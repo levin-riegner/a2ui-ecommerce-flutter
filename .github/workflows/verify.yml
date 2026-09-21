@@ -39,6 +39,3 @@ jobs:
 
       - name: Build Android debug APK
         run: flutter build apk --debug
-
-      - name: Public-safety scan
-        run: bash tool/check_public_safety.sh

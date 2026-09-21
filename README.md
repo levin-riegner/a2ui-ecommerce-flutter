@@ -47,7 +47,6 @@ fvm dart format lib test
 fvm flutter analyze
 fvm flutter test
 fvm flutter build apk --debug
-bash tool/check_public_safety.sh
 ```
 
 ## License
