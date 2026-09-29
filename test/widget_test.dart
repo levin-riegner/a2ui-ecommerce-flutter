@@ -52,6 +52,27 @@ void main() {
     }
   });
 
+  test('category filters use categories rather than keyword matches', () async {
+    final repository = CsvProductRepository(
+      bundle: _CsvBundle(
+        'id,name,brand,category,subcategory,price_eur,keywords\n'
+        'shoe-1,Low-Top Sneaker,Demo,shoes,sneakers,90,low-top summer\n'
+        'top-1,Linen Shirt,Demo,top,shirt,80,summer shirt\n',
+      ),
+    );
+
+    expect((await repository.search(category: 'top')).map((p) => p.id), [
+      'top-1',
+    ]);
+    expect(await repository.search(category: 'summer'), isEmpty);
+    expect((await repository.search(category: ' TOP ')).map((p) => p.id), [
+      'top-1',
+    ]);
+    expect((await repository.search(query: 'low-top')).map((p) => p.id), [
+      'shoe-1',
+    ]);
+  });
+
   test(
     'catalog recommendations rank the demo occasion and remain stable',
     () async {
