@@ -342,6 +342,7 @@ List<Product> _filterProducts(
   required int limit,
 }) {
   if (limit <= 0) return const [];
+  final categoryFilter = category?.trim().toLowerCase();
   final words = query
       .toLowerCase()
       .trim()
@@ -349,10 +350,9 @@ List<Product> _filterProducts(
       .where((w) => w.isNotEmpty);
   return products
       .where((p) {
-        if (category != null &&
-            category.isNotEmpty &&
-            !_matchesTag(p.keywords, category) &&
-            p.category.name != category.toLowerCase()) {
+        if (categoryFilter != null &&
+            categoryFilter.isNotEmpty &&
+            p.category.name != categoryFilter) {
           return false;
         }
         if (color != null && color.isNotEmpty && !_matchesTag(p.color, color)) {
