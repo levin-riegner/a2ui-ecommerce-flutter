@@ -40,6 +40,32 @@ The default app uses `FixtureProductRepository`. `CsvProductRepository` demonstr
 
 The CSV parser handles common quoted fields but is intentionally small and does not implement multiline CSV records. A production adapter should use a full CSV parser and validate external data before it reaches an A2UI surface.
 
+## Product catalog and images
+
+`assets/data/catalog/products.csv` provisions 200 fictional products for the next
+stylist integration. Its `image_asset` column stores local paths to JPEGs under
+`assets/images/products/`; the CSV does not embed image bytes. The existing demo
+continues to use its fixture data and original CSV adapter.
+
+Product names, brands, descriptions, prices, and identifiers in the new catalog
+are fictional. The bundled photographs are reused with permission, resized, and
+saved without image metadata. They are not presented as AI-generated images.
+Visible marks and reverse image search may still identify a photographed item.
+See [NOTICE](NOTICE) for image and project credits.
+
+Product JPEGs use Git LFS. Install Git LFS before cloning, or run
+`git lfs install && git lfs pull` in an existing checkout. CI downloads the image
+bytes and checks their JPEG signatures before building.
+
+Run `python3 tools/catalog/validate.py assets/data/catalog/products.csv` before
+publishing catalog changes. Add `--source` once per private source export to check
+for copied names, vendors, handles, and identifiers. Keep source exports outside
+this repository.
+
+For future expansion, `tools/catalog/import_images.py` accepts a private ordered
+URL file and an explicit `--allowed-host`, then writes renamed JPEGs. The importer
+requires Pillow; keep the URL file outside the repository.
+
 ## Verification
 
 ```sh
@@ -51,4 +77,4 @@ fvm flutter build apk --debug
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE).
+Apache-2.0, including the bundled demo images. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
