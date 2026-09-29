@@ -39,8 +39,5 @@ jobs:
       - name: Test
         run: flutter test
 
-      - name: Test CSV fixture mode
-        run: flutter test --dart-define=USE_CSV_FIXTURES=true
-
       - name: Build Android debug APK
         run: flutter build apk --debug

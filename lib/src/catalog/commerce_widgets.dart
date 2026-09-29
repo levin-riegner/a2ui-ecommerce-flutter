@@ -12,6 +12,29 @@ Color _colorFromHex(Object? value, {Color fallback = const Color(0xffe4e4e7)}) {
   return Color(raw.length == 6 ? 0xff000000 | parsed : parsed);
 }
 
+Widget _productImage(String? path, String? swatch) {
+  final fallback = ColoredBox(
+    color: _colorFromHex(swatch),
+    child: const Center(
+      child: Icon(Icons.checkroom_outlined, color: Colors.white70),
+    ),
+  );
+  // Product imagery must resolve from the bundled public catalog, never from a
+  // URL or an arbitrary path supplied in an A2UI message.
+  if (path == null ||
+      !RegExp(r'^assets/images/products/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$')
+          .hasMatch(path)) {
+    return fallback;
+  }
+  return Image.asset(
+    path,
+    fit: BoxFit.contain,
+    width: double.infinity,
+    filterQuality: FilterQuality.medium,
+    errorBuilder: (_, error, stackTrace) => fallback,
+  );
+}
+
 Map<String, Object?> _map(Object value) =>
     Map<String, Object?>.from(value as Map);
 
@@ -311,6 +334,7 @@ final productCardCatalogItem = CatalogItem(
       'brandLine': A2uiSchemas.stringReference(),
       'tag': A2uiSchemas.stringReference(),
       'swatch': A2uiSchemas.stringReference(),
+      'imageAsset': A2uiSchemas.stringReference(),
       'action': A2uiSchemas.action(),
     },
     required: ['name', 'price', 'brandLine', 'tag', 'swatch', 'action'],
@@ -332,141 +356,116 @@ final productCardCatalogItem = CatalogItem(
             builder: (_, tag) => BoundString(
               dataContext: context.dataContext,
               value: data['swatch'],
-              builder: (_, swatch) => InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () => _dispatchAction(context, data['action']),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xffe4e4e7)),
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final imageWidth = constraints.maxWidth < 440
-                          ? 104.0
-                          : 120.0;
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: imageWidth,
-                            height: 76,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: _colorFromHex(swatch),
+              builder: (_, swatch) => BoundString(
+                dataContext: context.dataContext,
+                value: data['imageAsset'],
+                builder: (_, imageAsset) => InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () => _dispatchAction(context, data['action']),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xffe4e4e7)),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final imageExtent = constraints.maxWidth < 360
+                            ? 92.0
+                            : 112.0;
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: imageExtent,
+                              height: imageExtent,
+                              child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    left: 6,
-                                    top: 6,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(99),
-                                      ),
-                                      child: Text(
-                                        tag ?? '',
-                                        style: Theme.of(buildContext)
-                                            .textTheme
-                                            .labelSmall,
-                                      ),
-                                    ),
-                                  ),
-                                  const Center(
-                                    child: Icon(
-                                      Icons.checkroom_outlined,
-                                      color: Colors.white70,
-                                    ),
-                                  ),
-                                ],
+                                child: ColoredBox(
+                                  color: Colors.white,
+                                  child: _productImage(imageAsset, swatch),
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: SizedBox(
-                              height: 76,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          name ?? '',
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: SizedBox(
+                                height: imageExtent,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            name ?? '',
+                                            style: Theme.of(buildContext)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          price ?? '',
                                           style: Theme.of(buildContext)
                                               .textTheme
-                                              .titleMedium
+                                              .labelLarge
                                               ?.copyWith(
                                                 fontWeight: FontWeight.w600,
                                               ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        price ?? '',
-                                        style: Theme.of(buildContext)
-                                            .textTheme
-                                            .labelLarge
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    brandLine ?? '',
-                                    style: Theme.of(buildContext)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                          color: const Color(0xff71717a),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      brandLine ?? '',
+                                      style: Theme.of(buildContext)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: const Color(0xff71717a),
+                                          ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            tag ?? '',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(buildContext)
+                                                .textTheme
+                                                .labelSmall,
+                                          ),
                                         ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const Spacer(),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Shoes',
-                                        style: Theme.of(buildContext)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(
-                                              color: const Color(0xffa1a1aa),
-                                            ),
-                                      ),
-                                      Text(
-                                        'Choose this',
-                                        style: Theme.of(buildContext)
-                                            .textTheme
-                                            .labelMedium,
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Choose this',
+                                          style: Theme.of(buildContext)
+                                              .textTheme
+                                              .labelMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -568,15 +567,19 @@ final dressingRoomCatalogItem = CatalogItem(
       'dressName': A2uiSchemas.stringReference(),
       'dressMeta': A2uiSchemas.stringReference(),
       'dressSwatch': A2uiSchemas.stringReference(),
+      'dressImageAsset': A2uiSchemas.stringReference(),
       'layerName': A2uiSchemas.stringReference(),
       'layerMeta': A2uiSchemas.stringReference(),
       'layerSwatch': A2uiSchemas.stringReference(),
+      'layerImageAsset': A2uiSchemas.stringReference(),
       'shoesName': A2uiSchemas.stringReference(),
       'shoesMeta': A2uiSchemas.stringReference(),
       'shoesSwatch': A2uiSchemas.stringReference(),
+      'shoesImageAsset': A2uiSchemas.stringReference(),
       'bagName': A2uiSchemas.stringReference(),
       'bagMeta': A2uiSchemas.stringReference(),
       'bagSwatch': A2uiSchemas.stringReference(),
+      'bagImageAsset': A2uiSchemas.stringReference(),
     },
     required: [
       'title',
@@ -638,79 +641,113 @@ class _DressingRoomBindings extends StatelessWidget {
                     value: data['dressSwatch'],
                     builder: (_, dressSwatch) => BoundString(
                       dataContext: context.dataContext,
-                      value: data['layerName'],
-                      builder: (_, layerName) => BoundString(
+                      value: data['dressImageAsset'],
+                      builder: (_, dressImageAsset) => BoundString(
                         dataContext: context.dataContext,
-                        value: data['layerMeta'],
-                        builder: (_, layerMeta) => BoundString(
+                        value: data['layerName'],
+                        builder: (_, layerName) => BoundString(
                           dataContext: context.dataContext,
-                          value: data['layerSwatch'],
-                          builder: (_, layerSwatch) => BoundString(
+                          value: data['layerMeta'],
+                          builder: (_, layerMeta) => BoundString(
                             dataContext: context.dataContext,
-                            value: data['shoesName'],
-                            builder: (_, shoesName) => BoundString(
+                            value: data['layerSwatch'],
+                            builder: (_, layerSwatch) => BoundString(
                               dataContext: context.dataContext,
-                              value: data['shoesMeta'],
-                              builder: (_, shoesMeta) => BoundString(
+                              value: data['layerImageAsset'],
+                              builder: (_, layerImageAsset) => BoundString(
                                 dataContext: context.dataContext,
-                                value: data['shoesSwatch'],
-                                builder: (_, shoesSwatch) => BoundString(
+                                value: data['shoesName'],
+                                builder: (_, shoesName) => BoundString(
                                   dataContext: context.dataContext,
-                                  value: data['bagName'],
-                                  builder: (_, bagName) => BoundString(
+                                  value: data['shoesMeta'],
+                                  builder: (_, shoesMeta) => BoundString(
                                     dataContext: context.dataContext,
-                                    value: data['bagMeta'],
-                                    builder: (_, bagMeta) => BoundString(
+                                    value: data['shoesSwatch'],
+                                    builder: (_, shoesSwatch) => BoundString(
                                       dataContext: context.dataContext,
-                                      value: data['bagSwatch'],
-                                      builder: (_, bagSwatch) => _DressingRoom(
-                                        title: title ?? '',
-                                        brief: brief ?? '',
-                                        spent: spent ?? '',
-                                        left: left ?? '',
-                                        progress: progress?.toDouble() ?? 0,
-                                        pieces: [
-                                          _PieceData(
-                                            ProductCategory.dress,
-                                            'A dress',
-                                            dressName ?? '',
-                                            dressMeta ?? '',
-                                            dressSwatch,
-                                            dressName?.isNotEmpty == true
-                                                ? 'Filled'
-                                                : 'Next',
+                                      value: data['shoesImageAsset'],
+                                      builder: (_, shoesImageAsset) => BoundString(
+                                        dataContext: context.dataContext,
+                                        value: data['bagName'],
+                                        builder: (_, bagName) => BoundString(
+                                          dataContext: context.dataContext,
+                                          value: data['bagMeta'],
+                                          builder: (_, bagMeta) => BoundString(
+                                            dataContext: context.dataContext,
+                                            value: data['bagSwatch'],
+                                            builder: (_, bagSwatch) => BoundString(
+                                              dataContext: context.dataContext,
+                                              value: data['bagImageAsset'],
+                                              builder: (_, bagImageAsset) =>
+                                                  _DressingRoom(
+                                                    title: title ?? '',
+                                                    brief: brief ?? '',
+                                                    spent: spent ?? '',
+                                                    left: left ?? '',
+                                                    progress:
+                                                        progress?.toDouble() ??
+                                                        0,
+                                                    pieces: [
+                                                      _PieceData(
+                                                        ProductCategory.dress,
+                                                        'A dress',
+                                                        dressName ?? '',
+                                                        dressMeta ?? '',
+                                                        dressSwatch,
+                                                        dressName?.isNotEmpty ==
+                                                                true
+                                                            ? 'Filled'
+                                                            : 'Next',
+                                                        imageAsset:
+                                                            dressImageAsset ??
+                                                            '',
+                                                      ),
+                                                      _PieceData(
+                                                        ProductCategory.layer,
+                                                        'A layer over it',
+                                                        layerName ?? '',
+                                                        layerMeta ?? '',
+                                                        layerSwatch,
+                                                        layerName?.isNotEmpty ==
+                                                                true
+                                                            ? 'Filled'
+                                                            : 'Empty',
+                                                        imageAsset:
+                                                            layerImageAsset ??
+                                                            '',
+                                                      ),
+                                                      _PieceData(
+                                                        ProductCategory.shoes,
+                                                        'Shoes',
+                                                        shoesName ?? '',
+                                                        shoesMeta ?? '',
+                                                        shoesSwatch,
+                                                        shoesName?.isNotEmpty ==
+                                                                true
+                                                            ? 'Filled'
+                                                            : 'Choosing on the left',
+                                                        imageAsset:
+                                                            shoesImageAsset ??
+                                                            '',
+                                                      ),
+                                                      _PieceData(
+                                                        ProductCategory.bag,
+                                                        'A bag',
+                                                        bagName ?? '',
+                                                        bagMeta ?? '',
+                                                        bagSwatch,
+                                                        bagName?.isNotEmpty ==
+                                                                true
+                                                            ? 'Filled'
+                                                            : 'Empty',
+                                                        imageAsset:
+                                                            bagImageAsset ?? '',
+                                                      ),
+                                                    ],
+                                                  ),
+                                            ),
                                           ),
-                                          _PieceData(
-                                            ProductCategory.layer,
-                                            'A layer over it',
-                                            layerName ?? '',
-                                            layerMeta ?? '',
-                                            layerSwatch,
-                                            layerName?.isNotEmpty == true
-                                                ? 'Filled'
-                                                : 'Empty',
-                                          ),
-                                          _PieceData(
-                                            ProductCategory.shoes,
-                                            'Shoes',
-                                            shoesName ?? '',
-                                            shoesMeta ?? '',
-                                            shoesSwatch,
-                                            shoesName?.isNotEmpty == true
-                                                ? 'Filled'
-                                                : 'Choosing on the left',
-                                          ),
-                                          _PieceData(
-                                            ProductCategory.bag,
-                                            'A bag',
-                                            bagName ?? '',
-                                            bagMeta ?? '',
-                                            bagSwatch,
-                                            bagName?.isNotEmpty == true
-                                                ? 'Filled'
-                                                : 'Empty',
-                                          ),
-                                        ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -739,8 +776,9 @@ class _PieceData {
     this.name,
     this.meta,
     this.swatch,
-    this.state,
-  );
+    this.state, {
+    this.imageAsset = '',
+  });
 
   final ProductCategory category;
   final String label;
@@ -748,6 +786,7 @@ class _PieceData {
   final String meta;
   final String? swatch;
   final String state;
+  final String imageAsset;
 }
 
 class _DressingRoom extends StatelessWidget {
@@ -983,8 +1022,12 @@ class _PieceCard extends StatelessWidget {
     final filled = piece.name.isNotEmpty;
     final thumbHeight = switch (piece.category) {
       ProductCategory.dress => compact ? 118.0 : 200.0,
-      ProductCategory.layer => compact ? 72.0 : 90.0,
-      ProductCategory.shoes || ProductCategory.bag => compact ? 52.0 : 64.0,
+      ProductCategory.layer ||
+      ProductCategory.top ||
+      ProductCategory.bottom => compact ? 92.0 : 132.0,
+      ProductCategory.shoes ||
+      ProductCategory.bag ||
+      ProductCategory.accessory => compact ? 76.0 : 100.0,
     };
     final isChoosing = piece.state == 'Choosing on the left';
     final labelColor = filled || isChoosing
@@ -997,7 +1040,7 @@ class _PieceCard extends StatelessWidget {
           height: thumbHeight,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: _colorFromHex(piece.swatch),
+            color: filled ? Colors.white : _colorFromHex(piece.swatch),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isChoosing
@@ -1010,6 +1053,13 @@ class _PieceCard extends StatelessWidget {
           ),
           child: Stack(
             children: [
+              if (filled)
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: _productImage(piece.imageAsset, piece.swatch),
+                  ),
+                ),
               if (isChoosing)
                 Positioned(
                   left: 7,
