@@ -47,14 +47,21 @@ enum DemoJourney {
   final String season;
   final double budget;
   final ProductCategory foundationCategory;
+
+  String get catalogOccasion => switch (this) {
+    paris => 'celebration',
+    berlin => 'work',
+    cotswolds => 'weekend',
+    lisbon => 'travel',
+  };
 }
 
-enum ProductCategory { dress, layer, shoes, bag }
+enum ProductCategory { dress, top, bottom, layer, shoes, bag, accessory }
 
 class Product {
   const Product({
     required this.id,
-    required this.journey,
+    this.journey,
     required this.category,
     required this.name,
     required this.brand,
@@ -62,10 +69,18 @@ class Product {
     required this.meta,
     required this.tag,
     required this.swatch,
+    this.description = '',
+    this.subcategory = '',
+    this.color = '',
+    this.material = '',
+    this.season = '',
+    this.occasion = '',
+    this.imageAsset = '',
+    this.keywords = '',
   });
 
   final String id;
-  final DemoJourney journey;
+  final DemoJourney? journey;
   final ProductCategory category;
   final String name;
   final String brand;
@@ -73,6 +88,14 @@ class Product {
   final String meta;
   final String tag;
   final String swatch;
+  final String description;
+  final String subcategory;
+  final String color;
+  final String material;
+  final String season;
+  final String occasion;
+  final String imageAsset;
+  final String keywords;
 
   String get priceLabel => '€${price.toStringAsFixed(0)}';
 

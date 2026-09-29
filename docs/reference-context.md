@@ -33,7 +33,6 @@ The exact type, spacing, font, icon, and image tokens remain a design-system fol
 ## Public-safety boundary
 
 - No service account files, API keys, OAuth refresh tokens, internal URLs, private repository names, or private design links belong in this repository.
-- The client currently uses deterministic fixtures and a checked-in CSV example.
-- `USE_CSV_FIXTURES=true` switches the app to the CSV adapter without changing the A2UI catalog or transport code.
+- The default offline client uses a fictional, checked-in CSV catalog and bundled product photographs. Small deterministic fixtures remain available for tests.
 - A future live adapter should obtain short-lived, least-privilege data through a trusted service boundary and should keep secrets out of the iOS bundle and generated web assets.
 - Before publishing a real connector, add redaction tests and a repository scan for secrets as part of CI.

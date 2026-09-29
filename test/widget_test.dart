@@ -1,5 +1,7 @@
-import 'dart:ui';
+import 'dart:convert';
 
+import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 
@@ -26,7 +28,63 @@ void main() {
     expect(fixtureProducts, isNotEmpty);
     expect(csvProducts, isNotEmpty);
     expect(csvProducts.first.category, ProductCategory.shoes);
-    expect(csvProducts.first.name, 'Satin Pointed Pump');
+    expect(csvProducts.first.name, isNotEmpty);
+    expect(csvProducts.first.id, startsWith('demo-'));
+    expect(csvProducts.first.imageAsset, startsWith('assets/images/products/'));
+  });
+
+  test('public CSV loads 200 products and supports filtered search', () async {
+    final repository = CsvProductRepository();
+    final all = await repository.search(limit: 250);
+    expect(all, hasLength(200));
+    final matches = await repository.search(
+      category: 'shoes',
+      season: 'summer',
+      maxPrice: 200,
+      limit: 5,
+    );
+    expect(matches, isNotEmpty);
+    expect(matches.length, lessThanOrEqualTo(5));
+    for (final product in matches) {
+      expect(product.category, ProductCategory.shoes);
+      expect(['summer', 'all-season'], contains(product.season.toLowerCase()));
+      expect(product.price, lessThanOrEqualTo(200));
+    }
+  });
+
+  test(
+    'catalog recommendations rank the demo occasion and remain stable',
+    () async {
+      final repository = CsvProductRepository();
+      final expected = <DemoJourney, String>{
+        DemoJourney.paris: 'demo-0092',
+        DemoJourney.berlin: 'demo-0027',
+        DemoJourney.cotswolds: 'demo-0077',
+        DemoJourney.lisbon: 'demo-0113',
+      };
+      for (final journey in DemoJourney.values) {
+        final products = await repository.recommendations(
+          journey: journey,
+          category: journey.foundationCategory,
+          limit: 1,
+        );
+        expect(products.single.id, expected[journey], reason: journey.name);
+        expect(products.single.price, lessThanOrEqualTo(journey.budget));
+      }
+    },
+  );
+
+  test('CSV parsing preserves quoted descriptions and loads once', () async {
+    final bundle = _CsvBundle(
+      'id,name,brand,description,category,subcategory,color,material,season,occasion,price_eur,image_asset,keywords\n'
+      'demo-1,"A ""soft"" dress",Demo,"Line one\nLine two, still description",dress,midi,blue,cotton,summer,evening,120,assets/images/products/demo-1.jpg,soft dress\n',
+    );
+    final repository = CsvProductRepository(bundle: bundle);
+    final first = await repository.search(query: 'soft dress');
+    final second = await repository.search(query: 'line two');
+    expect(first.single.name, 'A "soft" dress');
+    expect(second.single.description, 'Line one\nLine two, still description');
+    expect(bundle.reads, 1);
   });
 
   test(
@@ -80,7 +138,7 @@ void main() {
     final dataModel = agent.controller.contextFor(surfaceId).dataModel;
     expect(
       dataModel.getValue<String>(DataPath('/recommendations/0/name')),
-      'Satin Pointed Pump',
+      isNotEmpty,
     );
 
     agent.dispose();
@@ -108,6 +166,12 @@ void main() {
   });
 
   testWidgets('start screen launches an offline journey', (tester) async {
+    final options = (await tester.runAsync(
+      () => CsvProductRepository().recommendations(
+        journey: DemoJourney.paris,
+        category: ProductCategory.shoes,
+      ),
+    ))!;
     await tester.pumpWidget(const ReferenceApp());
     expect(find.text('Build the look\naround the moment.'), findsOneWidget);
 
@@ -124,16 +188,36 @@ void main() {
     );
     for (var attempt = 0; attempt < 20; attempt++) {
       await tester.pump(const Duration(milliseconds: 50));
-      if (find.text('Satin Pointed Pump').evaluate().isNotEmpty) break;
+      if (find.text(options.first.name).evaluate().isNotEmpty) break;
     }
 
-    expect(find.text('Satin Pointed Pump'), findsOneWidget);
+    expect(find.text(options.first.name), findsOneWidget);
+    final firstCard = find
+        .ancestor(
+          of: find.text(options.first.name),
+          matching: find.byType(InkWell),
+        )
+        .first;
+    expect(
+      find.descendant(of: firstCard, matching: find.text('Shoes')),
+      findsNothing,
+    );
 
-    if (const bool.fromEnvironment('USE_CSV_FIXTURES')) return;
-
-    await tester.tap(find.text('Leather Kitten Heel'));
+    await tester.tap(find.text(options[1].name));
     await tester.pumpAndSettle();
-    expect(find.text('Leather Kitten Heel'), findsNWidgets(2));
+    expect(find.text(options[1].name), findsNWidgets(2));
+    final productImages = tester.widgetList<Image>(find.byType(Image));
+    expect(productImages, isNotEmpty);
+    expect(productImages.every((image) => image.fit == BoxFit.contain), isTrue);
+    expect(
+      productImages.where(
+        (image) =>
+            image.image is AssetImage &&
+            (image.image as AssetImage).assetName == options[1].imageAsset,
+      ),
+      hasLength(2),
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('start screen opens the component catalog', (tester) async {
@@ -189,4 +273,17 @@ void main() {
     expect(find.text('Season'), findsOneWidget);
     expect(find.text('Find options'), findsOneWidget);
   });
+}
+
+class _CsvBundle extends CachingAssetBundle {
+  _CsvBundle(this.source);
+
+  final String source;
+  int reads = 0;
+
+  @override
+  Future<ByteData> load(String key) async {
+    reads++;
+    return ByteData.sublistView(Uint8List.fromList(utf8.encode(source)));
+  }
 }
