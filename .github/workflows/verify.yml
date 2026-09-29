@@ -39,5 +39,14 @@ jobs:
       - name: Test
         run: flutter test
 
+      - name: Set up Node for catalog agent tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test catalog agent service
+        working-directory: agent-service
+        run: npm test
+
       - name: Build Android debug APK
         run: flutter build apk --debug
