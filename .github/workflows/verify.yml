@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -24,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Validate catalog assets
+        run: python3 tools/catalog/validate.py assets/data/catalog/products.csv
 
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed lib test
