@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 
+import 'agent/commerce_agent.dart';
+import 'agent/remote_agent.dart';
 import 'agent/stub_agent.dart';
 import 'data/models.dart';
 import 'data/product_repository.dart';
@@ -34,13 +36,16 @@ class ReferenceApp extends StatefulWidget {
 }
 
 class _ReferenceAppState extends State<ReferenceApp> {
-  late final StubAgent agent;
+  late final CommerceAgent agent;
 
   @override
   void initState() {
     super.initState();
     final configuredRepository = widget.repository ?? CsvProductRepository();
-    agent = StubAgent(repository: configuredRepository);
+    const serviceUrl = String.fromEnvironment('AGENT_SERVICE_URL');
+    agent = serviceUrl.isNotEmpty && widget.repository == null
+        ? RemoteAgent(Uri.parse(serviceUrl))
+        : StubAgent(repository: configuredRepository);
   }
 
   @override
@@ -63,7 +68,7 @@ class _ReferenceAppState extends State<ReferenceApp> {
 class _AppHome extends StatefulWidget {
   const _AppHome({required this.agent});
 
-  final StubAgent agent;
+  final CommerceAgent agent;
 
   @override
   State<_AppHome> createState() => _AppHomeState();
@@ -71,6 +76,7 @@ class _AppHome extends StatefulWidget {
 
 class _AppHomeState extends State<_AppHome> {
   bool showGallery = false;
+  bool showStartScreen = false;
 
   @override
   Widget build(BuildContext context) {
@@ -78,18 +84,28 @@ class _AppHomeState extends State<_AppHome> {
       animation: widget.agent,
       builder: (context, _) {
         if (showGallery &&
-            (!widget.agent.hasStarted || widget.agent.activeJourney == null)) {
+            (showStartScreen ||
+                !widget.agent.hasStarted ||
+                widget.agent.activeJourney == null)) {
           return _ComponentGallery(
             onBack: () => setState(() => showGallery = false),
           );
         }
-        if (!widget.agent.hasStarted || widget.agent.activeJourney == null) {
+        if (showStartScreen ||
+            !widget.agent.hasStarted ||
+            widget.agent.activeJourney == null) {
           return _StartScreen(
-            onSelect: widget.agent.startJourney,
+            onSelect: (journey) {
+              setState(() => showStartScreen = false);
+              return widget.agent.startJourney(journey);
+            },
             onOpenGallery: () => setState(() => showGallery = true),
           );
         }
-        return _ResponsiveShell(agent: widget.agent);
+        return _ResponsiveShell(
+          agent: widget.agent,
+          onNewJourney: () => setState(() => showStartScreen = true),
+        );
       },
     );
   }
@@ -729,9 +745,10 @@ class _GalleryDressingPreview extends StatelessWidget {
 }
 
 class _ResponsiveShell extends StatelessWidget {
-  const _ResponsiveShell({required this.agent});
+  const _ResponsiveShell({required this.agent, required this.onNewJourney});
 
-  final StubAgent agent;
+  final CommerceAgent agent;
+  final VoidCallback onNewJourney;
 
   @override
   Widget build(BuildContext context) {
@@ -745,7 +762,7 @@ class _ResponsiveShell extends StatelessWidget {
                 if (constraints.maxWidth < 900) {
                   return Column(
                     children: [
-                      const _MobileHeader(),
+                      _MobileHeader(onNewJourney: onNewJourney),
                       Expanded(
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.only(bottom: 16),
@@ -789,10 +806,18 @@ class _ResponsiveShell extends StatelessWidget {
                   // on wide web viewports.
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(child: _ChatPanel(agent: agent)),
+                    Expanded(
+                      child: _ChatPanel(
+                        agent: agent,
+                        onNewJourney: onNewJourney,
+                      ),
+                    ),
                     const VerticalDivider(width: 1),
                     SizedBox(width: 415, child: _DressingPanel(agent: agent)),
-                    const SizedBox(width: 60, child: _SideRail()),
+                    SizedBox(
+                      width: 60,
+                      child: _SideRail(onNewJourney: onNewJourney),
+                    ),
                   ],
                 );
               },
@@ -805,9 +830,10 @@ class _ResponsiveShell extends StatelessWidget {
 }
 
 class _ChatPanel extends StatelessWidget {
-  const _ChatPanel({required this.agent});
+  const _ChatPanel({required this.agent, required this.onNewJourney});
 
-  final StubAgent agent;
+  final CommerceAgent agent;
+  final VoidCallback onNewJourney;
 
   @override
   Widget build(BuildContext context) {
@@ -815,7 +841,16 @@ class _ChatPanel extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 18, 24, 18),
       child: Column(
         children: [
-          const Row(children: [_BrandLockup()]),
+          Row(
+            children: [
+              const Expanded(child: _BrandLockup()),
+              IconButton(
+                onPressed: onNewJourney,
+                icon: const Icon(Icons.close),
+                tooltip: 'New journey',
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
           Expanded(child: _ChatSurface(agent: agent)),
           const SizedBox(height: 12),
@@ -829,7 +864,7 @@ class _ChatPanel extends StatelessWidget {
 class _ChatSurface extends StatelessWidget {
   const _ChatSurface({required this.agent});
 
-  final StubAgent agent;
+  final CommerceAgent agent;
 
   @override
   Widget build(BuildContext context) {
@@ -852,7 +887,7 @@ class _ChatSurface extends StatelessWidget {
 class _ChatComposer extends StatefulWidget {
   const _ChatComposer({required this.agent, this.padding = EdgeInsets.zero});
 
-  final StubAgent agent;
+  final CommerceAgent agent;
   final EdgeInsets padding;
 
   @override
@@ -911,7 +946,7 @@ class _ChatComposerState extends State<_ChatComposer> {
 class _DressingPanel extends StatelessWidget {
   const _DressingPanel({required this.agent, this.scrollable = true});
 
-  final StubAgent agent;
+  final CommerceAgent agent;
   final bool scrollable;
 
   @override
@@ -920,8 +955,21 @@ class _DressingPanel extends StatelessWidget {
       animation: agent,
       builder: (context, _) {
         if (!agent.hasStarted) return const SizedBox.shrink();
-        return Surface(
-          surfaceContext: agent.controller.contextFor('dressing-room'),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Surface(
+              surfaceContext: agent.controller.contextFor('dressing-room'),
+            ),
+            if (agent.hasSelectedProductsSurface) ...[
+              const SizedBox(height: 12),
+              Surface(
+                surfaceContext: agent.controller.contextFor(
+                  'selected-products',
+                ),
+              ),
+            ],
+          ],
         );
       },
     );
@@ -934,7 +982,9 @@ class _DressingPanel extends StatelessWidget {
 }
 
 class _MobileHeader extends StatelessWidget {
-  const _MobileHeader();
+  const _MobileHeader({required this.onNewJourney});
+
+  final VoidCallback onNewJourney;
 
   @override
   Widget build(BuildContext context) {
@@ -945,9 +995,9 @@ class _MobileHeader extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              onPressed: null,
+              onPressed: onNewJourney,
               icon: const Icon(Icons.close, size: 24),
-              tooltip: 'Close',
+              tooltip: 'New journey',
             ),
             const SizedBox(width: 4),
             const _BrandLockup(),
@@ -959,7 +1009,9 @@ class _MobileHeader extends StatelessWidget {
 }
 
 class _SideRail extends StatelessWidget {
-  const _SideRail();
+  const _SideRail({required this.onNewJourney});
+
+  final VoidCallback onNewJourney;
 
   @override
   Widget build(BuildContext context) {
@@ -988,10 +1040,14 @@ class _SideRail extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const SizedBox(
+          SizedBox(
             width: 44,
             height: 44,
-            child: Icon(Icons.close, size: 24),
+            child: IconButton(
+              onPressed: onNewJourney,
+              icon: const Icon(Icons.close, size: 24),
+              tooltip: 'New journey',
+            ),
           ),
           const Spacer(),
         ],

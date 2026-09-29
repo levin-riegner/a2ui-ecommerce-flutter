@@ -294,6 +294,26 @@ void main() {
     expect(find.text('Season'), findsOneWidget);
     expect(find.text('Find options'), findsOneWidget);
   });
+  testWidgets('mobile header can start another journey', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(const ReferenceApp());
+    await tester.tap(find.text(DemoJourney.paris.title));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('New journey'));
+    await tester.pumpAndSettle();
+    expect(find.text('Build the look\naround the moment.'), findsOneWidget);
+
+    await tester.tap(find.text(DemoJourney.berlin.title));
+    await tester.pumpAndSettle();
+    expect(find.text('Dressing room'), findsOneWidget);
+    expect(find.text('Build the look\naround the moment.'), findsNothing);
+  });
 }
 
 class _CsvBundle extends CachingAssetBundle {

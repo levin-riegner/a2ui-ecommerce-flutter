@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:a2ui_core/a2ui_core.dart' as core;
-import 'package:flutter/foundation.dart';
 import 'package:genui/genui.dart';
 
 import '../catalog/commerce_catalog.dart';
 import '../data/models.dart';
 import '../data/product_repository.dart';
+import 'commerce_agent.dart';
 
-class StubAgent extends ChangeNotifier {
+class StubAgent extends CommerceAgent {
   StubAgent({ProductRepository? repository})
     : repository = repository ?? const FixtureProductRepository(),
       catalog = buildCommerceCatalog() {
@@ -19,11 +19,15 @@ class StubAgent extends ChangeNotifier {
 
   final ProductRepository repository;
   final Catalog catalog;
+  @override
   late final SurfaceController controller;
   late final A2uiTransportAdapter transport;
+  @override
   late final Conversation conversation;
 
+  @override
   DemoJourney? activeJourney;
+  @override
   String? latestInlineSurfaceId;
   bool _hasStarted = false;
   int _turn = 0;
@@ -31,10 +35,15 @@ class StubAgent extends ChangeNotifier {
   _AgentStage _stage = _AgentStage.brief;
   Product? _selectedFoundation;
 
+  @override
   bool get hasStarted => _hasStarted;
+
+  @override
+  bool get hasSelectedProductsSurface => false;
 
   bool get isBrief => _stage == _AgentStage.brief;
 
+  @override
   Future<void> startJourney(DemoJourney journey) async {
     _turn = 0;
     _selectedShoes = null;
