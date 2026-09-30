@@ -5,7 +5,7 @@ This document records the public-facing decisions behind the starter without cop
 ## Protocol and renderer
 
 - Treat the catalog as an explicit vocabulary and allowlist. Each component should have a schema, a Flutter builder, stable interaction events, and fixture data.
-- Keep the Flutter client focused on rendering and event dispatch. Domain retrieval belongs behind `ProductRepository`; agent transport belongs behind the stub transport callback.
+- Keep the Flutter client focused on rendering and event dispatch. Domain retrieval belongs behind `ProductRepository`; the required agent service is reached through `RemoteAgent`.
 - Use separate surfaces for separate responsibilities. This sample keeps the dressing-room state persistent and replaces the inline recommendation surface as the journey advances.
 - Model the core journey as `brief → picks → complete look`; keep structured choices and budget changes as explicit events or data-model updates.
 - Keep protocol messages and data-model updates testable as exact values. The first test boundary is intentionally small so more component fixtures can be added without coupling them to a service.
@@ -33,6 +33,7 @@ The exact type, spacing, font, icon, and image tokens remain a design-system fol
 ## Public-safety boundary
 
 - No service account files, API keys, OAuth refresh tokens, internal URLs, private repository names, or private design links belong in this repository.
-- The default offline client uses a fictional, checked-in CSV catalog and bundled product photographs. Small deterministic fixtures remain available for tests.
-- A future live adapter should obtain short-lived, least-privilege data through a trusted service boundary and should keep secrets out of the iOS bundle and generated web assets.
+- The stylist requires an agent service configured through `AGENT_SERVICE_URL`. The service searches the fictional CSV catalog and keeps model credentials server-side; photographs remain bundled in Flutter.
+- Scripted agents and deterministic fixtures are restricted to tests and component previews. Missing configuration or failed requests show connection states and never enable a fixture fallback.
+- Reused photographs can still reveal real brands or be traced by reverse image search. Review image rights and visible marks before public distribution.
 - Before publishing a real connector, add redaction tests and a repository scan for secrets as part of CI.

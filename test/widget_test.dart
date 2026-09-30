@@ -186,14 +186,18 @@ void main() {
     }
   });
 
-  testWidgets('start screen launches an offline journey', (tester) async {
+  testWidgets('injected fixture preserves catalog photo previews', (
+    tester,
+  ) async {
     final options = (await tester.runAsync(
       () => CsvProductRepository().recommendations(
         journey: DemoJourney.paris,
         category: ProductCategory.shoes,
       ),
     ))!;
-    await tester.pumpWidget(const ReferenceApp());
+    await tester.pumpWidget(
+      ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
+    );
     expect(find.text('Build the look\naround the moment.'), findsOneWidget);
 
     await tester.tap(find.text(DemoJourney.paris.title));
@@ -242,7 +246,7 @@ void main() {
   });
 
   testWidgets('start screen opens the component catalog', (tester) async {
-    await tester.pumpWidget(const ReferenceApp());
+    await tester.pumpWidget(const ReferenceApp(serviceUrl: ''));
 
     await tester.ensureVisible(find.text('Explore component catalog'));
     await tester.tap(find.text('Explore component catalog'));
@@ -264,7 +268,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    await tester.pumpWidget(const ReferenceApp());
+    await tester.pumpWidget(
+      ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
+    );
     await tester.tap(find.text(DemoJourney.paris.title));
     await tester.pumpAndSettle();
 
@@ -283,7 +289,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    await tester.pumpWidget(const ReferenceApp());
+    await tester.pumpWidget(
+      ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
+    );
     await tester.tap(find.text(DemoJourney.paris.title));
     await tester.pumpAndSettle();
 
@@ -293,6 +301,28 @@ void main() {
     expect(find.text('How formal?'), findsOneWidget);
     expect(find.text('Season'), findsOneWidget);
     expect(find.text('Find options'), findsOneWidget);
+  });
+  testWidgets('mobile header can start another journey', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(
+      ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
+    );
+    await tester.tap(find.text(DemoJourney.paris.title));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('New journey'));
+    await tester.pumpAndSettle();
+    expect(find.text('Build the look\naround the moment.'), findsOneWidget);
+
+    await tester.tap(find.text(DemoJourney.berlin.title));
+    await tester.pumpAndSettle();
+    expect(find.text('Dressing room'), findsOneWidget);
+    expect(find.text('Build the look\naround the moment.'), findsNothing);
   });
 }
 

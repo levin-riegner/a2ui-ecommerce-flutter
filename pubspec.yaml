@@ -38,6 +38,7 @@ dependencies:
   # without changing the fixture or presentation layers.
   a2ui_core: 0.1.1
   genui: 0.10.3
+  http: ^1.6.0
   json_schema_builder: ^0.1.7
 
 dev_dependencies:
