@@ -39,11 +39,7 @@ class _ReferenceAppState extends State<ReferenceApp> {
   @override
   void initState() {
     super.initState();
-    final configuredRepository =
-        widget.repository ??
-        (const bool.fromEnvironment('USE_CSV_FIXTURES')
-            ? CsvProductRepository()
-            : const FixtureProductRepository());
+    final configuredRepository = widget.repository ?? CsvProductRepository();
     agent = StubAgent(repository: configuredRepository);
   }
 
@@ -284,7 +280,7 @@ class _SafetyNote extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'This starter uses deterministic local fixtures. Replace the repository adapter when connecting a real service; keep secrets outside the client and out of source control.',
+              'This demo uses a fictional local catalog with bundled product photographs. Keep service credentials outside the client and out of source control.',
               style: Theme.of(context).textTheme.bodySmall
                   ?.copyWith(height: 1.35),
             ),
@@ -632,7 +628,7 @@ class _GalleryProductPreview extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Satin Pointed Pump',
+                  'Demo Pointed Pump',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 Text(
