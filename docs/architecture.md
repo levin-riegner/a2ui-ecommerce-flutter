@@ -4,12 +4,12 @@
 
 The sample keeps four concerns separate:
 
-- `lib/src/data/` defines `ProductRepository`, deterministic fixture data, and a small local CSV adapter.
+- `lib/src/data/` defines `ProductRepository`, deterministic fixture data, and a searchable local CSV catalog adapter.
 - `lib/src/catalog/` defines the A2UI catalog vocabulary and Flutter widgets for commerce-specific components.
 - `lib/src/agent/` contains the stub transport flow that emits A2UI messages and updates the persistent dressing-room data model.
 - `lib/src/app.dart` owns the responsive host shell, text input, and native layout decisions around the A2UI surfaces.
 
-The intended replacement point for a real connection is `ProductRepository` and the transport callback in `StubAgent`. Keep service credentials, tokens, and provider-specific configuration on a trusted server or in a local development secret store. Never put them in Flutter assets, source code, generated web bundles, or committed environment files.
+The default offline app reads the bundled catalog through `CsvProductRepository` and emits fixed commerce components through `StubAgent`. The intended replacement point for a real connection is `ProductRepository` and the transport callback in `StubAgent`. Keep service credentials, tokens, and provider-specific configuration on a trusted server or in a local development secret store. Never put them in Flutter assets, source code, generated web bundles, or committed environment files.
 
 ## A2UI shape
 

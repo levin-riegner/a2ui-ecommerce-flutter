@@ -188,6 +188,7 @@ class StubAgent extends ChangeNotifier {
             'brandLine': product.brandLine,
             'tag': product.tag,
             'swatch': product.swatch,
+            'imageAsset': product.imageAsset,
           },
       ],
     };
@@ -200,9 +201,6 @@ class StubAgent extends ChangeNotifier {
     }
     final remaining = activeJourney!.budget - foundation.price;
     final remainingLabel = '€${remaining.toStringAsFixed(0)}';
-    if (activeJourney == DemoJourney.paris) {
-      return 'Lovely — the ${foundation.brand} is the most formal of the three and leaves you $remainingLabel. Shoes next: I’d keep them refined and let the main piece do the talking.';
-    }
     return 'The ${foundation.name} gives us a strong foundation and leaves you $remainingLabel. Shoes next: choose the pair that feels most like you.';
   }
 
@@ -251,11 +249,13 @@ class StubAgent extends ChangeNotifier {
           ? 'Choosing on the left'
           : '${dress.brand} · ${dress.priceLabel}',
       'dressSwatch': dress?.swatch ?? '#f4f4f5',
+      'dressImageAsset': dress?.imageAsset ?? '',
       'layerName': layer?.name ?? '',
       'layerMeta': layer == null
           ? 'Not yet'
           : '${layer.brand} · ${layer.priceLabel}',
       'layerSwatch': layer?.swatch ?? '#f4f4f5',
+      'layerImageAsset': layer?.imageAsset ?? '',
       'shoesName': _selectedShoes?.name ?? '',
       'shoesMeta': _selectedShoes == null
           ? showDress
@@ -263,9 +263,11 @@ class StubAgent extends ChangeNotifier {
                 : 'Not yet'
           : '${_selectedShoes!.brand} · ${_selectedShoes!.priceLabel}',
       'shoesSwatch': _selectedShoes?.swatch ?? '#f4f4f5',
+      'shoesImageAsset': _selectedShoes?.imageAsset ?? '',
       'bagName': '',
       'bagMeta': 'Not yet',
       'bagSwatch': '#f4f4f5',
+      'bagImageAsset': '',
     };
   }
 
@@ -281,15 +283,19 @@ class StubAgent extends ChangeNotifier {
       'dressName': {'path': '/dressName'},
       'dressMeta': {'path': '/dressMeta'},
       'dressSwatch': {'path': '/dressSwatch'},
+      'dressImageAsset': {'path': '/dressImageAsset'},
       'layerName': {'path': '/layerName'},
       'layerMeta': {'path': '/layerMeta'},
       'layerSwatch': {'path': '/layerSwatch'},
+      'layerImageAsset': {'path': '/layerImageAsset'},
       'shoesName': {'path': '/shoesName'},
       'shoesMeta': {'path': '/shoesMeta'},
       'shoesSwatch': {'path': '/shoesSwatch'},
+      'shoesImageAsset': {'path': '/shoesImageAsset'},
       'bagName': {'path': '/bagName'},
       'bagMeta': {'path': '/bagMeta'},
       'bagSwatch': {'path': '/bagSwatch'},
+      'bagImageAsset': {'path': '/bagImageAsset'},
     },
   ];
 
@@ -418,6 +424,7 @@ class StubAgent extends ChangeNotifier {
         'brandLine': {'path': '/recommendations/$index/brandLine'},
         'tag': {'path': '/recommendations/$index/tag'},
         'swatch': {'path': '/recommendations/$index/swatch'},
+        'imageAsset': {'path': '/recommendations/$index/imageAsset'},
         'action': {
           'event': {
             'name': 'select_product',
