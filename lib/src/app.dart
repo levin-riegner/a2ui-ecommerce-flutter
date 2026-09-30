@@ -3,9 +3,7 @@ import 'package:genui/genui.dart';
 
 import 'agent/commerce_agent.dart';
 import 'agent/remote_agent.dart';
-import 'agent/stub_agent.dart';
 import 'data/models.dart';
-import 'data/product_repository.dart';
 import 'theme.dart';
 
 const _basicComponentGalleryNames = <String>[
@@ -27,30 +25,40 @@ const _basicComponentGalleryNames = <String>[
 ];
 
 class ReferenceApp extends StatefulWidget {
-  const ReferenceApp({super.key, this.repository});
+  const ReferenceApp({
+    super.key,
+    this.agent,
+    this.serviceUrl = const String.fromEnvironment('AGENT_SERVICE_URL'),
+  });
 
-  final ProductRepository? repository;
+  /// Injection for tests and component previews. The app disposes this agent.
+  final CommerceAgent? agent;
+  final String serviceUrl;
 
   @override
   State<ReferenceApp> createState() => _ReferenceAppState();
 }
 
 class _ReferenceAppState extends State<ReferenceApp> {
-  late final CommerceAgent agent;
+  late final CommerceAgent? agent;
 
   @override
   void initState() {
     super.initState();
-    final configuredRepository = widget.repository ?? CsvProductRepository();
-    const serviceUrl = String.fromEnvironment('AGENT_SERVICE_URL');
-    agent = serviceUrl.isNotEmpty && widget.repository == null
-        ? RemoteAgent(Uri.parse(serviceUrl))
-        : StubAgent(repository: configuredRepository);
+    final origin = Uri.tryParse(widget.serviceUrl.trim());
+    final validOrigin =
+        origin != null &&
+        (origin.scheme == 'http' || origin.scheme == 'https') &&
+        origin.host.isNotEmpty &&
+        origin.userInfo.isEmpty &&
+        !origin.hasQuery &&
+        !origin.hasFragment;
+    agent = widget.agent ?? (validOrigin ? RemoteAgent(origin) : null);
   }
 
   @override
   void dispose() {
-    agent.dispose();
+    agent?.dispose();
     super.dispose();
   }
 
@@ -68,7 +76,7 @@ class _ReferenceAppState extends State<ReferenceApp> {
 class _AppHome extends StatefulWidget {
   const _AppHome({required this.agent});
 
-  final CommerceAgent agent;
+  final CommerceAgent? agent;
 
   @override
   State<_AppHome> createState() => _AppHomeState();
@@ -80,30 +88,32 @@ class _AppHomeState extends State<_AppHome> {
 
   @override
   Widget build(BuildContext context) {
+    final agent = widget.agent;
     return AnimatedBuilder(
-      animation: widget.agent,
+      animation: agent ?? const AlwaysStoppedAnimation(0),
       builder: (context, _) {
-        if (showGallery &&
-            (showStartScreen ||
-                !widget.agent.hasStarted ||
-                widget.agent.activeJourney == null)) {
+        if (showGallery) {
           return _ComponentGallery(
             onBack: () => setState(() => showGallery = false),
           );
         }
-        if (showStartScreen ||
-            !widget.agent.hasStarted ||
-            widget.agent.activeJourney == null) {
+        if (agent == null ||
+            showStartScreen ||
+            !agent.hasStarted ||
+            agent.activeJourney == null) {
           return _StartScreen(
-            onSelect: (journey) {
-              setState(() => showStartScreen = false);
-              return widget.agent.startJourney(journey);
-            },
+            onSelect: agent == null
+                ? null
+                : (journey) {
+                    setState(() => showStartScreen = false);
+                    return agent.startJourney(journey);
+                  },
+            isBusy: agent?.isBusy ?? false,
             onOpenGallery: () => setState(() => showGallery = true),
           );
         }
         return _ResponsiveShell(
-          agent: widget.agent,
+          agent: agent,
           onNewJourney: () => setState(() => showStartScreen = true),
         );
       },
@@ -112,10 +122,15 @@ class _AppHomeState extends State<_AppHome> {
 }
 
 class _StartScreen extends StatelessWidget {
-  const _StartScreen({required this.onSelect, required this.onOpenGallery});
+  const _StartScreen({
+    required this.onSelect,
+    required this.onOpenGallery,
+    this.isBusy = false,
+  });
 
-  final Future<void> Function(DemoJourney journey) onSelect;
+  final Future<void> Function(DemoJourney journey)? onSelect;
   final VoidCallback onOpenGallery;
+  final bool isBusy;
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +167,7 @@ class _StartScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 18),
                               Text(
-                                'A small, offline-first Flutter reference for rendering structured commerce journeys with A2UI.',
+                                'Tell your stylist the occasion. An agent searches the catalog and helps you build a look.',
                                 style: Theme.of(context).textTheme.bodyLarge
                                     ?.copyWith(
                                       color: const Color(0xff71717a),
@@ -160,8 +175,14 @@ class _StartScreen extends StatelessWidget {
                                     ),
                               ),
                               const SizedBox(height: 28),
+                              if (onSelect == null) ...[
+                                const _ConnectionNotice(
+                                  message: 'Connect the stylist service to start a journey.',
+                                ),
+                                const SizedBox(height: 18),
+                              ],
                               Text(
-                                'Choose an example',
+                                'Choose a journey',
                                 style: Theme.of(context).textTheme.labelLarge,
                               ),
                               const SizedBox(height: 12),
@@ -172,7 +193,9 @@ class _StartScreen extends StatelessWidget {
                                   for (final journey in DemoJourney.values)
                                     ActionChip(
                                       label: Text(journey.title),
-                                      onPressed: () => onSelect(journey),
+                                      onPressed: onSelect == null || isBusy
+                                          ? null
+                                          : () => onSelect!(journey),
                                     ),
                                 ],
                               ),
@@ -292,11 +315,11 @@ class _SafetyNote extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.offline_bolt_outlined, size: 18),
+          const Icon(Icons.auto_awesome_outlined, size: 18),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'This demo uses a fictional local catalog with bundled product photographs. Keep service credentials outside the client and out of source control.',
+              'Your stylist uses a fictional catalog with bundled product photographs. An agent connection is required for every journey.',
               style: Theme.of(context).textTheme.bodySmall
                   ?.copyWith(height: 1.35),
             ),
@@ -872,16 +895,96 @@ class _ChatSurface extends StatelessWidget {
       animation: agent,
       builder: (context, _) {
         final surfaceId = agent.latestInlineSurfaceId;
-        if (surfaceId == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        return Surface(
-          key: ValueKey(surfaceId),
-          surfaceContext: agent.controller.contextFor(surfaceId),
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (agent.isBusy)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          surfaceId == null
+                              ? 'Connecting to your stylist…'
+                              : 'Your stylist is thinking…',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (agent.connectionError != null)
+                _ConnectionNotice(
+                  message: agent.connectionError!,
+                  onRetry: agent.canRetry ? agent.retryLastTurn : null,
+                ),
+              if (agent.connectionNotice != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(agent.connectionNotice!),
+                ),
+              if (surfaceId != null)
+                IgnorePointer(
+                  ignoring: agent.isBusy || agent.connectionError != null,
+                  child: ExcludeFocus(
+                    excluding: agent.isBusy || agent.connectionError != null,
+                    child: Surface(
+                      key: ValueKey(surfaceId),
+                      surfaceContext: agent.controller.contextFor(surfaceId),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );
   }
+}
+
+class _ConnectionNotice extends StatelessWidget {
+  const _ConnectionNotice({required this.message, this.onRetry});
+  final String message;
+  final Future<void> Function()? onRetry;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    liveRegion: true,
+    child: Container(
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xfff4f4f5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Stylist unavailable',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          const SizedBox(height: 8),
+          Text(message),
+          if (onRetry != null) ...[
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ],
+      ),
+    ),
+  );
 }
 
 class _ChatComposer extends StatefulWidget {
@@ -905,13 +1008,21 @@ class _ChatComposerState extends State<_ChatComposer> {
 
   Future<void> _send() async {
     final text = textController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty ||
+        widget.agent.isBusy ||
+        widget.agent.connectionError != null) {
+      return;
+    }
     textController.clear();
     await widget.agent.conversation.sendRequest(ChatMessage.user(text));
   }
 
   @override
   Widget build(BuildContext context) {
+    final canSend =
+        !widget.agent.isBusy &&
+        widget.agent.connectionError == null &&
+        widget.agent.latestInlineSurfaceId != null;
     return Padding(
       padding: widget.padding,
       child: Row(
@@ -919,6 +1030,7 @@ class _ChatComposerState extends State<_ChatComposer> {
           Expanded(
             child: TextField(
               controller: textController,
+              enabled: canSend,
               onSubmitted: (_) => _send(),
               decoration: const InputDecoration(
                 hintText: 'Tell me about the occasion…',
@@ -933,7 +1045,7 @@ class _ChatComposerState extends State<_ChatComposer> {
               padding: EdgeInsets.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            onPressed: _send,
+            onPressed: canSend ? _send : null,
             icon: const Icon(Icons.arrow_upward, size: 22),
             tooltip: 'Send',
           ),
@@ -954,22 +1066,28 @@ class _DressingPanel extends StatelessWidget {
     final surface = AnimatedBuilder(
       animation: agent,
       builder: (context, _) {
-        if (!agent.hasStarted) return const SizedBox.shrink();
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Surface(
-              surfaceContext: agent.controller.contextFor('dressing-room'),
-            ),
-            if (agent.hasSelectedProductsSurface) ...[
-              const SizedBox(height: 12),
-              Surface(
-                surfaceContext: agent.controller.contextFor(
-                  'selected-products',
+        if (!agent.hasDressingRoomSurface) return const SizedBox.shrink();
+        return ExcludeFocus(
+          excluding: agent.isBusy || agent.connectionError != null,
+          child: IgnorePointer(
+            ignoring: agent.isBusy || agent.connectionError != null,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Surface(
+                  surfaceContext: agent.controller.contextFor('dressing-room'),
                 ),
-              ),
-            ],
-          ],
+                if (agent.hasSelectedProductsSurface) ...[
+                  const SizedBox(height: 12),
+                  Surface(
+                    surfaceContext: agent.controller.contextFor(
+                      'selected-products',
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         );
       },
     );

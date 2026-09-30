@@ -1,6 +1,6 @@
 # Design follow-ups
 
-These are intentionally kept as design-system follow-ups rather than runtime dependencies. The current sample preserves the existing visual direction with local color swatches and Material icons so it remains self-contained and reviewable offline.
+These are intentionally kept as design-system follow-ups rather than runtime dependencies. The component gallery can be reviewed using local previews. Stylist journeys require an agent connection and use bundled product photographs.
 
 ## For Ryan / design
 

@@ -6,11 +6,11 @@ The sample keeps five concerns separate:
 
 - `lib/src/data/` defines `ProductRepository`, deterministic fixture data, and a searchable local CSV catalog adapter.
 - `lib/src/catalog/` defines the A2UI catalog vocabulary and Flutter widgets for commerce-specific components.
-- `lib/src/agent/` contains both the offline stub and the remote transport that accepts server-produced A2UI messages.
+- `lib/src/agent/` contains the required remote transport and a scripted agent for tests and previews.
 - `agent-service/` contains the model tool loop and catalog search over the same sanitized CSV.
 - `lib/src/app.dart` owns the responsive host shell, text input, and native layout decisions around the A2UI surfaces.
 
-`ProductRepository` handles local catalog reads for the offline demo. `RemoteAgent` sends chat and surface actions to `/v1/turn`, retains the server session ID, parses A2UI envelopes, and feeds them to the same `SurfaceController`. Keep service credentials, tokens, and provider-specific configuration on a trusted server or in a local development secret store. Never put them in Flutter assets, source code, generated web bundles, or committed environment files.
+`ProductRepository` provides catalog reads for test fixtures and previews. Production stylist journeys require `AGENT_SERVICE_URL`; the app creates only `RemoteAgent` from that configuration. Missing or invalid configuration disables journeys, while the component gallery stays available. The host displays pending turns and connection errors, disables interactions until a turn completes, and retries failed requests without substituting fixtures. `RemoteAgent` sends chat and surface actions to `/v1/turn`, retains the server session ID, parses A2UI envelopes, and feeds them to the same `SurfaceController`. Keep service credentials, tokens, and provider-specific configuration on a trusted server or in a local development secret store. Never put them in Flutter assets, source code, generated web bundles, or committed environment files.
 
 ## A2UI shape
 

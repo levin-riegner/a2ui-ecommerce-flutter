@@ -123,7 +123,7 @@ void main() {
   );
 
   test(
-    'overlapping chat turns use the session returned by the prior turn',
+    'busy chat turns are blocked and later turns use the returned session',
     () async {
       final requests = <Map<String, dynamic>>[];
       final releaseSecondTurn = Completer<void>();
@@ -161,6 +161,8 @@ void main() {
       releaseSecondTurn.complete();
       await Future.wait([second, third]);
 
+      expect(requests, hasLength(2));
+      await agent.conversation.sendRequest(ChatMessage.user('Second'));
       expect(requests, hasLength(3));
       expect(requests[1]['sessionId'], 'session-1');
       expect(requests[2]['sessionId'], 'session-2');

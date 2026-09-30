@@ -1,6 +1,6 @@
 # Local catalog agent service
 
-This service gives the Flutter demo a model-driven stylist loop over the same sanitized product CSV. The model requests `search_products`, then chooses 1–5 returned IDs with `present_products`. The server validates those IDs and builds A2UI v0.9 cards from catalog facts. The model never supplies product names, prices, or image paths to the UI. Freeform A2UI composition, as used in the React POC, is a later step; this service uses safe fixed components.
+This service is required for the Flutter stylist journeys and supplies a model-driven loop over the same sanitized product CSV. The model requests `search_products`, then chooses 1–5 returned IDs with `present_products`. The server validates those IDs and builds A2UI v0.9 cards from catalog facts. The model never supplies product names, prices, or image paths to the UI. Freeform A2UI composition, as used in the React POC, is a later step; this service uses safe fixed components.
 
 ## Run
 
@@ -23,4 +23,4 @@ The `messages` array contains A2UI v0.9 JSON envelopes for `dressing-room`, `inl
 
 Session state is in memory for one hour, limited to 100 sessions. Turns for the same session run in order, and a failed model turn does not commit its budget, outfit, or surface changes. The server rejects a selected product ID unless search returned it earlier in that session, and rejects a previously searched presentation choice that exceeds the current remaining budget. It also rejects an outfit selection that would exceed a budget recorded from a `€` or `EUR` amount in the person's message. Top, bottom, and accessory selections have distinct outfit slots and appear as images in `selected-products`; the original dressing room widget currently has four visual slots. Restarting the process clears sessions. The server should remain local or gain authentication and persistent session storage before public deployment.
 
-Flutter's `RemoteAgent` sends chat and card actions to `/v1/turn`, feeds `messages` into its A2UI transport, and retains `sessionId`. Set `AGENT_SERVICE_URL` with `--dart-define` to enable it; the default `StubAgent` remains offline.
+Flutter's `RemoteAgent` sends chat and card actions to `/v1/turn`, feeds `messages` into its A2UI transport, and retains `sessionId`. Set `AGENT_SERVICE_URL` with `--dart-define` for every stylist run. Without valid configuration, Flutter disables journeys and keeps only the component gallery available. Loading and failed turns have explicit progress and retry states. `StubAgent` is retained only for injected tests and component previews; it is not a runtime fallback.
