@@ -8,7 +8,7 @@ import '../catalog/commerce_catalog.dart';
 import '../data/models.dart';
 import 'commerce_agent.dart';
 
-/// Connects Flutter's A2UI renderer to the local catalog agent service.
+/// Connects Flutter's A2UI renderer to the catalog agent service.
 /// Credentials stay on that service; the app receives catalog-backed UI only.
 class RemoteAgent extends CommerceAgent {
   RemoteAgent(this._origin, {http.Client? client})
@@ -30,9 +30,12 @@ class RemoteAgent extends CommerceAgent {
 
   String? _sessionId;
   final Set<String> _surfaceIds = {};
-  int _localTurn = 0;
   bool _hasStarted = false;
-  bool _hasSelectedProductsSurface = false;
+  int _queuedTurns = 0;
+  bool _disposed = false;
+  String? _connectionError;
+  String? _connectionNotice;
+  _AgentTurn? _failedTurn;
   Future<void> _pendingTurn = Future<void>.value();
   @override
   DemoJourney? activeJourney;
@@ -41,23 +44,33 @@ class RemoteAgent extends CommerceAgent {
 
   @override
   bool get hasStarted => _hasStarted;
+  @override
+  bool get isBusy => _queuedTurns > 0;
+  @override
+  String? get connectionError => _connectionError;
+  @override
+  String? get connectionNotice => _connectionNotice;
+  @override
+  bool get canRetry => _failedTurn != null && !isBusy;
+  @override
+  bool get hasSelectedProductsSurface =>
+      _surfaceIds.contains('selected-products');
+  @override
+  bool get hasDressingRoomSurface => _surfaceIds.contains('dressing-room');
 
   @override
-  bool get hasSelectedProductsSurface => _hasSelectedProductsSurface;
-
-  @override
-  Future<void> startJourney(DemoJourney journey) async {
-    return _enqueue(() async {
-      _clearSurfaces();
-      await Future<void>.delayed(Duration.zero);
-      activeJourney = journey;
-      _sessionId = null;
-      _localTurn = 0;
-      _hasStarted = true;
-      notifyListeners();
-      await _performTurn(message: '${journey.title}. ${journey.brief}');
-    });
-  }
+  Future<void> startJourney(DemoJourney journey) => _enqueue(() async {
+    _clearSurfaces();
+    await Future<void>.delayed(Duration.zero);
+    if (_disposed) return;
+    activeJourney = journey;
+    _sessionId = null;
+    _hasStarted = true;
+    notifyListeners();
+    await _performTurn(
+      _AgentTurn(message: '${journey.title}. ${journey.brief}'),
+    );
+  });
 
   void _clearSurfaces() {
     for (final surfaceId in _surfaceIds) {
@@ -65,18 +78,42 @@ class RemoteAgent extends CommerceAgent {
     }
     _surfaceIds.clear();
     latestInlineSurfaceId = null;
-    _hasSelectedProductsSurface = false;
   }
 
   Future<void> _handleSend(ChatMessage message) async {
+    if (_disposed || isBusy || _connectionError != null) return;
     final action = _actionFrom(message);
     final text = message.text.trim();
     if (action == null && text.isEmpty) return;
-    await _enqueue(() => _performTurn(message: text, action: action));
+    await _enqueue(
+      () => _performTurn(_AgentTurn(message: text, action: action)),
+    );
+  }
+
+  @override
+  Future<void> retryLastTurn() async {
+    final turn = _failedTurn;
+    if (turn == null || isBusy || _disposed) return;
+    await _enqueue(() => _performTurn(turn));
   }
 
   Future<void> _enqueue(Future<void> Function() turn) {
-    final next = _pendingTurn.then((_) => turn());
+    if (_disposed) return Future<void>.value();
+    _queuedTurns++;
+    notifyListeners();
+    final next = _pendingTurn.then((_) async {
+      try {
+        if (_disposed) return;
+        _connectionError = null;
+        _connectionNotice = null;
+        _failedTurn = null;
+        notifyListeners();
+        await turn();
+      } finally {
+        _queuedTurns--;
+        if (!_disposed) notifyListeners();
+      }
+    });
     _pendingTurn = next.catchError((Object _) {});
     return next;
   }
@@ -95,125 +132,175 @@ class RemoteAgent extends CommerceAgent {
     return null;
   }
 
-  Future<void> _performTurn({
-    String message = '',
-    Map<String, Object?>? action,
-    bool canRecover = true,
-  }) async {
+  Future<bool> _performTurn(_AgentTurn turn) async {
     try {
-      final requestBody = <String, Object?>{
-        if (_sessionId != null) 'sessionId': _sessionId,
-        if (message.isNotEmpty) 'message': message,
-      };
-      if (action != null) requestBody['action'] = action;
       final response = await _client
           .post(
             _origin.resolve('/v1/turn'),
             headers: const {'content-type': 'application/json'},
-            body: jsonEncode(requestBody),
+            body: jsonEncode({
+              if (_sessionId != null) 'sessionId': _sessionId,
+              if (turn.message.isNotEmpty) 'message': turn.message,
+              if (turn.action != null) 'action': turn.action,
+            }),
           )
           .timeout(const Duration(seconds: 70));
-      Object? payload;
-      try {
-        payload = jsonDecode(response.body);
-      } on FormatException {
-        if (response.statusCode == 200) rethrow;
-      }
-      if (response.statusCode == 404 && _sessionId != null && canRecover) {
+      if (_disposed) return false;
+      if (response.statusCode == 404 && _sessionId != null && turn.canRecover) {
         _sessionId = null;
         _clearSurfaces();
         await Future<void>.delayed(Duration.zero);
-        final journey = activeJourney;
-        if (journey != null) {
-          await _performTurn(
+        if (_disposed) return false;
+        final journey = activeJourney!;
+        return await _performTurn(
+          _AgentTurn(
             message:
-                '${journey.title}. ${journey.brief}${message.isEmpty ? '' : ' $message'}',
+                '${journey.title}. ${journey.brief}${turn.message.isEmpty ? '' : ' ${turn.message}'}',
             canRecover: false,
-          );
-          if (action != null) {
-            _showError(
-              'The stylist session expired. Please select the product again.',
-            );
-          }
-          return;
-        }
+            needsReselection: turn.action != null || turn.needsReselection,
+          ),
+        );
       }
       if (response.statusCode != 200) {
-        final detail = payload is Map && payload['error'] is String
-            ? payload['error'] as String
-            : 'HTTP ${response.statusCode}';
-        _showError('Stylist service error: $detail');
-        return;
+        _recordFailure(
+          turn,
+          'Your stylist could not respond. Please try again.',
+        );
+        return false;
       }
-      if (payload is! Map) {
-        throw const FormatException('Catalog agent response is incomplete');
+      final payload = jsonDecode(response.body);
+      if (payload is! Map ||
+          payload['sessionId'] is! String ||
+          (payload['sessionId'] as String).isEmpty ||
+          payload['messages'] is! List ||
+          (payload['messages'] as List).isEmpty) {
+        throw const FormatException('Incomplete agent response');
       }
-      final data = Map<String, Object?>.from(payload);
-      if (data['sessionId'] is! String || data['messages'] is! List) {
-        throw const FormatException('Catalog agent response is incomplete');
-      }
-      _sessionId = data['sessionId'] as String;
-      for (final raw in data['messages'] as List) {
+      // Parse the whole batch before publishing any part of it to the renderer.
+      final events = (payload['messages'] as List).map((raw) {
         if (raw is! Map) throw const FormatException('Invalid A2UI message');
-        final envelope = Map<String, dynamic>.from(raw);
-        final event = core.A2uiMessage.fromJson(envelope);
+        return core.A2uiMessage.fromJson(Map<String, dynamic>.from(raw));
+      }).toList();
+      _validateSurfaces(events);
+      _sessionId = payload['sessionId'] as String;
+      for (final event in events) {
         transport.addMessage(event);
         if (event is core.CreateSurfaceMessage) {
           _surfaceIds.add(event.surfaceId);
           if (event.surfaceId.startsWith('inline-')) {
             latestInlineSurfaceId = event.surfaceId;
-          } else if (event.surfaceId == 'selected-products') {
-            _hasSelectedProductsSurface = true;
+          }
+        } else if (event is core.DeleteSurfaceMessage) {
+          _surfaceIds.remove(event.surfaceId);
+          if (event.surfaceId == latestInlineSurfaceId) {
+            latestInlineSurfaceId = null;
           }
         }
       }
+      if (turn.needsReselection) {
+        _connectionNotice =
+            'Your stylist session restarted. Please select the piece again.';
+      }
       await Future<void>.delayed(Duration.zero);
-      notifyListeners();
+      return !_disposed;
+    } on FormatException {
+      if (!_disposed) {
+        _recordFailure(
+          turn,
+          'Your stylist sent an incomplete response. Please try again.',
+        );
+      }
+      return false;
     } catch (_) {
-      _showError(
-        'Could not reach the local stylist service. Check that it is running and try again.',
-      );
+      if (!_disposed) {
+        _recordFailure(
+          turn,
+          'Could not connect to your stylist. Check your connection and try again.',
+        );
+      }
+      return false;
     }
   }
 
-  void _showError(String message) {
-    final surfaceId = 'inline-error-${++_localTurn}';
-    transport.addMessage(
-      core.CreateSurfaceMessage(
-        surfaceId: surfaceId,
-        catalogId: commerceCatalogId,
-        sendDataModel: true,
-      ),
-    );
-    transport.addMessage(
-      core.UpdateComponentsMessage(
-        surfaceId: surfaceId,
-        components: [
-          {
-            'id': 'root',
-            'component': 'StylistMessage',
-            'text': {'path': '/message'},
-          },
-        ],
-      ),
-    );
-    transport.addMessage(
-      core.UpdateDataModelMessage(
-        surfaceId: surfaceId,
-        value: {'message': message},
-      ),
-    );
-    latestInlineSurfaceId = surfaceId;
-    _surfaceIds.add(surfaceId);
-    notifyListeners();
+  // Check the candidate definitions without mutating the live renderer. The
+  // fixed service must leave both host surfaces usable after each full turn.
+  void _validateSurfaces(List<core.A2uiMessage> events) {
+    final components = <String, Map<String, Map<String, dynamic>>>{};
+    for (final id in _surfaceIds) {
+      final definition = controller.contextFor(id).definition.value;
+      if (definition != null) {
+        components[id] = {
+          for (final entry in definition.components.entries)
+            entry.key: Map<String, dynamic>.from(entry.value.toJson()),
+        };
+      }
+    }
+    final supported = buildCommerceCatalog().items
+        .map((item) => item.name)
+        .toSet();
+    String? inlineId = latestInlineSurfaceId;
+    for (final event in events) {
+      if (event is core.CreateSurfaceMessage) {
+        if (event.catalogId != commerceCatalogId ||
+            event.surfaceId.isEmpty ||
+            components.containsKey(event.surfaceId)) {
+          throw const FormatException('Invalid surface creation');
+        }
+        components[event.surfaceId] = {};
+        if (event.surfaceId.startsWith('inline-')) inlineId = event.surfaceId;
+      } else if (event is core.DeleteSurfaceMessage) {
+        components.remove(event.surfaceId);
+        if (event.surfaceId == inlineId) inlineId = null;
+      } else if (event is core.UpdateComponentsMessage) {
+        final surface = components[event.surfaceId];
+        if (surface == null) throw const FormatException('Unknown surface');
+        for (final component in event.components) {
+          final id = component['id'];
+          if (id is! String ||
+              id.isEmpty ||
+              !supported.contains(component['component'])) {
+            throw const FormatException('Invalid component');
+          }
+          surface[id] = component;
+        }
+      } else if (event is core.UpdateDataModelMessage &&
+          !components.containsKey(event.surfaceId)) {
+        throw const FormatException('Unknown data surface');
+      }
+    }
+    if (inlineId == null ||
+        !components.containsKey('dressing-room') ||
+        !components.containsKey(inlineId) ||
+        components.values.any((surface) => !surface.containsKey('root'))) {
+      throw const FormatException('Missing surface root');
+    }
+  }
+
+  void _recordFailure(_AgentTurn turn, String message) {
+    _failedTurn = turn;
+    _connectionError = message;
   }
 
   @override
   void dispose() {
+    _disposed = true;
     conversation.dispose();
     controller.dispose();
     transport.dispose();
     if (_ownsClient) _client.close();
     super.dispose();
   }
+}
+
+class _AgentTurn {
+  const _AgentTurn({
+    this.message = '',
+    this.action,
+    this.canRecover = true,
+    this.needsReselection = false,
+  });
+  final String message;
+  final Map<String, Object?>? action;
+  final bool canRecover;
+  final bool needsReselection;
 }
