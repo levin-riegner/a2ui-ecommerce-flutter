@@ -22,6 +22,8 @@ The key stays in memory on the device and is added only to the provider's outgoi
 
 Without a model connection, journeys are disabled and the component gallery remains available. During a turn, the app shows progress and disables chat/product actions. Failed turns show Retry and retain the previous outfit and surfaces. No scripted fallback runs in the app.
 
+Once connected, choose a preset journey or enter your own occasion with **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. Choosing a piece immediately offers the next part of the look. You can also choose or remove pieces in words, refine the brief, and revisit a completed outfit. The dressing room follows the current outfit plan, including tops and bottoms.
+
 ## Genkit developer tools
 
 The app bundles the Dart runtime and official provider plugins. Genkit Dart is currently in preview; package versions are pinned, and HTTP transport injection for the Google and Anthropic plugins is isolated in `genkit_providers.dart` until their factory handles expose it.

@@ -4,6 +4,7 @@ import 'package:a2ui_flutter_commerce/src/agent/genkit_providers.dart';
 import 'package:a2ui_flutter_commerce/src/agent/model_settings.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
@@ -141,6 +142,7 @@ void main() {
         providerModel: connection.model,
         normalizeResponse: connection.normalizeResponse,
         onBeginTurn: connection.beginTurn,
+        onModelRequest: connection.prepareRequest,
         onCancelTurn: connection.cancelTurn,
       );
       addTearDown(() async {
@@ -178,6 +180,7 @@ void main() {
           providerModel: connection.model,
           normalizeResponse: connection.normalizeResponse,
           onBeginTurn: connection.beginTurn,
+          onModelRequest: connection.prepareRequest,
           onCancelTurn: connection.cancelTurn,
         );
         addTearDown(() async {
@@ -187,9 +190,15 @@ void main() {
         });
         expect(requests, isEmpty);
         final result = await runtime.turn({'message': 'Under €100'});
-        expect(result['reply'], 'Ready');
+        expect(result['reply'], contains('Ready'));
         expect(requests, hasLength(1));
         final request = requests.single;
+        final body = jsonDecode(request.body) as Map;
+        if (provider == 'googleai') {
+          expect(body.containsKey('toolConfig'), isFalse);
+        } else {
+          expect(body['tool_choice'], isNull);
+        }
         expect(request.body, isNot(contains('private-test-key')));
         expect(request.url.toString(), isNot(contains('private-test-key')));
         expect(request.followRedirects, isFalse);
@@ -238,10 +247,131 @@ void main() {
           switch (++round % 3) {
             case 1:
               return providerToolReply(provider, 'search_products', {
-                'query': 'dress',
+                'query': requests.length <= 3 || requests.length > 6
+                    ? 'dress'
+                    : 'shoes',
                 'limit': 1,
               });
             case 2:
+              return providerToolReply(provider, 'present_products', {
+                'productIds': [
+                  requests.length <= 3 || requests.length > 6
+                      ? 'dress-1'
+                      : 'shoes-1',
+                ],
+              });
+            default:
+              return providerReply(provider);
+          }
+        });
+        final connection = GenkitProvider(
+          ModelSettings(
+            provider: provider,
+            model: 'test-model',
+            apiKey: 'private-test-key',
+            baseUrl: provider == 'openai-compatible'
+                ? 'https://compatible.example/v1'
+                : null,
+          ),
+          client: client,
+        );
+        final runtime = StylistRuntime(
+          products: products,
+          plugins: [connection.plugin],
+          providerModel: connection.model,
+          normalizeResponse: connection.normalizeResponse,
+          onBeginTurn: connection.beginTurn,
+          onModelRequest: connection.prepareRequest,
+          onCancelTurn: connection.cancelTurn,
+        );
+        addTearDown(() async {
+          connection.dispose();
+          await runtime.dispose();
+          client.close();
+        });
+        final result = await runtime.turn({'message': 'A dress under €200'});
+        expect(result['products'].single['name'], 'Linen dress');
+        expect(requests[1].body, contains('image_asset'));
+        expect(requests[1].body, contains('price_eur'));
+        await runtime.turn({
+          'action': {
+            'name': 'select_product',
+            'context': {'productId': 'dress-1'},
+          },
+        });
+        expect(runtime.outfit['items'], {'dress': 'dress-1'});
+        await runtime.turn({
+          'action': {
+            'name': 'remove_product',
+            'context': {'productId': 'dress-1'},
+          },
+        });
+        expect(runtime.outfit['items'], isEmpty);
+        expect(requests, hasLength(9));
+        expect(
+          requests.every((r) => !r.body.contains('private-test-key')),
+          isTrue,
+        );
+      },
+    );
+    test('$provider optional auto choice reaches the wire unchanged', () async {
+      late Map<String, dynamic> body;
+      final client = MockClient((request) async {
+        body = jsonDecode(request.body) as Map<String, dynamic>;
+        return providerReply(provider);
+      });
+      final connection = GenkitProvider(
+        ModelSettings(
+          provider: provider,
+          model: 'test-model',
+          apiKey: 'private-test-key',
+          baseUrl: provider == 'openai-compatible'
+              ? 'https://compatible.example/v1'
+              : null,
+        ),
+        client: client,
+      );
+      final runtime = StylistRuntime(
+        products: products,
+        plugins: [connection.plugin],
+        providerModel: connection.model,
+        normalizeResponse: connection.normalizeResponse,
+        onBeginTurn: connection.beginTurn,
+        onCancelTurn: connection.cancelTurn,
+        onModelRequest: (request) {
+          request.toolChoice = 'auto';
+          connection.prepareRequest(request);
+        },
+      );
+      addTearDown(() async {
+        connection.dispose();
+        await runtime.dispose();
+        client.close();
+      });
+      await runtime.turn({'message': 'Hello'});
+      if (provider == 'googleai') {
+        expect(body['toolConfig']['functionCallingConfig']['mode'], 'AUTO');
+      } else if (provider == 'anthropic') {
+        expect(body['tool_choice'], {'type': 'auto'});
+      } else {
+        expect(body['tool_choice'], 'auto');
+      }
+    });
+
+    test(
+      '$provider wire preserves forced search, forced presentation and prose choice',
+      () async {
+        final bodies = <Map<String, dynamic>>[];
+        final client = MockClient((request) async {
+          final body = jsonDecode(request.body) as Map<String, dynamic>;
+          bodies.add(body);
+          switch (bodies.length) {
+            case 1:
+            case 2:
+              return providerToolReply(provider, 'search_products', {
+                'query': 'dress',
+              });
+            case 3:
               return providerToolReply(provider, 'present_products', {
                 'productIds': ['dress-1'],
               });
@@ -267,37 +397,78 @@ void main() {
           normalizeResponse: connection.normalizeResponse,
           onBeginTurn: connection.beginTurn,
           onCancelTurn: connection.cancelTurn,
+          onModelRequest: connection.prepareRequest,
         );
         addTearDown(() async {
           connection.dispose();
           await runtime.dispose();
           client.close();
         });
-        final result = await runtime.turn({'message': 'Under €200'});
-        expect(result['products'].single['name'], 'Linen dress');
-        expect(requests[1].body, contains('image_asset'));
-        expect(requests[1].body, contains('price_eur'));
-        await runtime.turn({
-          'action': {
-            'name': 'select_product',
-            'context': {'productId': 'dress-1'},
-          },
+        runtime.reset(journey: DemoJourney.paris);
+        final result = await runtime.turn({
+          'message': '${DemoJourney.paris.title}. ${DemoJourney.paris.brief}',
         });
-        expect(runtime.outfit['items'], {'dress': 'dress-1'});
-        await runtime.turn({
-          'action': {
-            'name': 'remove_product',
-            'context': {'productId': 'dress-1'},
-          },
-        });
-        expect(runtime.outfit['items'], isEmpty);
-        expect(requests, hasLength(9));
+        expect(result['products'], isNotEmpty);
+        expect(bodies, hasLength(4));
+        if (provider == 'googleai') {
+          expect(
+            bodies[0]['toolConfig']['functionCallingConfig']['mode'],
+            'ANY',
+          );
+          expect(
+            bodies[2]['toolConfig']['functionCallingConfig']['mode'],
+            'ANY',
+          );
+          expect(
+            bodies[3]['toolConfig']['functionCallingConfig']['mode'],
+            'NONE',
+          );
+          expect(
+            (bodies[0]['tools'] as List)
+                .single['functionDeclarations']
+                .single['name'],
+            'search_products',
+          );
+          expect(
+            (bodies[2]['tools'] as List)
+                .single['functionDeclarations']
+                .single['name'],
+            'present_products',
+          );
+        } else if (provider == 'anthropic') {
+          expect(bodies[0]['tool_choice'], {'type': 'any'});
+          expect(bodies[2]['tool_choice'], {'type': 'any'});
+          expect(bodies[3]['tool_choice'], {'type': 'none'});
+          expect(
+            (bodies[0]['tools'] as List).single['name'],
+            'search_products',
+          );
+          expect(
+            (bodies[2]['tools'] as List).single['name'],
+            'present_products',
+          );
+        } else {
+          expect(bodies[0]['tool_choice'], 'required');
+          expect(bodies[2]['tool_choice'], 'required');
+          expect(bodies[3]['tool_choice'], 'none');
+          expect(
+            (bodies[0]['tools'] as List).single['function']['name'],
+            'search_products',
+          );
+          expect(
+            (bodies[2]['tools'] as List).single['function']['name'],
+            'present_products',
+          );
+        }
         expect(
-          requests.every((r) => !r.body.contains('private-test-key')),
+          bodies.every(
+            (body) => !jsonEncode(body).contains('private-test-key'),
+          ),
           isTrue,
         );
       },
     );
+
     for (final status in [401, 429, 500, 302]) {
       test(
         '$provider provider status $status is sanitized and never retried',
@@ -328,6 +499,7 @@ void main() {
             providerModel: connection.model,
             normalizeResponse: connection.normalizeResponse,
             onBeginTurn: connection.beginTurn,
+            onModelRequest: connection.prepareRequest,
             onCancelTurn: connection.cancelTurn,
           );
           addTearDown(() async {

@@ -108,10 +108,7 @@ class _AppHomeState extends State<_AppHome> {
             onBack: () => setState(() => showGallery = false),
           );
         }
-        if (agent == null ||
-            showStartScreen ||
-            !agent.hasStarted ||
-            agent.activeJourney == null) {
+        if (agent == null || showStartScreen || !agent.hasStarted) {
           return _StartScreen(
             onConnect: agent == null
                 ? () => showDialog<void>(
@@ -140,6 +137,12 @@ class _AppHomeState extends State<_AppHome> {
                     setState(() => showStartScreen = false);
                     return agent.startJourney(journey);
                   },
+            onStartBrief: agent?.canStartBrief == true
+                ? (message) {
+                    setState(() => showStartScreen = false);
+                    return agent!.startBrief(message);
+                  }
+                : null,
             isBusy: agent?.isBusy ?? false,
             onOpenGallery: () => setState(() => showGallery = true),
           );
@@ -160,11 +163,13 @@ class _StartScreen extends StatelessWidget {
     this.isBusy = false,
     this.onConnect,
     this.onDisconnect,
+    this.onStartBrief,
   });
 
   final VoidCallback? onConnect;
   final VoidCallback? onDisconnect;
   final Future<void> Function(DemoJourney journey)? onSelect;
+  final Future<void> Function(String message)? onStartBrief;
   final VoidCallback onOpenGallery;
   final bool isBusy;
 
@@ -231,6 +236,13 @@ class _StartScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 12),
                               ],
+                              if (onStartBrief != null) ...[
+                                _CustomBriefEntry(
+                                  onStart: onStartBrief!,
+                                  isBusy: isBusy,
+                                ),
+                                const SizedBox(height: 24),
+                              ],
                               Text(
                                 'Choose a journey',
                                 style: Theme.of(context).textTheme.labelLarge,
@@ -277,6 +289,62 @@ class _StartScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CustomBriefEntry extends StatefulWidget {
+  const _CustomBriefEntry({required this.onStart, required this.isBusy});
+
+  final Future<void> Function(String message) onStart;
+  final bool isBusy;
+
+  @override
+  State<_CustomBriefEntry> createState() => _CustomBriefEntryState();
+}
+
+class _CustomBriefEntryState extends State<_CustomBriefEntry> {
+  final _controller = TextEditingController();
+
+  void _submit() {
+    final message = _controller.text.trim();
+    if (message.isEmpty || widget.isBusy) return;
+    widget.onStart(message);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          key: const ValueKey('custom-brief-occasion'),
+          controller: _controller,
+          enabled: !widget.isBusy,
+          minLines: 1,
+          maxLines: 3,
+          textInputAction: TextInputAction.done,
+          decoration: const InputDecoration(
+            labelText: 'Your occasion',
+            hintText: 'A spring day in Berlin…',
+          ),
+          onChanged: (_) => setState(() {}),
+          onSubmitted: (_) => _submit(),
+        ),
+        const SizedBox(height: 12),
+        FilledButton(
+          onPressed: widget.isBusy || _controller.text.trim().isEmpty
+              ? null
+              : _submit,
+          child: const Text('Start my look'),
+        ),
+      ],
     );
   }
 }

@@ -54,6 +54,8 @@ class GenkitProvider {
   late final ModelRef model;
 
   void beginTurn() => _transport.beginTurn();
+  void prepareRequest(ModelRequest request) =>
+      _transport.prepareRequest(request);
   void cancelTurn() => _transport.cancelTurn();
   ModelResponse normalizeResponse(ModelResponse response) {
     // genkit_openai 0.5.0 maps the SDK's camel-case enum name, whereas its
@@ -96,12 +98,18 @@ class _CredentialTransport extends http.BaseClient {
   bool _cancelled = false;
   int _requests = 0;
   int _epoch = 0;
+  String? _toolChoice;
   Completer<void> _abort = Completer<void>();
   void beginTurn() {
     _epoch++;
     _abort = Completer<void>();
     _requests = 0;
     _cancelled = false;
+    _toolChoice = null;
+  }
+
+  void prepareRequest(ModelRequest request) {
+    _toolChoice = request.toolChoice;
   }
 
   void cancelTurn() {
@@ -115,6 +123,7 @@ class _CredentialTransport extends http.BaseClient {
       throw StateError('Model request unavailable');
     }
     final epoch = _epoch;
+    final toolChoice = _toolChoice;
     final expected = switch (settings.provider) {
       'googleai' => Uri.parse('https://generativelanguage.googleapis.com/'),
       'anthropic' => Uri.parse('https://api.anthropic.com/v1/'),
@@ -129,6 +138,38 @@ class _CredentialTransport extends http.BaseClient {
       throw StateError('Unexpected provider destination');
     }
     final bytes = await request.finalize().toBytes();
+    final body = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+    // These preview plugins ignore Genkit toolChoice for OpenAI and Gemini.
+    // Translate the host's per-request choice at the existing credential boundary.
+    if (settings.provider == 'googleai' && toolChoice != null) {
+      final mode = switch (toolChoice) {
+        'any' => 'ANY',
+        'none' => 'NONE',
+        'auto' => 'AUTO',
+        _ => null,
+      };
+      if (mode != null) {
+        body['toolConfig'] = {
+          ...(body['toolConfig'] as Map<String, dynamic>? ?? {}),
+          'functionCallingConfig': {'mode': mode},
+        };
+      }
+    } else if ((settings.provider == 'openai' ||
+            settings.provider == 'openai-compatible') &&
+        toolChoice != null) {
+      final choice = switch (toolChoice) {
+        'any' => 'required',
+        'none' => 'none',
+        'auto' => 'auto',
+        _ => null,
+      };
+      if (choice != null) body['tool_choice'] = choice;
+    }
+    if (settings.provider == 'openai') {
+      body['store'] = false;
+      // Luna supports Chat Completions tools only without reasoning.
+      if (settings.model == 'gpt-6-luna') body['reasoning_effort'] = 'none';
+    }
     final query = Map<String, String>.from(request.url.queryParameters)
       ..remove('key');
     final forwarded =
@@ -141,7 +182,7 @@ class _CredentialTransport extends http.BaseClient {
           )
           ..followRedirects = false
           ..headers.addAll(request.headers)
-          ..bodyBytes = bytes;
+          ..body = jsonEncode(body);
     forwarded.headers.remove('authorization');
     forwarded.headers.remove('x-api-key');
     forwarded.headers.remove('x-goog-api-key');
@@ -152,13 +193,6 @@ class _CredentialTransport extends http.BaseClient {
       forwarded.headers['x-goog-api-key'] = settings.apiKey;
     } else {
       forwarded.headers['authorization'] = 'Bearer ${settings.apiKey}';
-      if (settings.provider == 'openai') {
-        final body = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
-        body['store'] = false;
-        // Luna supports Chat Completions tools only without reasoning.
-        if (settings.model == 'gpt-6-luna') body['reasoning_effort'] = 'none';
-        forwarded.body = jsonEncode(body);
-      }
     }
     try {
       final response = await inner

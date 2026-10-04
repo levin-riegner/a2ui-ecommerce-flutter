@@ -37,8 +37,8 @@ void main() {
       expect(agent.latestInlineSurfaceId, 'inline-1');
       expect(agent.hasSelectedProductsSurface, isTrue);
       expect(agent.hasDressingRoomSurface, isTrue);
-      await agent.conversation.sendRequest(select('dress-1'));
-      expect(runtime.outfit['items'], {'dress': 'dress-1'});
+      await agent.conversation.sendRequest(select('top-1'));
+      expect(runtime.outfit['items'], {'top': 'top-1'});
       expect(agent.latestInlineSurfaceId, 'inline-2');
       await agent.startJourney(DemoJourney.paris);
       expect(runtime.outfit['items'], isEmpty);
@@ -58,13 +58,12 @@ void main() {
         products: products,
         model: (request) {
           calls++;
-          return calls == 1
-              ? response.future
-              : Future.value(textResponse('Your stylist is ready.'));
+          return calls == 1 ? response.future : offlineStylistModel(request);
         },
       ),
     );
     await tester.pumpWidget(ReferenceApp(agent: agent));
+    await tester.ensureVisible(find.text(DemoJourney.paris.title));
     await tester.tap(find.text(DemoJourney.paris.title));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 20));
@@ -80,8 +79,11 @@ void main() {
     expect(calls, 1);
     await tester.tap(find.text('Retry'));
     await tester.pumpAndSettle();
-    expect(calls, 2);
-    expect(find.text('Your stylist is ready.'), findsOneWidget);
+    expect(calls, 4);
+    expect(
+      find.text('Offline preview: here are some catalog options.'),
+      findsOneWidget,
+    );
     expect(tester.widget<TextField>(find.byType(TextField)).enabled, isTrue);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
@@ -102,7 +104,7 @@ void main() {
     addTearDown(agent.dispose);
     await agent.startJourney(DemoJourney.lisbon);
     fail = true;
-    await agent.conversation.sendRequest(select('dress-1'));
+    await agent.conversation.sendRequest(select('top-1'));
     expect(agent.latestInlineSurfaceId, 'inline-1');
     expect(agent.canRetry, isTrue);
     expect(runtime.outfit['items'], isEmpty);
@@ -113,7 +115,7 @@ void main() {
     await Future.wait([retry, duplicate]);
     expect(calls - before, 3);
     expect(agent.latestInlineSurfaceId, 'inline-2');
-    expect(runtime.outfit['items'], {'dress': 'dress-1'});
+    expect(runtime.outfit['items'], {'top': 'top-1'});
     expect(agent.connectionError, isNull);
   });
 
