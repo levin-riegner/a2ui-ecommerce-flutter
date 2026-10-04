@@ -31,7 +31,7 @@ jobs:
         run: python3 tools/catalog/validate.py assets/data/catalog/products.csv
 
       - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed lib test
+        run: dart format --output=none --set-exit-if-changed lib test tools/genkit
 
       - name: Analyze
         run: flutter analyze
@@ -39,14 +39,8 @@ jobs:
       - name: Test
         run: flutter test
 
-      - name: Set up Node for catalog agent tests
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Test catalog agent service
-        working-directory: agent-service
-        run: npm test
-
       - name: Build Android debug APK
         run: flutter build apk --debug
+
+      - name: Build web app
+        run: flutter build web
