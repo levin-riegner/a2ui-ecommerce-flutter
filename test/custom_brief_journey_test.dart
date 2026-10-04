@@ -43,8 +43,8 @@ void main() {
       );
       final agent = GenkitAgent(runtime);
       await tester.pumpWidget(ReferenceApp(agent: agent));
-      final start = find.widgetWithText(FilledButton, 'Start my look');
-      expect(tester.widget<FilledButton>(start).onPressed, isNull);
+      final start = find.byKey(const ValueKey('stylist-submit-Start my look'));
+      expect(tester.widget<IconButton>(start).onPressed, isNull);
       await tester.enterText(
         find.byKey(const ValueKey('custom-brief-occasion')),
         'A spring day in Berlin',
@@ -54,7 +54,7 @@ void main() {
       await finishTurn(tester, agent);
       expect(agent.hasStarted, isTrue);
       expect(agent.activeJourney, isNull);
-      expect(find.text('Build the look\naround the moment.'), findsNothing);
+      expect(find.text('Where are you going?'), findsNothing);
       expect(find.text('How formal or relaxed?'), findsOneWidget);
       expect(find.text('Budget for the whole outfit'), findsOneWidget);
       expect(find.text('Find options'), findsOneWidget);
@@ -101,6 +101,7 @@ void main() {
       // Returning to a preset replaces the custom brief rather than retaining it.
       await tester.tap(find.byTooltip('New journey').first);
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(DemoJourney.paris.title));
       await tester.tap(find.text(DemoJourney.paris.title));
       await finishTurn(tester, agent);
       expect(agent.activeJourney, DemoJourney.paris);
@@ -130,9 +131,9 @@ void main() {
     await tester.ensureVisible(occasion);
     await tester.enterText(occasion, 'A weekend away');
     await tester.pump();
-    final button = find.widgetWithText(FilledButton, 'Start my look');
+    final button = find.byKey(const ValueKey('stylist-submit-Start my look'));
     await tester.ensureVisible(button);
-    expect(tester.widget<FilledButton>(button).onPressed, isNotNull);
+    expect(tester.widget<IconButton>(button).onPressed, isNotNull);
     expect(tester.takeException(), isNull);
   });
 }

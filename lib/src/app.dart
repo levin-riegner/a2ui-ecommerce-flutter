@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'agent/commerce_agent.dart';
 import 'agent/model_connection.dart';
 import 'agent/genkit_agent.dart';
+import 'catalog/commerce_examples.dart';
+import 'catalog/commerce_components.dart';
 import 'data/models.dart';
+import 'layout/adaptive_page.dart';
+import 'layout/adaptive_pane_layout.dart';
+import 'layout/stylist_composer.dart';
 import 'theme.dart';
 
 const _basicComponentGalleryNames = <String>[
@@ -174,124 +180,172 @@ class _StartScreen extends StatelessWidget {
   final bool isBusy;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(28),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 980),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const _BrandLockup(showMark: true),
-                const SizedBox(height: 40),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final compact = constraints.maxWidth < 680;
-                    return Flex(
-                      direction: compact ? Axis.vertical : Axis.horizontal,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: compact ? 0 : 5,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Build the look\naround the moment.',
-                                style: Theme.of(context).textTheme.displaySmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.04,
-                                    ),
-                              ),
-                              const SizedBox(height: 18),
-                              Text(
-                                'Tell your stylist the occasion. An agent searches the catalog and helps you build a look.',
-                                style: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(
-                                      color: const Color(0xff71717a),
-                                      height: 1.4,
-                                    ),
-                              ),
-                              const SizedBox(height: 28),
-                              if (onSelect == null) ...[
-                                const _ConnectionNotice(
-                                  message:
-                                      'Connect your model to start a journey.',
-                                ),
-                                const SizedBox(height: 18),
-                              ],
-                              if (onConnect != null) ...[
-                                FilledButton(
-                                  onPressed: onConnect,
-                                  child: const Text('Connect your model'),
-                                ),
-                                const SizedBox(height: 18),
-                              ],
-                              if (onDisconnect != null) ...[
-                                TextButton(
-                                  onPressed: isBusy ? null : onDisconnect,
-                                  child: const Text('Disconnect model'),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                              if (onStartBrief != null) ...[
-                                _CustomBriefEntry(
-                                  onStart: onStartBrief!,
-                                  isBusy: isBusy,
-                                ),
-                                const SizedBox(height: 24),
-                              ],
-                              Text(
-                                'Choose a journey',
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                              const SizedBox(height: 12),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: [
-                                  for (final journey in DemoJourney.values)
-                                    ActionChip(
-                                      label: Text(journey.title),
-                                      onPressed: onSelect == null || isBusy
-                                          ? null
-                                          : () => onSelect!(journey),
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(height: 18),
-                              OutlinedButton.icon(
-                                onPressed: onOpenGallery,
-                                icon: const Icon(Icons.grid_view_outlined),
-                                label: const Text('Explore component catalog'),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (!compact) const SizedBox(width: 80),
-                        Expanded(
-                          flex: compact ? 0 : 4,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: compact ? 36 : 0),
-                            child: const _MosaicPreview(),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 44),
-                const _SafetyNote(),
-              ],
+  Widget build(BuildContext context) => Scaffold(
+    body: AdaptivePaneLayout(
+      compactSecondaryFirst: false,
+      secondaryScrollable: false,
+      secondaryPadding: EdgeInsets.zero,
+      panePadding: const EdgeInsets.fromLTRB(32, 8, 32, 24),
+      header: const Padding(
+        padding: EdgeInsets.fromLTRB(32, 24, 32, 16),
+        child: _BrandLockup(),
+      ),
+      primary: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Where are you going?',
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+              fontSize: 30,
+              fontWeight: FontWeight.w400,
+              height: 1.2,
+              letterSpacing: -.75,
             ),
           ),
+          const SizedBox(height: 8),
+          Text(
+            'Tell me the occasion, where it is and roughly what you’d like to spend. I’ll pull the whole look together from what we carry, and you can change anything as we go.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: 15,
+              height: 1.4,
+              color: Colors.black.withValues(alpha: .75),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Divider(height: 1),
+          const SizedBox(height: 24),
+          if (onSelect != null && onStartBrief == null) ...[
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final journey in DemoJourney.values)
+                  ActionChip(
+                    label: Text(journey.title),
+                    onPressed: isBusy ? null : () => onSelect!(journey),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+          Text(
+            'HERE ARE SOME EXAMPLES',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontSize: 10,
+              letterSpacing: 1,
+              color: Colors.black.withValues(alpha: .4),
+            ),
+          ),
+          const SizedBox(height: 8),
+          for (final example in _occasionExamples) ...[
+            _OccasionSuggestion(
+              message: example.message,
+              onPressed: isBusy || onSelect == null
+                  ? null
+                  : () {
+                      if (onStartBrief != null) {
+                        onStartBrief!(example.message);
+                      } else {
+                        onSelect!(example.journey);
+                      }
+                    },
+            ),
+            const SizedBox(height: 8),
+          ],
+          if (onStartBrief != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              'Preset journeys',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final journey in DemoJourney.values)
+                  ActionChip(
+                    label: Text(journey.title),
+                    onPressed: isBusy ? null : () => onSelect!(journey),
+                  ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: onOpenGallery,
+            icon: const Icon(Icons.grid_view_outlined),
+            label: const Text('Explore component catalog'),
+          ),
+          if (onDisconnect != null)
+            TextButton(
+              onPressed: isBusy ? null : onDisconnect,
+              child: const Text('Disconnect model'),
+            ),
+        ],
+      ),
+      secondary: const _MosaicPreview(),
+      footer: Padding(
+        padding: const EdgeInsets.fromLTRB(32, 16, 32, 24),
+        child: onStartBrief != null
+            ? _CustomBriefEntry(onStart: onStartBrief!, isBusy: isBusy)
+            : onConnect != null
+            ? FilledButton(
+                onPressed: onConnect,
+                child: const Text('Connect your model'),
+              )
+            : const SizedBox.shrink(),
+      ),
+    ),
+  );
+}
+
+const _occasionExamples = [
+  (
+    journey: DemoJourney.lisbon,
+    message: 'A summer wedding in Lisbon in late June — outdoor ceremony, cocktail dress code, around €1,200 for the whole outfit',
+  ),
+  (
+    journey: DemoJourney.paris,
+    message: 'Anniversary dinner at a smart restaurant in Paris in October, black tie optional, about €1,500',
+  ),
+  (
+    journey: DemoJourney.berlin,
+    message: 'First day at a creative agency in Berlin in September. Smart casual, nothing corporate, under €800',
+  ),
+];
+
+class _OccasionSuggestion extends StatelessWidget {
+  const _OccasionSuggestion({required this.message, this.onPressed});
+  final String message;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: const Color(0xfff3f3f3),
+    borderRadius: BorderRadius.circular(8),
+    child: InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SvgPicture.asset('assets/images/occasions/suggestion-sparkle.svg'),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: Theme.of(context).textTheme.bodyLarge
+                    ?.copyWith(fontSize: 16, height: 1.4, letterSpacing: -.25),
+              ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 class _CustomBriefEntry extends StatefulWidget {
@@ -320,133 +374,90 @@ class _CustomBriefEntryState extends State<_CustomBriefEntry> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextField(
-          key: const ValueKey('custom-brief-occasion'),
-          controller: _controller,
-          enabled: !widget.isBusy,
-          minLines: 1,
-          maxLines: 3,
-          textInputAction: TextInputAction.done,
-          decoration: const InputDecoration(
-            labelText: 'Your occasion',
-            hintText: 'A spring day in Berlin…',
-          ),
-          onChanged: (_) => setState(() {}),
-          onSubmitted: (_) => _submit(),
-        ),
-        const SizedBox(height: 12),
-        FilledButton(
-          onPressed: widget.isBusy || _controller.text.trim().isEmpty
-              ? null
-              : _submit,
-          child: const Text('Start my look'),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => StylistComposer(
+    controller: _controller,
+    enabled: !widget.isBusy,
+    fieldKey: const ValueKey('custom-brief-occasion'),
+    fieldLabel: 'Your occasion',
+    submitLabel: 'Start my look',
+    onSubmitted: (_) => _submit(),
+  );
 }
 
 class _BrandLockup extends StatelessWidget {
-  const _BrandLockup({this.showMark = false});
-
-  final bool showMark;
+  const _BrandLockup();
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (showMark) ...[
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: const Color(0xff18181b),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.auto_awesome,
-              color: Colors.white,
-              size: 17,
-            ),
-          ),
-          const SizedBox(width: 10),
-        ],
-        Text(
-          'ALDER',
-          style: Theme.of(context).textTheme.labelLarge
-              ?.copyWith(letterSpacing: 2.2, fontWeight: FontWeight.w600),
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.centerLeft,
+    child: Container(
+      color: Colors.black,
+      padding: const EdgeInsets.fromLTRB(6, 4, 3, 5),
+      child: Text(
+        'ALDER',
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+          letterSpacing: 4,
+          height: 1.1,
         ),
-        const SizedBox(width: 8),
-        Text(
-          'GENUINE STYLIST',
-          style: Theme.of(context).textTheme.labelSmall
-              ?.copyWith(color: const Color(0xff71717a), letterSpacing: 1.1),
-        ),
-      ],
-    );
-  }
+      ),
+    ),
+  );
 }
 
 class _MosaicPreview extends StatelessWidget {
   const _MosaicPreview();
 
   @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.05,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: GridView.count(
-          crossAxisCount: 3,
-          physics: const NeverScrollableScrollPhysics(),
-          children: const [
-            ColoredBox(color: Color(0xffd7d1c4)),
-            ColoredBox(color: Color(0xffe6e0d7)),
-            ColoredBox(color: Color(0xff9c8779)),
-            ColoredBox(color: Color(0xffbab0a1)),
-            ColoredBox(color: Color(0xff2a2a2e)),
-            ColoredBox(color: Color(0xffc3b29b)),
-            ColoredBox(color: Color(0xffe3d9c9)),
-            ColoredBox(color: Color(0xff77706a)),
-            ColoredBox(color: Color(0xfff0ece5)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SafetyNote extends StatelessWidget {
-  const _SafetyNote();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xfff4f4f5),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.auto_awesome_outlined, size: 18),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Your stylist uses a fictional catalog with bundled product photographs. An agent connection is required for every journey.',
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(height: 1.35),
-            ),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final width = constraints.maxWidth;
+      final height = constraints.hasBoundedHeight
+          ? constraints.maxHeight
+          : width * 1.4;
+      final columnWidth = (width - 8) / 2.4;
+      return SizedBox(
+        height: height,
+        child: ClipRect(
+          child: Stack(
+            children: [
+              for (final column in [
+                (index: 0, images: [1, 2, 3]),
+                (index: 1, images: [4, 5, 6, 7]),
+                (index: 2, images: [8, 9, 10]),
+              ])
+                Positioned(
+                  left: column.index * (columnWidth + 4),
+                  top: 0,
+                  bottom: 0,
+                  width: columnWidth,
+                  child: OverflowBox(
+                    maxHeight: double.infinity,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (final number in column.images) ...[
+                          Image.asset(
+                            'assets/images/occasions/start-${number.toString().padLeft(2, '0')}.png',
+                            width: columnWidth,
+                            height: columnWidth * 4 / 3,
+                            fit: BoxFit.cover,
+                            excludeFromSemantics: true,
+                          ),
+                          const SizedBox(height: 4),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      );
+    },
+  );
 }
 
 class _ComponentGallery extends StatelessWidget {
@@ -457,150 +468,89 @@ class _ComponentGallery extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(28),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 980),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: onBack,
-                        icon: const Icon(Icons.arrow_back),
-                        tooltip: 'Back',
-                      ),
-                      const SizedBox(width: 4),
-                      const _BrandLockup(),
-                    ],
-                  ),
-                  const SizedBox(height: 36),
-                  Text(
-                    'Catalog components',
-                    style: Theme.of(context).textTheme.displaySmall
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'A visual index of the commerce vocabulary available to A2UI surfaces. Each custom item has a schema, a Flutter builder, and a fixture-backed interaction path.',
-                    style: Theme.of(context).textTheme.bodyLarge
-                        ?.copyWith(color: const Color(0xff71717a), height: 1.4),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '9 commerce components · 15 GenUI basic components',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  const SizedBox(height: 28),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final tileWidth = constraints.maxWidth < 680
-                          ? constraints.maxWidth
-                          : (constraints.maxWidth - 16) / 2;
-                      return Wrap(
-                        spacing: 16,
-                        runSpacing: 16,
-                        children: [
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'StylistMessage',
-                            description:
-                                'Warm guidance with a clear next step.',
-                            preview: const _GalleryMessagePreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'Eyebrow',
-                            description: 'Compact uppercase grouping label.',
-                            preview: const _GalleryEyebrowPreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'ChoiceChip',
-                            description:
-                                'Structured single-choice interaction.',
-                            preview: const _GalleryChipPreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'ChoiceGroup',
-                            description: 'Wrapping responsive choice set.',
-                            preview: const _GalleryChoiceGroupPreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'BudgetSlider',
-                            description:
-                                'Bounded value updated in the data model.',
-                            preview: const _GallerySliderPreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'PrimaryButton',
-                            description:
-                                'Explicit event for a journey transition.',
-                            preview: const _GalleryButtonPreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'ProductCard',
-                            description: 'Recommendation with reason and selection action.',
-                            preview: const _GalleryProductPreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'PieceSlot',
-                            description:
-                                'Empty, next, and filled dressing-room states.',
-                            preview: const _GalleryPiecePreview(),
-                          ),
-                          _GalleryTile(
-                            width: tileWidth,
-                            name: 'DressingRoom',
-                            description:
-                                'Persistent surface for the evolving look.',
-                            preview: const _GalleryDressingPreview(),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
-                    'GenUI basic components',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'These primitives are available from the base catalog and can be composed before adding a custom schema.',
-                    style: Theme.of(context).textTheme.bodySmall
-                        ?.copyWith(color: const Color(0xff71717a), height: 1.4),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final name in _basicComponentGalleryNames)
-                        Chip(
-                          avatar: const Icon(Icons.widgets_outlined, size: 16),
-                          label: Text(name),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
-                    'Basic components remain available through the GenUI catalog. Add a custom item only when a schema and reusable interaction are clearer than composing existing primitives.',
-                    style: Theme.of(context).textTheme.bodySmall
-                        ?.copyWith(color: const Color(0xff71717a), height: 1.4),
-                  ),
-                ],
-              ),
+      body: AdaptivePage(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: onBack,
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: 'Back',
+                ),
+                const SizedBox(width: 4),
+                const Expanded(child: _BrandLockup()),
+              ],
             ),
-          ),
+            const SizedBox(height: 36),
+            Text(
+              'Catalog components',
+              style: Theme.of(context).textTheme.displaySmall
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'A visual index of the commerce vocabulary available to A2UI surfaces. Each custom item has a schema, a Flutter builder, and a fixture-backed interaction path.',
+              style: Theme.of(context).textTheme.bodyLarge
+                  ?.copyWith(color: const Color(0xff71717a), height: 1.4),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '9 commerce components · 15 GenUI basic components',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            const SizedBox(height: 28),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final tileWidth = constraints.maxWidth < 680
+                    ? constraints.maxWidth
+                    : (constraints.maxWidth - 16) / 2;
+                return Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: [
+                    for (final example in commerceComponentExamples)
+                      _GalleryTile(
+                        width: tileWidth,
+                        name: example.name,
+                        description: example.description,
+                        preview: example.previewBuilder(context),
+                      ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 30),
+            Text(
+              'GenUI basic components',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'These primitives are available from the base catalog and can be composed before adding a custom schema.',
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: const Color(0xff71717a), height: 1.4),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final name in _basicComponentGalleryNames)
+                  Chip(
+                    avatar: const Icon(Icons.widgets_outlined, size: 16),
+                    label: Text(name),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Text(
+              'Basic components remain available through the GenUI catalog. Add a custom item only when a schema and reusable interaction are clearer than composing existing primitives.',
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: const Color(0xff71717a), height: 1.4),
+            ),
+          ],
         ),
       ),
     );
@@ -650,242 +600,6 @@ class _GalleryTile extends StatelessWidget {
   }
 }
 
-class _GalleryMessagePreview extends StatelessWidget {
-  const _GalleryMessagePreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'Lovely — one more considered piece and the look will come together.',
-      style: TextStyle(height: 1.35),
-    );
-  }
-}
-
-class _GalleryEyebrowPreview extends StatelessWidget {
-  const _GalleryEyebrowPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'SHOES · 3 OPTIONS',
-      style: Theme.of(context).textTheme.labelSmall
-          ?.copyWith(letterSpacing: 1.2, color: const Color(0xff71717a)),
-    );
-  }
-}
-
-class _GalleryChipPreview extends StatelessWidget {
-  const _GalleryChipPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      children: [
-        const ActionChip(label: Text('Black tie')),
-        ActionChip(
-          label: const Text('Cocktail'),
-          backgroundColor: const Color(0xff18181b),
-          labelStyle: const TextStyle(color: Colors.white),
-          onPressed: () {},
-        ),
-      ],
-    );
-  }
-}
-
-class _GalleryChoiceGroupPreview extends StatelessWidget {
-  const _GalleryChoiceGroupPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        for (final option in ['Black tie', 'Cocktail', 'Smart elegant'])
-          Chip(
-            label: Text(option),
-            backgroundColor: option == 'Black tie'
-                ? const Color(0xff18181b)
-                : const Color(0xfff4f4f5),
-            labelStyle: TextStyle(
-              color: option == 'Black tie'
-                  ? Colors.white
-                  : const Color(0xff3f3f46),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _GallerySliderPreview extends StatelessWidget {
-  const _GallerySliderPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Budget', style: Theme.of(context).textTheme.labelLarge),
-            Text('€1,500', style: Theme.of(context).textTheme.labelLarge),
-          ],
-        ),
-        const Slider(value: 0.55, onChanged: null),
-      ],
-    );
-  }
-}
-
-class _GalleryButtonPreview extends StatelessWidget {
-  const _GalleryButtonPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton(onPressed: () {}, child: const Text('Find options')),
-    );
-  }
-}
-
-class _GalleryProductPreview extends StatelessWidget {
-  const _GalleryProductPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xffe4e4e7)),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 58,
-            decoration: BoxDecoration(
-              color: const Color(0xff1c1c1f),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(Icons.checkroom_outlined, color: Colors.white70),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Most formal',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Demo Pointed Pump',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                Text(
-                  '€545 · Black satin',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GalleryPiecePreview extends StatelessWidget {
-  const _GalleryPiecePreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _GalleryPieceRow(
-          label: 'Dress',
-          value: 'Indra Long Dress',
-          filled: true,
-        ),
-        _GalleryPieceRow(
-          label: 'A layer over it',
-          value: 'Next piece',
-          filled: false,
-        ),
-      ],
-    );
-  }
-}
-
-class _GalleryPieceRow extends StatelessWidget {
-  const _GalleryPieceRow({
-    required this.label,
-    required this.value,
-    required this.filled,
-  });
-
-  final String label;
-  final String value;
-  final bool filled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        children: [
-          Icon(
-            filled ? Icons.check_circle_outline : Icons.add_circle_outline,
-            size: 17,
-            color: filled ? const Color(0xff18181b) : const Color(0xffa1a1aa),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(label, style: Theme.of(context).textTheme.labelMedium),
-          ),
-          Text(value, style: Theme.of(context).textTheme.bodySmall),
-        ],
-      ),
-    );
-  }
-}
-
-class _GalleryDressingPreview extends StatelessWidget {
-  const _GalleryDressingPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xfffafafa),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Dressing room', style: Theme.of(context).textTheme.labelMedium),
-          const SizedBox(height: 4),
-          Text(
-            'Anniversary dinner in Paris',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-          const SizedBox(height: 8),
-          const _GalleryPieceRow(label: 'Dress', value: 'Filled', filled: true),
-          const _GalleryPieceRow(label: 'Shoes', value: 'Next', filled: false),
-        ],
-      ),
-    );
-  }
-}
-
 class _ResponsiveShell extends StatelessWidget {
   const _ResponsiveShell({required this.agent, required this.onNewJourney});
 
@@ -893,114 +607,18 @@ class _ResponsiveShell extends StatelessWidget {
   final VoidCallback onNewJourney;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 951),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth < 900) {
-                  return Column(
-                    children: [
-                      _MobileHeader(onNewJourney: onNewJourney),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  12,
-                                  8,
-                                  12,
-                                  0,
-                                ),
-                                child: _DressingPanel(
-                                  agent: agent,
-                                  scrollable: false,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                ),
-                                child: _ChatSurface(agent: agent),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      _ChatComposer(
-                        agent: agent,
-                        padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
-                      ),
-                    ],
-                  );
-                }
-                return Row(
-                  // The side panels should occupy the full shell height. The
-                  // default cross-axis alignment centers their shorter content,
-                  // which makes the dressing room appear halfway down the page
-                  // on wide web viewports.
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      child: _ChatPanel(
-                        agent: agent,
-                        onNewJourney: onNewJourney,
-                      ),
-                    ),
-                    const VerticalDivider(width: 1),
-                    SizedBox(width: 415, child: _DressingPanel(agent: agent)),
-                    SizedBox(
-                      width: 60,
-                      child: _SideRail(onNewJourney: onNewJourney),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ),
+  Widget build(BuildContext context) => Scaffold(
+    body: AdaptivePaneLayout(
+      primary: _ChatSurface(agent: agent),
+      secondary: _DressingPanel(agent: agent),
+      header: _MobileHeader(onNewJourney: onNewJourney),
+      footer: _ChatComposer(
+        agent: agent,
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       ),
-    );
-  }
-}
-
-class _ChatPanel extends StatelessWidget {
-  const _ChatPanel({required this.agent, required this.onNewJourney});
-
-  final CommerceAgent agent;
-  final VoidCallback onNewJourney;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 18, 24, 18),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Expanded(child: _BrandLockup()),
-              IconButton(
-                onPressed: onNewJourney,
-                icon: const Icon(Icons.close),
-                tooltip: 'New journey',
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Expanded(child: _ChatSurface(agent: agent)),
-          const SizedBox(height: 12),
-          _ChatComposer(agent: agent),
-        ],
-      ),
-    );
-  }
+      rail: _SideRail(onNewJourney: onNewJourney),
+    ),
+  );
 }
 
 class _ChatSurface extends StatelessWidget {
@@ -1014,54 +632,52 @@ class _ChatSurface extends StatelessWidget {
       animation: agent,
       builder: (context, _) {
         final surfaceId = agent.latestInlineSurfaceId;
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (agent.isBusy)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          surfaceId == null
-                              ? 'Asking your stylist…'
-                              : 'Your stylist is thinking…',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              if (agent.connectionError != null)
-                _ConnectionNotice(
-                  message: agent.connectionError!,
-                  onRetry: agent.canRetry ? agent.retryLastTurn : null,
-                ),
-              if (agent.connectionNotice != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(agent.connectionNotice!),
-                ),
-              if (surfaceId != null)
-                IgnorePointer(
-                  ignoring: agent.isBusy || agent.connectionError != null,
-                  child: ExcludeFocus(
-                    excluding: agent.isBusy || agent.connectionError != null,
-                    child: Surface(
-                      key: ValueKey(surfaceId),
-                      surfaceContext: agent.controller.contextFor(surfaceId),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (agent.isBusy)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        surfaceId == null
+                            ? 'Asking your stylist…'
+                            : 'Your stylist is thinking…',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (agent.connectionError != null)
+              _ConnectionNotice(
+                message: agent.connectionError!,
+                onRetry: agent.canRetry ? agent.retryLastTurn : null,
+              ),
+            if (agent.connectionNotice != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(agent.connectionNotice!),
+              ),
+            if (surfaceId != null)
+              IgnorePointer(
+                ignoring: agent.isBusy || agent.connectionError != null,
+                child: ExcludeFocus(
+                  excluding: agent.isBusy || agent.connectionError != null,
+                  child: Surface(
+                    key: ValueKey(surfaceId),
+                    surfaceContext: agent.controller.contextFor(surfaceId),
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         );
       },
     );
@@ -1142,43 +758,20 @@ class _ChatComposerState extends State<_ChatComposer> {
         !widget.agent.isBusy &&
         widget.agent.connectionError == null &&
         widget.agent.latestInlineSurfaceId != null;
-    return Padding(
+    return StylistComposer(
+      controller: textController,
+      enabled: canSend,
+      fieldKey: const ValueKey('stylist-composer'),
       padding: widget.padding,
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: textController,
-              enabled: canSend,
-              onSubmitted: (_) => _send(),
-              decoration: const InputDecoration(
-                hintText: 'Tell me about the occasion…',
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton.filled(
-            style: IconButton.styleFrom(
-              minimumSize: const Size(36, 36),
-              maximumSize: const Size(36, 36),
-              padding: EdgeInsets.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            onPressed: canSend ? _send : null,
-            icon: const Icon(Icons.arrow_upward, size: 22),
-            tooltip: 'Send',
-          ),
-        ],
-      ),
+      onSubmitted: (_) => _send(),
     );
   }
 }
 
 class _DressingPanel extends StatelessWidget {
-  const _DressingPanel({required this.agent, this.scrollable = true});
+  const _DressingPanel({required this.agent});
 
   final CommerceAgent agent;
-  final bool scrollable;
 
   @override
   Widget build(BuildContext context) {
@@ -1210,9 +803,8 @@ class _DressingPanel extends StatelessWidget {
         );
       },
     );
-    if (!scrollable) return surface;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 18),
+    return CommerceDressingRoomStyle(
+      dark: AdaptivePaneScope.isSplitOf(context),
       child: surface,
     );
   }
@@ -1225,21 +817,18 @@ class _MobileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 52,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 24),
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: onNewJourney,
-              icon: const Icon(Icons.close, size: 24),
-              tooltip: 'New journey',
-            ),
-            const SizedBox(width: 4),
-            const _BrandLockup(),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 4, 16, 4),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: onNewJourney,
+            icon: const Icon(Icons.close, size: 24),
+            tooltip: 'New journey',
+          ),
+          const SizedBox(width: 4),
+          const Expanded(child: _BrandLockup()),
+        ],
       ),
     );
   }

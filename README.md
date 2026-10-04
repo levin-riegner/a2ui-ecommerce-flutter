@@ -59,6 +59,10 @@ Product JPEGs are tracked with Git LFS. Install Git LFS before cloning or run `g
 
 See [architecture.md](docs/architecture.md) for the layer boundaries, surface lifecycle, message shape, and event flow. Open the **Explore component catalog** action on the landing screen to see the complete 24-component vocabulary in a compact visual index.
 
+Reusable presentation widgets and layouts are exported through `package:a2ui_flutter_commerce/commerce_ui.dart`. The A2UI catalog adapters and interactive component gallery use those same widgets. The gallery includes choice, disabled action, choose/remove, slot, completion, and light/dark dressing-room examples; its controls make no provider requests.
+
+`AdaptivePaneLayout` keeps the composer reachable, stacks the dressing room above the conversation on compact windows, and gives wider panes independent scrolling. Layout decisions use available space and text size; the 669-wide portrait reference stacks, while the 951-wide landscape reference splits and shows the utility rail. Reported display obstructions are avoided without resetting drafts or outfit state. Native iOS Duo hinge/posture reporting still needs a platform adapter: see the [current package review](docs/foldable-package-review.md).
+
 ## Data sources
 
 The bundled `StylistRuntime` searches `assets/data/catalog/products.csv` and publishes A2UI messages through `GenkitAgent`. Flutter renders the bundled product photographs from their `image_asset` paths. `CsvProductRepository`, `FixtureProductRepository`, and `StubAgent` remain available for tests and component previews through explicit agent injection; they are not runtime fallback modes.
@@ -81,4 +85,4 @@ fvm flutter build web
 
 ## License
 
-Apache-2.0, including the bundled demo images. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
+Apache-2.0 for the project and approved bundled catalog photographs. Jost retains its SIL Open Font License in `assets/fonts/jost/OFL.txt`. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
