@@ -309,6 +309,7 @@ class StylistRuntime {
       throw const FormatException('A message or action is required');
     }
     var actionNote = '';
+    String? actionConfirmation;
     if (action != null) {
       final id = (action['context'] as Map)['productId'];
       if (action['name'] == 'select_product') {
@@ -323,6 +324,7 @@ class StylistRuntime {
           throw StateError('Selection exceeds the outfit budget');
         }
         state.outfit[slot] = product;
+        actionConfirmation = 'Selected ${product.name}.';
         actionNote =
             'The person selected ${product.name} (${euro(product.price)}) for $slot. The host recorded it.';
       } else if (action['name'] == 'remove_product') {
@@ -330,7 +332,8 @@ class StylistRuntime {
             .where((slot) => state.outfit[slot]!.id == id)
             .toList();
         if (slots.isEmpty) throw StateError('Product is not in the outfit');
-        state.outfit.remove(slots.single);
+        final removed = state.outfit.remove(slots.single)!;
+        actionConfirmation = 'Removed ${removed.name}.';
         actionNote = 'The person removed product $id from the outfit.';
       } else {
         throw StateError('Unsupported action');
@@ -361,7 +364,7 @@ class StylistRuntime {
         ),
       ],
       system:
-          '$_instructions\nBudget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. Already spent: ${euro(state.spent)}.',
+          '$_instructions\nBudget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. Already spent: ${euro(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : euro(state.remaining)}.',
       toolNames: ['search_products', 'present_products'],
       maxTurns: 4,
       cancel: scope.cancel.token,
@@ -373,11 +376,25 @@ class StylistRuntime {
     state.history = response.messages
         .where((message) => message.role != Role.system)
         .toList();
-    final reply = response.text.trim().isEmpty
+    final generatedReply = response.text.trim().isEmpty
         ? (scope.picks.isEmpty
               ? 'Tell me the occasion and budget, and I can find some options.'
               : 'Here are a few options from the catalog.')
         : response.text.trim();
+    // Click confirmations use the same authoritative state as the budget panel.
+    // Do not let a model's arithmetic contradict the recorded selection.
+    final reply = actionConfirmation != null && message.isEmpty
+        ? '$actionConfirmation${state.budget == null ? '' : ' ${euro(state.remaining)} left in your budget.'}'
+        : generatedReply;
+    if (actionConfirmation != null &&
+        message.isEmpty &&
+        state.history.isNotEmpty &&
+        state.history.last.role == Role.model) {
+      state.history[state.history.length - 1] = Message(
+        role: Role.model,
+        content: [TextPart(text: reply)],
+      );
+    }
     return {
       'reply': reply,
       'products': scope.picks.map(productFacts).toList(),

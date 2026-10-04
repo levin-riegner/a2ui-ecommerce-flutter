@@ -105,6 +105,45 @@ void main() {
   );
 
   test(
+    'action confirmations and history use host-calculated remaining budget',
+    () async {
+      var actionTurns = false;
+      var removing = false;
+      final runtime = StylistRuntime(
+        products: products,
+        model: (request) async {
+          if (!actionTurns) return offlineStylistModel(request);
+          if (removing) {
+            expect(
+              request.messages
+                  .where((message) => message.role == Role.model)
+                  .last
+                  .text,
+              'Selected Linen dress. €120.00 left in your budget.',
+            );
+          }
+          return textResponse('Your remaining budget is €5.');
+        },
+      );
+      addTearDown(runtime.dispose);
+      await runtime.turn({'message': 'A dress under €200'});
+      actionTurns = true;
+      final selected = await runtime.turn(action('select_product', 'dress-1'));
+      expect(
+        selected['reply'],
+        'Selected Linen dress. €120.00 left in your budget.',
+      );
+      removing = true;
+      final removed = await runtime.turn(action('remove_product', 'dress-1'));
+      expect(
+        removed['reply'],
+        'Removed Linen dress. €200.00 left in your budget.',
+      );
+      expect(runtime.outfit['items'], isEmpty);
+    },
+  );
+
+  test(
     'unknown selections and over-budget selections never call a model',
     () async {
       var calls = 0;
