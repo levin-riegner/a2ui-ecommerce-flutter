@@ -1,4 +1,6 @@
 import '../data/models.dart';
+import 'outfit_plan.dart';
+import 'stylist_brief_surface.dart';
 
 const stylistCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
 String euro(num value) => '€${value.toStringAsFixed(2)}';
@@ -62,20 +64,30 @@ List<Map<String, Object?>> renderStylistSurfaces({
   required Map<String, Product> outfit,
   required double? budget,
   required String occasion,
+  OutfitPlan? plan,
+  ProductCategory? nextCategory,
+  Map<String, Object?>? clarification,
 }) {
   final spent = outfit.values.fold<double>(0, (sum, p) => sum + p.price);
-  const slots = ['dress', 'layer', 'shoes', 'bag'];
-  final extras = [
-    'top',
-    'bottom',
-    'accessory',
-  ].where(outfit.containsKey).map((slot) => '$slot: ${outfit[slot]!.name}');
+  final outfitPlan = plan ?? OutfitPlan.from(brief: occasion, outfit: outfit);
+  final slots = outfitPlan.displaySlots;
+  final next = nextCategory ?? outfitPlan.nextCategory;
+  const slotLabels = {
+    ProductCategory.dress: 'A dress',
+    ProductCategory.top: 'A top',
+    ProductCategory.bottom: 'Bottoms',
+    ProductCategory.layer: 'A layer over it',
+    ProductCategory.shoes: 'Shoes',
+    ProductCategory.bag: 'A bag',
+    ProductCategory.accessory: 'An accessory',
+  };
   final dressingData = <String, Object?>{
     'title': 'Your dressing room',
-    'brief': [
-      occasion.isEmpty ? 'Build a look together' : occasion,
-      ...extras,
-    ].join(' · '),
+    'brief': occasion.isEmpty ? 'Build a look together' : occasion,
+    'planCaption': outfitPlan.complete
+        ? 'Your look is complete'
+        : '${outfitPlan.filledCount} of ${outfitPlan.slots.length} pieces selected',
+    'planComplete': outfitPlan.complete,
     'spent': '${euro(spent)} spent · ${outfit.length} pieces',
     'left': budget == null
         ? 'Set a budget'
@@ -83,24 +95,41 @@ List<Map<String, Object?>> renderStylistSurfaces({
     'progress': budget == null || budget == 0
         ? 0.0
         : (spent / budget).clamp(0, 1),
-    for (final slot in slots) ...{
-      '${slot}Name': outfit[slot]?.name ?? '',
-      '${slot}Meta': outfit[slot] == null
-          ? 'Not yet'
-          : '${outfit[slot]!.brand} · ${euro(outfit[slot]!.price)}',
-      '${slot}Swatch': outfit[slot]?.swatch ?? '#e4e4e7',
-      '${slot}ImageAsset': outfit[slot]?.imageAsset ?? '',
-    },
+    'slots': [
+      for (final slot in slots)
+        {
+          'category': slot.name,
+          'label': slotLabels[slot],
+          'name': outfit[slot.name]?.name ?? '',
+          'meta': outfit[slot.name] == null
+              ? slot == next
+                    ? 'Next piece'
+                    : 'Not yet'
+              : '${outfit[slot.name]!.brand} · ${euro(outfit[slot.name]!.price)}',
+          'swatch': outfit[slot.name]?.swatch ?? '#e4e4e7',
+          'imageAsset': outfit[slot.name]?.imageAsset ?? '',
+          'state': outfit[slot.name] != null
+              ? 'Filled'
+              : slot == next
+              ? 'Next'
+              : 'Empty',
+        },
+    ],
   };
   final dressingComponents = <Map<String, Object?>>[
     {
       'id': 'root',
       'component': 'DressingRoom',
-      for (final property in ['title', 'brief', 'spent', 'left', 'progress'])
+      for (final property in [
+        'title',
+        'brief',
+        'spent',
+        'left',
+        'progress',
+        'slots',
+        'planCaption',
+      ])
         property: _path('/$property'),
-      for (final slot in slots)
-        for (final suffix in ['Name', 'Meta', 'Swatch', 'ImageAsset'])
-          '$slot$suffix': _path('/$slot$suffix'),
     },
   ];
   final inlineData = <String, Object?>{
@@ -133,6 +162,18 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'select_product',
       ),
   ];
+  if (clarification != null) {
+    final briefSurface = renderStylistBriefSurface(
+      reply: reply,
+      clarification: clarification,
+    );
+    inlineData
+      ..clear()
+      ..addAll(briefSurface.data);
+    inlineComponents
+      ..clear()
+      ..addAll(briefSurface.components);
+  }
   final selected = outfit.entries.toList();
   final selectedData = <String, Object?>{
     'message': selected.isEmpty

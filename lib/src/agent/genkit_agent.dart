@@ -52,6 +52,7 @@ class GenkitAgent extends CommerceAgent {
           providerModel: connection.model,
           normalizeResponse: connection.normalizeResponse,
           onBeginTurn: connection.beginTurn,
+          onModelRequest: connection.prepareRequest,
           onCancelTurn: connection.cancelTurn,
         ),
         provider: connection,
@@ -116,13 +117,32 @@ class GenkitAgent extends CommerceAgent {
     await Future<void>.delayed(Duration.zero);
     if (_disposed) return;
     activeJourney = journey;
-    _runtime?.reset();
+    _runtime?.reset(journey: journey);
     _hasStarted = true;
     notifyListeners();
     await _performTurn(
       _AgentTurn(message: '${journey.title}. ${journey.brief}'),
     );
   });
+
+  @override
+  bool get canStartBrief => true;
+
+  @override
+  Future<void> startBrief(String message) {
+    final text = message.trim();
+    if (text.isEmpty) return Future<void>.value();
+    return _enqueue(() async {
+      _clearSurfaces();
+      await Future<void>.delayed(Duration.zero);
+      if (_disposed) return;
+      activeJourney = null;
+      _runtime?.reset();
+      _hasStarted = true;
+      notifyListeners();
+      await _performTurn(_AgentTurn(message: text));
+    });
+  }
 
   void _clearSurfaces() {
     for (final surfaceId in _surfaceIds) {

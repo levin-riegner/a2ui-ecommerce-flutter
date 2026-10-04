@@ -22,6 +22,8 @@ The key stays in memory on the device and is added only to the provider's outgoi
 
 Without a model connection, journeys are disabled and the component gallery remains available. During a turn, the app shows progress and disables chat/product actions. Failed turns show Retry and retain the previous outfit and surfaces. No scripted fallback runs in the app.
 
+Once connected, choose a preset journey or enter your own occasion with **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. Choosing a piece immediately offers the next part of the look. You can also choose or remove pieces in words, refine the brief, and revisit a completed outfit. The dressing room follows the current outfit plan, including tops and bottoms.
+
 ## Genkit developer tools
 
 The app bundles the Dart runtime and official provider plugins. Genkit Dart is currently in preview; package versions are pinned, and HTTP transport injection for the Google and Anthropic plugins is isolated in `genkit_providers.dart` until their factory handles expose it.
@@ -32,7 +34,15 @@ For an explicitly opted-in live OpenAI smoke test, put `OPENAI_API_KEY` and `OPE
 STYLIST_LIVE_TEST=1 fvm flutter test tools/genkit/live_smoke_test.dart
 ```
 
-This test makes paid requests: at most three interactions and twelve provider requests. It checks real search/presentation tool calls, a rendered catalog photograph, selection/removal, and dressing-room totals. It reports request counts and provider token usage without logging credentials. It is excluded from the default test suite and CI. OpenAI Platform API keys work with this Chat Completions integration; ChatGPT Admin tokens for Codex or Workspace Agents are not interchangeable with those keys.
+This test makes paid requests: at most three interactions and twelve provider requests. It checks real search/presentation tool calls, catalog-backed cards and photo files, selection/removal, next-category progression, and dressing-room totals. Rendering is covered separately by the normal widget tests. It reports request counts and provider token usage without logging credentials. It is excluded from the default test suite and CI. OpenAI Platform API keys work with this Chat Completions integration; ChatGPT Admin tokens for Codex or Workspace Agents are not interchangeable with those keys.
+
+To check one real selection continuation with an offline initial preview and a three-request cap:
+
+```sh
+STYLIST_LIVE_TEST=1 STYLIST_LIVE_SEED_PREVIEW=1 STYLIST_LIVE_INTERACTIONS=2 STYLIST_LIVE_MAX_REQUESTS=3 fvm flutter test tools/genkit/live_smoke_test.dart
+```
+
+This narrower mode verifies that selecting a seeded top produces real model-generated bottom options. It does not test an entirely live journey or removal.
 
 For free prompt/tool/flow inspection with the same catalog and stylist implementation, install the Genkit CLI on your development machine and run from the repository root:
 
