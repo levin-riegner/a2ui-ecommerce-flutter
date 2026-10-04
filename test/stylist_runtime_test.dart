@@ -321,11 +321,36 @@ void main() {
       'under €1,200': 1200.0,
       '€1.200,50': 1200.5,
       '100,50 EUR': 100.5,
+      'under 100€': 100.0,
+      'under 100 €': 100.0,
+      '100,50 €': 100.5,
       '€0': 0.0,
     }.entries) {
       expect(parseStylistBudget(entry.key), entry.value);
     }
     expect(parseStylistBudget('under a hundred'), isNull);
+  });
+
+  test('suffix-euro budget changes prevent unaffordable selections', () async {
+    var calls = 0;
+    final runtime = StylistRuntime(
+      products: products,
+      model: (request) {
+        calls++;
+        return offlineStylistModel(request);
+      },
+    );
+    addTearDown(runtime.dispose);
+    await runtime.turn({'message': 'A dress under €200'});
+    await runtime.turn({'message': 'Change my budget to 40 €'});
+    expect(runtime.outfit['budget'], 40);
+    final before = calls;
+    await expectLater(
+      runtime.turn(action('select_product', 'dress-1')),
+      throwsStateError,
+    );
+    expect(calls, before);
+    expect(runtime.outfit['items'], isEmpty);
   });
 
   test('search ranks titles, filters facets, caps prices and returns bundled facts', () {

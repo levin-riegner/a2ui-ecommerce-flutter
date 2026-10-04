@@ -66,7 +66,7 @@ final _presentSchema = _object({
 
 double? parseStylistBudget(String message) {
   final match = RegExp(
-    r'(?:€|EUR)\s*([0-9][0-9.,\s]*[0-9]|[0-9])|([0-9][0-9.,\s]*[0-9]|[0-9])\s*(?:€|EUR)\b',
+    r'(?:€|EUR)\s*([0-9][0-9.,\s]*[0-9]|[0-9])|([0-9][0-9.,\s]*[0-9]|[0-9])\s*(?:€|EUR\b)',
     caseSensitive: false,
   ).firstMatch(message);
   if (match == null) return null;
