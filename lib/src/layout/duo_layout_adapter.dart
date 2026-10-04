@@ -22,12 +22,14 @@ class _DuoLayoutAdapterState extends State<DuoLayoutAdapter>
     with WidgetsBindingObserver {
   FoldableData _data = FoldableData.unsupported;
   StreamSubscription<FoldableData>? _events;
+  FoldablePlatform? _replacementPlatform;
+  bool _eventsCompleted = false;
   int _generation = 0;
   int _revision = 0;
   int _request = 0;
 
   FoldablePlatform get _platform =>
-      widget.platform ?? FoldablePlatform.instance;
+      _replacementPlatform ?? widget.platform ?? FoldablePlatform.instance;
   bool get _enabled =>
       widget.platform != null ||
       (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS);
@@ -58,7 +60,10 @@ class _DuoLayoutAdapterState extends State<DuoLayoutAdapter>
           _apply(FoldableData.unsupported);
         },
         onDone: () {
-          if (generation == _generation) _events = null;
+          if (generation == _generation) {
+            _events = null;
+            _eventsCompleted = true;
+          }
         },
       );
     } catch (_) {
@@ -72,6 +77,13 @@ class _DuoLayoutAdapterState extends State<DuoLayoutAdapter>
     _events = null;
     await previous?.cancel();
     if (!mounted || generation != _generation) return;
+    if (_eventsCompleted && _platform is MethodChannelFoldable) {
+      // The pinned plugin caches a stream that closes after an unsupported
+      // snapshot, including transient startup failures. Recreate it locally;
+      // never reset the singleton or other consumers' subscriptions.
+      _replacementPlatform = MethodChannelFoldable();
+    }
+    _eventsCompleted = false;
     _listen(generation);
     await _refresh();
   }
@@ -102,7 +114,8 @@ class _DuoLayoutAdapterState extends State<DuoLayoutAdapter>
   }
 
   @override
-  void didChangeMetrics() => unawaited(_refresh());
+  void didChangeMetrics() =>
+      unawaited(_eventsCompleted ? _restartEvents() : _refresh());
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -119,6 +132,8 @@ class _DuoLayoutAdapterState extends State<DuoLayoutAdapter>
     if (widget.platform != oldWidget.platform) {
       unawaited(_events?.cancel());
       _events = null;
+      _replacementPlatform = null;
+      _eventsCompleted = false;
       _data = FoldableData.unsupported;
       unawaited(_start());
     }

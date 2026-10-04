@@ -615,6 +615,113 @@ void main() {
     },
   );
 
+  for (final recovery in ['resume', 'metrics']) {
+    testWidgets(
+      'real native stream closed after an unavailable startup snapshot recovers on $recovery',
+      (tester) async {
+        _window(tester, const Size(951, 669));
+        final platform = MethodChannelFoldable();
+        final globalPlatform = FoldablePlatform.instance;
+        final messenger = tester.binding.defaultBinaryMessenger;
+        var available = false;
+        var listens = 0;
+        final wire = <String, Object?>{
+          'supportLevel': 'available',
+          'isFoldable': true,
+          'hingeApiPresent': true,
+          'regionApiPresent': true,
+          'angleUnitVerified': false,
+          'strategy': 'test-native',
+          'status': 'fullyOpen',
+          'angleDegrees': 180,
+          'regions': <Object?>[],
+        };
+        messenger.setMockMethodCallHandler(
+          const MethodChannel(kFoldableMethodChannel),
+          (call) async {
+            if (!available) {
+              throw PlatformException(code: 'temporarily_unavailable');
+            }
+            return wire;
+          },
+        );
+        messenger.setMockMethodCallHandler(
+          const MethodChannel(kFoldableEventChannel),
+          (call) async {
+            if (call.method == 'listen') listens++;
+            return null;
+          },
+        );
+        try {
+          final observed = _Observed();
+          await tester.pumpWidget(_probeApp(observed, platform: platform));
+          await tester.pumpAndSettle();
+          expect(observed.fold, FoldableData.unsupported);
+          expect(listens, 0);
+          // The real plugin has now completed and cached its Dart stream.
+          // A later snapshot alone is insufficient: native events must resume.
+          available = true;
+          if (recovery == 'resume') {
+            tester.binding.handleAppLifecycleStateChanged(
+              AppLifecycleState.inactive,
+            );
+            tester.binding.handleAppLifecycleStateChanged(
+              AppLifecycleState.resumed,
+            );
+          } else {
+            tester.binding.handleMetricsChanged();
+          }
+          await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+          await tester.pumpAndSettle();
+          expect(observed.fold.status, HingeStatus.fullyOpen);
+          expect(listens, 1);
+          expect(FoldablePlatform.instance, same(globalPlatform));
+          // There is deliberately no metrics or lifecycle notification here.
+          // An event-only hinge change proves that the native listener is live.
+          tester.binding.channelBuffers.push(
+            kFoldableEventChannel,
+            const StandardMethodCodec().encodeSuccessEnvelope({
+              ...wire,
+              'status': 'partiallyOpen',
+              'angleDegrees': 75,
+              'regions': [
+                {
+                  'kind': 'division',
+                  'left': 455,
+                  'top': 0,
+                  'width': 40,
+                  'height': 669,
+                  'active': true,
+                },
+              ],
+            }),
+            (_) {},
+          );
+          await tester.pumpAndSettle();
+          expect(observed.fold.status, HingeStatus.partiallyOpen);
+          expect(observed.fold.angleDegrees, 75);
+          expect(
+            observed.layout.displayFeatures.single.bounds,
+            const Rect.fromLTWH(455, 0, 40, 669),
+          );
+          expect(FoldablePlatform.instance, same(globalPlatform));
+          expect(tester.takeException(), isNull);
+        } finally {
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pumpAndSettle();
+          messenger.setMockMethodCallHandler(
+            const MethodChannel(kFoldableMethodChannel),
+            null,
+          );
+          messenger.setMockMethodCallHandler(
+            const MethodChannel(kFoldableEventChannel),
+            null,
+          );
+        }
+      },
+    );
+  }
+
   testWidgets(
     'camera behind the keyboard reserves no visible-body space and composer stays reachable',
     (tester) async {
