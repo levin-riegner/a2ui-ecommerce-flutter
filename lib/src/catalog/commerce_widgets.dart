@@ -120,61 +120,83 @@ final choiceGroupCatalogItem = CatalogItem(
     properties: {
       'options': A2uiSchemas.stringArrayReference(),
       'selected': A2uiSchemas.stringReference(),
+      'selectionPath': S.string(
+        description:
+            'Optional local data-model path updated before form submission.',
+      ),
       'action': A2uiSchemas.action(),
     },
-    required: ['options', 'action'],
+    required: ['options'],
   ),
   widgetBuilder: (context) {
     final data = _map(context.data);
-    final options =
-        (data['options'] as List<Object?>?)
-            ?.map((option) => option.toString())
-            .toList(growable: false) ??
-        const <String>[];
-    final selected = data['selected']?.toString();
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        for (final option in options)
-          Semantics(
-            button: true,
-            selected: option == selected,
-            label: option,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(99),
-              onTap: () =>
-                  _dispatchChoiceGroupAction(context, data['action'], option),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 9,
-                ),
-                decoration: BoxDecoration(
-                  color: option == selected
-                      ? const Color(0xff18181b)
-                      : Colors.white,
-                  border: Border.all(
-                    color: option == selected
-                        ? const Color(0xff18181b)
-                        : const Color(0xffe4e4e7),
-                  ),
+    return BoundList(
+      dataContext: context.dataContext,
+      value: data['options'],
+      builder: (_, options) => BoundString(
+        dataContext: context.dataContext,
+        value: data['selected'],
+        builder: (_, selected) => Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final option in (options ?? const <Object?>[]).map(
+              (value) => value.toString(),
+            ))
+              Semantics(
+                button: true,
+                selected: option == selected,
+                label: option,
+                child: InkWell(
                   borderRadius: BorderRadius.circular(99),
-                ),
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    color: option == selected
-                        ? Colors.white
-                        : const Color(0xff18181b),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                  onTap: () {
+                    final selectionPath = data['selectionPath'];
+                    if (selectionPath is String &&
+                        selectionPath.startsWith('/')) {
+                      context.dataContext.update(
+                        DataPath(selectionPath),
+                        option,
+                      );
+                    } else {
+                      _dispatchChoiceGroupAction(
+                        context,
+                        data['action'],
+                        option,
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: option == selected
+                          ? const Color(0xff18181b)
+                          : Colors.white,
+                      border: Border.all(
+                        color: option == selected
+                            ? const Color(0xff18181b)
+                            : const Color(0xffe4e4e7),
+                      ),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    child: Text(
+                      option,
+                      style: TextStyle(
+                        color: option == selected
+                            ? Colors.white
+                            : const Color(0xff18181b),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-      ],
+          ],
+        ),
+      ),
     );
   },
 );
@@ -324,6 +346,11 @@ final eyebrowCatalogItem = CatalogItem(
   },
 );
 
+bool _isRemoval(Object? action) =>
+    action is Map &&
+    action['event'] is Map &&
+    (action['event'] as Map)['name'] == 'remove_product';
+
 final productCardCatalogItem = CatalogItem(
   name: 'ProductCard',
   dataSchema: S.object(
@@ -451,7 +478,9 @@ final productCardCatalogItem = CatalogItem(
                                         ),
                                         const SizedBox(width: 8),
                                         Text(
-                                          'Choose this',
+                                          _isRemoval(data['action'])
+                                              ? 'Remove'
+                                              : 'Choose this',
                                           style: Theme.of(buildContext)
                                               .textTheme
                                               .labelMedium,
@@ -564,42 +593,30 @@ final dressingRoomCatalogItem = CatalogItem(
       'spent': A2uiSchemas.stringReference(),
       'left': A2uiSchemas.stringReference(),
       'progress': A2uiSchemas.numberReference(),
-      'dressName': A2uiSchemas.stringReference(),
-      'dressMeta': A2uiSchemas.stringReference(),
-      'dressSwatch': A2uiSchemas.stringReference(),
-      'dressImageAsset': A2uiSchemas.stringReference(),
-      'layerName': A2uiSchemas.stringReference(),
-      'layerMeta': A2uiSchemas.stringReference(),
-      'layerSwatch': A2uiSchemas.stringReference(),
-      'layerImageAsset': A2uiSchemas.stringReference(),
-      'shoesName': A2uiSchemas.stringReference(),
-      'shoesMeta': A2uiSchemas.stringReference(),
-      'shoesSwatch': A2uiSchemas.stringReference(),
-      'shoesImageAsset': A2uiSchemas.stringReference(),
-      'bagName': A2uiSchemas.stringReference(),
-      'bagMeta': A2uiSchemas.stringReference(),
-      'bagSwatch': A2uiSchemas.stringReference(),
-      'bagImageAsset': A2uiSchemas.stringReference(),
+      'slots': A2uiSchemas.listOrReference(
+        description: 'The host-planned dressing-room slots, in journey order.',
+        items: S.object(
+          properties: {
+            for (final field in [
+              'category',
+              'label',
+              'name',
+              'meta',
+              'swatch',
+              'imageAsset',
+              'state',
+            ])
+              field: S.string(),
+          },
+          required: ['category', 'label', 'name', 'meta', 'swatch', 'state'],
+        ),
+      ),
+      'planCaption': A2uiSchemas.stringReference(),
+      for (final slot in ['dress', 'layer', 'shoes', 'bag'])
+        for (final suffix in ['Name', 'Meta', 'Swatch', 'ImageAsset'])
+          '$slot$suffix': A2uiSchemas.stringReference(),
     },
-    required: [
-      'title',
-      'brief',
-      'spent',
-      'left',
-      'progress',
-      'dressName',
-      'dressMeta',
-      'dressSwatch',
-      'layerName',
-      'layerMeta',
-      'layerSwatch',
-      'shoesName',
-      'shoesMeta',
-      'shoesSwatch',
-      'bagName',
-      'bagMeta',
-      'bagSwatch',
-    ],
+    required: ['title', 'brief', 'spent', 'left', 'progress'],
   ),
   widgetBuilder: (context) {
     final data = _map(context.data);
@@ -617,155 +634,130 @@ class _DressingRoomBindings extends StatelessWidget {
   Widget build(BuildContext buildContext) {
     return BoundString(
       dataContext: context.dataContext,
-      value: data['title'],
-      builder: (_, title) => BoundString(
+      value: data['brief'],
+      builder: (_, brief) => BoundString(
         dataContext: context.dataContext,
-        value: data['brief'],
-        builder: (_, brief) => BoundString(
+        value: data['spent'],
+        builder: (_, spent) => BoundString(
           dataContext: context.dataContext,
-          value: data['spent'],
-          builder: (_, spent) => BoundString(
+          value: data['left'],
+          builder: (_, left) => BoundNumber(
             dataContext: context.dataContext,
-            value: data['left'],
-            builder: (_, left) => BoundNumber(
+            value: data['progress'],
+            builder: (_, progress) => BoundString(
               dataContext: context.dataContext,
-              value: data['progress'],
-              builder: (_, progress) => BoundString(
-                dataContext: context.dataContext,
-                value: data['dressName'],
-                builder: (_, dressName) => BoundString(
-                  dataContext: context.dataContext,
-                  value: data['dressMeta'],
-                  builder: (_, dressMeta) => BoundString(
+              value: data['planCaption'],
+              builder: (_, caption) {
+                Widget room(List<_PieceData> pieces) => _DressingRoom(
+                  brief: brief ?? '',
+                  spent: spent ?? '',
+                  left: left ?? '',
+                  progress: progress?.toDouble() ?? 0,
+                  planCaption: caption ?? '',
+                  pieces: pieces,
+                );
+                if (data.containsKey('slots')) {
+                  return BoundList(
                     dataContext: context.dataContext,
-                    value: data['dressSwatch'],
-                    builder: (_, dressSwatch) => BoundString(
-                      dataContext: context.dataContext,
-                      value: data['dressImageAsset'],
-                      builder: (_, dressImageAsset) => BoundString(
-                        dataContext: context.dataContext,
-                        value: data['layerName'],
-                        builder: (_, layerName) => BoundString(
-                          dataContext: context.dataContext,
-                          value: data['layerMeta'],
-                          builder: (_, layerMeta) => BoundString(
-                            dataContext: context.dataContext,
-                            value: data['layerSwatch'],
-                            builder: (_, layerSwatch) => BoundString(
-                              dataContext: context.dataContext,
-                              value: data['layerImageAsset'],
-                              builder: (_, layerImageAsset) => BoundString(
-                                dataContext: context.dataContext,
-                                value: data['shoesName'],
-                                builder: (_, shoesName) => BoundString(
-                                  dataContext: context.dataContext,
-                                  value: data['shoesMeta'],
-                                  builder: (_, shoesMeta) => BoundString(
-                                    dataContext: context.dataContext,
-                                    value: data['shoesSwatch'],
-                                    builder: (_, shoesSwatch) => BoundString(
-                                      dataContext: context.dataContext,
-                                      value: data['shoesImageAsset'],
-                                      builder: (_, shoesImageAsset) => BoundString(
-                                        dataContext: context.dataContext,
-                                        value: data['bagName'],
-                                        builder: (_, bagName) => BoundString(
-                                          dataContext: context.dataContext,
-                                          value: data['bagMeta'],
-                                          builder: (_, bagMeta) => BoundString(
-                                            dataContext: context.dataContext,
-                                            value: data['bagSwatch'],
-                                            builder: (_, bagSwatch) => BoundString(
-                                              dataContext: context.dataContext,
-                                              value: data['bagImageAsset'],
-                                              builder: (_, bagImageAsset) =>
-                                                  _DressingRoom(
-                                                    title: title ?? '',
-                                                    brief: brief ?? '',
-                                                    spent: spent ?? '',
-                                                    left: left ?? '',
-                                                    progress:
-                                                        progress?.toDouble() ??
-                                                        0,
-                                                    pieces: [
-                                                      _PieceData(
-                                                        ProductCategory.dress,
-                                                        'A dress',
-                                                        dressName ?? '',
-                                                        dressMeta ?? '',
-                                                        dressSwatch,
-                                                        dressName?.isNotEmpty ==
-                                                                true
-                                                            ? 'Filled'
-                                                            : 'Next',
-                                                        imageAsset:
-                                                            dressImageAsset ??
-                                                            '',
-                                                      ),
-                                                      _PieceData(
-                                                        ProductCategory.layer,
-                                                        'A layer over it',
-                                                        layerName ?? '',
-                                                        layerMeta ?? '',
-                                                        layerSwatch,
-                                                        layerName?.isNotEmpty ==
-                                                                true
-                                                            ? 'Filled'
-                                                            : 'Empty',
-                                                        imageAsset:
-                                                            layerImageAsset ??
-                                                            '',
-                                                      ),
-                                                      _PieceData(
-                                                        ProductCategory.shoes,
-                                                        'Shoes',
-                                                        shoesName ?? '',
-                                                        shoesMeta ?? '',
-                                                        shoesSwatch,
-                                                        shoesName?.isNotEmpty ==
-                                                                true
-                                                            ? 'Filled'
-                                                            : 'Choosing on the left',
-                                                        imageAsset:
-                                                            shoesImageAsset ??
-                                                            '',
-                                                      ),
-                                                      _PieceData(
-                                                        ProductCategory.bag,
-                                                        'A bag',
-                                                        bagName ?? '',
-                                                        bagMeta ?? '',
-                                                        bagSwatch,
-                                                        bagName?.isNotEmpty ==
-                                                                true
-                                                            ? 'Filled'
-                                                            : 'Empty',
-                                                        imageAsset:
-                                                            bagImageAsset ?? '',
-                                                      ),
-                                                    ],
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                    value: data['slots'],
+                    builder: (_, rows) => room([
+                      for (final row in rows ?? const <Object?>[])
+                        if (row is Map &&
+                            _slotCategory(row['category']) != null)
+                          _PieceData(
+                            _slotCategory(row['category'])!,
+                            row['label']?.toString() ?? '',
+                            row['name']?.toString() ?? '',
+                            row['meta']?.toString() ?? '',
+                            row['swatch']?.toString(),
+                            row['state']?.toString() ?? 'Empty',
+                            imageAsset: row['imageAsset']?.toString() ?? '',
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+                    ]),
+                  );
+                }
+                // Older showcase fixtures bind the original four named slots.
+                return _LegacyPieceBindings(
+                  context: context,
+                  data: data,
+                  builder: room,
+                );
+              },
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+ProductCategory? _slotCategory(Object? value) {
+  for (final category in ProductCategory.values) {
+    if (category.name == value) return category;
+  }
+  return null;
+}
+
+class _LegacyPieceBindings extends StatelessWidget {
+  const _LegacyPieceBindings({
+    required this.context,
+    required this.data,
+    required this.builder,
+  });
+
+  final CatalogItemContext context;
+  final Map<String, Object?> data;
+  final Widget Function(List<_PieceData>) builder;
+
+  @override
+  Widget build(BuildContext buildContext) {
+    const labels = {
+      'dress': 'A dress',
+      'layer': 'A layer over it',
+      'shoes': 'Shoes',
+      'bag': 'A bag',
+    };
+    final fields = [
+      for (final slot in labels.keys)
+        for (final suffix in ['Name', 'Meta', 'Swatch', 'ImageAsset'])
+          '$slot$suffix',
+    ];
+    Widget bind(int index, Map<String, String> values) {
+      if (index < fields.length) {
+        final field = fields[index];
+        return BoundString(
+          dataContext: context.dataContext,
+          value: data[field],
+          builder: (_, value) =>
+              bind(index + 1, {...values, field: value ?? ''}),
+        );
+      }
+      final next = labels.keys
+          .where(
+            (slot) =>
+                values['${slot}Name']!.isEmpty &&
+                values['${slot}Meta'] == 'Choosing on the left',
+          )
+          .firstOrNull;
+      return builder([
+        for (final entry in labels.entries)
+          _PieceData(
+            _slotCategory(entry.key)!,
+            entry.value,
+            values['${entry.key}Name']!,
+            values['${entry.key}Meta']!,
+            values['${entry.key}Swatch'],
+            values['${entry.key}Name']!.isNotEmpty
+                ? 'Filled'
+                : entry.key == next
+                ? 'Next'
+                : 'Empty',
+            imageAsset: values['${entry.key}ImageAsset']!,
+          ),
+      ]);
+    }
+
+    return bind(0, {});
   }
 }
 
@@ -791,20 +783,20 @@ class _PieceData {
 
 class _DressingRoom extends StatelessWidget {
   const _DressingRoom({
-    required this.title,
     required this.brief,
     required this.spent,
     required this.left,
     required this.progress,
     required this.pieces,
+    required this.planCaption,
   });
 
-  final String title;
   final String brief;
   final String spent;
   final String left;
   final double progress;
   final List<_PieceData> pieces;
+  final String planCaption;
 
   @override
   Widget build(BuildContext context) {
@@ -826,38 +818,26 @@ class _DressingRoom extends StatelessWidget {
             left: left,
             progress: progress,
           );
-          final rack = fourAcross
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (var index = 0; index < pieces.length; index++) ...[
-                      if (index > 0) const SizedBox(width: 12),
-                      Expanded(
-                        child: _PieceCard(piece: pieces[index], compact: true),
-                      ),
-                    ],
-                  ],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _PieceCard(piece: pieces.first, compact: false),
+          final rack = LayoutBuilder(
+            builder: (_, rackConstraints) {
+              final columns = fourAcross
+                  ? (rackConstraints.maxWidth / 105).floor().clamp(1, 4)
+                  : (rackConstraints.maxWidth / 140).floor().clamp(1, 2);
+              final cardWidth =
+                  (rackConstraints.maxWidth - (columns - 1) * 12) / columns;
+              return Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  for (final piece in pieces)
+                    SizedBox(
+                      width: cardWidth,
+                      child: _PieceCard(piece: piece, compact: fourAcross),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          _PieceCard(piece: pieces[1], compact: false),
-                          const SizedBox(height: 10),
-                          _PieceCard(piece: pieces[2], compact: false),
-                          const SizedBox(height: 10),
-                          _PieceCard(piece: pieces[3], compact: false),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
+                ],
+              );
+            },
+          );
           return Padding(
             padding: EdgeInsets.all(innerPadding),
             child: Column(
@@ -906,6 +886,13 @@ class _DressingRoom extends StatelessWidget {
                     brief,
                     style: Theme.of(context).textTheme.bodySmall
                         ?.copyWith(color: const Color(0xff71717a)),
+                  ),
+                ],
+                if (planCaption.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    planCaption,
+                    style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ],
                 const SizedBox(height: 14),
@@ -1029,11 +1016,13 @@ class _PieceCard extends StatelessWidget {
       ProductCategory.bag ||
       ProductCategory.accessory => compact ? 76.0 : 100.0,
     };
-    final isChoosing = piece.state == 'Choosing on the left';
+    final isChoosing =
+        piece.state == 'Next' || piece.state == 'Choosing on the left';
     final labelColor = filled || isChoosing
         ? const Color(0xff18181b)
         : const Color(0xff71717a);
     return Column(
+      key: ValueKey('dressing-slot-${piece.category.name}'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(

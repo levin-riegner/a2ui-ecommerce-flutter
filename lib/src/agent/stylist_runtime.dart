@@ -7,6 +7,8 @@ import 'package:schemantic/schemantic.dart';
 
 import '../data/models.dart';
 import 'stylist_surfaces.dart';
+import 'outfit_plan.dart';
+import 'stylist_brief.dart';
 
 typedef StylistModel = Future<ModelResponse> Function(ModelRequest request);
 
@@ -21,8 +23,18 @@ const _instructions =
     'Consider the remaining budget and suggest a small coherent set. Your final response should '
     'be concise natural language. The host constructs A2UI cards from your validated choices and '
     'records outfit selections; do not output UI markup or claim a selection happened unless the host says so. '
-    'After the host records a selection or removal, briefly acknowledge it without searching '
-    'or presenting more products unless the person asks for alternatives.';
+    'A selection is the next conversational turn: explain why the piece works, then search '
+    'and present choices for the host next category immediately. A removal reopens that category. '
+    'Follow the host outfit plan and retained preferences; do not ask again for settled information. '
+    'When complete, explain how the pieces work together and invite keeping the look or swapping '
+    'a piece. If nothing fits the budget, ask to raise it or replace a selected piece. '
+    'The host displays all financial amounts: do not state prices, spent totals or remaining '
+    'amounts in your prose. Focus on styling and the next decision. '
+    'For verbal choices (including the second one), call add_to_outfit with an ID from '
+    'Last presented IDs. For verbal removal call remove_from_outfit with a selected ID. '
+    'Call save_outfit to record explicit changes to style, season, occasion or preferences; '
+    'never assume missing dressCode or budget. After an edit, use the updated tool result '
+    'to search and present the next category in the same turn.';
 
 SchemanticType<Map<String, dynamic>> _object(Map<String, Object?> schema) =>
     SchemanticType.from(
@@ -69,6 +81,24 @@ final _presentSchema = _object({
   'additionalProperties': false,
 });
 
+final _productIdSchema = _object({
+  'type': 'object',
+  'properties': {
+    'productId': {'type': 'string'},
+  },
+  'required': ['productId'],
+  'additionalProperties': false,
+});
+final _briefSchema = _object({
+  'type': 'object',
+  'properties': {
+    for (final name in ['occasion', 'dressCode', 'season', 'palette', 'notes'])
+      name: {'type': 'string'},
+    'budget': {'type': 'number', 'minimum': 0},
+  },
+  'additionalProperties': false,
+});
+
 double? parseStylistBudget(String message) {
   final match = RegExp(
     r'(?:€|EUR)\s*([0-9][0-9.,\s]*[0-9]|[0-9])|([0-9][0-9.,\s]*[0-9]|[0-9])\s*(?:€|EUR\b)',
@@ -95,6 +125,7 @@ class StylistRuntime {
     ModelResponse Function(ModelResponse)? normalizeResponse,
     bool developerTools = false,
     this.onBeginTurn,
+    this.onModelRequest,
     this.onCancelTurn,
   }) : ai = Genkit(
          plugins: plugins,
@@ -109,25 +140,86 @@ class StylistRuntime {
         if (++scope.requests > 4) {
           throw StateError('Model request limit reached');
         }
-        if (scope.requests == 3 &&
-            scope.picks.isEmpty &&
-            scope.searchFoundProducts) {
-          // Reserve the last tool-capable request for displaying catalog cards.
-          // A third search would leave only the prose-only fourth request.
-          request = ModelRequest.fromJson({
-            ...request.toJson(),
-            'tools': request.tools!
-                .where((tool) => tool.name == 'present_products')
-                .map((tool) => tool.toJson())
-                .toList(),
-          });
-        } else if (scope.requests == 4) {
+        final needsPicks = scope.needsProducts && scope.picks.isEmpty;
+        final forceSearch =
+            needsPicks && scope.searches == 0 && !scope.allowEdits;
+        final forcePresentation =
+            needsPicks && scope.searchFoundProducts && scope.requests == 3;
+        if (scope.requests == 4 ||
+            scope.picks.isNotEmpty ||
+            (scope.target == null &&
+                scope.plan?.complete == true &&
+                !scope.allowEdits)) {
           request = ModelRequest.fromJson({
             ...request.toJson(),
             'tools': [],
             'toolChoice': 'none',
           });
+        } else if (scope.plan?.complete == true &&
+            scope.allowEdits &&
+            (scope.target == null || scope.removing)) {
+          request = ModelRequest.fromJson({
+            ...request.toJson(),
+            'tools': request.tools!
+                .where(
+                  (tool) => [
+                    'save_outfit',
+                    'add_to_outfit',
+                    'remove_from_outfit',
+                  ].contains(tool.name),
+                )
+                .map((tool) => tool.toJson())
+                .toList(),
+          });
+        } else if (forceSearch || forcePresentation) {
+          request = ModelRequest.fromJson({
+            ...request.toJson(),
+            'tools': request.tools!
+                .where(
+                  (tool) =>
+                      tool.name ==
+                      (forceSearch ? 'search_products' : 'present_products'),
+                )
+                .map((tool) => tool.toJson())
+                .toList(),
+            'toolChoice': 'any',
+          });
+        } else if (needsPicks && scope.searchFoundProducts) {
+          request = ModelRequest.fromJson({
+            ...request.toJson(),
+            'toolChoice': 'any',
+          });
         }
+        if (scope.searches > 0 && request.tools?.isNotEmpty == true) {
+          request = ModelRequest.fromJson({
+            ...request.toJson(),
+            'tools': request.tools!
+                .where(
+                  (tool) => [
+                    'search_products',
+                    'present_products',
+                  ].contains(tool.name),
+                )
+                .map((tool) => tool.toJson())
+                .toList(),
+          });
+        }
+        // Tool edits update the same draft; every subsequent model request sees
+        // the revised plan and financial facts rather than stale opening state.
+        request = ModelRequest.fromJson({
+          ...request.toJson(),
+          'messages': request.messages
+              .map(
+                (message) => message.role == Role.system
+                    ? Message(
+                        role: Role.system,
+                        content: [TextPart(text: _systemFor(scope))],
+                      ).toJson()
+                    : message.toJson(),
+              )
+              .toList(),
+        });
+        onModelRequest?.call(request);
         ModelResponse response;
         if (model != null) {
           response = await model(request);
@@ -152,6 +244,19 @@ class StylistRuntime {
                 response.message!.content.any((part) => part.isToolRequest))) {
           throw StateError('Incomplete model response');
         }
+        final allowedTools =
+            request.tools?.map((tool) => tool.name).toSet() ?? <String>{};
+        if (response.message!.content.any(
+          (part) =>
+              part.isToolRequest &&
+              !allowedTools.contains(part.toolRequest!.name),
+        )) {
+          throw StateError('Stylist requested an unavailable tool');
+        }
+        if (request.toolChoice == 'any' &&
+            !response.message!.content.any((part) => part.isToolRequest)) {
+          throw StateError('Stylist did not continue the outfit journey');
+        }
         return response;
       },
     );
@@ -159,7 +264,7 @@ class StylistRuntime {
       name: 'search_products',
       description:
           'Search the local fictional fashion catalog before offering products. '
-          'Returns authoritative facts and IDs. Use priceMax for the remaining outfit budget. '
+          'Returns authoritative facts and IDs. Use priceMax for the host available next-category budget, which refunds replaced pieces. '
           'Optional facet filters are exact catalog terms: '
           'category (${ProductCategory.values.map((value) => value.name).join(', ')}), '
           'season (${products.map((product) => product.season).where((value) => value.isNotEmpty).toSet().join(', ')}), '
@@ -170,21 +275,50 @@ class StylistRuntime {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
         final state = scope.state;
-        final remaining = state.remaining;
+        if (!state.briefState.canSearch) {
+          return ToolResult.response({
+            'error': 'First save the missing brief fields',
+            'missingFields': state.briefState.missingFields,
+          });
+        }
+        scope.searches++;
+        final available = scope.availableBudget;
         final cap = min(
-          remaining,
-          (input['priceMax'] as num?)?.toDouble() ?? remaining,
+          available,
+          (input['priceMax'] as num?)?.toDouble() ?? available,
         );
-        final found = searchStylistProducts(products, {
+        final filters = <String, dynamic>{
           ...input,
+          if (scope.target != null) 'category': scope.target!.name,
           'priceMax': cap,
-        });
+        };
+        // The first search uses the settled journey facets; subsequent searches
+        // may broaden them, while the next outfit category remains authoritative.
+        if (scope.searches == 1) {
+          if (state.catalogOccasion.isNotEmpty &&
+              !filters.containsKey('occasion')) {
+            filters['occasion'] = state.catalogOccasion;
+          }
+          if (state.season.isNotEmpty && !filters.containsKey('season')) {
+            filters['season'] = state.season;
+          }
+        }
+        var found = searchStylistProducts(products, filters);
+        if (found.isEmpty && scope.target != null) {
+          found = searchStylistProducts(products, {
+            'query': input['query'],
+            'category': scope.target!.name,
+            'priceMax': cap,
+            'limit': input['limit'] ?? 6,
+          });
+        }
         if (found.isNotEmpty) scope.searchFoundProducts = true;
         for (final product in found) {
           state.seen[product.id] = product;
         }
         return ToolResult.response({
           'products': found.map(productFacts).toList(),
+          'nextCategory': scope.target?.name,
         });
       },
     );
@@ -206,13 +340,89 @@ class StylistRuntime {
                 'Choose 1 to 5 unique IDs from this session search results',
           });
         }
-        if (ids.any((id) => state.seen[id]!.price > state.remaining)) {
+        if (scope.target != null &&
+            ids.any((id) => state.seen[id]!.category != scope.target)) {
+          return ToolResult.response({
+            'error':
+                'Present choices for the next category: ${scope.target!.name}',
+          });
+        }
+        if (ids.any((id) => state.seen[id]!.price > scope.availableBudget)) {
           return ToolResult.response({
             'error': 'Presentation exceeds the remaining budget; search for cheaper options',
           });
         }
         scope.picks = ids.map((id) => state.seen[id]!).toList();
         return ToolResult.response({'presentedIds': ids});
+      },
+    );
+    ai.defineTool(
+      name: 'save_outfit',
+      description: 'Save explicit occasion, dressCode, season, budget, palette or notes from the person. Never invent missing fields. Returns the authoritative next step.',
+      inputSchema: _briefSchema,
+      fn: (input, context) async {
+        final scope = _scope;
+        scope.cancel.token.throwIfCancelled();
+        try {
+          final next = scope.state.briefState.merge(
+            Map<String, Object?>.from(input),
+          );
+          if (next.budget != null && next.budget! < scope.state.spent) {
+            return ToolResult.response({
+              'error': 'Budget is below selected outfit total',
+            });
+          }
+          scope.state.briefState = next;
+          scope.allowEdits = false;
+          _refreshProgress(scope, requested: scope.requested);
+          return ToolResult.response(_progressFacts(scope));
+        } on FormatException catch (error) {
+          return ToolResult.response({'error': error.message});
+        }
+      },
+    );
+    ai.defineTool(
+      name: 'add_to_outfit',
+      description: 'Record a verbal selection using a productId from the last presented choices, including ordinal choices such as the second one. Never select an unpresented ID. Then continue with the returned next category.',
+      inputSchema: _productIdSchema,
+      fn: (input, context) async {
+        final scope = _scope;
+        scope.cancel.token.throwIfCancelled();
+        final id = input['productId'];
+        if (!scope.state.lastPresented.contains(id)) {
+          return ToolResult.response({
+            'error': 'Choose an ID from the last presented choices',
+          });
+        }
+        try {
+          final product = _recordSelection(scope.state, id);
+          scope.confirmations.add('Selected ${product.name}.');
+          scope.allowEdits = false;
+          scope.picks = [];
+          _refreshProgress(scope);
+          return ToolResult.response(_progressFacts(scope));
+        } on StateError catch (error) {
+          return ToolResult.response({'error': error.message});
+        }
+      },
+    );
+    ai.defineTool(
+      name: 'remove_from_outfit',
+      description: 'Record a verbal removal using the productId of an item currently in the host outfit. Reopen the removed category immediately.',
+      inputSchema: _productIdSchema,
+      fn: (input, context) async {
+        final scope = _scope;
+        scope.cancel.token.throwIfCancelled();
+        try {
+          final removed = _recordRemoval(scope.state, input['productId']);
+          scope.confirmations.add('Removed ${removed.name}.');
+          scope.allowEdits = false;
+          scope.picks = [];
+          _refreshProgress(scope, requested: removed.category);
+          return ToolResult.response(_progressFacts(scope));
+        } on StateError catch (error) {
+          return ToolResult.response({'error': error.message});
+        }
       },
     );
     flow = ai.defineFlow(
@@ -226,6 +436,7 @@ class StylistRuntime {
   final Genkit ai;
   final List<Product> products;
   final void Function()? onBeginTurn;
+  final void Function(ModelRequest request)? onModelRequest;
   final void Function()? onCancelTurn;
   late final Flow<Map<String, dynamic>, Map<String, dynamic>, void, void> flow;
   final _zoneKey = Object();
@@ -241,7 +452,12 @@ class StylistRuntime {
     },
   };
 
-  void reset() => _state = _StylistState();
+  void reset({DemoJourney? journey}) => _state = _StylistState()
+    ..brief = journey == null ? '' : '${journey.title}. ${journey.brief}'
+    ..briefState = journey == null
+        ? const StylistBrief()
+        : StylistBrief.fromJourney(journey)
+    ..catalogOccasion = journey?.catalogOccasion ?? '';
 
   Future<Map<String, dynamic>> turn(
     Map<String, dynamic> input, {
@@ -309,32 +525,29 @@ class StylistRuntime {
       throw const FormatException('A message or action is required');
     }
     var actionNote = '';
-    String? actionConfirmation;
+    ProductCategory? removedCategory;
     if (action != null) {
-      final id = (action['context'] as Map)['productId'];
-      if (action['name'] == 'select_product') {
-        final product = state.seen[id];
-        if (product == null) {
-          throw StateError('Product was not returned by a catalog search');
+      final context = action['context'] as Map;
+      if (action['name'] == 'find_options') {
+        final next = state.briefState.merge({
+          for (final name in ['dressCode', 'season', 'budget'])
+            if (context[name] != null) name: context[name],
+        });
+        if (next.budget != null && next.budget! < state.spent) {
+          throw StateError('Budget is below the selected outfit total');
         }
-        final slot = product.category.name;
-        if (state.budget != null &&
-            state.spent - (state.outfit[slot]?.price ?? 0) + product.price >
-                state.budget!) {
-          throw StateError('Selection exceeds the outfit budget');
-        }
-        state.outfit[slot] = product;
-        actionConfirmation = 'Selected ${product.name}.';
+        state.briefState = next;
+        actionNote = 'The person confirmed the brief: ${next.toMap()}.';
+      } else if (action['name'] == 'select_product') {
+        final product = _recordSelection(state, context['productId']);
+        scope.confirmations.add('Selected ${product.name}.');
         actionNote =
-            'The person selected ${product.name} (${euro(product.price)}) for $slot. The host recorded it.';
+            'The person selected ${product.name} for ${product.category.name}. The host recorded it.';
       } else if (action['name'] == 'remove_product') {
-        final slots = state.outfit.keys
-            .where((slot) => state.outfit[slot]!.id == id)
-            .toList();
-        if (slots.isEmpty) throw StateError('Product is not in the outfit');
-        final removed = state.outfit.remove(slots.single)!;
-        actionConfirmation = 'Removed ${removed.name}.';
-        actionNote = 'The person removed product $id from the outfit.';
+        final removed = _recordRemoval(state, context['productId']);
+        removedCategory = removed.category;
+        scope.confirmations.add('Removed ${removed.name}.');
+        actionNote = 'The person removed ${removed.name} from the outfit.';
       } else {
         throw StateError('Unsupported action');
       }
@@ -344,11 +557,27 @@ class StylistRuntime {
       if (budget < state.spent) {
         throw StateError('Budget is below the selected outfit total');
       }
-      state.budget = budget;
+      state.briefState = state.briefState.merge({'budget': budget});
     }
     if (message.isNotEmpty) {
-      state.occasion = message.substring(0, min(message.length, 120));
+      if (state.brief.isEmpty) {
+        state.brief = message;
+      } else if (message != state.brief) {
+        state.preferences.add(message);
+      }
     }
+    state.briefState = state.briefState.recordMessage(message, budget: budget);
+    final openingJourney =
+        state.catalogOccasion.isNotEmpty && message == state.brief;
+    scope.requested =
+        (openingJourney ? null : _requestedCategory(message)) ??
+        removedCategory;
+    scope.allowEdits = message.isNotEmpty && !openingJourney;
+    scope.removing = RegExp(
+      r'\b(?:remove|drop|reject|discard)\b',
+      caseSensitive: false,
+    ).hasMatch(message);
+    _refreshProgress(scope, requested: scope.requested);
     state.turn++;
     final response = await ai.generate(
       model: modelRef('stylist/model'),
@@ -363,9 +592,14 @@ class StylistRuntime {
           ],
         ),
       ],
-      system:
-          '$_instructions\nBudget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. Already spent: ${euro(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : euro(state.remaining)}.',
-      toolNames: ['search_products', 'present_products'],
+      system: _systemFor(scope),
+      toolNames: [
+        'search_products',
+        'present_products',
+        'save_outfit',
+        'add_to_outfit',
+        'remove_from_outfit',
+      ],
       maxTurns: 4,
       cancel: scope.cancel.token,
     );
@@ -381,15 +615,33 @@ class StylistRuntime {
               ? 'Tell me the occasion and budget, and I can find some options.'
               : 'Here are a few options from the catalog.')
         : response.text.trim();
-    // Click confirmations use the same authoritative state as the budget panel.
-    // Do not let a model's arithmetic contradict the recorded selection.
-    final reply = actionConfirmation != null && message.isEmpty
-        ? '$actionConfirmation${state.budget == null ? '' : ' ${euro(state.remaining)} left in your budget.'}'
-        : generatedReply;
-    if (actionConfirmation != null &&
-        message.isEmpty &&
-        state.history.isNotEmpty &&
-        state.history.last.role == Role.model) {
+    if (scope.needsProducts && scope.picks.isEmpty) {
+      throw StateError('Stylist did not present the next outfit choices');
+    }
+    // Financial facts belong to the host; retain stylist guidance separately.
+    final guidance = _withoutFinancialProse(generatedReply);
+    final plan = scope.plan!;
+    final hostFacts = scope.confirmations.isEmpty
+        ? ''
+        : '${scope.confirmations.join(' ')}${state.budget == null ? '' : ' ${euro(state.remaining)} left in your budget.'}';
+    final nextStep = !state.briefState.canSearch
+        ? 'Tell me ${state.briefState.missingFields.map((field) => field == 'dressCode' ? 'the style or dress code' : 'your budget').join(' and ')} so I can find the right pieces.'
+        : scope.target == null && plan.complete
+        ? 'Your look is complete. Keep it, or tell me which piece you want to swap.'
+        : scope.needsProducts
+        ? 'Next, choose ${_categoryLabel(scope.target!)} to continue the look.'
+        : 'There are no ${_categoryLabel(scope.target!)} in the catalog within the available budget. '
+              'Would you like to raise the budget or replace a selected piece?';
+    final reply = [
+      hostFacts,
+      guidance,
+      if (scope.confirmations.isNotEmpty ||
+          plan.complete ||
+          !scope.needsProducts)
+        nextStep,
+    ].where((text) => text.isNotEmpty).join('\n\n');
+    state.lastPresented = scope.picks.map((product) => product.id).toList();
+    if (state.history.isNotEmpty && state.history.last.role == Role.model) {
       state.history[state.history.length - 1] = Message(
         role: Role.model,
         content: [TextPart(text: reply)],
@@ -398,6 +650,8 @@ class StylistRuntime {
     return {
       'reply': reply,
       'products': scope.picks.map(productFacts).toList(),
+      'brief': state.briefState.toMap(),
+      'missingFields': state.briefState.missingFields,
       'outfit': {
         'budget': state.budget,
         'items': {
@@ -410,9 +664,98 @@ class StylistRuntime {
         picks: scope.picks,
         outfit: state.outfit,
         budget: state.budget,
-        occasion: state.occasion,
+        occasion: state.briefState.summary,
+        clarification: state.briefState.canSearch
+            ? null
+            : {
+                'missingFields': state.briefState.missingFields,
+                ...state.briefState.toMap(),
+              },
+        plan: plan,
+        nextCategory: scope.target,
       ),
     };
+  }
+
+  Product _recordSelection(_StylistState state, Object? id) {
+    final product = state.seen[id];
+    if (product == null) {
+      throw StateError('Product was not returned by a catalog search');
+    }
+    final candidate = Map<String, Product>.of(state.outfit);
+    removeConflictingFoundation(candidate, product.category);
+    candidate[product.category.name] = product;
+    final total = candidate.values.fold<double>(
+      0,
+      (sum, item) => sum + item.price,
+    );
+    if (state.budget != null && total > state.budget!) {
+      throw StateError('Selection exceeds the outfit budget');
+    }
+    state.outfit = candidate;
+    return product;
+  }
+
+  Product _recordRemoval(_StylistState state, Object? id) {
+    final slots = state.outfit.keys
+        .where((slot) => state.outfit[slot]!.id == id)
+        .toList();
+    if (slots.isEmpty) throw StateError('Product is not in the outfit');
+    return state.outfit.remove(slots.single)!;
+  }
+
+  void _refreshProgress(_TurnScope scope, {ProductCategory? requested}) {
+    final state = scope.state;
+    final plan = OutfitPlan.from(
+      brief: state.briefState.planningText,
+      outfit: state.outfit,
+    );
+    scope.plan = plan;
+    scope.target = state.briefState.canSearch
+        ? requested ?? plan.nextCategory
+        : null;
+    scope.needsProducts =
+        scope.target != null &&
+        products.any(
+          (product) =>
+              product.category == scope.target &&
+              product.price <= scope.availableBudget,
+        );
+  }
+
+  Map<String, Object?> _progressFacts(_TurnScope scope) => {
+    'brief': scope.state.briefState.toMap(),
+    'missingFields': scope.state.briefState.missingFields,
+    'outfit': scope.state.outfit.values.map(productFacts).toList(),
+    'spent': scope.state.spent,
+    'remaining': scope.state.budget == null ? null : scope.state.remaining,
+    'availableForNextCategory': scope.state.budget == null
+        ? null
+        : scope.availableBudget,
+    'nextCategory': scope.target?.name,
+    'complete': scope.plan!.complete,
+  };
+
+  String _systemFor(_TurnScope scope) {
+    final state = scope.state;
+    final plan = scope.plan!;
+    final next = !state.briefState.canSearch
+        ? 'Searching is blocked. Ask only for missing fields: ${state.briefState.missingFields.join(', ')}. Save explicit answers with save_outfit.'
+        : scope.target == null && plan.complete
+        ? 'The outfit is complete. Summarize it, identify any weakest piece, and offer keep or swap.'
+        : scope.needsProducts
+        ? 'Search and present this category now; do not stop at an acknowledgement.'
+        : 'No affordable catalog choices for this category. Explain that limit and offer a budget change or replacing a selected piece.';
+    return '$_instructions\nRetained original brief: ${state.brief}. '
+        'Preferences: ${state.preferences.join('; ')}. Settled brief: ${state.briefState.toMap()}.\n'
+        'Budget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. '
+        'Already spent: ${euro(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : euro(state.remaining)}.\n'
+        'Host outfit facts: ${state.outfit.values.map(productFacts).toList()}.\n'
+        'Last presented IDs, in display order: ${state.lastPresented}.\n'
+        'Plan: ${plan.slots.map((slot) => slot.name).join(', ')}. '
+        'Progress: ${plan.filledCount} of ${plan.slots.length}.\n'
+        'Next category: ${scope.target?.name ?? 'none'}. '
+        'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : euro(scope.availableBudget)}. $next';
   }
 
   Future<void> dispose() async {
@@ -425,13 +768,64 @@ class StylistRuntime {
   }
 }
 
+ProductCategory? _requestedCategory(String message) {
+  final text = message.toLowerCase().replaceAll(
+    RegExp(r'\bdress[ -]*code\b|\bdressing[ -]*code\b'),
+    'style',
+  );
+  final matches = <ProductCategory>[];
+  for (final entry in {
+    ProductCategory.dress: r'\bdress(?:es)?\b',
+    ProductCategory.top: r'\b(?:tops?|shirts?|knits?|blouses?)\b',
+    ProductCategory.bottom:
+        r'\b(?:bottoms?|trousers?|pants?|shorts?|skirts?)\b',
+    ProductCategory.layer: r'\b(?:layers?|jackets?|coats?|outerwear)\b',
+    ProductCategory.shoes:
+        r'\b(?:shoes?|boots?|sandals?|heels?|trainers?|sneakers?)\b',
+    ProductCategory.bag: r'\b(?:bags?|totes?|handbags?)\b',
+    ProductCategory.accessory:
+        r'\b(?:accessor(?:y|ies)|jewell?ery|scarves?|belts?)\b',
+  }.entries) {
+    if (RegExp(entry.value).hasMatch(text)) matches.add(entry.key);
+  }
+  // Broad multi-category briefs follow the planner; one requested category can
+  // deliberately jump ahead or reopen a settled slot for alternatives.
+  return matches.length == 1 ? matches.single : null;
+}
+
+String _categoryLabel(ProductCategory category) => switch (category) {
+  ProductCategory.dress => 'a dress',
+  ProductCategory.top => 'a top',
+  ProductCategory.bottom => 'bottoms',
+  ProductCategory.layer => 'a layer',
+  ProductCategory.shoes => 'shoes',
+  ProductCategory.bag => 'a bag',
+  ProductCategory.accessory => 'an accessory',
+};
+
+String _withoutFinancialProse(String text) => text
+    .split(RegExp(r'(?<=[.!?])\s+|\n+'))
+    .where(
+      (sentence) => !RegExp(
+        r'€|\bEUR\b|\beuros?\b|\$\d|\b(?:remaining|left|spent|budget|total|cost)\b[^.!?]*\d|\d[^.!?]*\b(?:left|remaining|spent)\b',
+        caseSensitive: false,
+      ).hasMatch(sentence),
+    )
+    .join(' ')
+    .trim();
+
 class _StylistState {
   int turn = 0;
   List<Message> history = [];
   Map<String, Product> seen = {};
   Map<String, Product> outfit = {};
-  double? budget;
-  String occasion = '';
+  StylistBrief briefState = const StylistBrief();
+  double? get budget => briefState.budget;
+  String brief = '';
+  List<String> preferences = [];
+  String catalogOccasion = '';
+  String get season => briefState.season;
+  List<String> lastPresented = [];
   double get spent => outfit.values.fold(0, (sum, p) => sum + p.price);
   double get remaining =>
       budget == null ? double.infinity : max(0, budget! - spent);
@@ -440,8 +834,11 @@ class _StylistState {
     ..history = List.of(history)
     ..seen = Map.of(seen)
     ..outfit = Map.of(outfit)
-    ..budget = budget
-    ..occasion = occasion;
+    ..briefState = briefState
+    ..brief = brief
+    ..preferences = List.of(preferences)
+    ..catalogOccasion = catalogOccasion
+    ..lastPresented = List.of(lastPresented);
 }
 
 class _TurnScope {
@@ -450,6 +847,28 @@ class _TurnScope {
   final CancellationController cancel;
   int requests = 0;
   bool searchFoundProducts = false;
+  int searches = 0;
+  OutfitPlan? plan;
+  ProductCategory? target;
+  bool needsProducts = false;
+  bool allowEdits = false;
+  bool removing = false;
+  ProductCategory? requested;
+  List<String> confirmations = [];
+  double get availableBudget {
+    if (target == null) return state.remaining;
+    final candidate = Map<String, Product>.of(state.outfit);
+    removeConflictingFoundation(candidate, target!);
+    candidate.remove(target!.name);
+    final spent = candidate.values.fold<double>(
+      0,
+      (sum, item) => sum + item.price,
+    );
+    return state.budget == null
+        ? double.infinity
+        : max(0, state.budget! - spent);
+  }
+
   List<Product> picks = [];
 }
 
@@ -542,15 +961,32 @@ Future<ModelResponse> offlineStylistModel(ModelRequest request) async {
         ),
       ),
     ];
-  } else if (result != null) {
+  } else if (result?.name == 'search_products') {
     content = [TextPart(text: 'Offline preview: try another catalog search.')];
+  } else if (request.messages
+      .where((message) => message.role == Role.system)
+      .any((message) => message.text.contains('Searching is blocked'))) {
+    content = [TextPart(text: 'Let’s settle the brief first.')];
   } else {
     content = [
       ToolRequestPart(
         toolRequest: ToolRequest(
           name: 'search_products',
           ref: 'preview-search',
-          input: {'query': 'dress', 'limit': 2},
+          input: {
+            'query': '',
+            'category':
+                RegExp(r'Next category: (\w+)')
+                    .firstMatch(
+                      request.messages
+                          .where((message) => message.role == Role.system)
+                          .map((message) => message.text)
+                          .join(' '),
+                    )
+                    ?.group(1) ??
+                'dress',
+            'limit': 2,
+          },
         ),
       ),
     ];

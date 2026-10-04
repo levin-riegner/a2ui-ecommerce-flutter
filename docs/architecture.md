@@ -11,7 +11,7 @@ The sample keeps four concerns separate:
 
 The setup dialog collects a provider, model ID, API key, and an optional compatible API base URL. `GenkitAgent.connect` loads the bundled catalog and creates an isolated `StylistRuntime` and official provider plugin. Setup makes no network request. There is no service URL, server session token, or Node backend in the app.
 
-`StylistRuntime` defines the `stylistTurn` Genkit flow and `search_products` / `present_products` tools. Genkit manages native conversation history and the tool loop. Search ranks local products and caps prices at the remaining outfit budget. Presentation accepts only one to five unique IDs already returned by search, and checks the remaining budget again. Selection and removal validate host state before model generation; lowering the budget below already-selected spending is rejected. The host constructs fixed commerce A2UI surfaces from authoritative catalog facts rather than accepting model-generated card facts or arbitrary markup.
+`StylistRuntime` defines the `stylistTurn` Genkit flow and catalog search, presentation, brief-saving, and outfit-editing tools. Genkit manages native conversation history and the tool loop. Search ranks local products and caps prices at the available outfit budget, accounting for pieces released by a replacement. Presentation accepts only one to five unique IDs already returned by search, and checks the available budget again. Selection and removal validate host state before model generation; lowering the budget below already-selected spending is rejected. The host constructs commerce A2UI surfaces from authoritative catalog facts rather than accepting model-generated card facts or arbitrary markup.
 
 Each interaction works on a draft of the conversation, seen products, outfit, budget, and turn number. Only a successful complete generation commits it. Generation is serialized per connection, limited to four provider requests and a 60-second turn deadline; the fourth generation requests prose only. Failed or cancelled turns preserve prior state and remain retryable. Starting a new journey clears the previous outfit and surfaces.
 
@@ -38,6 +38,14 @@ The catalog includes the basic GenUI catalog plus a small extensible commerce vo
 - `BudgetSlider`
 
 The flow is `brief → picks → complete look`. The dressing room is created once and updated through its data model. Recommendation surfaces can be replaced on each turn. This keeps the host-owned responsive shell stable while allowing the agent-generated content to evolve.
+
+`OutfitPlan` derives the required pieces from the brief and selected foundation, following the original React PoC: formal looks start with a dress, ordinary looks use separates, and outdoor looks start with a layer and footwear. Cold-weather looks include a layer. Selecting a dress releases any selected top and bottom; selecting separates releases the dress before checking the resulting budget. Accessories are optional and selected pieces remain visible even when outside the required route.
+
+`StylistBrief` retains occasion, dress code, season, budget, palette, and notes outside model history. Preset journeys supply their known facts. Searching requires a dress code and budget; a host-owned form gathers missing facts together, and its editors update local surface data until one explicit Find options action submits them. The model can use `save_outfit` for typed refinements, `add_to_outfit` for a verbal choice from the last presented cards, and `remove_from_outfit` for a selected product. These tools mutate only the current draft and return the refreshed host plan and budget facts.
+
+The runtime supplies the model with the recorded outfit and the next missing category. A successful selection immediately offers that next category; removing a piece reopens its category. Once all required pieces are selected, the stylist summarizes the completed look and offers to keep or change it. The dressing-room slot list and its current-choice marker come from the same host plan. Host-calculated selection confirmations and budget amounts remain authoritative without replacing the stylist's explanation.
+
+Regression coverage follows every bundled journey through completion and reopens a removed piece, using the real local catalog with a deterministic test model. The opt-in live test checks that Berlin starts with tops, selecting one presents bottoms, and removing it presents tops again, within three interactions and twelve provider requests.
 
 The protocol boundary is intentionally explicit:
 
