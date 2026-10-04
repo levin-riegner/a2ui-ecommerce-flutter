@@ -61,7 +61,7 @@ See [architecture.md](docs/architecture.md) for the layer boundaries, surface li
 
 Reusable presentation widgets and layouts are exported through `package:a2ui_flutter_commerce/commerce_ui.dart`. The A2UI catalog adapters and interactive component gallery use those same widgets. The gallery includes choice, disabled action, choose/remove, slot, completion, and light/dark dressing-room examples; its controls make no provider requests.
 
-`AdaptivePaneLayout` keeps the composer reachable, stacks the dressing room above the conversation on compact windows, and gives wider panes independent scrolling. Layout decisions use available space and text size; the 669-wide portrait reference stacks, while the 951-wide landscape reference splits and shows the utility rail. Reported display obstructions are avoided without resetting drafts or outfit state. Native iOS Duo hinge/posture reporting still needs a platform adapter: see the [current package review](docs/foldable-package-review.md).
+`AdaptivePaneLayout` keeps the composer reachable, stacks the dressing room above the conversation on compact windows, and gives wider panes independent scrolling. Layout decisions use available space and text size; the 669-wide portrait reference stacks, while the 951-wide landscape reference splits and shows the utility rail. `DuoLayoutAdapter` reads native iOS Duo posture and reserved geometry through pinned `foldable` 1.0.5, keeping controls clear of active divisions and camera regions without resetting drafts or outfit state. See the [native simulator verification](docs/duo-simulator-verification.md) for reproduction steps, evidence, and remaining limits.
 
 ## Data sources
 
@@ -71,12 +71,14 @@ The CSV parser handles quoted commas, escaped quotes, and multiline fields. Run 
 
 The CSV uses fictional names, brands, descriptions, prices, and IDs. The approved product photographs are reused as local assets, resized and saved without image metadata. Visible marks on products and reverse image search can still identify a photographed item; the image bundle does not provide image-level unlinkability. For future catalog expansion, `tools/catalog/import_images.py` accepts a private, ordered URL file and an explicit `--allowed-host`, then writes renamed JPEGs. Keep that URL file outside the repository; the importer requires Pillow.
 
-The bundled photographs are used with permission for this public demo. They are existing photographs, not presented as AI-generated images. See [NOTICE](NOTICE) for image and project credits.
+The bundled catalog photographs are used with permission for this public demo. They are existing photographs, not presented as AI-generated images. The ten Start collage photographs supplied in the design reference still need recorded source credits and redistribution terms. See [NOTICE](NOTICE) for image and project credits.
 
 ## Verification
 
 ```sh
-fvm dart format lib test tools/genkit
+fvm dart format lib test tools/genkit tool
+python3 -m unittest discover -s tool -p 'test_*.py'
+python3 tool/verify_duo_checkpoints.py docs/verification/duo-simulator-2026-10-04.json
 fvm flutter analyze
 fvm flutter test
 fvm flutter build apk --debug
