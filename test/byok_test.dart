@@ -6,6 +6,13 @@ import 'package:http/testing.dart';
 
 import 'genkit_providers_test.dart' show providerReply;
 
+Finder occasionSuggestion() => find
+    .ancestor(
+      of: find.textContaining('A summer wedding in Lisbon'),
+      matching: find.byType(InkWell),
+    )
+    .first;
+
 Future<void> fill(WidgetTester tester) async {
   await tester.tap(find.text('Connect your model'));
   await tester.pumpAndSettle();
@@ -24,10 +31,7 @@ void main() {
         return providerReply('googleai');
       });
       await tester.pumpWidget(ReferenceApp(connectionClient: client));
-      expect(
-        tester.widget<ActionChip>(find.byType(ActionChip).first).onPressed,
-        isNull,
-      );
+      expect(tester.widget<InkWell>(occasionSuggestion()).onTap, isNull);
       await fill(tester);
       expect(find.text('Stylist service URL'), findsNothing);
       expect(find.byType(TextFormField), findsNWidgets(2));
@@ -44,16 +48,11 @@ void main() {
       expect(find.byType(Dialog), findsNothing);
       expect(find.text('private-test-key'), findsNothing);
       expect(requests, isEmpty);
-      expect(
-        tester.widget<ActionChip>(find.byType(ActionChip).first).onPressed,
-        isNotNull,
-      );
+      expect(tester.widget<InkWell>(occasionSuggestion()).onTap, isNotNull);
+      await tester.ensureVisible(find.text('Disconnect model'));
       await tester.tap(find.text('Disconnect model'));
       await tester.pumpAndSettle();
-      expect(
-        tester.widget<ActionChip>(find.byType(ActionChip).first).onPressed,
-        isNull,
-      );
+      expect(tester.widget<InkWell>(occasionSuggestion()).onTap, isNull);
       expect(requests, isEmpty);
       await tester.tap(find.text('Connect your model'));
       await tester.pumpAndSettle();

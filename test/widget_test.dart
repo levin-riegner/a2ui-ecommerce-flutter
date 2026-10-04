@@ -198,7 +198,7 @@ void main() {
     await tester.pumpWidget(
       ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
     );
-    expect(find.text('Build the look\naround the moment.'), findsOneWidget);
+    expect(find.text('Where are you going?'), findsOneWidget);
 
     await tester.tap(find.text(DemoJourney.paris.title));
     await tester.pumpAndSettle();
@@ -231,7 +231,15 @@ void main() {
     await tester.tap(find.text(options[1].name));
     await tester.pumpAndSettle();
     expect(find.text(options[1].name), findsNWidgets(2));
-    final productImages = tester.widgetList<Image>(find.byType(Image));
+    final productImages = tester
+        .widgetList<Image>(find.byType(Image))
+        .where(
+          (image) =>
+              image.image is AssetImage &&
+              (image.image as AssetImage).assetName.startsWith(
+                'assets/images/products/',
+              ),
+        );
     expect(productImages, isNotEmpty);
     expect(productImages.every((image) => image.fit == BoxFit.contain), isTrue);
     expect(
@@ -317,12 +325,12 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('New journey'));
     await tester.pumpAndSettle();
-    expect(find.text('Build the look\naround the moment.'), findsOneWidget);
+    expect(find.text('Where are you going?'), findsOneWidget);
 
     await tester.tap(find.text(DemoJourney.berlin.title));
     await tester.pumpAndSettle();
     expect(find.text('Dressing room'), findsOneWidget);
-    expect(find.text('Build the look\naround the moment.'), findsNothing);
+    expect(find.text('Where are you going?'), findsNothing);
   });
 }
 
