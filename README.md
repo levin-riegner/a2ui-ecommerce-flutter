@@ -34,7 +34,15 @@ For an explicitly opted-in live OpenAI smoke test, put `OPENAI_API_KEY` and `OPE
 STYLIST_LIVE_TEST=1 fvm flutter test tools/genkit/live_smoke_test.dart
 ```
 
-This test makes paid requests: at most three interactions and twelve provider requests. It checks real search/presentation tool calls, a rendered catalog photograph, selection/removal, and dressing-room totals. It reports request counts and provider token usage without logging credentials. It is excluded from the default test suite and CI. OpenAI Platform API keys work with this Chat Completions integration; ChatGPT Admin tokens for Codex or Workspace Agents are not interchangeable with those keys.
+This test makes paid requests: at most three interactions and twelve provider requests. It checks real search/presentation tool calls, catalog-backed cards and photo files, selection/removal, next-category progression, and dressing-room totals. Rendering is covered separately by the normal widget tests. It reports request counts and provider token usage without logging credentials. It is excluded from the default test suite and CI. OpenAI Platform API keys work with this Chat Completions integration; ChatGPT Admin tokens for Codex or Workspace Agents are not interchangeable with those keys.
+
+To check one real selection continuation with an offline initial preview and a three-request cap:
+
+```sh
+STYLIST_LIVE_TEST=1 STYLIST_LIVE_SEED_PREVIEW=1 STYLIST_LIVE_INTERACTIONS=2 STYLIST_LIVE_MAX_REQUESTS=3 fvm flutter test tools/genkit/live_smoke_test.dart
+```
+
+This narrower mode verifies that selecting a seeded top produces real model-generated bottom options. It does not test an entirely live journey or removal.
 
 For free prompt/tool/flow inspection with the same catalog and stylist implementation, install the Genkit CLI on your development machine and run from the repository root:
 

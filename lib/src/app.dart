@@ -218,7 +218,8 @@ class _StartScreen extends StatelessWidget {
                               const SizedBox(height: 28),
                               if (onSelect == null) ...[
                                 const _ConnectionNotice(
-                                  message: 'Connect the stylist service to start a journey.',
+                                  message:
+                                      'Connect your model to start a journey.',
                                 ),
                                 const SizedBox(height: 18),
                               ],

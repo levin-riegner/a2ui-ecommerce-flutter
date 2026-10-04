@@ -165,6 +165,19 @@ class _CredentialTransport extends http.BaseClient {
       };
       if (choice != null) body['tool_choice'] = choice;
     }
+    final hasTools =
+        (body['tools'] as List?)?.any((tool) {
+          if (settings.provider != 'googleai') return tool is Map;
+          return tool is Map &&
+              (tool['functionDeclarations'] as List?)?.isNotEmpty == true;
+        }) ??
+        false;
+    if (!hasTools) {
+      // With no declarations the provider already defaults to prose. Some
+      // endpoints reject a tool choice without its corresponding tools field.
+      body.remove('tool_choice');
+      body.remove('toolConfig');
+    }
     if (settings.provider == 'openai') {
       body['store'] = false;
       // Luna supports Chat Completions tools only without reasoning.
