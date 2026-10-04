@@ -31,7 +31,7 @@ jobs:
         run: python3 tools/catalog/validate.py assets/data/catalog/products.csv
 
       - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed lib test tools/genkit
+        run: dart format --output=none --set-exit-if-changed lib test tools/genkit tool
 
       - name: Analyze
         run: flutter analyze

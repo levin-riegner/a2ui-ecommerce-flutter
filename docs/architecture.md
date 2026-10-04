@@ -8,6 +8,7 @@ The sample keeps four concerns separate:
 - `lib/src/catalog/` defines the A2UI component vocabulary and commerce widgets.
 - `lib/commerce_ui.dart` exports the reusable presentation widgets, local gallery examples, and adaptive layouts independently of any model connection.
 - `lib/src/layout/` owns available-space and display-obstruction decisions; screen children retain their state as panes rearrange.
+  `DuoLayoutAdapter` reads Apple's native posture, reserved regions and size classes through pinned `foldable` 1.0.5. It refreshes on viewport changes and resume, guards late snapshots and falls back safely on unavailable channels. Fold/camera geometry is consumed only by the adaptive layouts, without changing global Material dialog sizing. Camera islands reserve their nearest edge strip; closed and flat devices discard stale division geometry.
 - `lib/src/agent/` contains the bundled Genkit runtime, provider adapters, and renderer transport. Scripted agents are available for tests and previews.
 - `lib/src/app.dart` owns the responsive shell, model setup, text input, and native layout around the A2UI surfaces.
 

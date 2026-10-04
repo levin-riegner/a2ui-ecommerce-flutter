@@ -11,6 +11,7 @@ import 'catalog/commerce_components.dart';
 import 'data/models.dart';
 import 'layout/adaptive_page.dart';
 import 'layout/adaptive_pane_layout.dart';
+import 'layout/duo_layout_adapter.dart';
 import 'layout/stylist_composer.dart';
 import 'theme.dart';
 
@@ -64,6 +65,7 @@ class _ReferenceAppState extends State<ReferenceApp> {
       title: 'A2UI Flutter Commerce',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
+      builder: (context, child) => DuoLayoutAdapter(child: child!),
       home: _AppHome(
         key: ObjectKey(agent),
         agent: agent,

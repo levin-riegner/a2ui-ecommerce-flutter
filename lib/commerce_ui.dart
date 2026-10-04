@@ -9,4 +9,5 @@ export 'src/catalog/commerce_examples.dart';
 export 'src/data/models.dart' show ProductCategory;
 export 'src/layout/adaptive_page.dart';
 export 'src/layout/adaptive_pane_layout.dart';
+export 'src/layout/duo_layout_adapter.dart' show DuoLayoutAdapter;
 export 'src/layout/stylist_composer.dart';
