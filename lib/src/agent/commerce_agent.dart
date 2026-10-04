@@ -14,7 +14,9 @@ abstract class CommerceAgent extends ChangeNotifier {
   String? get connectionError => null;
   String? get connectionNotice => null;
   bool get canRetry => false;
+  bool get canStartBrief => false;
   Future<void> retryLastTurn() async {}
+  Future<void> startBrief(String message) async {}
   SurfaceController get controller;
   Conversation get conversation;
 
