@@ -23,6 +23,7 @@ def verify(rows):
               for r in rows]
     assert len(actual) == len(set(actual)) == 48 and set(actual) == expected
     baseline = rows[0]['probe']
+    assert len(baseline['fields']) == 1, 'checkpoint 0: expected one composer field'
     field = baseline['fields'][0]
     layouts = collections.Counter()
     for index, row in enumerate(rows):
@@ -44,6 +45,7 @@ def verify(rows):
         width, height = numbers(probe['size'])
         keyboard = probe['keyboard']
         assert (keyboard > 0) == (row['keyboardRequested'] == 'on'), label
+        assert len(probe['fields']) == 1, (label, 'expected one composer field')
         for current in probe['fields']:
             assert current['draft'] == field['draft'], label
             assert current['state'] == field['state'], label
