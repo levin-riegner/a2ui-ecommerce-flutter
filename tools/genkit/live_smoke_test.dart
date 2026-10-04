@@ -48,6 +48,17 @@ void main() {
       _LiveHttpOverrides(),
     );
     addTearDown(client.close);
+    addTearDown(() {
+      // Preserve bounded-request evidence even when a later assertion fails.
+      stdout.writeln(
+        jsonEncode({
+          'model': model,
+          'providerRequests': client.requests,
+          'tools': client.tools,
+          'usage': client.usage,
+        }),
+      );
+    });
     tester.view.physicalSize = const Size(1440, 1100);
     tester.view.devicePixelRatio = 1;
     addTearDown(() {
@@ -154,12 +165,19 @@ class _ProbeClient extends http.BaseClient {
   _ProbeClient(this.inner);
   final http.Client inner;
   int requests = 0;
+  final int requestLimit =
+      (int.tryParse(Platform.environment['STYLIST_LIVE_MAX_REQUESTS'] ?? '') ??
+              12)
+          .clamp(1, 12);
   final List<String> tools = [];
   final List<Map<String, Object?>> usage = [];
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    if (++requests > 12) throw StateError('Smoke-test request limit reached');
+    if (requests >= requestLimit) {
+      throw StateError('Smoke-test request limit reached');
+    }
+    requests++;
     final response = await inner.send(request);
     final bytes = await response.stream.toBytes();
     if (response.statusCode == 200) {

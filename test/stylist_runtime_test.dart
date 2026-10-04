@@ -224,6 +224,42 @@ void main() {
   );
 
   test(
+    'two searches leave time to present cards and finish within four requests',
+    () async {
+      var calls = 0;
+      final runtime = StylistRuntime(
+        products: products,
+        model: (request) async {
+          calls++;
+          if (calls <= 2) {
+            return toolResponse('search_products', {
+              'query': calls == 1 ? 'dress' : 'sandals',
+            });
+          }
+          if (calls == 3) {
+            expect(request.tools!.map((tool) => tool.name), [
+              'present_products',
+            ]);
+            return toolResponse('present_products', {
+              'productIds': ['dress-1', 'shoes-1'],
+            });
+          }
+          expect(request.tools, isEmpty);
+          return textResponse('A linen dress with leather sandals.');
+        },
+      );
+      addTearDown(runtime.dispose);
+      final result = await runtime.turn({'message': 'Summer lunch under €200'});
+      expect((result['products'] as List).map((p) => p['id']), [
+        'dress-1',
+        'shoes-1',
+      ]);
+      expect(result['reply'], 'A linen dress with leather sandals.');
+      expect(calls, 4);
+    },
+  );
+
+  test(
     'fourth request is prose-only and repeated tools cannot trigger a fifth',
     () async {
       var calls = 0;

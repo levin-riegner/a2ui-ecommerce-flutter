@@ -14,10 +14,15 @@ const _instructions =
     'You are a personal stylist in a fictional demo catalog. '
     'Ask for the occasion and budget if missing. Search products before recommending them, '
     'then call present_products with 1 to 5 IDs from the search results you want to show. '
+    'You have four model requests per interaction: use at most two requests for searches, '
+    'then present your choices before the final prose response. Omit filters that do not '
+    'match the catalog values listed by search_products; broaden a search that returns no products. '
     'Product facts come only from search_products. Never invent names, brands, prices, IDs or images. '
     'Consider the remaining budget and suggest a small coherent set. Your final response should '
     'be concise natural language. The host constructs A2UI cards from your validated choices and '
-    'records outfit selections; do not output UI markup or claim a selection happened unless the host says so.';
+    'records outfit selections; do not output UI markup or claim a selection happened unless the host says so. '
+    'After the host records a selection or removal, briefly acknowledge it without searching '
+    'or presenting more products unless the person asks for alternatives.';
 
 SchemanticType<Map<String, dynamic>> _object(Map<String, Object?> schema) =>
     SchemanticType.from(
@@ -104,7 +109,19 @@ class StylistRuntime {
         if (++scope.requests > 4) {
           throw StateError('Model request limit reached');
         }
-        if (scope.requests == 4) {
+        if (scope.requests == 3 &&
+            scope.picks.isEmpty &&
+            scope.searchFoundProducts) {
+          // Reserve the last tool-capable request for displaying catalog cards.
+          // A third search would leave only the prose-only fourth request.
+          request = ModelRequest.fromJson({
+            ...request.toJson(),
+            'tools': request.tools!
+                .where((tool) => tool.name == 'present_products')
+                .map((tool) => tool.toJson())
+                .toList(),
+          });
+        } else if (scope.requests == 4) {
           request = ModelRequest.fromJson({
             ...request.toJson(),
             'tools': [],
@@ -140,7 +157,14 @@ class StylistRuntime {
     );
     ai.defineTool(
       name: 'search_products',
-      description: 'Search the local fictional fashion catalog before offering products. Returns authoritative facts and IDs. Use priceMax for the remaining outfit budget.',
+      description:
+          'Search the local fictional fashion catalog before offering products. '
+          'Returns authoritative facts and IDs. Use priceMax for the remaining outfit budget. '
+          'Optional facet filters are exact catalog terms: '
+          'category (${ProductCategory.values.map((value) => value.name).join(', ')}), '
+          'season (${products.map((product) => product.season).where((value) => value.isNotEmpty).toSet().join(', ')}), '
+          'occasion (${products.map((product) => product.occasion).where((value) => value.isNotEmpty).toSet().join(', ')}). '
+          'Omit a facet when unsure; query accepts free text.',
       inputSchema: _searchSchema,
       fn: (input, context) async {
         final scope = _scope;
@@ -155,6 +179,7 @@ class StylistRuntime {
           ...input,
           'priceMax': cap,
         });
+        if (found.isNotEmpty) scope.searchFoundProducts = true;
         for (final product in found) {
           state.seen[product.id] = product;
         }
@@ -407,6 +432,7 @@ class _TurnScope {
   final _StylistState state;
   final CancellationController cancel;
   int requests = 0;
+  bool searchFoundProducts = false;
   List<Product> picks = [];
 }
 
