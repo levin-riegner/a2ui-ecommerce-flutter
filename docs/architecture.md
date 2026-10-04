@@ -6,6 +6,8 @@ The sample keeps four concerns separate:
 
 - `lib/src/data/` defines domain products, fixture repositories, and a pure Dart CSV parser shared by the app and developer tools.
 - `lib/src/catalog/` defines the A2UI component vocabulary and commerce widgets.
+- `lib/commerce_ui.dart` exports the reusable presentation widgets, local gallery examples, and adaptive layouts independently of any model connection.
+- `lib/src/layout/` owns available-space and display-obstruction decisions; screen children retain their state as panes rearrange.
 - `lib/src/agent/` contains the bundled Genkit runtime, provider adapters, and renderer transport. Scripted agents are available for tests and previews.
 - `lib/src/app.dart` owns the responsive shell, model setup, text input, and native layout around the A2UI surfaces.
 

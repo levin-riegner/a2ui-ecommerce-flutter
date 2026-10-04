@@ -39,6 +39,7 @@ dependencies:
   a2ui_core: 0.1.1
   genui: 0.10.3
   http: ^1.6.0
+  flutter_svg: 2.3.0
   json_schema_builder: ^0.1.7
   genkit: 0.17.0
   genkit_openai: 0.5.0
@@ -77,6 +78,18 @@ flutter:
     - assets/data/
     - assets/data/catalog/
     - assets/images/products/
+    - assets/images/occasions/
+    - assets/icons/commerce/
+
+  fonts:
+    - family: Jost
+      fonts:
+        - asset: assets/fonts/jost/Jost-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/jost/Jost-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/jost/Jost-Variable.ttf
+          weight: 600
 
   # To add assets to your application, add an assets section, like this:
   # assets:
