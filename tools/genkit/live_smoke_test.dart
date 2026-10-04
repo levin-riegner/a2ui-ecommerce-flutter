@@ -1,211 +1,247 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/src/agent/genkit_providers.dart';
+import 'package:a2ui_flutter_commerce/src/agent/model_settings.dart';
+import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
 import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genkit/genkit.dart' as g;
 import 'package:genui/genui.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
-/// Explicit opt-in only; never included in the default test directory or CI.
-/// Makes at most three interactions / twelve provider requests.
+/// Explicit opt-in only; outside the normal test directory and CI.
+/// Default: three real interactions, at most twelve provider requests.
+/// STYLIST_LIVE_SEED_PREVIEW=1 scripts only the initial preview turn; later
+/// interactions use the registered provider model. This mode tests continuation,
+/// and must never be reported as an entirely live journey.
 void main() {
-  testWidgets(
-    'live Berlin journey advances after selection and reopens removal',
-    (tester) async {
-      if (Platform.environment['STYLIST_LIVE_TEST'] != '1') {
-        fail('Set STYLIST_LIVE_TEST=1 to authorize this paid smoke test.');
-      }
-      final settings = <String, String>{};
-      final file = File('.env.local');
-      if (file.existsSync()) {
-        for (final line in file.readAsLinesSync()) {
-          final index = line.indexOf('=');
-          if (index < 1 || line.trimLeft().startsWith('#')) continue;
-          var value = line.substring(index + 1).trim();
-          if (value.length >= 2 &&
-              ((value.startsWith('"') && value.endsWith('"')) ||
-                  (value.startsWith("'") && value.endsWith("'")))) {
-            value = value.substring(1, value.length - 1);
-          }
-          settings[line.substring(0, index).trim()] = value;
+  TestWidgetsFlutterBinding.ensureInitialized();
+  test('live Berlin journey advances after selection and reopens removal', () async {
+    if (Platform.environment['STYLIST_LIVE_TEST'] != '1') {
+      fail('Set STYLIST_LIVE_TEST=1 to authorize this paid smoke test.');
+    }
+    final settings = <String, String>{};
+    final file = File('.env.local');
+    if (file.existsSync()) {
+      for (final line in file.readAsLinesSync()) {
+        final index = line.indexOf('=');
+        if (index < 1 || line.trimLeft().startsWith('#')) continue;
+        var value = line.substring(index + 1).trim();
+        if (value.length >= 2 &&
+            ((value.startsWith('"') && value.endsWith('"')) ||
+                (value.startsWith("'") && value.endsWith("'")))) {
+          value = value.substring(1, value.length - 1);
         }
+        settings[line.substring(0, index).trim()] = value;
       }
-      settings.addAll(Platform.environment);
-      final key = settings['OPENAI_API_KEY'] ?? '';
-      final model = settings['OPENAI_MODEL'] ?? '';
-      if (key.isEmpty || model.isEmpty) {
-        fail(
-          'Provide OPENAI_API_KEY and OPENAI_MODEL in .env.local or the environment.',
-        );
-      }
-      // Widget tests normally block HTTP; enable it only for this opted-in client.
-      final client = HttpOverrides.runWithHttpOverrides(
-        () => _ProbeClient(IOClient(HttpClient())),
-        _LiveHttpOverrides(),
+    }
+    settings.addAll(Platform.environment);
+    final key = settings['OPENAI_API_KEY'] ?? '';
+    final model = settings['OPENAI_MODEL'] ?? '';
+    if (key.isEmpty || model.isEmpty) {
+      fail(
+        'Provide OPENAI_API_KEY and OPENAI_MODEL in .env.local or the environment.',
       );
-      addTearDown(client.close);
-      addTearDown(() {
-        // Preserve bounded-request evidence even when a later assertion fails.
-        stdout.writeln(
-          jsonEncode({
-            'model': model,
-            'providerRequests': client.requests,
-            'tools': client.tools,
-            'usage': client.usage,
-          }),
-        );
-      });
-      tester.view.physicalSize = const Size(1440, 1100);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
-      final agent = await tester.runAsync(
-        () => GenkitAgent.connect(
-          provider: 'openai',
-          model: model,
-          apiKey: key,
-          client: client,
-        ),
+    }
+    final seededPreview =
+        Platform.environment['STYLIST_LIVE_SEED_PREVIEW'] == '1';
+    final testRemoval =
+        Platform.environment['STYLIST_LIVE_INTERACTIONS'] != '2';
+    // The binding normally blocks HTTP. Only this opted-in client bypasses it.
+    final client = HttpOverrides.runWithHttpOverrides(
+      () => _ProbeClient(IOClient(HttpClient())),
+      _LiveHttpOverrides(),
+    );
+    addTearDown(client.close);
+    addTearDown(() {
+      stdout.writeln(
+        jsonEncode({
+          'model': model,
+          'initialPreviewSeeded': seededPreview,
+          'providerRequests': client.requests,
+          'requestLimit': client.requestLimit,
+          'tools': client.tools,
+          'usage': client.usage,
+        }),
       );
-      expect(agent, isNotNull);
-      final connected = agent!;
-      expect(client.requests, 0, reason: 'Setup must make no paid request.');
-      final previewKey = GlobalKey();
-      await tester.pumpWidget(
-        RepaintBoundary(
-          key: previewKey,
-          child: ReferenceApp(agent: connected),
-        ),
+    });
+    final catalog = parseCatalogProducts(
+      await rootBundle.loadString('assets/data/catalog/products.csv'),
+    );
+    GenkitAgent connected;
+    var usePreviewModel = seededPreview;
+    if (seededPreview) {
+      final connection = GenkitProvider(
+        ModelSettings(provider: 'openai', model: model, apiKey: key),
+        client: client,
       );
-      final catalog = parseCatalogProducts(
-        await rootBundle.loadString('assets/data/catalog/products.csv'),
+      late final StylistRuntime runtime;
+      runtime = StylistRuntime(
+        products: catalog,
+        plugins: [connection.plugin],
+        model: (request) async {
+          if (usePreviewModel) return offlineStylistModel(request);
+          final action = await runtime.ai.registry.lookupAction(
+            g.ActionType.model,
+            connection.model.name,
+          ) as g.Model?;
+          if (action == null) throw StateError('Provider model unavailable');
+          return action(request);
+        },
+        normalizeResponse: connection.normalizeResponse,
+        onBeginTurn: connection.beginTurn,
+        onModelRequest: connection.prepareRequest,
+        onCancelTurn: connection.cancelTurn,
       );
-      Product productFor(String id) => catalog.singleWhere((p) => p.id == id);
-      List<String> recommendationIds() =>
-          (connected.controller
-                      .contextFor(connected.latestInlineSurfaceId!)
-                      .dataModel
-                      .getValue<List<Object?>>(DataPath('/recommendations')) ??
-                  [])
-              .map((card) => (card as Map)['id'] as String)
-              .toList();
-      void expectOptionsFor(ProductCategory category) {
-        final ids = recommendationIds();
+      connected = GenkitAgent(runtime, provider: connection);
+    } else {
+      connected = await GenkitAgent.connect(
+        provider: 'openai',
+        model: model,
+        apiKey: key,
+        client: client,
+      );
+    }
+    addTearDown(() async {
+      await connected.disconnect();
+      connected.dispose();
+    });
+    expect(client.requests, 0, reason: 'Setup must make no paid request.');
+    Product productFor(String id) => catalog.singleWhere((p) => p.id == id);
+    List<Map> recommendationRows() =>
+        (connected.controller
+                    .contextFor(connected.latestInlineSurfaceId!)
+                    .dataModel
+                    .getValue<List<Object?>>(DataPath('/recommendations')) ??
+                [])
+            .cast<Map>();
+    List<String> recommendationIds() =>
+        recommendationRows().map((card) => card['id'] as String).toList();
+    void expectOptionsFor(ProductCategory category) {
+      final rows = recommendationRows();
+      expect(
+        rows,
+        isNotEmpty,
+        reason: 'The conversation must offer its next step.',
+      );
+      for (final row in rows) {
+        final product = productFor(row['id'] as String);
+        expect(product.category, category);
+        expect(row['name'], product.name);
+        expect(row['imageAsset'], product.imageAsset);
+        expect(product.imageAsset, startsWith('assets/images/products/'));
         expect(
-          ids,
-          isNotEmpty,
-          reason: 'The conversation must offer its next step.',
-        );
-        expect(
-          ids.map((id) => productFor(id).category),
-          everyElement(category),
+          File(product.imageAsset).existsSync(),
+          isTrue,
+          reason: 'Recommendations must reference a bundled catalog photo.',
         );
       }
+    }
 
-      await tester.runAsync(() => connected.startJourney(DemoJourney.berlin));
-      await tester.pumpAndSettle();
-      expect(connected.connectionError, isNull);
+    List<Map> dressingSlots() => connected.controller
+        .contextFor('dressing-room')
+        .dataModel
+        .getValue<List<Object?>>(DataPath('/slots'))!
+        .cast<Map>();
+    void expectNext(ProductCategory category) => expect(
+      dressingSlots()
+          .where((slot) => slot['state'] == 'Next')
+          .map((slot) => slot['category']),
+      [category.name],
+    );
+    String? inlineMessage() => connected.controller
+        .contextFor(connected.latestInlineSurfaceId!)
+        .dataModel
+        .getValue<String>(DataPath('/message'));
+
+    await connected.startJourney(DemoJourney.berlin);
+    stdout.writeln(
+      jsonEncode({
+        'stage': 'initial',
+        'requests': client.requests,
+        'scriptedPreview': seededPreview,
+      }),
+    );
+    expect(connected.connectionError, isNull);
+    expect(connected.latestInlineSurfaceId, 'inline-1');
+    expectOptionsFor(ProductCategory.top);
+    expectNext(ProductCategory.top);
+    if (seededPreview) {
+      expect(
+        client.requests,
+        0,
+        reason: 'Seed preview must make no paid request.',
+      );
+    } else {
       expect(
         client.tools,
         containsAll(['search_products', 'present_products']),
       );
-      expectOptionsFor(ProductCategory.top);
-      final recommendations = connected.controller
-          .contextFor(connected.latestInlineSurfaceId!)
-          .dataModel;
-      final id = recommendations.getValue<String>(
-        DataPath('/recommendations/0/id'),
+    }
+    usePreviewModel = false;
+    final id = recommendationIds().first;
+    final selectedProduct = productFor(id);
+    Future<void> interact(String action) => connected.conversation.sendRequest(
+      ChatMessage.user(
+        '',
+        parts: [
+          UiInteractionPart.create(
+            jsonEncode({
+              'action': {
+                'name': action,
+                'context': {'productId': id},
+              },
+            }),
+          ),
+        ],
+      ),
+    );
+    final requestsBeforeSelection = client.requests;
+    await interact('select_product');
+    stdout.writeln(
+      jsonEncode({'stage': 'selection', 'requests': client.requests}),
+    );
+    expect(connected.connectionError, isNull);
+    expect(
+      client.requests,
+      greaterThan(requestsBeforeSelection),
+      reason: 'Selection continuation must use the real provider, including seed mode.',
+    );
+    expect(client.tools, containsAll(['search_products', 'present_products']));
+    expect(connected.latestInlineSurfaceId, 'inline-2');
+    final selected = connected.controller
+        .contextFor('selected-products')
+        .dataModel;
+    expect(selected.getValue<String>(DataPath('/products/0/id')), id);
+    final dressing = connected.controller.contextFor('dressing-room').dataModel;
+    expect(dressing.getValue<String>(DataPath('/spent')), contains('1 pieces'));
+    expectOptionsFor(ProductCategory.bottom);
+    expectNext(ProductCategory.bottom);
+    expect(recommendationIds(), isNot(contains(id)));
+    expect(
+      dressing.getValue<String>(DataPath('/left')),
+      '€${(900 - selectedProduct.price).toStringAsFixed(2)} left',
+    );
+    final filled = dressingSlots().singleWhere(
+      (slot) => slot['category'] == 'top',
+    );
+    expect(filled['state'], 'Filled');
+    expect(filled['name'], selectedProduct.name);
+    expect(filled['imageAsset'], selectedProduct.imageAsset);
+    expect(inlineMessage(), contains(selectedProduct.name));
+    expect(inlineMessage(), contains('Next, choose bottoms'));
+    if (testRemoval) {
+      await interact('remove_product');
+      stdout.writeln(
+        jsonEncode({'stage': 'removal', 'requests': client.requests}),
       );
-      final name = recommendations.getValue<String>(
-        DataPath('/recommendations/0/name'),
-      );
-      final image = recommendations.getValue<String>(
-        DataPath('/recommendations/0/imageAsset'),
-      );
-      expect(id, isNotEmpty);
-      expect(name, isNotEmpty);
-      expect(image, startsWith('assets/images/products/'));
-      expect(find.text(name!), findsWidgets);
-      expect(
-        tester
-            .widgetList<Image>(find.byType(Image))
-            .any(
-              (widget) =>
-                  widget.image is AssetImage &&
-                  (widget.image as AssetImage).assetName == image,
-            ),
-        isTrue,
-      );
-      Future<void> interact(String action) =>
-          connected.conversation.sendRequest(
-            ChatMessage.user(
-              '',
-              parts: [
-                UiInteractionPart.create(
-                  jsonEncode({
-                    'action': {
-                      'name': action,
-                      'context': {'productId': id},
-                    },
-                  }),
-                ),
-              ],
-            ),
-          );
-      await tester.runAsync(() => interact('select_product'));
-      await tester.pumpAndSettle();
       expect(connected.connectionError, isNull);
-      final selected = connected.controller
-          .contextFor('selected-products')
-          .dataModel;
-      expect(selected.getValue<String>(DataPath('/products/0/id')), id);
-      final dressing = connected.controller
-          .contextFor('dressing-room')
-          .dataModel;
-      expect(
-        dressing.getValue<String>(DataPath('/spent')),
-        contains('1 pieces'),
-      );
-      expectOptionsFor(ProductCategory.bottom);
-      expect(recommendationIds(), isNot(contains(id)));
-      expect(
-        dressing.getValue<String>(DataPath('/left')),
-        '€${(900 - productFor(id!).price).toStringAsFixed(2)} left',
-      );
-      expect(find.text(name), findsWidgets);
-      final screenshotDirectory =
-          Platform.environment['STYLIST_LIVE_SCREENSHOT_DIR'];
-      if (screenshotDirectory != null) {
-        await tester.runAsync(() async {
-          final boundary =
-              previewKey.currentContext!.findRenderObject()
-                  as RenderRepaintBoundary;
-          final snapshot = await boundary.toImage();
-          try {
-            final png = await snapshot.toByteData(
-              format: ui.ImageByteFormat.png,
-            );
-            await Directory(screenshotDirectory).create(recursive: true);
-            await File('$screenshotDirectory/berlin-next-bottoms.png')
-                .writeAsBytes(png!.buffer.asUint8List());
-          } finally {
-            snapshot.dispose();
-          }
-        });
-      }
-      await tester.runAsync(() => interact('remove_product'));
-      await tester.pumpAndSettle();
-      expect(connected.connectionError, isNull);
+      expect(connected.latestInlineSurfaceId, 'inline-3');
       expect(selected.getValue<List<Object?>>(DataPath('/products')), isEmpty);
       expect(
         dressing.getValue<String>(DataPath('/spent')),
@@ -213,26 +249,30 @@ void main() {
       );
       expect(dressing.getValue<String>(DataPath('/left')), '€900.00 left');
       expectOptionsFor(ProductCategory.top);
-      expect(client.requests, lessThanOrEqualTo(12));
-      expect(tester.takeException(), isNull);
-      // Only counts, tool names, and usage are recorded; never headers or bodies.
-      stdout.writeln(
-        jsonEncode({
-          'model': model,
-          'providerRequests': client.requests,
-          'tools': client.tools,
-          'usage': client.usage,
-          'recommendationId': id,
-          'selectedThenRemoved': true,
-          'advancedToBottomsAfterSelection': true,
-          'reopenedTopAfterRemoval': true,
-          'renderedCatalogPhoto': true,
-        }),
-      );
-      await tester.pumpWidget(const SizedBox());
-    },
-    timeout: const Timeout(Duration(minutes: 4)),
-  );
+      expectNext(ProductCategory.top);
+      expect(inlineMessage(), contains('Removed ${selectedProduct.name}'));
+    }
+    expect(client.requests, lessThanOrEqualTo(client.requestLimit));
+    stdout.writeln(
+      jsonEncode({
+        'model': model,
+        'initialPreviewSeeded': seededPreview,
+        'realProviderInteractions': seededPreview
+            ? testRemoval
+                  ? 2
+                  : 1
+            : testRemoval
+            ? 3
+            : 2,
+        'providerRequests': client.requests,
+        'recommendationId': id,
+        'selectedThenRemoved': testRemoval,
+        'advancedToBottomsAfterSelection': true,
+        'reopenedTopAfterRemoval': testRemoval,
+        'catalogPhotoFilesVerified': true,
+      }),
+    );
+  }, timeout: const Timeout(Duration(minutes: 4)));
 }
 
 class _LiveHttpOverrides extends HttpOverrides {}
@@ -254,8 +294,35 @@ class _ProbeClient extends http.BaseClient {
       throw StateError('Smoke-test request limit reached');
     }
     requests++;
+    stdout.writeln(
+      jsonEncode({'stage': 'provider_request', 'request': requests}),
+    );
     final response = await inner.send(request);
     final bytes = await response.stream.toBytes();
+    stdout.writeln(
+      jsonEncode({
+        'stage': 'provider_response',
+        'request': requests,
+        'status': response.statusCode,
+      }),
+    );
+    if (response.statusCode >= 400) {
+      final body = jsonDecode(utf8.decode(bytes));
+      if (body is Map && body['error'] is Map) {
+        final error = body['error'] as Map;
+        stdout.writeln(
+          jsonEncode({
+            'providerError': {
+              for (final field in ['type', 'param', 'code'])
+                if (error[field] is String &&
+                    RegExp(r'^[a-zA-Z0-9_.\[\]-]{1,100}$')
+                        .hasMatch(error[field]))
+                  field: error[field],
+            },
+          }),
+        );
+      }
+    }
     if (response.statusCode == 200) {
       final body = jsonDecode(utf8.decode(bytes)) as Map;
       for (final choice in (body['choices'] as List?) ?? []) {

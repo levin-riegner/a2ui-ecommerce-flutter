@@ -314,49 +314,58 @@ void main() {
         );
       },
     );
-    test('$provider optional auto choice reaches the wire unchanged', () async {
-      late Map<String, dynamic> body;
-      final client = MockClient((request) async {
-        body = jsonDecode(request.body) as Map<String, dynamic>;
-        return providerReply(provider);
-      });
-      final connection = GenkitProvider(
-        ModelSettings(
-          provider: provider,
-          model: 'test-model',
-          apiKey: 'private-test-key',
-          baseUrl: provider == 'openai-compatible'
-              ? 'https://compatible.example/v1'
-              : null,
-        ),
-        client: client,
-      );
-      final runtime = StylistRuntime(
-        products: products,
-        plugins: [connection.plugin],
-        providerModel: connection.model,
-        normalizeResponse: connection.normalizeResponse,
-        onBeginTurn: connection.beginTurn,
-        onCancelTurn: connection.cancelTurn,
-        onModelRequest: (request) {
-          request.toolChoice = 'auto';
-          connection.prepareRequest(request);
+    for (final choice in ['auto', 'none']) {
+      test(
+        '$provider explicit $choice choice retains declared tools',
+        () async {
+          late Map<String, dynamic> body;
+          final client = MockClient((request) async {
+            body = jsonDecode(request.body) as Map<String, dynamic>;
+            return providerReply(provider);
+          });
+          final connection = GenkitProvider(
+            ModelSettings(
+              provider: provider,
+              model: 'test-model',
+              apiKey: 'private-test-key',
+              baseUrl: provider == 'openai-compatible'
+                  ? 'https://compatible.example/v1'
+                  : null,
+            ),
+            client: client,
+          );
+          final runtime = StylistRuntime(
+            products: products,
+            plugins: [connection.plugin],
+            providerModel: connection.model,
+            normalizeResponse: connection.normalizeResponse,
+            onBeginTurn: connection.beginTurn,
+            onCancelTurn: connection.cancelTurn,
+            onModelRequest: (request) {
+              request.toolChoice = choice;
+              connection.prepareRequest(request);
+            },
+          );
+          addTearDown(() async {
+            connection.dispose();
+            await runtime.dispose();
+            client.close();
+          });
+          await runtime.turn({'message': 'Hello'});
+          expect(body['tools'], isNotEmpty);
+          if (provider == 'googleai') {
+            expect(
+              body['toolConfig']['functionCallingConfig']['mode'],
+              choice.toUpperCase(),
+            );
+          } else if (provider == 'anthropic') {
+            expect(body['tool_choice'], {'type': choice});
+          } else {
+            expect(body['tool_choice'], choice);
+          }
         },
       );
-      addTearDown(() async {
-        connection.dispose();
-        await runtime.dispose();
-        client.close();
-      });
-      await runtime.turn({'message': 'Hello'});
-      if (provider == 'googleai') {
-        expect(body['toolConfig']['functionCallingConfig']['mode'], 'AUTO');
-      } else if (provider == 'anthropic') {
-        expect(body['tool_choice'], {'type': 'auto'});
-      } else {
-        expect(body['tool_choice'], 'auto');
-      }
-    });
+    }
 
     test(
       '$provider wire preserves forced search, forced presentation and prose choice',
@@ -365,6 +374,11 @@ void main() {
         final client = MockClient((request) async {
           final body = jsonDecode(request.body) as Map<String, dynamic>;
           bodies.add(body);
+          final declared = body['tools'] as List? ?? [];
+          if (declared.isEmpty) {
+            expect(body.containsKey('tool_choice'), isFalse);
+            expect(body.containsKey('toolConfig'), isFalse);
+          }
           switch (bodies.length) {
             case 1:
             case 2:
@@ -410,6 +424,14 @@ void main() {
         });
         expect(result['products'], isNotEmpty);
         expect(bodies, hasLength(4));
+        runtime.reset();
+        await runtime.turn({'message': 'Hello'});
+        expect(bodies, hasLength(5));
+        if (provider == 'googleai') {
+          expect(bodies.last.containsKey('toolConfig'), isFalse);
+        } else {
+          expect(bodies.last['tool_choice'], isNull);
+        }
         if (provider == 'googleai') {
           expect(
             bodies[0]['toolConfig']['functionCallingConfig']['mode'],
@@ -419,10 +441,7 @@ void main() {
             bodies[2]['toolConfig']['functionCallingConfig']['mode'],
             'ANY',
           );
-          expect(
-            bodies[3]['toolConfig']['functionCallingConfig']['mode'],
-            'NONE',
-          );
+          expect(bodies[3].containsKey('toolConfig'), isFalse);
           expect(
             (bodies[0]['tools'] as List)
                 .single['functionDeclarations']
@@ -438,7 +457,7 @@ void main() {
         } else if (provider == 'anthropic') {
           expect(bodies[0]['tool_choice'], {'type': 'any'});
           expect(bodies[2]['tool_choice'], {'type': 'any'});
-          expect(bodies[3]['tool_choice'], {'type': 'none'});
+          expect(bodies[3].containsKey('tool_choice'), isFalse);
           expect(
             (bodies[0]['tools'] as List).single['name'],
             'search_products',
@@ -450,7 +469,7 @@ void main() {
         } else {
           expect(bodies[0]['tool_choice'], 'required');
           expect(bodies[2]['tool_choice'], 'required');
-          expect(bodies[3]['tool_choice'], 'none');
+          expect(bodies[3].containsKey('tool_choice'), isFalse);
           expect(
             (bodies[0]['tools'] as List).single['function']['name'],
             'search_products',
