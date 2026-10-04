@@ -33,3 +33,17 @@ The brief form binds `ChoiceGroup.selected` to its surface data and supplies `se
 ## Growth path
 
 The next useful additions are explicit state variants and visual examples for `ProductGrid`, `OutfitSummary`, `ImageWithReason`, `LoadingState`, `ErrorState`, and `ChatInput`. Those should remain catalog items only when the state cannot be expressed clearly with the existing basic vocabulary.
+
+## Reusing the presentation layer
+
+`lib/commerce_ui.dart` exports the commerce presentation widgets and example definitions. The A2UI catalog builders only resolve bound values and dispatch existing events; they render the same `CommerceProductCard`, `CommerceChoice`, `CommercePrimaryButton`, `CommerceBudgetControl`, `CommercePieceSlot`, and `CommerceDressingRoom` used outside GenUI. Presentation widgets take plain values and callbacks, so another screen can use them without a conversation or provider connection.
+
+For native iPhone Duo signals, wrap the screen or `MaterialApp.builder` child in the exported `DuoLayoutAdapter`. `AdaptivePaneLayout` and `AdaptivePage` then consume its safe geometry; they still adapt to ordinary Flutter constraints on other devices and web. Place these layouts at the scaffold-body origin, because reserved rectangles use viewport coordinates. The app already installs the adapter once above its navigator.
+
+`commerceComponentExamples` contains one definition per registered commerce component, with `name`, `description`, and `previewBuilder`. The component gallery consumes these definitions rather than copying their appearance. Preview interactions are local: chips switch selection, the budget slider changes its amount, the product card toggles Choose this/Remove, and the dressing room switches between an incomplete and complete outfit. Disabled controls and empty/next/filled slots remain visible for inspection.
+
+Product cards use their own available width and text scale to switch between a thumbnail row and a vertical card. Names, amounts, reasons, and actions can wrap; they are not confined to a fixed image-height text box. Choice targets are at least 48 logical pixels high. The rack also uses pane width rather than the overall window width, and reduces columns for large text. A narrow pane on a wide screen therefore behaves like a narrow pane on a phone.
+
+The formal wide-screen design uses a black dressing room, light budget meter, a budget above the rack, and a white next-piece badge below the image. Scope that presentation around a surface with `CommerceDressingRoomStyle(dark: true, contextImages: [...], child: surface)`. The default light presentation retains the original compact design and category-specific image heights. `contextImages` accepts screen-owned bundled occasion photographs; it does not invent weather or location data. Next and empty formal slots use the supplied local SVG assets at their original dimensions. Product photographs stay dynamic and resolve only from the bundled public catalog.
+
+The existing nine A2UI component schemas, event names, local choice/budget updates, and legacy named dressing-room bindings remain compatible. Additional formal designs such as photo upload, fit/size, saved looks, bag quantity, weather, and delivery need their corresponding data and interaction contracts before they become runtime catalog items.

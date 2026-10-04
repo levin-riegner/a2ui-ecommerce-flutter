@@ -30,8 +30,13 @@ jobs:
       - name: Validate catalog assets
         run: python3 tools/catalog/validate.py assets/data/catalog/products.csv
 
+      - name: Verify saved Duo checkpoints
+        run: |
+          python3 -m unittest discover -s tool -p 'test_*.py'
+          python3 tool/verify_duo_checkpoints.py docs/verification/duo-simulator-2026-10-04.json
+
       - name: Check formatting
-        run: dart format --output=none --set-exit-if-changed lib test tools/genkit
+        run: dart format --output=none --set-exit-if-changed lib test tools/genkit tool
 
       - name: Analyze
         run: flutter analyze
