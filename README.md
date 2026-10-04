@@ -2,7 +2,7 @@
 
 Flutter reference for building responsive commerce experiences with declarative A2UI surfaces. It targets Flutter web, iOS, and Android, with the responsive shell designed to cover compact phone layouts and the wider iPhone Duo showcase frame.
 
-The personal stylist requires an agent connection. The agent searches the fictional catalog and sends A2UI recommendations and dressing-room updates to Flutter. Missing configuration or connection failures are shown explicitly; the app does not switch to a scripted stylist.
+The personal stylist runs inside Flutter with Genkit Dart. It searches the bundled fictional catalog and builds A2UI recommendations and dressing-room updates locally. Users supply their own provider, model ID, and API key; no separate agent service is required.
 
 ## Run
 
@@ -11,23 +11,37 @@ Use the SDK pinned in [.fvmrc](.fvmrc):
 ```sh
 fvm install
 fvm flutter pub get
+fvm flutter run
 ```
 
-Start the service in [agent-service/](agent-service/) with your own server-side credentials. Starting a journey, sending a message, selecting or removing a product, and retrying a failed turn can make a paid model request.
+Choose an iOS or Android device, or use `fvm flutter run -d chrome` for web. Choose **Connect your model**, select Google Gemini, OpenAI, Anthropic, or OpenAI-compatible, then enter a model ID that supports function tools and your API key. Compatible providers also require their API base URL, including its version path (for example `https://your-provider.example/v1`). HTTPS is required for remote providers; loopback HTTP is accepted for local compatible providers. Native operating systems may require additional configuration to permit local HTTP.
+
+Connecting loads the bundled catalog and configures Genkit without calling a model or checking the key. Starting a journey, chatting, selecting/removing pieces, and Retry can make paid requests, with at most four model requests per interaction. The app sends requests directly to the chosen provider. Browser use additionally requires that provider to support browser requests (CORS); a native build does not have this browser restriction.
+
+The key stays in memory on the device and is added only to the provider's outgoing HTTP headers. It is not saved to files or browser storage and is never a Genkit flow input or generation option. **New journey → Disconnect model** clears the key and session. Reloading or closing the app requires configuring it again. Never embed keys in source, assets, or `--dart-define` values.
+
+Without a model connection, journeys are disabled and the component gallery remains available. During a turn, the app shows progress and disables chat/product actions. Failed turns show Retry and retain the previous outfit and surfaces. No scripted fallback runs in the app.
+
+## Genkit developer tools
+
+The app bundles the Dart runtime and official provider plugins. Genkit Dart is currently in preview; package versions are pinned, and HTTP transport injection for the Google and Anthropic plugins is isolated in `genkit_providers.dart` until their factory handles expose it.
+
+For an explicitly opted-in live OpenAI smoke test, put `OPENAI_API_KEY` and `OPENAI_MODEL` in the ignored `.env.local` file or your process environment, then run:
 
 ```sh
-# Terminal 1: local agent service (requires Node 20 or later).
-cd agent-service
-DEV_ORIGIN=http://localhost:5173 OPENAI_API_KEY=... OPENAI_MODEL=... npm start
-
-# Terminal 2: Flutter web client.
-fvm flutter run -d chrome --web-port 5173 \
-  --dart-define=AGENT_SERVICE_URL=http://127.0.0.1:8787
+STYLIST_LIVE_TEST=1 fvm flutter test tools/genkit/live_smoke_test.dart
 ```
 
-Use the same `AGENT_SERVICE_URL` define for iOS and Android. For an Android emulator, use `http://10.0.2.2:8787` to reach the host. For native devices and production builds, use an HTTPS service reachable from the device. The included service binds to loopback and is intended for local development; configure the Flutter URL for your environment. Keep credentials on the service.
+This test makes paid requests: at most three interactions and twelve provider requests. It checks real search/presentation tool calls, a rendered catalog photograph, selection/removal, and dressing-room totals. It reports request counts and provider token usage without logging credentials. It is excluded from the default test suite and CI. OpenAI Platform API keys work with this Chat Completions integration; ChatGPT Admin tokens for Codex or Workspace Agents are not interchangeable with those keys.
 
-Without a valid HTTP(S) service URL, journey controls are disabled and the app shows that the stylist needs a connection. The component gallery remains available. During an agent turn, the app shows progress and disables chat and product actions. Failed turns show a Retry action that resends the original message or selection; a restarted session asks you to select the piece again.
+For free prompt/tool/flow inspection with the same catalog and stylist implementation, install the Genkit CLI on your development machine and run from the repository root:
+
+```sh
+npm install -g genkit-cli@1.43.0
+genkit start -- fvm dart run tools/genkit/stylist.dart
+```
+
+Open `http://localhost:4000` and run `stylistTurn` with `{"message":"A summer dress under €250"}`. This developer entry point always uses an offline preview model, so it requires no key and makes no paid requests. The Flutter app uses BYOK provider plugins and does not expose its connected credentials or live model actions through a reflection server. Node is needed only for the optional developer CLI, not to run or bundle the Flutter app.
 
 Product JPEGs are tracked with Git LFS. Install Git LFS before cloning or run `git lfs install && git lfs pull` in an existing checkout so Flutter receives the image bytes rather than pointer files. CI fetches LFS assets and validates their JPEG signatures before building.
 
@@ -37,7 +51,7 @@ See [architecture.md](docs/architecture.md) for the layer boundaries, surface li
 
 ## Data sources
 
-The agent service searches `assets/data/catalog/products.csv` and sends A2UI messages through `RemoteAgent`. Flutter renders the bundled product photographs from their `image_asset` paths. `CsvProductRepository`, `FixtureProductRepository`, and `StubAgent` remain available for tests and component previews through explicit agent injection; they are not runtime fallback modes.
+The bundled `StylistRuntime` searches `assets/data/catalog/products.csv` and publishes A2UI messages through `GenkitAgent`. Flutter renders the bundled product photographs from their `image_asset` paths. `CsvProductRepository`, `FixtureProductRepository`, and `StubAgent` remain available for tests and component previews through explicit agent injection; they are not runtime fallback modes.
 
 The CSV parser handles quoted commas, escaped quotes, and multiline fields. Run `python3 tools/catalog/validate.py assets/data/catalog/products.csv` before publishing catalog changes. Add `--source` once per private source export when checking for source identifiers; the original exports are not part of this repository.
 
@@ -48,10 +62,11 @@ The bundled photographs are used with permission for this public demo. They are 
 ## Verification
 
 ```sh
-fvm dart format lib test
+fvm dart format lib test tools/genkit
 fvm flutter analyze
 fvm flutter test
 fvm flutter build apk --debug
+fvm flutter build web
 ```
 
 ## License
