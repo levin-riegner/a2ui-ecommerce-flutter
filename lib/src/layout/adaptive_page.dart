@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'duo_layout_adapter.dart';
+
 /// A bounded, safe, scrollable frame shared by the landing and catalog pages.
 /// On a separating display feature it uses one unobstructed sub-screen.
 class AdaptivePage extends StatelessWidget {
@@ -19,7 +21,10 @@ class AdaptivePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final media = MediaQuery.of(context);
+      final media = DuoLayoutScope.mediaForLayout(
+        context,
+        viewportSize: constraints.biggest,
+      );
       final safe = Rect.fromLTRB(
         media.padding.left,
         media.padding.top,

@@ -46,6 +46,7 @@ dependencies:
   genkit_anthropic: 0.4.0
   genkit_google_genai: 0.4.0
   schemantic: 0.2.3
+  foldable: 1.0.5
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,8 @@
 
 Reviewed **2026-10-04 at approximately 18:00 UTC**. This is a research snapshot; no dependency, lockfile, native configuration, or global Xcode selection was changed.
 
+Integration follow-up: the app now pins `foldable` 1.0.5 behind `DuoLayoutAdapter`. See [native simulator verification](duo-simulator-verification.md) for actual signal checks, reproduction steps and remaining limits; the research table below remains the original package comparison snapshot.
+
 ## Recommendation for this app
 
 Keep the reusable component and layout foundation in Flutter: `LayoutBuilder`, `SafeArea`, local constraints, accessible text sizing, and injected display-region data. This preserves the custom design and supports compact phones, wide windows, web, and simulated fold configurations without introducing a navigation framework.

@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'duo_layout_adapter.dart';
+
 /// A screen-sized conversation/content layout with independently scrolling
 /// panes on wide windows and one ordered scroll on compact windows.
 ///
@@ -130,10 +132,13 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         final size = constraints.biggest;
+        final media = DuoLayoutScope.mediaForLayout(
+          context,
+          viewportSize: size,
+        );
         final textScale = math.max(1.0, media.textScaler.scale(14) / 14);
         final minPrimaryWidth = widget.minPrimaryWidth * textScale;
         final minSecondaryWidth = widget.minSecondaryWidth * textScale;
