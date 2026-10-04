@@ -2,15 +2,26 @@
 
 ## Architecture
 
-The sample keeps five concerns separate:
+The sample keeps four concerns separate:
 
-- `lib/src/data/` defines `ProductRepository`, deterministic fixture data, and a searchable local CSV catalog adapter.
-- `lib/src/catalog/` defines the A2UI catalog vocabulary and Flutter widgets for commerce-specific components.
-- `lib/src/agent/` contains the required remote transport and a scripted agent for tests and previews.
-- `agent-service/` contains the model tool loop and catalog search over the same sanitized CSV.
-- `lib/src/app.dart` owns the responsive host shell, text input, and native layout decisions around the A2UI surfaces.
+- `lib/src/data/` defines domain products, fixture repositories, and a pure Dart CSV parser shared by the app and developer tools.
+- `lib/src/catalog/` defines the A2UI component vocabulary and commerce widgets.
+- `lib/src/agent/` contains the bundled Genkit runtime, provider adapters, and renderer transport. Scripted agents are available for tests and previews.
+- `lib/src/app.dart` owns the responsive shell, model setup, text input, and native layout around the A2UI surfaces.
 
-`ProductRepository` provides catalog reads for test fixtures and previews. Production stylist journeys require `AGENT_SERVICE_URL`; the app creates only `RemoteAgent` from that configuration. Missing or invalid configuration disables journeys, while the component gallery stays available. The host displays pending turns and connection errors, disables interactions until a turn completes, and retries failed requests without substituting fixtures. `RemoteAgent` sends chat and surface actions to `/v1/turn`, retains the server session ID, parses A2UI envelopes, and feeds them to the same `SurfaceController`. Keep service credentials, tokens, and provider-specific configuration on a trusted server or in a local development secret store. Never put them in Flutter assets, source code, generated web bundles, or committed environment files.
+The setup dialog collects a provider, model ID, API key, and an optional compatible API base URL. `GenkitAgent.connect` loads the bundled catalog and creates an isolated `StylistRuntime` and official provider plugin. Setup makes no network request. There is no service URL, server session token, or Node backend in the app.
+
+`StylistRuntime` defines the `stylistTurn` Genkit flow and `search_products` / `present_products` tools. Genkit manages native conversation history and the tool loop. Search ranks local products and caps prices at the remaining outfit budget. Presentation accepts only one to five unique IDs already returned by search, and checks the remaining budget again. Selection and removal validate host state before model generation; lowering the budget below already-selected spending is rejected. The host constructs fixed commerce A2UI surfaces from authoritative catalog facts rather than accepting model-generated card facts or arbitrary markup.
+
+Each interaction works on a draft of the conversation, seen products, outfit, budget, and turn number. Only a successful complete generation commits it. Generation is serialized per connection, limited to four provider requests and a 60-second turn deadline; the fourth generation requests prose only. Failed or cancelled turns preserve prior state and remain retryable. Starting a new journey clears the previous outfit and surfaces.
+
+`GenkitAgent` parses the complete A2UI batch, validates component/catalog/root references, and feeds it through `A2uiTransportAdapter` into `SurfaceController`. `stylist_surfaces.dart` creates the persistent dressing-room and selected-products surfaces and a new inline recommendation surface per successful turn.
+
+`genkit_providers.dart` configures the official Gemini, OpenAI, Anthropic, and OpenAI-compatible plugins. OpenAI uses Chat Completions with `store: false`. Real keys enter HTTP headers at the transport boundary; plugin configurations contain a placeholder. The transport validates destinations, refuses redirects, sanitizes provider failures before SDK errors/traces, and bounds provider requests. A Dart Zone carries mutable per-turn draft state outside serialized flow context. Disconnect clears the key, cancels outstanding work, disposes the owned HTTP client and Genkit runtime, and discards the session.
+
+The same flow runs in the optional Genkit Developer UI through `tools/genkit/stylist.dart`, using a free offline model. The connected Flutter runtime disables reflection and automatic telemetry. The optional Genkit CLI is a development dependency only. Genkit Dart and its plugins are pinned because the SDK is in preview; Google/Anthropic HTTP injection currently uses their implementation classes behind one adapter.
+
+The Flutter app runs natively and builds for web. Direct browser requests depend on provider CORS support; native apps do not require CORS. Keys must not appear in assets, source, generated bundles, saved browser state, or committed environment files.
 
 ## A2UI shape
 

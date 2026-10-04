@@ -246,7 +246,7 @@ void main() {
   });
 
   testWidgets('start screen opens the component catalog', (tester) async {
-    await tester.pumpWidget(const ReferenceApp(serviceUrl: ''));
+    await tester.pumpWidget(const ReferenceApp());
 
     await tester.ensureVisible(find.text('Explore component catalog'));
     await tester.tap(find.text('Explore component catalog'));

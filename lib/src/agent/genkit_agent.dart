@@ -1,34 +1,86 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:a2ui_core/a2ui_core.dart' as core;
 import 'package:genui/genui.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../catalog/commerce_catalog.dart';
 import '../data/models.dart';
 import 'commerce_agent.dart';
+import '../data/catalog_products.dart';
+import 'model_settings.dart';
+import 'genkit_providers.dart';
+import 'stylist_runtime.dart';
 
-/// Connects Flutter's A2UI renderer to the catalog agent service.
-/// Credentials stay on that service; the app receives catalog-backed UI only.
-class RemoteAgent extends CommerceAgent {
-  RemoteAgent(this._origin, {http.Client? client})
-    : _client = client ?? http.Client(),
-      _ownsClient = client == null {
+/// Runs Genkit inside Flutter and publishes catalog-backed A2UI surfaces.
+class GenkitAgent extends CommerceAgent {
+  GenkitAgent(StylistRuntime runtime, {GenkitProvider? provider})
+    : _runtime = runtime,
+      // Public injection preserves a private provider field.
+      // ignore: prefer_initializing_formals
+      _provider = provider {
     controller = SurfaceController(catalogs: [buildCommerceCatalog()]);
     transport = A2uiTransportAdapter(onSend: _handleSend);
     conversation = Conversation(controller: controller, transport: transport);
   }
 
-  final Uri _origin;
-  final http.Client _client;
-  final bool _ownsClient;
+  static Future<GenkitAgent> connect({
+    required String provider,
+    required String model,
+    required String apiKey,
+    String? baseUrl,
+    http.Client? client,
+  }) async {
+    final settings = ModelSettings(
+      provider: provider,
+      model: model,
+      apiKey: apiKey,
+      baseUrl: baseUrl,
+    );
+    final connection = GenkitProvider(settings, client: client);
+    try {
+      final products = parseCatalogProducts(
+        await rootBundle.loadString('assets/data/catalog/products.csv'),
+      );
+      if (products.isEmpty) throw const FormatException('Catalog unavailable');
+      return GenkitAgent(
+        StylistRuntime(
+          products: products,
+          plugins: [connection.plugin],
+          providerModel: connection.model,
+          normalizeResponse: connection.normalizeResponse,
+          onBeginTurn: connection.beginTurn,
+          onCancelTurn: connection.cancelTurn,
+        ),
+        provider: connection,
+      );
+    } catch (_) {
+      connection.dispose();
+      rethrow;
+    }
+  }
+
+  StylistRuntime? _runtime;
+  final GenkitProvider? _provider;
+  bool _revoked = false;
+
+  Future<void> disconnect() async {
+    if (_revoked) return;
+    _revoked = true;
+    final runtime = _runtime;
+    _runtime = null;
+    _provider?.dispose();
+    await runtime?.dispose();
+  }
+
   late final A2uiTransportAdapter transport;
   @override
   late final SurfaceController controller;
   @override
   late final Conversation conversation;
 
-  String? _sessionId;
   final Set<String> _surfaceIds = {};
   bool _hasStarted = false;
   int _queuedTurns = 0;
@@ -64,7 +116,7 @@ class RemoteAgent extends CommerceAgent {
     await Future<void>.delayed(Duration.zero);
     if (_disposed) return;
     activeJourney = journey;
-    _sessionId = null;
+    _runtime?.reset();
     _hasStarted = true;
     notifyListeners();
     await _performTurn(
@@ -98,12 +150,12 @@ class RemoteAgent extends CommerceAgent {
   }
 
   Future<void> _enqueue(Future<void> Function() turn) {
-    if (_disposed) return Future<void>.value();
+    if (_disposed || _revoked) return Future<void>.value();
     _queuedTurns++;
     notifyListeners();
     final next = _pendingTurn.then((_) async {
       try {
-        if (_disposed) return;
+        if (_disposed || _revoked) return;
         _connectionError = null;
         _connectionNotice = null;
         _failedTurn = null;
@@ -134,55 +186,19 @@ class RemoteAgent extends CommerceAgent {
 
   Future<bool> _performTurn(_AgentTurn turn) async {
     try {
-      final response = await _client
-          .post(
-            _origin.resolve('/v1/turn'),
-            headers: const {'content-type': 'application/json'},
-            body: jsonEncode({
-              if (_sessionId != null) 'sessionId': _sessionId,
-              if (turn.message.isNotEmpty) 'message': turn.message,
-              if (turn.action != null) 'action': turn.action,
-            }),
-          )
-          .timeout(const Duration(seconds: 70));
-      if (_disposed) return false;
-      if (response.statusCode == 404 && _sessionId != null && turn.canRecover) {
-        _sessionId = null;
-        _clearSurfaces();
-        await Future<void>.delayed(Duration.zero);
-        if (_disposed) return false;
-        final journey = activeJourney!;
-        return await _performTurn(
-          _AgentTurn(
-            message:
-                '${journey.title}. ${journey.brief}${turn.message.isEmpty ? '' : ' ${turn.message}'}',
-            canRecover: false,
-            needsReselection: turn.action != null || turn.needsReselection,
-          ),
-        );
-      }
-      if (response.statusCode != 200) {
-        _recordFailure(
-          turn,
-          'Your stylist could not respond. Please try again.',
-        );
-        return false;
-      }
-      final payload = jsonDecode(response.body);
-      if (payload is! Map ||
-          payload['sessionId'] is! String ||
-          (payload['sessionId'] as String).isEmpty ||
-          payload['messages'] is! List ||
-          (payload['messages'] as List).isEmpty) {
-        throw const FormatException('Incomplete agent response');
-      }
+      final runtime = _runtime;
+      if (runtime == null) throw StateError('Model disconnected');
+      final payload = await runtime.turn({
+        if (turn.message.isNotEmpty) 'message': turn.message,
+        if (turn.action != null) 'action': turn.action,
+      });
+      if (_disposed || _revoked) return false;
       // Parse the whole batch before publishing any part of it to the renderer.
       final events = (payload['messages'] as List).map((raw) {
         if (raw is! Map) throw const FormatException('Invalid A2UI message');
         return core.A2uiMessage.fromJson(Map<String, dynamic>.from(raw));
       }).toList();
       _validateSurfaces(events);
-      _sessionId = payload['sessionId'] as String;
       for (final event in events) {
         transport.addMessage(event);
         if (event is core.CreateSurfaceMessage) {
@@ -196,10 +212,6 @@ class RemoteAgent extends CommerceAgent {
             latestInlineSurfaceId = null;
           }
         }
-      }
-      if (turn.needsReselection) {
-        _connectionNotice =
-            'Your stylist session restarted. Please select the piece again.';
       }
       await Future<void>.delayed(Duration.zero);
       return !_disposed;
@@ -215,7 +227,7 @@ class RemoteAgent extends CommerceAgent {
       if (!_disposed) {
         _recordFailure(
           turn,
-          'Could not connect to your stylist. Check your connection and try again.',
+          'Your model could not respond. Check your API key, model settings, and connection, then try again.',
         );
       }
       return false;
@@ -223,7 +235,7 @@ class RemoteAgent extends CommerceAgent {
   }
 
   // Check the candidate definitions without mutating the live renderer. The
-  // fixed service must leave both host surfaces usable after each full turn.
+  // bundled stylist must leave both host surfaces usable after each full turn.
   void _validateSurfaces(List<core.A2uiMessage> events) {
     final components = <String, Map<String, Map<String, dynamic>>>{};
     for (final id in _surfaceIds) {
@@ -287,20 +299,13 @@ class RemoteAgent extends CommerceAgent {
     conversation.dispose();
     controller.dispose();
     transport.dispose();
-    if (_ownsClient) _client.close();
+    unawaited(disconnect());
     super.dispose();
   }
 }
 
 class _AgentTurn {
-  const _AgentTurn({
-    this.message = '',
-    this.action,
-    this.canRecover = true,
-    this.needsReselection = false,
-  });
+  const _AgentTurn({this.message = '', this.action});
   final String message;
   final Map<String, Object?>? action;
-  final bool canRecover;
-  final bool needsReselection;
 }

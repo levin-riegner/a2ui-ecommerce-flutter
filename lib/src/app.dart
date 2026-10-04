@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
+import 'package:http/http.dart' as http;
 
 import 'agent/commerce_agent.dart';
-import 'agent/remote_agent.dart';
+import 'agent/model_connection.dart';
+import 'agent/genkit_agent.dart';
 import 'data/models.dart';
 import 'theme.dart';
 
@@ -25,35 +27,23 @@ const _basicComponentGalleryNames = <String>[
 ];
 
 class ReferenceApp extends StatefulWidget {
-  const ReferenceApp({
-    super.key,
-    this.agent,
-    this.serviceUrl = const String.fromEnvironment('AGENT_SERVICE_URL'),
-  });
+  const ReferenceApp({super.key, this.agent, this.connectionClient});
 
   /// Injection for tests and component previews. The app disposes this agent.
   final CommerceAgent? agent;
-  final String serviceUrl;
+  final http.Client? connectionClient;
 
   @override
   State<ReferenceApp> createState() => _ReferenceAppState();
 }
 
 class _ReferenceAppState extends State<ReferenceApp> {
-  late final CommerceAgent? agent;
+  CommerceAgent? agent;
 
   @override
   void initState() {
     super.initState();
-    final origin = Uri.tryParse(widget.serviceUrl.trim());
-    final validOrigin =
-        origin != null &&
-        (origin.scheme == 'http' || origin.scheme == 'https') &&
-        origin.host.isNotEmpty &&
-        origin.userInfo.isEmpty &&
-        !origin.hasQuery &&
-        !origin.hasFragment;
-    agent = widget.agent ?? (validOrigin ? RemoteAgent(origin) : null);
+    agent = widget.agent;
   }
 
   @override
@@ -68,15 +58,36 @@ class _ReferenceAppState extends State<ReferenceApp> {
       title: 'A2UI Flutter Commerce',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
-      home: _AppHome(agent: agent),
+      home: _AppHome(
+        key: ObjectKey(agent),
+        agent: agent,
+        connectionClient: widget.connectionClient,
+        onConnected: (value) => setState(() => agent = value),
+        onDisconnect: widget.agent == null && agent != null
+            ? () {
+                final previous = agent;
+                setState(() => agent = null);
+                previous?.dispose();
+              }
+            : null,
+      ),
     );
   }
 }
 
 class _AppHome extends StatefulWidget {
-  const _AppHome({required this.agent});
+  const _AppHome({
+    super.key,
+    required this.agent,
+    required this.onConnected,
+    this.onDisconnect,
+    this.connectionClient,
+  });
 
   final CommerceAgent? agent;
+  final ValueChanged<GenkitAgent> onConnected;
+  final VoidCallback? onDisconnect;
+  final http.Client? connectionClient;
 
   @override
   State<_AppHome> createState() => _AppHomeState();
@@ -102,6 +113,27 @@ class _AppHomeState extends State<_AppHome> {
             !agent.hasStarted ||
             agent.activeJourney == null) {
           return _StartScreen(
+            onConnect: agent == null
+                ? () => showDialog<void>(
+                    context: context,
+                    builder: (dialogContext) => Dialog(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 480),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(24),
+                          child: ModelConnectionForm(
+                            client: widget.connectionClient,
+                            onConnected: (value) {
+                              Navigator.of(dialogContext).pop();
+                              widget.onConnected(value);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : null,
+            onDisconnect: widget.onDisconnect,
             onSelect: agent == null
                 ? null
                 : (journey) {
@@ -126,8 +158,12 @@ class _StartScreen extends StatelessWidget {
     required this.onSelect,
     required this.onOpenGallery,
     this.isBusy = false,
+    this.onConnect,
+    this.onDisconnect,
   });
 
+  final VoidCallback? onConnect;
+  final VoidCallback? onDisconnect;
   final Future<void> Function(DemoJourney journey)? onSelect;
   final VoidCallback onOpenGallery;
   final bool isBusy;
@@ -180,6 +216,20 @@ class _StartScreen extends StatelessWidget {
                                   message: 'Connect the stylist service to start a journey.',
                                 ),
                                 const SizedBox(height: 18),
+                              ],
+                              if (onConnect != null) ...[
+                                FilledButton(
+                                  onPressed: onConnect,
+                                  child: const Text('Connect your model'),
+                                ),
+                                const SizedBox(height: 18),
+                              ],
+                              if (onDisconnect != null) ...[
+                                TextButton(
+                                  onPressed: isBusy ? null : onDisconnect,
+                                  child: const Text('Disconnect model'),
+                                ),
+                                const SizedBox(height: 12),
                               ],
                               Text(
                                 'Choose a journey',
@@ -913,7 +963,7 @@ class _ChatSurface extends StatelessWidget {
                       Expanded(
                         child: Text(
                           surfaceId == null
-                              ? 'Connecting to your stylist…'
+                              ? 'Asking your stylist…'
                               : 'Your stylist is thinking…',
                         ),
                       ),

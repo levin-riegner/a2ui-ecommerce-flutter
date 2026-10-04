@@ -49,3 +49,9 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# Local secrets
+.env
+.env.*
+!.env.example
+node_modules/
+.genkit/
