@@ -155,6 +155,8 @@ class _CredentialTransport extends http.BaseClient {
       if (settings.provider == 'openai') {
         final body = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
         body['store'] = false;
+        // Luna supports Chat Completions tools only without reasoning.
+        if (settings.model == 'gpt-6-luna') body['reasoning_effort'] = 'none';
         forwarded.body = jsonEncode(body);
       }
     }

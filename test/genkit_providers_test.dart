@@ -104,6 +104,56 @@ http.Response providerToolReply(
 }
 
 void main() {
+  test(
+    'OpenAI Luna disables reasoning for Chat Completions tool calls',
+    () async {
+      final requests = <http.Request>[];
+      final client = MockClient((request) async {
+        requests.add(request);
+        final body = jsonDecode(request.body) as Map;
+        expect(body['model'], 'gpt-6-luna');
+        expect(body['reasoning_effort'], 'none');
+        expect(body['store'], false);
+        switch (requests.length) {
+          case 1:
+            return providerToolReply('openai', 'search_products', {
+              'query': 'dress',
+            });
+          case 2:
+            return providerToolReply('openai', 'present_products', {
+              'productIds': ['dress-1'],
+            });
+          default:
+            return providerReply('openai');
+        }
+      });
+      final connection = GenkitProvider(
+        ModelSettings(
+          provider: 'openai',
+          model: 'gpt-6-luna',
+          apiKey: 'test-key',
+        ),
+        client: client,
+      );
+      final runtime = StylistRuntime(
+        products: products,
+        plugins: [connection.plugin],
+        providerModel: connection.model,
+        normalizeResponse: connection.normalizeResponse,
+        onBeginTurn: connection.beginTurn,
+        onCancelTurn: connection.cancelTurn,
+      );
+      addTearDown(() async {
+        connection.dispose();
+        await runtime.dispose();
+        client.close();
+      });
+      final result = await runtime.turn({'message': 'A dress under €100'});
+      expect(result['products'].single['id'], 'dress-1');
+      expect(requests, hasLength(3));
+    },
+  );
+
   for (final provider in ModelSettings.providers) {
     test(
       '$provider official Genkit plugin calls provider directly with an isolated key',
@@ -162,6 +212,10 @@ void main() {
           expect(request.headers['authorization'], 'Bearer private-test-key');
           if (provider == 'openai') {
             expect(jsonDecode(request.body)['store'], false);
+            expect(
+              jsonDecode(request.body).containsKey('reasoning_effort'),
+              false,
+            );
           }
         }
         connection.dispose();
