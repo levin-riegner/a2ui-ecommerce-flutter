@@ -260,7 +260,10 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
                         widget.onSend == null
                     ? null
                     : send,
-                icon: const Text('↑', style: TextStyle(fontSize: 20)),
+                icon: const Text(
+                  '↑',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
                 style: IconButton.styleFrom(
                   backgroundColor: _ink,
                   foregroundColor: Colors.white,

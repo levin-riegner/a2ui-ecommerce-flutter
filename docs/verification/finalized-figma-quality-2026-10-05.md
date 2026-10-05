@@ -14,7 +14,7 @@ Branch: `feat/finalized-figma-catalog`, based on main `5586800`.
 
 - Enlarged slider targets, preserved external composer controller ownership and draft selection, and removed mock status time from the native production rail.
 - Fixed quantity-one removal and Undo, reserved component-ID collision, and actual QuickAdjust category/adjustment payloads.
-- Fixed tags/badges that could clip silently at maximum text size; corrected gallery selectors, header/footer scrolling and bounded Start collage rendering.
+- Fixed tags/badges that could clip silently at maximum text size; corrected gallery selectors, header/footer scrolling, bounded Start collage rendering and the native send-arrow contrast.
 - Brief preview choices update the resolved submission values without resetting its budget or draft.
 - Replacement browsing cannot mutate the selected outfit; replacement affordability includes the released piece cost, and current items are excluded from alternatives.
 
