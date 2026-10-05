@@ -632,6 +632,7 @@ class _ResponsiveShell extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     body: AdaptivePaneLayout(
       primary: _ChatSurface(agent: agent),
+      secondaryBackgroundColor: Colors.black,
       secondary: _DressingPanel(agent: agent),
       header: _MobileHeader(onNewJourney: onNewJourney),
       footer: _ChatComposer(
@@ -863,18 +864,21 @@ class _SideRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: Colors.white,
+    color: Colors.black,
     child: Column(
       children: [
         const SizedBox(height: 12),
         IconButton(
           onPressed: onNewJourney,
           tooltip: 'New journey',
-          icon: const Icon(Icons.close, size: 24),
+          icon: const Icon(Icons.close, size: 24, color: Colors.white),
           constraints: const BoxConstraints.tightFor(width: 48, height: 48),
         ),
         const Spacer(),
-        const FinalizedBagIcon(count: 0),
+        const ColorFiltered(
+          colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
+          child: FinalizedBagIcon(count: 0),
+        ),
         const SizedBox(height: 14),
       ],
     ),

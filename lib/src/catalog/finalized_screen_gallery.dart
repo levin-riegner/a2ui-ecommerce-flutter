@@ -225,6 +225,9 @@ class FinalizedScreenGalleryState extends State<FinalizedScreenGallery> {
       builder: (context, constraints) => Stack(
         children: [
           AdaptivePaneLayout(
+            secondaryBackgroundColor: example.id == 'start'
+                ? null
+                : Colors.black,
             compactSecondaryFirst: example.id != 'start',
             secondaryScrollable: example.id != 'start',
             header: dock(

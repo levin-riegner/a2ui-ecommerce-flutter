@@ -18,6 +18,10 @@ Branch: `feat/finalized-figma-catalog`, based on main `5586800`.
 - Brief preview choices update the resolved submission values without resetting its budget or draft.
 - Replacement browsing cannot mutate the selected outfit; replacement affordability includes the released piece cost, and current items are excluded from alternatives.
 
+## Right pane background
+
+The split dressing pane now paints black through its top, bottom and far-right margins while controls retain their safe bounds. The native Duo capture confirmed white system time/connectivity indicators and readable selected-piece text. A subsequent native Book-state probe retained the selected top, €35 spend and composer identity with no render errors. An actual Closed/cover screenshot then confirmed the white page background and dark system indicators, with the same selected outfit and composer identity. Both flat and hinge-separated widget tests verify the background geometry, safe controls and restoration of the compact appearance; all 74 targeted tests and analysis pass.
+
 ## Source and integration scope
 
 Exact read-only Figma properties/assets were authorized after design-context extraction reached its connector limit. Original screen image bytes were checked against Figma image hashes; source copy and budget inconsistencies are documented in the screen manifest. No Figma nodes were changed.

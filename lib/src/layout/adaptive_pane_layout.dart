@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'duo_layout_adapter.dart';
 
@@ -26,6 +27,7 @@ class AdaptivePaneLayout extends StatefulWidget {
     this.railMinWidth = 900,
     this.panePadding = const EdgeInsets.all(16),
     this.secondaryPadding,
+    this.secondaryBackgroundColor,
     this.secondaryScrollable = true,
     this.compactSecondaryFirst = true,
   });
@@ -43,6 +45,10 @@ class AdaptivePaneLayout extends StatefulWidget {
   final double railMinWidth;
   final EdgeInsets panePadding;
   final EdgeInsets? secondaryPadding;
+
+  /// Paints the split pane through safe-area margins without moving controls
+  /// into hardware-reserved regions. Compact layouts keep the page background.
+  final Color? secondaryBackgroundColor;
   final bool secondaryScrollable;
   final bool compactSecondaryFirst;
 
@@ -72,6 +78,31 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
       KeyedSubtree(key: _secondaryKey, child: widget.secondary);
   Widget _header() => KeyedSubtree(key: _headerKey, child: widget.header);
   Widget _footer() => KeyedSubtree(key: _footerKey, child: widget.footer);
+
+  Widget _background(double left) => Positioned(
+    left: left,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    child: ColoredBox(
+      key: const ValueKey('secondary-pane-background'),
+      color: widget.secondaryBackgroundColor!,
+    ),
+  );
+
+  Widget _canvas({required bool split, required List<Widget> children}) {
+    final canvas = Stack(children: children);
+    if (widget.secondaryBackgroundColor == null) return canvas;
+    final color = split
+        ? widget.secondaryBackgroundColor!
+        : Theme.of(context).scaffoldBackgroundColor;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: color.computeLuminance() < .5
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
+      child: canvas,
+    );
+  }
 
   Widget _primaryPane() => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -166,21 +197,26 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
         if (separatingRegions) {
           return AdaptivePaneScope(
             isSplit: true,
-            child: Stack(
+            child: KeyedSubtree(
               key: const ValueKey('obstructed-split-layout'),
-              children: [
-                Positioned.fromRect(rect: regions[0], child: _primaryPane()),
-                Positioned.fromRect(
-                  rect: regions[1],
-                  child: _secondaryPane(
-                    showRail:
-                        widget.rail != null &&
-                        size.width >= widget.railMinWidth &&
-                        regions[1].width - widget.railWidth >=
-                            minSecondaryWidth,
+              child: _canvas(
+                split: true,
+                children: [
+                  if (widget.secondaryBackgroundColor != null)
+                    _background(regions[1].left),
+                  Positioned.fromRect(rect: regions[0], child: _primaryPane()),
+                  Positioned.fromRect(
+                    rect: regions[1],
+                    child: _secondaryPane(
+                      showRail:
+                          widget.rail != null &&
+                          size.width >= widget.railMinWidth &&
+                          regions[1].width - widget.railWidth >=
+                              minSecondaryWidth,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }
@@ -217,8 +253,11 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                 2;
         return AdaptivePaneScope(
           isSplit: split,
-          child: Stack(
+          child: _canvas(
+            split: split,
             children: [
+              if (split && widget.secondaryBackgroundColor != null)
+                _background(centered.left + primaryWidth + 1),
               Positioned.fromRect(
                 rect: centered,
                 child: split

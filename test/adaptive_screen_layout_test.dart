@@ -7,6 +7,7 @@ import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -53,6 +54,69 @@ void main() {
       );
       expect(tester.takeException(), isNull);
     });
+  }
+
+  for (final obstructed in [false, true]) {
+    testWidgets(
+      'split background covers safe margins while controls avoid them, hinge=$obstructed',
+      (tester) async {
+        setWindow(tester, const Size(951, 669));
+        await tester.pumpWidget(
+          _Harness(
+            secondaryBackgroundColor: Colors.black,
+            padding: const EdgeInsets.fromLTRB(0, 20, 84, 34),
+            features: obstructed
+                ? const [
+                    DisplayFeature(
+                      bounds: Rect.fromLTWH(455.5, 0, 40, 669),
+                      type: DisplayFeatureType.hinge,
+                      state: DisplayFeatureState.postureHalfOpened,
+                    ),
+                  ]
+                : const [],
+          ),
+        );
+        await tester.pumpAndSettle();
+        final background = tester.getRect(
+          find.byKey(const ValueKey('secondary-pane-background')),
+        );
+        expect(background.top, 0);
+        expect(background.bottom, 669);
+        expect(background.right, 951);
+        expect(background.left, obstructed ? 495.5 : 454);
+        final content = tester.getRect(find.byKey(const ValueKey('secondary')));
+        expect(content.left, greaterThanOrEqualTo(background.left + 16));
+        expect(content.right, lessThanOrEqualTo(951 - 84 - 16));
+        expect(content.top, greaterThanOrEqualTo(20 + 16));
+        expect(
+          tester
+              .widget<AnnotatedRegion<SystemUiOverlayStyle>>(
+                find.byType(AnnotatedRegion<SystemUiOverlayStyle>).first,
+              )
+              .value
+              .statusBarBrightness,
+          Brightness.dark,
+        );
+        await tester.enterText(find.byKey(const ValueKey('draft')), 'Keep me');
+        tester.view.physicalSize = const Size(466, 678);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('secondary-pane-background')),
+          findsNothing,
+        );
+        expect(find.text('Keep me'), findsOneWidget);
+        expect(
+          tester
+              .widget<AnnotatedRegion<SystemUiOverlayStyle>>(
+                find.byType(AnnotatedRegion<SystemUiOverlayStyle>).first,
+              )
+              .value
+              .statusBarBrightness,
+          Brightness.light,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
   }
 
   testWidgets('draft and focus survive compact/split resize', (tester) async {
@@ -351,12 +415,14 @@ class _Harness extends StatelessWidget {
     this.padding = EdgeInsets.zero,
     this.keyboardHeight = 0,
     this.longContent = false,
+    this.secondaryBackgroundColor,
   });
 
   final List<DisplayFeature> features;
   final EdgeInsets padding;
   final double keyboardHeight;
   final bool longContent;
+  final Color? secondaryBackgroundColor;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -370,6 +436,7 @@ class _Harness extends StatelessWidget {
           ),
           child: Scaffold(
             body: AdaptivePaneLayout(
+              secondaryBackgroundColor: secondaryBackgroundColor,
               primary: Column(
                 key: const ValueKey('primary'),
                 children: [

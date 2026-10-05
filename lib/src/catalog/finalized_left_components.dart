@@ -94,7 +94,14 @@ class FinalizedStylistMessage extends StatelessWidget {
   const FinalizedStylistMessage({super.key, required this.text});
   final String text;
   @override
-  Widget build(BuildContext context) => Text(text, style: _body);
+  Widget build(BuildContext context) => Text(
+    text,
+    style: _body.copyWith(
+      color: CommerceDressingRoomStyle.maybeOf(context)?.dark == true
+          ? Colors.white
+          : _ink,
+    ),
+  );
 }
 
 class FinalizedSuggestion extends StatelessWidget {
