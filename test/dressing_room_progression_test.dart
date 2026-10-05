@@ -265,7 +265,7 @@ void main() {
   );
 
   testWidgets(
-    'selected cards show Remove and recommendations show Choose this',
+    'selected cards show Remove and recommendations show Add to dressing room',
     (tester) async {
       final harness = _SurfaceHarness();
       addTearDown(harness.dispose);
@@ -292,7 +292,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('Remove'), findsOneWidget);
-      expect(find.text('Choose this'), findsOneWidget);
+      expect(find.text('Add to dressing room'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

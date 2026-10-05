@@ -8,6 +8,9 @@ import 'agent/model_connection.dart';
 import 'agent/genkit_agent.dart';
 import 'catalog/commerce_examples.dart';
 import 'catalog/commerce_components.dart';
+import 'catalog/finalized_component_gallery.dart';
+import 'catalog/finalized_screen_gallery.dart';
+import 'catalog/finalized_shared_components.dart';
 import 'data/models.dart';
 import 'layout/adaptive_page.dart';
 import 'layout/adaptive_pane_layout.dart';
@@ -502,6 +505,23 @@ class _ComponentGallery extends StatelessWidget {
               '9 commerce components · 15 GenUI basic components',
               style: Theme.of(context).textTheme.labelLarge,
             ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const FinalizedComponentGallery(),
+                ),
+              ),
+              child: const Text('Finalized Figma components'),
+            ),
+            OutlinedButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const FinalizedScreenGallery(),
+                ),
+              ),
+              child: const Text('Finalized Figma screens'),
+            ),
             const SizedBox(height: 28),
             LayoutBuilder(
               builder: (context, constraints) {
@@ -842,44 +862,21 @@ class _SideRail extends StatelessWidget {
   final VoidCallback onNewJourney;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: [
-          const SizedBox(height: 12),
-          Container(
-            width: 10,
-            height: 36,
-            decoration: BoxDecoration(
-              color: const Color(0xff18181b),
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          const SizedBox(height: 4),
-          RotatedBox(
-            quarterTurns: 1,
-            child: Text(
-              '9:41',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: const Color(0xff18181b),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: 44,
-            height: 44,
-            child: IconButton(
-              onPressed: onNewJourney,
-              icon: const Icon(Icons.close, size: 24),
-              tooltip: 'New journey',
-            ),
-          ),
-          const Spacer(),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ColoredBox(
+    color: Colors.white,
+    child: Column(
+      children: [
+        const SizedBox(height: 12),
+        IconButton(
+          onPressed: onNewJourney,
+          tooltip: 'New journey',
+          icon: const Icon(Icons.close, size: 24),
+          constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+        ),
+        const Spacer(),
+        const FinalizedBagIcon(count: 0),
+        const SizedBox(height: 14),
+      ],
+    ),
+  );
 }

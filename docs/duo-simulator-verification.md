@@ -28,6 +28,11 @@ Open Device Hub using `devices://device/open?id=<duo-udid>`. Its Closed, Book an
 
 `swift tool/duo_device_hub_controls.swift <Device-Hub-pid> 'Rotate Right'` presses only the existing Duo window's button, checks the target app identity and reports foreground identity before/after. It never activates Device Hub or opens menus. The helper also accepts `Closed`, `Book`, `Open` and read-only `list`. Allow transitions to settle before capturing native state.
 
+If Device Hub beta omits its accessibility windows while inactive, the explicit
+`--recover-window` flag briefly activates it, presses the requested Duo control,
+and restores the previously focused application. This recovery is opt-in;
+ordinary helper calls remain background-only.
+
 ## Acceptance matrix
 
 For every Closed, Book and Open preset, rotate through portrait, both landscapes and upside-down. The production iPhone orientation list excludes upside-down portrait, so that physical orientation can retain the prior supported app orientation. Test each with the software keyboard hidden and shown, at normal and maximum accessibility text sizes. This is 48 checkpoints; retain the requested physical orientation and actual viewport separately.

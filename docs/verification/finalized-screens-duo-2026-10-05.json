@@ -1,0 +1,678 @@
+{
+  "native": true,
+  "providerRequests": 0,
+  "records": [
+    {
+      "id": "start",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "brief",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "picks",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "portrait_picks",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_brief",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_tops",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_complete",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_brief",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_boots",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_complete",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "complete",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "added_bag",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "bag_preview",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "partially_folded",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "start",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "brief",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "picks",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "portrait_picks",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_brief",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_tops",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_complete",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_brief",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_boots",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_complete",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "complete",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "added_bag",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "bag_preview",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "partially_folded",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "start",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "brief",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "picks",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "portrait_picks",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_brief",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_tops",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "berlin_complete",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_brief",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_boots",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "cotswolds_complete",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "complete",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "added_bag",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "bag_preview",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "partially_folded",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 1.0
+    },
+    {
+      "id": "start",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "brief",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "picks",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "portrait_picks",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_brief",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_tops",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_complete",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_brief",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_boots",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_complete",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "complete",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "added_bag",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "bag_preview",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "partially_folded",
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "start",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "brief",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "picks",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "portrait_picks",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_brief",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_tops",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_complete",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_brief",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_boots",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_complete",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "complete",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "added_bag",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "bag_preview",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "partially_folded",
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "start",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "brief",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "picks",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "portrait_picks",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_brief",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_tops",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "berlin_complete",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_brief",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_boots",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "cotswolds_complete",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "complete",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "added_bag",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "bag_preview",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    },
+    {
+      "id": "partially_folded",
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "errors": [],
+      "textScale": 3.1176470588235294
+    }
+  ]
+}

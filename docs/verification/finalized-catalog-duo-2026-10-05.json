@@ -1,0 +1,3006 @@
+{
+  "native": true,
+  "providerRequests": 0,
+  "records": [
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "UserMessage",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistMessage",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChatInput",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChatInput",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Suggestion",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BudgetSlider",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 7,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 8,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 9,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 10,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 11,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 12,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ColourPicker",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PhotoUpload",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PhotoUpload",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "FitSize",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTimeline",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuickAdjust",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BrandPreferences",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistWorking",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistWorking",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 7,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 8,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 9,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 10,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 11,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 12,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 13,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 14,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 15,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 16,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 17,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "DressingRoom",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BudgetMeter",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "TypicalWeather",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "MapCard",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ContextStrip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ContextStrip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Look",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Look",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookSummary",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "DeliveryEstimate",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SavedLooksRail",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "FitNotes",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AlternativePiece",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "IfWeatherTurns",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagPreview",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChoiceChip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChoiceChip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Toast",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Toast",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTile",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTile",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SideBar",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SideBar",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PrimaryButton",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Eyebrow",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "UserMessage",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistMessage",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChatInput",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChatInput",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Suggestion",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BudgetSlider",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 7,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 8,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 9,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 10,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 11,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 12,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ColourPicker",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PhotoUpload",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PhotoUpload",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "FitSize",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTimeline",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuickAdjust",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BrandPreferences",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistWorking",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistWorking",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 7,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 8,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 9,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 10,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 11,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 12,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 13,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 14,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 15,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 16,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 17,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "DressingRoom",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BudgetMeter",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "TypicalWeather",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "MapCard",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ContextStrip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ContextStrip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Look",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Look",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookSummary",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "DeliveryEstimate",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SavedLooksRail",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "FitNotes",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AlternativePiece",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "IfWeatherTurns",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagPreview",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChoiceChip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChoiceChip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Toast",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Toast",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTile",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTile",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SideBar",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SideBar",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PrimaryButton",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "partiallyOpen",
+      "angle": 127.77777862548828,
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Eyebrow",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "UserMessage",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistMessage",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChatInput",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChatInput",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Suggestion",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BudgetSlider",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 7,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 8,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 9,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 10,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 11,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ProductCard",
+      "variant": 12,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PicksStrip",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ThisOrThat",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ColourPicker",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PhotoUpload",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PhotoUpload",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "FitSize",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTimeline",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuickAdjust",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BrandPreferences",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistWorking",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "StylistWorking",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 7,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 8,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 9,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 10,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 11,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 12,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 13,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 14,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 15,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 16,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PieceSlot",
+      "variant": 17,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "DressingRoom",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BudgetMeter",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AddToBagButton",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "TypicalWeather",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "MapCard",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ContextStrip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ContextStrip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Look",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Look",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookSummary",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "DeliveryEstimate",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SavedLooksRail",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "FitNotes",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "AlternativePiece",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "IfWeatherTurns",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagPreview",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChoiceChip",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "ChoiceChip",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "BagIcon",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Toast",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Toast",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "QuantityStepper",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTile",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "OccasionTile",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "LookTile",
+      "variant": 6,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 2,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 3,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 4,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "GarmentSilhouette",
+      "variant": 5,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SideBar",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "SideBar",
+      "variant": 1,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "PrimaryButton",
+      "variant": 0,
+      "errors": []
+    },
+    {
+      "status": "closed",
+      "angle": 0.0,
+      "size": "Size(466.0, 678.0)",
+      "keyboard": 0.0,
+      "textScale": 3.1176470588235294,
+      "component": "Eyebrow",
+      "variant": 0,
+      "errors": []
+    }
+  ]
+}

@@ -147,6 +147,7 @@ class StylistRuntime {
             needsPicks && scope.searchFoundProducts && scope.requests == 3;
         if (scope.requests == 4 ||
             scope.picks.isNotEmpty ||
+            (scope.adjustingProductId != null && !scope.needsProducts) ||
             (scope.target == null &&
                 scope.plan?.complete == true &&
                 !scope.allowEdits)) {
@@ -190,7 +191,8 @@ class StylistRuntime {
             'toolChoice': 'any',
           });
         }
-        if (scope.searches > 0 && request.tools?.isNotEmpty == true) {
+        if ((scope.searches > 0 || scope.adjustingProductId != null) &&
+            request.tools?.isNotEmpty == true) {
           request = ModelRequest.fromJson({
             ...request.toJson(),
             'tools': request.tools!
@@ -303,9 +305,12 @@ class StylistRuntime {
             filters['season'] = state.season;
           }
         }
-        var found = searchStylistProducts(products, filters);
+        final candidates = scope.adjustingProductId == null
+            ? products
+            : products.where((p) => p.id != scope.adjustingProductId).toList();
+        var found = searchStylistProducts(candidates, filters);
         if (found.isEmpty && scope.target != null) {
-          found = searchStylistProducts(products, {
+          found = searchStylistProducts(candidates, {
             'query': input['query'],
             'category': scope.target!.name,
             'priceMax': cap,
@@ -345,6 +350,11 @@ class StylistRuntime {
           return ToolResult.response({
             'error':
                 'Present choices for the next category: ${scope.target!.name}',
+          });
+        }
+        if (ids.contains(scope.adjustingProductId)) {
+          return ToolResult.response({
+            'error': 'Present alternatives to the currently selected piece.',
           });
         }
         if (ids.any((id) => state.seen[id]!.price > scope.availableBudget)) {
@@ -526,6 +536,7 @@ class StylistRuntime {
     }
     var actionNote = '';
     ProductCategory? removedCategory;
+    ProductCategory? adjustedCategory;
     if (action != null) {
       final context = action['context'] as Map;
       if (action['name'] == 'find_options') {
@@ -548,6 +559,38 @@ class StylistRuntime {
         removedCategory = removed.category;
         scope.confirmations.add('Removed ${removed.name}.');
         actionNote = 'The person removed ${removed.name} from the outfit.';
+      } else if (action['name'] == 'adjust_piece') {
+        final rawCategory = context['category'];
+        final matches = rawCategory is String
+            ? ProductCategory.values.where(
+                (category) => category.name == rawCategory.trim().toLowerCase(),
+              )
+            : const <ProductCategory>[];
+        if (matches.length != 1) {
+          throw const FormatException('Invalid category for adjustment');
+        }
+        adjustedCategory = matches.single;
+        final selected = state.outfit[adjustedCategory.name];
+        if (selected == null || selected.category != adjustedCategory) {
+          throw StateError('No selected piece for this category');
+        }
+        final rawAdjustment = context['adjustment'];
+        if (rawAdjustment != null &&
+            (rawAdjustment is! String || rawAdjustment.trim().length > 120)) {
+          throw const FormatException('Invalid piece adjustment');
+        }
+        final adjustment = (rawAdjustment as String?)?.trim() ?? '';
+        final preference = adjustment.isEmpty
+            ? ''
+            : '${adjustedCategory.name} replacement preference: $adjustment';
+        if (preference.isNotEmpty && !state.preferences.contains(preference)) {
+          state.preferences.add(preference);
+        }
+        scope.adjustingProductId = selected.id;
+        actionNote =
+            'The person wants alternatives to ${selected.name} for ${adjustedCategory.name}. '
+            '${preference.isEmpty ? '' : '$preference. '}'
+            'Keep the selected piece and the rest of the outfit until they choose a replacement.';
       } else {
         throw StateError('Unsupported action');
       }
@@ -570,9 +613,11 @@ class StylistRuntime {
     final openingJourney =
         state.catalogOccasion.isNotEmpty && message == state.brief;
     scope.requested =
+        adjustedCategory ??
         (openingJourney ? null : _requestedCategory(message)) ??
         removedCategory;
-    scope.allowEdits = message.isNotEmpty && !openingJourney;
+    scope.allowEdits =
+        adjustedCategory == null && message.isNotEmpty && !openingJourney;
     scope.removing = RegExp(
       r'\b(?:remove|drop|reject|discard)\b',
       caseSensitive: false,
@@ -630,6 +675,9 @@ class StylistRuntime {
         ? 'Your look is complete. Keep it, or tell me which piece you want to swap.'
         : scope.needsProducts
         ? 'Next, choose ${_categoryLabel(scope.target!)} to continue the look.'
+        : scope.adjustingProductId != null
+        ? 'There are no alternatives for that piece within the available budget. '
+              'Keep it, or raise the budget to see more options.'
         : 'There are no ${_categoryLabel(scope.target!)} in the catalog within the available budget. '
               'Would you like to raise the budget or replace a selected piece?';
     final reply = [
@@ -719,6 +767,7 @@ class StylistRuntime {
         products.any(
           (product) =>
               product.category == scope.target &&
+              product.id != scope.adjustingProductId &&
               product.price <= scope.availableBudget,
         );
   }
@@ -751,6 +800,7 @@ class StylistRuntime {
         'Budget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. '
         'Already spent: ${euro(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : euro(state.remaining)}.\n'
         'Host outfit facts: ${state.outfit.values.map(productFacts).toList()}.\n'
+        '${scope.adjustingProductId == null ? '' : 'The person is adjusting ${scope.target?.name}. Keep ${scope.adjustingProductId} selected until a replacement is chosen. Present different product IDs.\n'}'
         'Last presented IDs, in display order: ${state.lastPresented}.\n'
         'Plan: ${plan.slots.map((slot) => slot.name).join(', ')}. '
         'Progress: ${plan.filledCount} of ${plan.slots.length}.\n'
@@ -854,6 +904,7 @@ class _TurnScope {
   bool allowEdits = false;
   bool removing = false;
   ProductCategory? requested;
+  String? adjustingProductId;
   List<String> confirmations = [];
   double get availableBudget {
     if (target == null) return state.remaining;

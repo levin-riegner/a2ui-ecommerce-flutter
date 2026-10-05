@@ -82,7 +82,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
     ProductCategory.accessory: 'An accessory',
   };
   final dressingData = <String, Object?>{
-    'title': 'Your dressing room',
+    'title': 'Dressing room',
     'brief': occasion.isEmpty ? 'Build a look together' : occasion,
     'planCaption': outfitPlan.complete
         ? 'Your look is complete'

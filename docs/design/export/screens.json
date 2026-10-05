@@ -1,0 +1,3770 @@
+[
+  {
+    "id": "start",
+    "sourceNode": "175:2285",
+    "sourceIssues": [],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "start-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "start-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6",
+                  "chat-7"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "Text",
+                "text": "Where are you going?",
+                "variant": "h2"
+              },
+              {
+                "id": "chat-2",
+                "component": "StylistMessage",
+                "text": "Tell me the occasion, where it is and roughly what you’d like to spend. I’ll pull the whole look together from what we carry, and you can change anything as we go."
+              },
+              {
+                "id": "chat-3",
+                "component": "Eyebrow",
+                "text": "Here are some examples"
+              },
+              {
+                "id": "chat-4",
+                "component": "Suggestion",
+                "text": "A summer wedding in Lisbon in late June — outdoor ceremony, cocktail dress code, around €1,200 for the whole outfit",
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "Suggestion",
+                "text": "Anniversary dinner at a smart restaurant in Paris in October, black tie optional, about €1,500",
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "Suggestion",
+                "text": "First day at a creative agency in Berlin in September. Smart casual, nothing corporate, under €800",
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              },
+              {
+                "id": "chat-7",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "start-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "start-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "start-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "OccasionCollage"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "start-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "brief",
+    "sourceNode": "175:3772",
+    "sourceIssues": [],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "brief-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "brief-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6",
+                  "chat-7",
+                  "chat-8",
+                  "chat-9",
+                  "chat-10",
+                  "chat-11",
+                  "chat-12"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "UserMessage",
+                "text": "Anniversary dinner at a smart restaurant in Paris in October, black tie optional, about €1,500"
+              },
+              {
+                "id": "chat-2",
+                "component": "StylistMessage",
+                "text": "Perfect — an anniversary in Paris in October. I’d go elegant, with the option to take it all the way to black tie. Three quick things and I’ll pull options for you."
+              },
+              {
+                "id": "chat-3",
+                "component": "ChoiceChip",
+                "label": "Black tie",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Black tie"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ChoiceChip",
+                "label": "Cocktail",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Cocktail"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ChoiceChip",
+                "label": "Smart Elegant",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Smart Elegant"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChoiceChip",
+                "label": "Spring",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Spring"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-7",
+                "component": "ChoiceChip",
+                "label": "Summer",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Summer"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-8",
+                "component": "ChoiceChip",
+                "label": "Autumn",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Autumn"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-9",
+                "component": "ChoiceChip",
+                "label": "Winter",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Winter"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-10",
+                "component": "BudgetSlider",
+                "value": {
+                  "path": "/budget"
+                },
+                "min": 0,
+                "max": 3750
+              },
+              {
+                "id": "chat-11",
+                "component": "PrimaryButton",
+                "label": "Find options",
+                "action": {
+                  "event": {
+                    "name": "find_options",
+                    "context": {
+                      "budget": {
+                        "path": "/budget"
+                      },
+                      "dressCode": {
+                        "path": "/dressCode"
+                      },
+                      "season": {
+                        "path": "/season"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-12",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "brief-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "brief-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "brief-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "16° / 10°",
+                "rain": "Rain 4 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/paris-autumn.png",
+                "photoB": "assets/images/finalized_left/restaurant.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "Anniversary dinner in Paris · black tie optional · under €1,500",
+                "spent": "€0 spent · 0 of 4",
+                "left": "€1,500 left",
+                "progress": 0.0,
+                "slots": [
+                  {
+                    "category": "dress",
+                    "label": "A dress",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "brief-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "picks",
+    "sourceNode": "186:4485",
+    "sourceIssues": [
+      "Source budget meter says €0 spent / €1,500 left although selected dress costs €874. Fixture computes €874 spent / €626 left from selected pieces."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "picks-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "picks-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "Lovely — the Zimmermann is in your dressing room and leaves you €626. Shoes next: I’d keep them refined and let the dress do the talking."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Shoes · black tie · under €626"
+              },
+              {
+                "id": "chat-3",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Satin Pointed Pump",
+                "price": "€545",
+                "brandLine": "Manolo Blahnik · Black · Satin · 70mm",
+                "tag": "Most formal",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "paris-shoes-1"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Leather Kitten Heel",
+                "price": "€295",
+                "brandLine": "Aeyde · Black · Leather · 55mm",
+                "tag": "Easiest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-kitten-heel"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Suede Low-Top Sneaker",
+                "price": "€349",
+                "brandLine": "Common Projects · Off-white · Suede",
+                "tag": "Relaxed",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-sneaker"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "picks-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "picks-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "picks-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "16° / 10°",
+                "rain": "Rain 4 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/paris-autumn.png",
+                "photoB": "assets/images/finalized_left/restaurant.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "Anniversary dinner in Paris · black tie optional · under €1,500",
+                "spent": "€874 spent · 1 of 4",
+                "left": "€626 left",
+                "progress": 0.5826666666666667,
+                "slots": [
+                  {
+                    "category": "dress",
+                    "label": "A dress",
+                    "name": "Indra Long Dress",
+                    "meta": "Zimmermann · €874",
+                    "state": "Filled",
+                    "swatch": "#b8a98e"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Partial",
+                "pieceCount": 1,
+                "total": "€874",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-picks"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "picks-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "portrait_picks",
+    "sourceNode": "204:7733",
+    "sourceIssues": [
+      "Source budget meter says €0 spent / €1,500 left although selected dress costs €874. Fixture computes €874 spent / €626 left from selected pieces."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "portrait_picks-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "portrait_picks-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "Lovely — the Zimmermann is in your dressing room and leaves you €626. Shoes next: I’d keep them refined and let the dress do the talking."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Anniversary dinner in Paris · black tie optional · under €1,500"
+              },
+              {
+                "id": "chat-3",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Satin Pointed Pump",
+                "price": "€545",
+                "brandLine": "Manolo Blahnik · Black · Satin · 70mm",
+                "tag": "Most formal",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "paris-shoes-1"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Leather Kitten Heel",
+                "price": "€295",
+                "brandLine": "Aeyde · Black · Leather · 55mm",
+                "tag": "Easiest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-kitten-heel"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Suede Low-Top Sneaker",
+                "price": "€349",
+                "brandLine": "Common Projects · Off-white · Suede",
+                "tag": "Relaxed",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-sneaker"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "portrait_picks-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "portrait_picks-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "portrait_picks-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "16° / 10°",
+                "rain": "Rain 4 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/paris-autumn.png",
+                "photoB": "assets/images/finalized_left/restaurant.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "Anniversary dinner in Paris · black tie optional · under €1,500",
+                "spent": "€874 spent · 1 of 4",
+                "left": "€626 left",
+                "progress": 0.5826666666666667,
+                "slots": [
+                  {
+                    "category": "dress",
+                    "label": "A dress",
+                    "name": "Indra Long Dress",
+                    "meta": "Zimmermann · €874",
+                    "state": "Filled",
+                    "swatch": "#b8a98e"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Partial",
+                "pieceCount": 1,
+                "total": "€874",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-portrait_picks"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "portrait_picks-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "berlin_brief",
+    "sourceNode": "203:4824",
+    "sourceIssues": [],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "berlin_brief-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "berlin_brief-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6",
+                  "chat-7",
+                  "chat-8",
+                  "chat-9",
+                  "chat-10",
+                  "chat-11",
+                  "chat-12",
+                  "chat-13"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "UserMessage",
+                "text": "First day at a creative agency in Berlin in September. Smart casual, nothing corporate, under €800"
+              },
+              {
+                "id": "chat-2",
+                "component": "StylistMessage",
+                "text": "Nice — first days are about looking like yourself, just a notch sharper. Tell me how you want to come across and what you usually wear, and I’ll build around that."
+              },
+              {
+                "id": "chat-3",
+                "component": "ChoiceChip",
+                "label": "Polished",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Polished"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ChoiceChip",
+                "label": "Relaxed",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Relaxed"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ChoiceChip",
+                "label": "A bit bold",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "A bit bold"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChoiceChip",
+                "label": "Trousers + Shirt",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Trousers + Shirt"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-7",
+                "component": "ChoiceChip",
+                "label": "Denim",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Denim"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-8",
+                "component": "ChoiceChip",
+                "label": "A dress",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "A dress"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-9",
+                "component": "ChoiceChip",
+                "label": "Yes",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Yes"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-10",
+                "component": "ChoiceChip",
+                "label": "No",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "No"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-11",
+                "component": "BudgetSlider",
+                "value": {
+                  "path": "/budget"
+                },
+                "min": 0,
+                "max": 3750
+              },
+              {
+                "id": "chat-12",
+                "component": "PrimaryButton",
+                "label": "Build the look",
+                "action": {
+                  "event": {
+                    "name": "find_options",
+                    "context": {
+                      "budget": {
+                        "path": "/budget"
+                      },
+                      "dressCode": {
+                        "path": "/dressCode"
+                      },
+                      "season": {
+                        "path": "/season"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-13",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "berlin_brief-chat",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "berlin_brief-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "berlin_brief-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "12° / 19°",
+                "rain": "Rain 3 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "First day · Berlin · September · smart casual, relaxed · under €800",
+                "spent": "€0 spent · 0 of 4",
+                "left": "€800 left",
+                "progress": 0.0,
+                "slots": [
+                  {
+                    "category": "bottom",
+                    "label": "Trousers",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "top",
+                    "label": "Top",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "berlin_brief-room",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "berlin_tops",
+    "sourceNode": "203:5085",
+    "sourceIssues": [
+      "Source cards retain shoe product names and final card category Shoes while showing top prices/brands. Executable fixture uses corrected top names already present in Berlin Complete source, preserving product identity and category."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "berlin_tops-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "berlin_tops-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "Good trouser — it’s in your dressing room. Now a top. Nothing stiff: I’d go for a knit or a soft shirt you can push the sleeves up on."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Tops • Relaxed • Under €510"
+              },
+              {
+                "id": "chat-3",
+                "component": "ProductCard",
+                "category": "top",
+                "name": "Merino Crew Knit",
+                "price": "€180",
+                "brandLine": "COS · Charcoal · Merino",
+                "tag": "Easiest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-berlin-knit"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ProductCard",
+                "category": "top",
+                "name": "Washed Cotton Shirt",
+                "price": "€145",
+                "brandLine": "Sunspel · Off-white · Cotton",
+                "tag": "Sharpest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-berlin-shirt"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ProductCard",
+                "category": "top",
+                "name": "Striped Boat-Neck Tee",
+                "price": "€95",
+                "brandLine": "Armor Lux · Navy stripe · Cotton",
+                "tag": "A bit bold",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-berlin-tee"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "berlin_tops-chat",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "berlin_tops-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "berlin_tops-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "12° / 19°",
+                "rain": "Rain 3 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "First day · Berlin · September · smart casual, relaxed · under €800",
+                "spent": "€290 spent · 1 of 4",
+                "left": "€510 left",
+                "progress": 0.3625,
+                "slots": [
+                  {
+                    "category": "bottom",
+                    "label": "Trousers",
+                    "name": "Pleated Wool Trouser",
+                    "meta": "Uniqlo U · €290",
+                    "state": "Filled",
+                    "swatch": "#666666"
+                  },
+                  {
+                    "category": "top",
+                    "label": "Top",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Partial",
+                "pieceCount": 1,
+                "total": "€290",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-berlin_tops"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "berlin_tops-room",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "berlin_complete",
+    "sourceNode": "203:5384",
+    "sourceIssues": [
+      "Source selected top is named Washed Cotton Shirt but priced/branded as COS €180 knit. Fixture uses Merino Crew Knit (from source recommendation) to preserve item identity and €775 total."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "berlin_complete-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "berlin_complete-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "Good trouser — it’s in your dressing room. Now a top. Nothing stiff: I’d go for a knit or a soft shirt you can push the sleeves up on."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Tops • Relaxed • Under €510"
+              },
+              {
+                "id": "chat-3",
+                "component": "ProductCard",
+                "category": "top",
+                "name": "Merino Crew Knit",
+                "price": "€180",
+                "brandLine": "COS · Charcoal · Merino",
+                "tag": "Easiest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-berlin-knit"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ProductCard",
+                "category": "top",
+                "name": "Washed Cotton Shirt",
+                "price": "€145",
+                "brandLine": "Sunspel · Off-white · Cotton",
+                "tag": "Sharpest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-berlin-shirt"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ProductCard",
+                "category": "top",
+                "name": "Striped Boat-Neck Tee",
+                "price": "€95",
+                "brandLine": "Armor Lux · Navy stripe · Cotton",
+                "tag": "A bit bold",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-berlin-tee"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "berlin_complete-chat",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "berlin_complete-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "berlin_complete-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "12° / 19°",
+                "rain": "Rain 3 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "First day · Berlin · September · smart casual, relaxed · under €800",
+                "spent": "€775 spent · 4 of 4",
+                "left": "€25 left",
+                "progress": 0.96875,
+                "slots": [
+                  {
+                    "category": "bottom",
+                    "label": "Trousers",
+                    "name": "Pleated Wool Trouser",
+                    "meta": "Uniqlo U · €290",
+                    "state": "Filled",
+                    "swatch": "#666666"
+                  },
+                  {
+                    "category": "top",
+                    "label": "Top",
+                    "name": "Merino Crew Knit",
+                    "meta": "COS · €180",
+                    "state": "Filled",
+                    "swatch": "#555555"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "Unlined Cotton Blazer",
+                    "meta": "Arket · €190",
+                    "state": "Filled",
+                    "swatch": "#444444"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "Leather Derby",
+                    "meta": "Grenson · €115",
+                    "state": "Filled",
+                    "swatch": "#222222"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Default",
+                "pieceCount": 4,
+                "total": "€775",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-berlin_complete"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "berlin_complete-room",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "cotswolds_brief",
+    "sourceNode": "203:5644",
+    "sourceIssues": [
+      "The finalized Cotswolds Brief frame still contains Berlin user message, narrative, rack brief, copied Berlin photographs and €800 budget. Fixture preserves source text as a review issue; it is not a validated Cotswolds flow."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "cotswolds_brief-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "cotswolds_brief-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6",
+                  "chat-7",
+                  "chat-8",
+                  "chat-9",
+                  "chat-10",
+                  "chat-11"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "UserMessage",
+                "text": "First day at a creative agency in Berlin in September. Smart casual, nothing corporate, under €800"
+              },
+              {
+                "id": "chat-2",
+                "component": "StylistMessage",
+                "text": "Nice — first days are about looking like yourself, just a notch sharper. Tell me how you want to come across and what you usually wear, and I’ll build around that."
+              },
+              {
+                "id": "chat-3",
+                "component": "ChoiceChip",
+                "label": "An hour or two",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "An hour or two"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ChoiceChip",
+                "label": "Half days",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Half days"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ChoiceChip",
+                "label": "All day",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "All day"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChoiceChip",
+                "label": "Yes, a pub",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Yes, a pub"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-7",
+                "component": "ChoiceChip",
+                "label": "Something nicer",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Something nicer"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-8",
+                "component": "ChoiceChip",
+                "label": "Just walking",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "set_brief_choice",
+                    "context": {
+                      "value": "Just walking"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-9",
+                "component": "TypicalWeather",
+                "title": "Design example",
+                "days": [
+                  {
+                    "label": "Fri",
+                    "value": "9°",
+                    "detail": "Rain"
+                  },
+                  {
+                    "label": "Sat",
+                    "value": "7°",
+                    "detail": "Showers"
+                  },
+                  {
+                    "label": "Sun",
+                    "value": "8°",
+                    "detail": "Cloudy"
+                  }
+                ],
+                "disclaimer": "Figma example data; not a live forecast"
+              },
+              {
+                "id": "chat-10",
+                "component": "PrimaryButton",
+                "label": "Start with the coat",
+                "action": {
+                  "event": {
+                    "name": "find_options",
+                    "context": {
+                      "budget": {
+                        "path": "/budget"
+                      },
+                      "dressCode": {
+                        "path": "/dressCode"
+                      },
+                      "season": {
+                        "path": "/season"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-11",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "cotswolds_brief-chat",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "cotswolds_brief-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "cotswolds_brief-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "12° / 19°",
+                "rain": "Rain 3 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "First day · Berlin · September · smart casual, relaxed · under €800",
+                "spent": "€0 spent · 0 of 4",
+                "left": "€800 left",
+                "progress": 0.0,
+                "slots": [
+                  {
+                    "category": "bottom",
+                    "label": "Trousers",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "top",
+                    "label": "Top",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "cotswolds_brief-room",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "cotswolds_boots",
+    "sourceNode": "203:5999",
+    "sourceIssues": [
+      "Source boots conversation says waxed jacket €325 while rack still contains Berlin items/spending. No fake Cotswolds outfit is synthesized in this fixture."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "cotswolds_boots-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "cotswolds_boots-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "Good — the waxed jacket’s on your rack and will shrug off the rain. Boots next: waterproof, and something you can walk half a day in."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Boots · waterproof · under €575"
+              },
+              {
+                "id": "chat-3",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Leather Country Boot",
+                "price": "€180",
+                "brandLine": "Blundstone · Brown · Waterproof leather",
+                "tag": "Easiest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-country-boot"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Lace-Up Walking Boot",
+                "price": "€145",
+                "brandLine": "Grenson · Brown · Gore-Tex",
+                "tag": "Best for all day",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-walking-boot"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Tall Rubber Boot",
+                "price": "€95",
+                "brandLine": "Le Chameau · Green · Rubber",
+                "tag": "Wettest days",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-rubber-boot"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "cotswolds_boots-chat",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "cotswolds_boots-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "cotswolds_boots-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "12° / 19°",
+                "rain": "Rain 3 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "First day · Berlin · September · smart casual, relaxed · under €800",
+                "spent": "€0 spent · 0 of 4",
+                "left": "€800 left",
+                "progress": 0.0,
+                "slots": [
+                  {
+                    "category": "bottom",
+                    "label": "Trousers",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "top",
+                    "label": "Top",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "cotswolds_boots-room",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "cotswolds_complete",
+    "sourceNode": "204:6453",
+    "sourceIssues": [
+      "Source Cotswolds Complete claims €860 and €40 left but rack items are copied from Berlin; source product sum differs. Fixture uses coherent copied Berlin rack (€775 of €800) and flags it for domain-content review, rather than inventing missing Cotswolds pieces."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "cotswolds_complete-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "cotswolds_complete-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "That’s you sorted — €860, everything waterproof or wool, and it packs into one bag. Swap anything from your dressing room, or add it all from there when you’re ready."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Anything to change?"
+              },
+              {
+                "id": "chat-3",
+                "component": "ChoiceChip",
+                "label": "Add a second knit",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Add a second knit"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ChoiceChip",
+                "label": "Lighter jacket",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Lighter jacket"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ChoiceChip",
+                "label": "Under €800 ",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Under €800 "
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "cotswolds_complete-chat",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "cotswolds_complete-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "cotswolds_complete-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "12° / 19°",
+                "rain": "Rain 3 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "First day · Berlin · September · smart casual, relaxed · under €800",
+                "spent": "€775 spent · 4 of 4",
+                "left": "€25 left",
+                "progress": 0.96875,
+                "slots": [
+                  {
+                    "category": "bottom",
+                    "label": "Trousers",
+                    "name": "Pleated Wool Trouser",
+                    "meta": "Uniqlo U · €290",
+                    "state": "Filled",
+                    "swatch": "#666666"
+                  },
+                  {
+                    "category": "top",
+                    "label": "Top",
+                    "name": "Merino Crew Knit",
+                    "meta": "COS · €180",
+                    "state": "Filled",
+                    "swatch": "#555555"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "Unlined Cotton Blazer",
+                    "meta": "Arket · €190",
+                    "state": "Filled",
+                    "swatch": "#444444"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "Leather Derby",
+                    "meta": "Grenson · €115",
+                    "state": "Filled",
+                    "swatch": "#222222"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Default",
+                "pieceCount": 4,
+                "total": "€775",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-cotswolds_complete"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "cotswolds_complete-room",
+            "value": {
+              "budget": 800,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "complete",
+    "sourceNode": "204:6664",
+    "sourceIssues": [
+      "Source complete rack reuses copied Berlin/Cotswolds names while bag modal prices total €1,489. Fixture uses canonical four-piece €1,489 outfit; literal source copy remains in manifest. Source photos show Berlin despite Paris brief."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "complete-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "complete-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "That’s the look — €1,489, €11 under. Elegant enough for black tie, and the kitten heel means you can walk from the hotel. Tap Change on any piece in your dressing room, or add the lot from there when you’re happy."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Anything to change?"
+              },
+              {
+                "id": "chat-3",
+                "component": "ChoiceChip",
+                "label": "Swap the shoes",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Swap the shoes"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ChoiceChip",
+                "label": "Dressier bag",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Dressier bag"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ChoiceChip",
+                "label": "A bolder colour",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "A bolder colour"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "complete-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "complete-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "complete-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "16° / 10°",
+                "rain": "Rain 4 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "Anniversary dinner in Paris · black tie optional · under €1,500",
+                "spent": "€1,489 spent · 4 of 4",
+                "left": "€11 left",
+                "progress": 0.9926666666666667,
+                "slots": [
+                  {
+                    "category": "dress",
+                    "label": "A dress",
+                    "name": "Indra Long Dress",
+                    "meta": "Zimmermann · €874",
+                    "state": "Filled",
+                    "swatch": "#b8a98e"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "Leather Kitten Heel",
+                    "meta": "Aeyde · €295",
+                    "state": "Filled",
+                    "swatch": "#202020"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "Wool Wrap Scarf",
+                    "meta": "Arket · €190",
+                    "state": "Filled",
+                    "swatch": "#654142"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "Le Petit Bambino",
+                    "meta": "Mango · €130",
+                    "state": "Filled",
+                    "swatch": "#ed3a35"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Default",
+                "pieceCount": 4,
+                "total": "€1,489",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-complete"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "complete-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "added_bag",
+    "sourceNode": "204:7212",
+    "sourceIssues": [
+      "Source complete rack reuses copied Berlin/Cotswolds names while bag modal prices total €1,489. Fixture uses canonical four-piece €1,489 outfit; literal source copy remains in manifest. Source photos show Berlin despite Paris brief."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "added_bag-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "added_bag-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "That’s the look — €1,489, €11 under. Elegant enough for black tie, and the kitten heel means you can walk from the hotel. Tap Change on any piece in your dressing room, or add the lot from there when you’re happy."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Anything to change?"
+              },
+              {
+                "id": "chat-3",
+                "component": "ChoiceChip",
+                "label": "Swap the shoes",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Swap the shoes"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ChoiceChip",
+                "label": "Dressier bag",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Dressier bag"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ChoiceChip",
+                "label": "A bolder colour",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "A bolder colour"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "added_bag-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "added_bag-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "added_bag-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2",
+                  "room-3"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "16° / 10°",
+                "rain": "Rain 4 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "Anniversary dinner in Paris · black tie optional · under €1,500",
+                "spent": "€1,489 spent · 4 of 4",
+                "left": "€11 left",
+                "progress": 0.9926666666666667,
+                "slots": [
+                  {
+                    "category": "dress",
+                    "label": "A dress",
+                    "name": "Indra Long Dress",
+                    "meta": "Zimmermann · €874",
+                    "state": "Filled",
+                    "swatch": "#b8a98e"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "Leather Kitten Heel",
+                    "meta": "Aeyde · €295",
+                    "state": "Filled",
+                    "swatch": "#202020"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "Wool Wrap Scarf",
+                    "meta": "Arket · €190",
+                    "state": "Filled",
+                    "swatch": "#654142"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "Le Petit Bambino",
+                    "meta": "Mango · €130",
+                    "state": "Filled",
+                    "swatch": "#ed3a35"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Added",
+                "pieceCount": 4,
+                "total": "€1,489",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-added_bag"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "room-3",
+                "component": "Toast",
+                "message": "4 items added",
+                "actionLabel": "View bag",
+                "action": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "added_bag-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "bag_preview",
+    "sourceNode": "204:7457",
+    "sourceIssues": [
+      "Source complete rack reuses copied Berlin/Cotswolds names while bag modal prices total €1,489. Fixture uses canonical four-piece €1,489 outfit; literal source copy remains in manifest. Source photos show Berlin despite Paris brief."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "bag_preview-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "bag_preview-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "That’s the look — €1,489, €11 under. Elegant enough for black tie, and the kitten heel means you can walk from the hotel. Tap Change on any piece in your dressing room, or add the lot from there when you’re happy."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Anything to change?"
+              },
+              {
+                "id": "chat-3",
+                "component": "ChoiceChip",
+                "label": "Swap the shoes",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Swap the shoes"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ChoiceChip",
+                "label": "Dressier bag",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "Dressier bag"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ChoiceChip",
+                "label": "A bolder colour",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "adjust_piece",
+                    "context": {
+                      "adjustment": "A bolder colour"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "bag_preview-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "bag_preview-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "bag_preview-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2",
+                  "room-3"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "16° / 10°",
+                "rain": "Rain 4 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/berlin-landmark.png",
+                "photoB": "assets/images/finalized_left/creative-studio.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "Anniversary dinner in Paris · black tie optional · under €1,500",
+                "spent": "€1,489 spent · 4 of 4",
+                "left": "€11 left",
+                "progress": 0.9926666666666667,
+                "slots": [
+                  {
+                    "category": "dress",
+                    "label": "A dress",
+                    "name": "Indra Long Dress",
+                    "meta": "Zimmermann · €874",
+                    "state": "Filled",
+                    "swatch": "#b8a98e"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "Leather Kitten Heel",
+                    "meta": "Aeyde · €295",
+                    "state": "Filled",
+                    "swatch": "#202020"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "Wool Wrap Scarf",
+                    "meta": "Arket · €190",
+                    "state": "Filled",
+                    "swatch": "#654142"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "Le Petit Bambino",
+                    "meta": "Mango · €130",
+                    "state": "Filled",
+                    "swatch": "#ed3a35"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Added",
+                "pieceCount": 4,
+                "total": "€1,489",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-bag_preview"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "room-3",
+                "component": "Toast",
+                "message": "4 items added",
+                "actionLabel": "View bag",
+                "action": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "bag_preview-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "overlay": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "bag_preview-overlay",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "bag_preview-overlay",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "overlay-0"
+                ]
+              },
+              {
+                "id": "overlay-0",
+                "component": "BagPreview",
+                "items": [
+                  {
+                    "id": "paris-dress-1",
+                    "category": "dress",
+                    "name": "Indra Long Dress",
+                    "meta": "Zimmermann · €874",
+                    "swatch": "#b8a98e",
+                    "unitPrice": 874,
+                    "quantity": 1,
+                    "size": "38"
+                  },
+                  {
+                    "id": "design-kitten-heel",
+                    "category": "shoes",
+                    "name": "Leather Kitten Heel",
+                    "meta": "Aeyde · €295",
+                    "swatch": "#202020",
+                    "unitPrice": 295,
+                    "quantity": 1,
+                    "size": "39"
+                  },
+                  {
+                    "id": "design-wrap",
+                    "category": "layer",
+                    "name": "Wool Wrap Scarf",
+                    "meta": "Arket · €190",
+                    "swatch": "#654142",
+                    "unitPrice": 190,
+                    "quantity": 1,
+                    "size": "One size"
+                  },
+                  {
+                    "id": "design-bag",
+                    "category": "bag",
+                    "name": "Le Petit Bambino",
+                    "meta": "Mango · €130",
+                    "swatch": "#ed3a35",
+                    "unitPrice": 130,
+                    "quantity": 1,
+                    "size": "One size"
+                  }
+                ],
+                "closeAction": {
+                  "event": {
+                    "name": "close_bag",
+                    "context": {}
+                  }
+                },
+                "quantityAction": {
+                  "event": {
+                    "name": "set_bag_quantity",
+                    "context": {}
+                  }
+                },
+                "removeAction": {
+                  "event": {
+                    "name": "remove_bag_product",
+                    "context": {}
+                  }
+                },
+                "restoreAction": {
+                  "event": {
+                    "name": "restore_bag_product",
+                    "context": {}
+                  }
+                },
+                "checkoutAction": {
+                  "event": {
+                    "name": "checkout_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "bag_preview-overlay",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "partially_folded",
+    "sourceNode": "205:7997",
+    "sourceIssues": [
+      "Source budget meter says €0 spent / €1,500 left although selected dress costs €874. Fixture computes €874 spent / €626 left from selected pieces."
+    ],
+    "panes": {
+      "chat": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "partially_folded-chat",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "partially_folded-chat",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "chat-0",
+                  "chat-1",
+                  "chat-2",
+                  "chat-3",
+                  "chat-4",
+                  "chat-5",
+                  "chat-6"
+                ]
+              },
+              {
+                "id": "chat-0",
+                "component": "Text",
+                "text": "ALDER",
+                "variant": "caption"
+              },
+              {
+                "id": "chat-1",
+                "component": "StylistMessage",
+                "text": "Lovely — the Zimmermann is in your dressing room and leaves you €626. Shoes next: I’d keep them refined and let the dress do the talking."
+              },
+              {
+                "id": "chat-2",
+                "component": "Eyebrow",
+                "text": "Shoes · black tie · under €626"
+              },
+              {
+                "id": "chat-3",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Satin Pointed Pump",
+                "price": "€545",
+                "brandLine": "Manolo Blahnik · Black · Satin · 70mm",
+                "tag": "Most formal",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "paris-shoes-1"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-4",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Leather Kitten Heel",
+                "price": "€295",
+                "brandLine": "Aeyde · Black · Leather · 55mm",
+                "tag": "Easiest",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-kitten-heel"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-5",
+                "component": "ProductCard",
+                "category": "shoes",
+                "name": "Suede Low-Top Sneaker",
+                "price": "€349",
+                "brandLine": "Common Projects · Off-white · Suede",
+                "tag": "Relaxed",
+                "swatch": "#e4e4e7",
+                "action": {
+                  "event": {
+                    "name": "select_product",
+                    "context": {
+                      "productId": "design-sneaker"
+                    }
+                  }
+                }
+              },
+              {
+                "id": "chat-6",
+                "component": "ChatInput",
+                "value": {
+                  "path": "/draft"
+                },
+                "action": {
+                  "event": {
+                    "name": "send_message",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "partially_folded-chat",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ],
+      "room": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "partially_folded-room",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog"
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "partially_folded-room",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "room-0",
+                  "room-1",
+                  "room-2"
+                ]
+              },
+              {
+                "id": "room-0",
+                "component": "ContextStrip",
+                "location": "Known",
+                "venue": "Paris 8e",
+                "temperatures": "16° / 10°",
+                "rain": "Rain 4 in 10",
+                "mapAction": {
+                  "event": {
+                    "name": "expand_map",
+                    "context": {}
+                  }
+                },
+                "weatherAction": {
+                  "event": {
+                    "name": "expand_weather",
+                    "context": {}
+                  }
+                },
+                "photoA": "assets/images/finalized_left/paris-autumn.png",
+                "photoB": "assets/images/finalized_left/restaurant.png"
+              },
+              {
+                "id": "room-1",
+                "component": "DressingRoom",
+                "title": "Dressing room",
+                "brief": "Anniversary dinner in Paris · black tie optional · under €1,500",
+                "spent": "€874 spent · 1 of 4",
+                "left": "€626 left",
+                "progress": 0.5826666666666667,
+                "slots": [
+                  {
+                    "category": "dress",
+                    "label": "A dress",
+                    "name": "Indra Long Dress",
+                    "meta": "Zimmermann · €874",
+                    "state": "Filled",
+                    "swatch": "#b8a98e"
+                  },
+                  {
+                    "category": "shoes",
+                    "label": "Shoes",
+                    "name": "",
+                    "meta": "Choosing now",
+                    "state": "Next",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "layer",
+                    "label": "A layer over it",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  },
+                  {
+                    "category": "bag",
+                    "label": "A bag",
+                    "name": "",
+                    "meta": "Not yet",
+                    "state": "Empty",
+                    "swatch": "#181818"
+                  }
+                ]
+              },
+              {
+                "id": "room-2",
+                "component": "AddToBagButton",
+                "state": "Partial",
+                "pieceCount": 1,
+                "total": "€874",
+                "action": {
+                  "event": {
+                    "name": "add_look_to_bag",
+                    "context": {
+                      "lookId": "design-partially_folded"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "partially_folded-room",
+            "value": {
+              "budget": 1500,
+              "dressCode": "black-tie",
+              "season": "autumn",
+              "draft": "",
+              "selectedSize": "38"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

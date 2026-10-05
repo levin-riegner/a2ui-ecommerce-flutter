@@ -814,8 +814,8 @@ void main() {
         await tester.ensureVisible(find.text('Find options'));
         await tester.tap(find.text('Find options'));
         await tester.pumpAndSettle();
-        await tester.ensureVisible(find.text('Choose this').first);
-        await tester.tap(find.text('Choose this').first);
+        await tester.ensureVisible(find.text('Add to dressing room').first);
+        await tester.tap(find.text('Add to dressing room').first);
         await tester.pumpAndSettle();
         final session = agent.conversation;
         final surfaceId = agent.latestInlineSurfaceId;

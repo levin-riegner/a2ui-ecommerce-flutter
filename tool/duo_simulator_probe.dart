@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:foldable/foldable.dart';
 import 'package:genui/genui.dart';
 
-Future<void> main() async {
+Future<GenkitAgent> createDuoFixtureAgent() async {
   WidgetsFlutterBinding.ensureInitialized();
   final products = parseCatalogProducts(
     await rootBundle.loadString('assets/data/catalog/products.csv'),
@@ -41,6 +41,11 @@ Future<void> main() async {
       ],
     ),
   );
+  return agent;
+}
+
+Future<void> main() async {
+  final agent = await createDuoFixtureAgent();
   runApp(ReferenceApp(agent: agent));
   developer.registerExtension('ext.duo.capture', (method, parameters) async {
     return developer.ServiceExtensionResponse.result(
