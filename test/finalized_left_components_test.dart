@@ -372,7 +372,9 @@ void main() {
       await tester.pump();
       expect(
         tester
-            .widget<IconButton>(find.widgetWithText(IconButton, '↑'))
+            .widget<IconButton>(
+              find.byKey(const ValueKey('stylist-submit-Send message')),
+            )
             .onPressed,
         isNull,
       );
@@ -380,14 +382,18 @@ void main() {
       await tester.pump();
       expect(
         tester
-            .widget<IconButton>(find.widgetWithText(IconButton, '↑'))
+            .widget<IconButton>(
+              find.byKey(const ValueKey('stylist-submit-Send message')),
+            )
             .onPressed,
         isNull,
       );
       await tester.enterText(find.byType(TextField), '  Paris dinner  ');
       await tester.pump();
       expect(model.getValue<String>(DataPath('/draft')), '  Paris dinner  ');
-      await tester.tap(find.widgetWithText(IconButton, '↑'));
+      await tester.tap(
+        find.byKey(const ValueKey('stylist-submit-Send message')),
+      );
       await tester.pump();
       expect((events.single as UserActionEvent).context, {
         'text': 'Paris dinner',
