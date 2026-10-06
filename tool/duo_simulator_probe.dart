@@ -121,12 +121,18 @@ Future<Map<String, Object?>> captureDuoState(GenkitAgent agent) async {
         const {
           'dressing-room-resize',
           'selected-pieces-section',
+          'finalized-dressing-room',
+          'dressing-room-rack',
         }.contains((widget.key as ValueKey).value)) {
       final render = element.findRenderObject();
       if (render is RenderBox && render.hasSize) {
         panels[(widget.key as ValueKey).value as String] = {
           'top': render.localToGlobal(Offset.zero).dy,
           'height': render.size.height,
+          if (widget is Container && widget.decoration is BoxDecoration)
+            'color': (widget.decoration as BoxDecoration).color
+                ?.toARGB32()
+                .toRadixString(16),
         };
       }
     }

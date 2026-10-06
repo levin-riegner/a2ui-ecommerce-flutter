@@ -846,7 +846,8 @@ class _DressingPanel extends StatelessWidget {
       },
     );
     return CommerceDressingRoomStyle(
-      dark: AdaptivePaneScope.isSplitOf(context),
+      dark: true,
+      compact: !AdaptivePaneScope.isSplitOf(context),
       child: surface,
     );
   }

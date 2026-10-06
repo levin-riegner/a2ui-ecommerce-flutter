@@ -323,11 +323,14 @@ class FinalizedScreenGalleryState extends State<FinalizedScreenGallery> {
             ),
             secondary: example.id == 'start'
                 ? surface('room')
-                : CommerceDressingRoomStyle(
-                    dark: true,
-                    child: Container(
-                      color: Colors.black,
-                      child: surface('room'),
+                : Builder(
+                    builder: (context) => CommerceDressingRoomStyle(
+                      dark: true,
+                      compact: !AdaptivePaneScope.isSplitOf(context),
+                      child: Container(
+                        color: Colors.black,
+                        child: surface('room'),
+                      ),
                     ),
                   ),
           ),

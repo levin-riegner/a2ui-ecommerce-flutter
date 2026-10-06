@@ -30,6 +30,12 @@ Corrected on 2026-10-06 after native screenshots showed the selected-piece headi
 
 Three native transitions (Open → Book → Open → Book) kept the selected section at y=593 and the dressing-room height at 565 points throughout the sampled frames. Background fades, selected top, €35 spending, inline surface and composer identity were preserved, with zero render errors and no change to foreground application focus. Evidence: `duo-selected-section-2026-10-06.json`. All 75 affected layout/component/screen tests pass, including a bundled-font regression for the vertical anchor and intermediate resize positions after a longer brief. Analysis and changed-file formatting checks pass. These checks used the deterministic native fixture with zero provider requests.
 
+## Compact dressing room
+
+Corrected on 2026-10-06 against Figma screen `204:7733`, dressing-room node `204:7860`. Fresh design context confirmed the black card, horizontal 240-point slots, 88-point thumbnails and budget beneath the rack. The production cover and inner portrait layouts now reuse that presentation, rather than the tall light grid. Layout selection follows the available pane configuration, including accessibility-driven compact layouts; the wider split presentation remains a grid. All rack slots are horizontally reachable and retain their Change actions. The surrounding compact page and system-control area remain white.
+
+Native cover portrait inspection measured a 261-point card, down from 457 points. The recorded eight-checkpoint native sequence covers inner Open/Book portrait, cover landscape and inner Open/Book landscape, returning to portrait. Compact cards stayed at 261 points; split cards stayed at 565 points, with a black card in every posture and zero render errors. Outfit, budget, inline surface and composer identity survived these transitions. Evidence: `duo-compact-room-2026-10-06.json`. All 79 affected layout, screen and component tests pass, including compact cover/portrait wiring, enlarged-text rack scrolling and Change payloads. Analysis and formatting checks pass. The native runtime was restarted once to apply the added style field before checking transitions; fixtures made zero provider requests.
+
 ## Source and integration scope
 
 Exact read-only Figma properties/assets were authorized after design-context extraction reached its connector limit. Original screen image bytes were checked against Figma image hashes; source copy and budget inconsistencies are documented in the screen manifest. No Figma nodes were changed.

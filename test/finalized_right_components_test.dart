@@ -232,6 +232,64 @@ void main() {
       },
     );
   }
+  for (final scale in [1.0, 3.12]) {
+    testWidgets(
+      'compact black rack scrolls to every slot and keeps actions at $scale text',
+      (tester) async {
+        final item = finalizedDressingRoomCatalogItem;
+        final data = Map<String, Object?>.from(
+          (jsonDecode(item.exampleData.single()) as List).single as Map,
+        );
+        final model = InMemoryDataModel();
+        final events = <UiEvent>[];
+        await tester.pumpWidget(
+          _harness(
+            CommerceDressingRoomStyle(
+              dark: true,
+              compact: true,
+              child: _catalogWidget(item, data, events, model),
+            ),
+            width: 314,
+            scale: scale,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final room = find.byKey(const ValueKey('finalized-dressing-room'));
+        final rack = find.byKey(const ValueKey('dressing-room-rack'));
+        final decoration =
+            tester.widget<Container>(room).decoration as BoxDecoration;
+        expect(decoration.color, Colors.black);
+        if (scale == 1) expect(tester.getSize(room).height, lessThan(350));
+        expect(
+          tester.getBottomRight(rack).dy,
+          lessThan(tester.getTopLeft(find.byType(CommerceBudgetSummary)).dy),
+        );
+        final dress = find.byKey(const ValueKey('dressing-slot-dress'));
+        await tester.ensureVisible(dress);
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.descendant(of: dress, matching: find.byType(InkWell)),
+        );
+        expect(events, hasLength(1));
+        final action = events.single as UserActionEvent;
+        expect(action.name, 'adjust_piece');
+        expect(action.context, {'category': 'dress'});
+        await tester.drag(rack, const Offset(-1000, 0));
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .getRect(rack)
+              .overlaps(
+                tester.getRect(find.byKey(const ValueKey('dressing-slot-bag'))),
+              ),
+          isTrue,
+        );
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+        model.dispose();
+      },
+    );
+  }
   testWidgets(
     'legacy category-less PieceSlot retains original schema presentation',
     (tester) async {

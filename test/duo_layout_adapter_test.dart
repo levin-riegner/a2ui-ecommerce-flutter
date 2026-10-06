@@ -4,6 +4,7 @@ import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
+import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_components.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
 import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
@@ -892,6 +893,57 @@ void main() {
     },
   );
 
+  for (final size in [const Size(466, 678), const Size(669, 951)]) {
+    testWidgets('actual compact dressing room condenses at $size', (
+      tester,
+    ) async {
+      _window(tester, size);
+      final fake = _FakeFoldable(_data(HingeStatus.closed));
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final agent = (await tester.runAsync(() async {
+        final font = FontLoader('Jost')
+          ..addFont(rootBundle.load('assets/fonts/jost/Jost-Variable.ttf'));
+        await font.load();
+        return createDuoFixtureAgent();
+      }))!;
+      try {
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final room = find.byKey(const ValueKey('finalized-dressing-room'));
+        final decoration =
+            tester.widget<Container>(room).decoration as BoxDecoration;
+        expect(decoration.color, Colors.black);
+        expect(tester.getSize(room).height, lessThan(350));
+        expect(
+          tester
+              .widgetList<FinalizedPieceSlot>(find.byType(FinalizedPieceSlot))
+              .every((slot) => slot.compactHorizontal),
+          isTrue,
+        );
+        final selected = agent.controller.contextFor('dressing-room').dataModel;
+        final before = jsonEncode(selected.getValue<Object?>(DataPath('/')));
+        final session = agent.conversation;
+        tester.view.physicalSize = const Size(951, 669);
+        fake.emit(_data(HingeStatus.fullyOpen));
+        await tester.pumpAndSettle();
+        expect(tester.getSize(room).height, greaterThan(350));
+        tester.view.physicalSize = size;
+        fake.emit(_data(HingeStatus.closed));
+        await tester.pumpAndSettle();
+        expect(tester.getSize(room).height, lessThan(350));
+        expect(agent.conversation, same(session));
+        expect(jsonEncode(selected.getValue<Object?>(DataPath('/'))), before);
+        expect(tester.takeException(), isNull);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+        FoldablePlatform.instance = previous;
+        await tester.pumpWidget(const SizedBox.shrink());
+        await fake.dispose();
+      }
+    });
+  }
   testWidgets(
     'selected section keeps its vertical anchor between Open and Book',
     (tester) async {

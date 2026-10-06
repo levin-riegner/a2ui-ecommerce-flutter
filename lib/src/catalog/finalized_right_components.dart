@@ -2136,6 +2136,16 @@ class _FinalizedDressingRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = CommerceDressingRoomStyle.maybeOf(context)?.dark ?? false;
+    final compact =
+        CommerceDressingRoomStyle.maybeOf(context)?.compact ?? false;
+    final budget = CommerceDressingRoomStyle(
+      dark: dark,
+      child: CommerceBudgetSummary(
+        spent: values['spent']!,
+        left: values['left']!,
+        progress: progress,
+      ),
+    );
     Widget roomText(String value, {double size = 14, bool muted = false}) =>
         Text(
           value,
@@ -2149,6 +2159,7 @@ class _FinalizedDressingRoom extends StatelessWidget {
           ),
         );
     return Container(
+      key: const ValueKey('finalized-dressing-room'),
       padding: EdgeInsets.symmetric(horizontal: dark ? 24 : 20, vertical: 16),
       decoration: BoxDecoration(
         color: dark ? Colors.black : const Color(0xfff4f4f5),
@@ -2177,20 +2188,14 @@ class _FinalizedDressingRoom extends StatelessWidget {
             roomText(values['planCaption']!, size: 10, muted: true),
           ],
           const SizedBox(height: 14),
-          CommerceDressingRoomStyle(
-            dark: dark,
-            child: CommerceBudgetSummary(
-              spent: values['spent']!,
-              left: values['left']!,
-              progress: progress,
-            ),
-          ),
-          const SizedBox(height: 14),
+          if (!compact) ...[budget, const SizedBox(height: 14)],
           LayoutBuilder(
             builder: (context, constraints) {
               final large = MediaQuery.textScalerOf(context).scale(14) > 21;
-              if (dark && constraints.maxWidth >= 520 && !large) {
+              if (dark &&
+                  (compact || (constraints.maxWidth >= 520 && !large))) {
                 return SingleChildScrollView(
+                  key: const ValueKey('dressing-room-rack'),
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -2261,6 +2266,7 @@ class _FinalizedDressingRoom extends StatelessWidget {
               );
             },
           ),
+          if (compact) ...[const SizedBox(height: 14), budget],
         ],
       ),
     );
