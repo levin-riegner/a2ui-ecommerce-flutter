@@ -65,7 +65,7 @@ class _ReferenceAppState extends State<ReferenceApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'A2UI Flutter Commerce',
+      title: 'Alder',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       builder: (context, child) => DuoLayoutAdapter(child: child!),
