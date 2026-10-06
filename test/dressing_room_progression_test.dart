@@ -9,12 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 
-Product piece(ProductCategory category) => Product(
+Product piece(ProductCategory category, {double price = 50}) => Product(
   id: 'test-${category.name}',
   category: category,
   name: 'Selected ${category.name}',
   brand: 'Demo',
-  price: 50,
+  price: price,
   meta: 'Cotton',
   tag: 'A good fit',
   swatch: '#123456',
@@ -160,6 +160,14 @@ void main() {
     expect(data['planCaption'], isEmpty);
     expect(data['spent'], '€50 spent —\u00a01 of 4');
     expect(data['left'], '€850 left');
+  });
+
+  test('Figma budget copy preserves fractional amounts', () {
+    final data = dressingData(
+      surfaces({'top': piece(ProductCategory.top, price: 50.25)}),
+    );
+    expect(data['spent'], '€50.25 spent —\u00a01 of 4');
+    expect(data['left'], '€849.75 left');
   });
 
   test('selected optional pieces remain visible after completing the plan', () {

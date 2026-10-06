@@ -94,7 +94,7 @@ void main() {
         final dressing = agent.controller.contextFor('dressing-room').dataModel;
         expect(
           dressing.getValue<String>(DataPath('/left')),
-          '€${(entry.key.budget - spent).toStringAsFixed(2)} left',
+          '€${(entry.key.budget - spent).toStringAsFixed(0)} left',
         );
         expect((runtime.outfit['items'] as Map).values, containsAll(selected));
       }
@@ -127,7 +127,7 @@ void main() {
       final dressing = agent.controller.contextFor('dressing-room').dataModel;
       expect(
         dressing.getValue<String>(DataPath('/left')),
-        '€${(entry.key.budget - spent + productFor(reopened).price).toStringAsFixed(2)} left',
+        '€${(entry.key.budget - spent + productFor(reopened).price).toStringAsFixed(0)} left',
       );
       await agent.conversation.sendRequest(_action('select_product', reopened));
       expect(agent.connectionError, isNull);

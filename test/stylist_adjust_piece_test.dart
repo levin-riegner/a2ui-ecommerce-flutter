@@ -251,8 +251,8 @@ void main() {
                   )['updateDataModel']
                   as Map)['value']
               as Map;
-      expect(dressing['spent'], contains('€150.00'));
-      expect(dressing['left'], '€150.00 left');
+      expect(dressing['spent'], '€150 spent —\u00a03 of 3');
+      expect(dressing['left'], '€150 left');
       final slots = (dressing['slots'] as List).cast<Map>();
       expect(
         slots.singleWhere((slot) => slot['category'] == 'dress')['name'],
