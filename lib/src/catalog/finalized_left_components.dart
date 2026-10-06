@@ -141,6 +141,9 @@ class FinalizedChatInput extends StatefulWidget {
     this.onChanged,
     this.onSend,
     this.onMicrophone,
+    this.onEditing,
+    this.isDictating = false,
+    this.microphoneLabel = 'Dictate message',
     this.externalController,
     this.enabled = true,
     this.fieldKey,
@@ -152,6 +155,9 @@ class FinalizedChatInput extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSend;
   final VoidCallback? onMicrophone;
+  final VoidCallback? onEditing;
+  final bool isDictating;
+  final String microphoneLabel;
   final TextEditingController? externalController;
   final bool enabled;
   final Key? fieldKey;
@@ -215,7 +221,7 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
             color: _wash,
             borderRadius: BorderRadius.circular(28),
           ),
-          padding: const EdgeInsets.fromLTRB(24, 8, 8, 8),
+          padding: const EdgeInsets.fromLTRB(20, 4, 4, 4),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -226,17 +232,21 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
                     key: widget.fieldKey,
                     enabled: widget.enabled,
                     controller: controller,
+                    onTap: widget.onEditing,
+                    textInputAction: TextInputAction.send,
                     minLines: 1,
                     maxLines: 5,
                     style: const TextStyle(fontSize: 14),
                     decoration: InputDecoration(
-                      hintText: widget.placeholder,
+                      hintText: widget.isDictating
+                          ? 'Listening…'
+                          : widget.placeholder,
                       hintStyle: const TextStyle(color: _muted, fontSize: 14),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       filled: false,
-                      contentPadding: EdgeInsets.zero,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
                       isDense: true,
                     ),
                     onChanged: (value) {
@@ -248,13 +258,22 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
                 ),
               ),
               IconButton(
+                key: const ValueKey('stylist-microphone'),
                 tooltip: widget.onMicrophone == null
                     ? 'Voice input unavailable'
-                    : 'Voice input',
+                    : widget.microphoneLabel,
                 onPressed: widget.enabled ? widget.onMicrophone : null,
-                icon: const FinalizedLeftIcon('357bc.svg'),
+                icon: widget.isDictating
+                    ? const Icon(Icons.stop_rounded, size: 22)
+                    : const FinalizedLeftIcon('357bc.svg'),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xffe6e6e6),
+                  fixedSize: const Size(48, 48),
+                  minimumSize: const Size(48, 48),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  backgroundColor: widget.isDictating
+                      ? _ink
+                      : const Color(0xffe6e6e6),
+                  foregroundColor: widget.isDictating ? Colors.white : _ink,
                 ),
               ),
               const SizedBox(width: 8),
@@ -267,14 +286,15 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
                         widget.onSend == null
                     ? null
                     : send,
-                icon: const Text(
-                  '↑',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
+                icon: const Icon(Icons.arrow_upward_rounded, size: 24),
                 style: IconButton.styleFrom(
+                  fixedSize: const Size(48, 48),
+                  minimumSize: const Size(48, 48),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   backgroundColor: _ink,
                   foregroundColor: Colors.white,
                   disabledBackgroundColor: _line,
+                  disabledForegroundColor: _muted,
                 ),
               ),
             ],

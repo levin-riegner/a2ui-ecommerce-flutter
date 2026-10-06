@@ -188,6 +188,7 @@ class _StartScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     body: AdaptivePaneLayout(
       compactSecondaryFirst: false,
+      overlayFooter: onStartBrief != null,
       secondaryScrollable: false,
       secondaryPadding: EdgeInsets.zero,
       panePadding: const EdgeInsets.fromLTRB(32, 8, 32, 24),
@@ -290,17 +291,19 @@ class _StartScreen extends StatelessWidget {
         ],
       ),
       secondary: const _MosaicPreview(),
-      footer: Padding(
-        padding: const EdgeInsets.fromLTRB(32, 16, 32, 24),
-        child: onStartBrief != null
-            ? _CustomBriefEntry(onStart: onStartBrief!, isBusy: isBusy)
-            : onConnect != null
-            ? FilledButton(
-                onPressed: onConnect,
-                child: const Text('Connect your model'),
-              )
-            : const SizedBox.shrink(),
-      ),
+      footer: onStartBrief != null
+          ? StylistComposerDock(
+              child: _CustomBriefEntry(onStart: onStartBrief!, isBusy: isBusy),
+            )
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(32, 16, 32, 24),
+              child: onConnect != null
+                  ? FilledButton(
+                      onPressed: onConnect,
+                      child: const Text('Connect your model'),
+                    )
+                  : const SizedBox.shrink(),
+            ),
     ),
   );
 }
@@ -631,15 +634,13 @@ class _ResponsiveShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: AdaptivePaneLayout(
+      overlayFooter: true,
       primary: _ChatSurface(agent: agent),
       secondaryBackgroundColor: Colors.black,
       secondaryBackgroundOnlyInBookMode: true,
       secondary: _DressingPanel(agent: agent),
       header: _MobileHeader(onNewJourney: onNewJourney),
-      footer: _ChatComposer(
-        agent: agent,
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-      ),
+      footer: StylistComposerDock(child: _ChatComposer(agent: agent)),
       rail: _SideRail(onNewJourney: onNewJourney),
     ),
   );
@@ -747,10 +748,9 @@ class _ConnectionNotice extends StatelessWidget {
 }
 
 class _ChatComposer extends StatefulWidget {
-  const _ChatComposer({required this.agent, this.padding = EdgeInsets.zero});
+  const _ChatComposer({required this.agent});
 
   final CommerceAgent agent;
-  final EdgeInsets padding;
 
   @override
   State<_ChatComposer> createState() => _ChatComposerState();
@@ -786,7 +786,6 @@ class _ChatComposerState extends State<_ChatComposer> {
       controller: textController,
       enabled: canSend,
       fieldKey: const ValueKey('stylist-composer'),
-      padding: widget.padding,
       onSubmitted: (_) => _send(),
     );
   }
