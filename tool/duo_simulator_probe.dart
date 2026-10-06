@@ -114,8 +114,22 @@ Future<Map<String, Object?>> captureDuoState(GenkitAgent agent) async {
   final fields = <Map<String, Object?>>[];
   final layouts = <String>[];
   final backgrounds = <Map<String, Object?>>[];
+  final panels = <String, Object?>{};
   void visit(Element element) {
     final widget = element.widget;
+    if (widget.key is ValueKey &&
+        const {
+          'dressing-room-resize',
+          'selected-pieces-section',
+        }.contains((widget.key as ValueKey).value)) {
+      final render = element.findRenderObject();
+      if (render is RenderBox && render.hasSize) {
+        panels[(widget.key as ValueKey).value as String] = {
+          'top': render.localToGlobal(Offset.zero).dy,
+          'height': render.size.height,
+        };
+      }
+    }
     if (widget is ColoredBox &&
         widget.key == const ValueKey('secondary-pane-background')) {
       backgrounds.add({
@@ -169,6 +183,7 @@ Future<Map<String, Object?>> captureDuoState(GenkitAgent agent) async {
     'fields': fields,
     'layouts': layouts,
     'backgrounds': backgrounds,
+    'panels': panels,
     'surface': agent.latestInlineSurfaceId,
     'journey': agent.activeJourney?.name,
     'agent': identityHashCode(agent),

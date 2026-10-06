@@ -13,6 +13,7 @@ import 'duo_layout_adapter.dart';
 /// Display features use viewport coordinates, so place this directly in a
 /// Scaffold body rather than inside an already inset or centered container.
 class AdaptivePaneLayout extends StatefulWidget {
+  static const transitionDuration = Duration(milliseconds: 320);
   const AdaptivePaneLayout({
     super.key,
     required this.primary,
@@ -114,7 +115,7 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
       tween: ColorTween(end: color),
       duration: MediaQuery.disableAnimationsOf(context)
           ? Duration.zero
-          : const Duration(milliseconds: 320),
+          : AdaptivePaneLayout.transitionDuration,
       curve: Curves.easeInOutCubic,
       child: canvas,
       builder: (context, animatedColor, child) => AdaptivePaneScope(

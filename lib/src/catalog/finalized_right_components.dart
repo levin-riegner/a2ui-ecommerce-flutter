@@ -2286,6 +2286,9 @@ class _FinalizedDressingRoom extends StatelessWidget {
 
 class _FinalizedDarkPieceSlot extends StatelessWidget {
   const _FinalizedDarkPieceSlot({required this.slot});
+  // The pane narrows around the active hinge in Book mode. Keep image height
+  // independent of that width so the selected section below does not jump.
+  static const imageHeight = 144.0;
   final FinalizedPieceSlot slot;
   @override
   Widget build(BuildContext context) {
@@ -2399,8 +2402,8 @@ class _FinalizedDarkPieceSlot extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            AspectRatio(
-              aspectRatio: 1,
+            SizedBox(
+              height: imageHeight,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Container(
@@ -2425,7 +2428,7 @@ class _FinalizedDarkPieceSlot extends StatelessWidget {
                                   'category': slot.category,
                                   'swatch': slot.swatch,
                                 },
-                                height: 168,
+                                height: imageHeight,
                                 glyphSize: 70,
                               ))
                       : Center(

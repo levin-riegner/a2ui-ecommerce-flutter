@@ -24,6 +24,12 @@ Corrected on 2026-10-06 after the user clarified the intended Open state: the ou
 
 Native Open and Book screenshots confirmed the two endpoint appearances. The native probe observed three intermediate grey colours in each direction, with the selected top, €35 spend, inline surface and composer identity retained, and no render errors. Evidence: `duo-book-background-2026-10-06.json`. All 57 affected layout/screen tests and analysis pass, including interrupted fades and Reduce Motion.
 
+## Selected-section stability
+
+Corrected on 2026-10-06 after native screenshots showed the selected-piece heading jumping vertically during Open/Book changes. The dark grid now uses 144-point thumbnail heights rather than width-dependent squares. The dressing-room surface animates genuine content-height changes over the same 320 ms as the background, with Reduce Motion disabling the resize animation.
+
+Three native transitions (Open → Book → Open → Book) kept the selected section at y=593 and the dressing-room height at 565 points throughout the sampled frames. Background fades, selected top, €35 spending, inline surface and composer identity were preserved, with zero render errors and no change to foreground application focus. Evidence: `duo-selected-section-2026-10-06.json`. All 75 affected layout/component/screen tests pass, including a bundled-font regression for the vertical anchor and intermediate resize positions after a longer brief. Analysis and changed-file formatting checks pass. These checks used the deterministic native fixture with zero provider requests.
+
 ## Source and integration scope
 
 Exact read-only Figma properties/assets were authorized after design-context extraction reached its connector limit. Original screen image bytes were checked against Figma image hashes; source copy and budget inconsistencies are documented in the screen manifest. No Figma nodes were changed.

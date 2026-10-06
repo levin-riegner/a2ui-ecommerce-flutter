@@ -814,14 +814,25 @@ class _DressingPanel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Surface(
-                  surfaceContext: agent.controller.contextFor('dressing-room'),
+                AnimatedSize(
+                  key: const ValueKey('dressing-room-resize'),
+                  duration: MediaQuery.disableAnimationsOf(context)
+                      ? Duration.zero
+                      : AdaptivePaneLayout.transitionDuration,
+                  curve: Curves.easeInOutCubic,
+                  alignment: Alignment.topLeft,
+                  child: Surface(
+                    surfaceContext: agent.controller.contextFor(
+                      'dressing-room',
+                    ),
+                  ),
                 ),
                 if (agent.hasSelectedProductsSurface) ...[
                   const SizedBox(height: 12),
                   CommerceDressingRoomStyle(
                     dark: backdropDark,
                     child: Surface(
+                      key: const ValueKey('selected-pieces-section'),
                       surfaceContext: agent.controller.contextFor(
                         'selected-products',
                       ),

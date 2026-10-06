@@ -14,6 +14,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:foldable/foldable.dart';
 import 'package:genui/genui.dart';
 
+import '../tool/duo_simulator_probe.dart' show createDuoFixtureAgent;
+
 const _available = FoldableCapabilities(
   supportLevel: FoldableSupportLevel.available,
   isFoldable: true,
@@ -882,6 +884,105 @@ void main() {
           );
         }
         expect(fake.snapshots, greaterThan(1));
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+        FoldablePlatform.instance = previous;
+        await tester.pumpWidget(const SizedBox.shrink());
+      }
+    },
+  );
+
+  testWidgets(
+    'selected section keeps its vertical anchor between Open and Book',
+    (tester) async {
+      _window(tester, const Size(951, 669));
+      final fake = _FakeFoldable(
+        _data(
+          HingeStatus.fullyOpen,
+          regions: [_camera(const Rect.fromLTRB(867, 0, 951, 120))],
+        ),
+      );
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() {
+        FoldablePlatform.instance = previous;
+        debugDefaultTargetPlatformOverride = null;
+      });
+      addTearDown(fake.dispose);
+      await tester.runAsync(() async {
+        final font = FontLoader('Jost')
+          ..addFont(rootBundle.load('assets/fonts/jost/Jost-Variable.ttf'));
+        await font.load();
+      });
+      final agent = (await tester.runAsync(createDuoFixtureAgent))!;
+      try {
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final selected = find.byKey(const ValueKey('selected-pieces-section'));
+        final resize = find.byKey(const ValueKey('dressing-room-resize'));
+        final top = tester.getTopLeft(selected).dy;
+        final height = tester.getSize(resize).height;
+        expect(top, lessThan(669 - 34));
+        final session = agent.conversation;
+        final before = jsonEncode(
+          agent.controller
+              .contextFor('dressing-room')
+              .dataModel
+              .getValue<Object?>(DataPath('/')),
+        );
+        for (final status in [
+          HingeStatus.partiallyOpen,
+          HingeStatus.fullyOpen,
+        ]) {
+          fake.emit(
+            _data(
+              status,
+              regions: [
+                _camera(const Rect.fromLTRB(867, 0, 951, 120)),
+                if (status == HingeStatus.partiallyOpen)
+                  _division(const Rect.fromLTWH(455.5, 0, 40, 669)),
+              ],
+            ),
+          );
+          await tester.pump();
+          expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+          await tester.pump(const Duration(milliseconds: 160));
+          expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+          await tester.pumpAndSettle();
+          expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+          expect(tester.getSize(resize).height, closeTo(height, .01));
+          expect(agent.conversation, same(session));
+          expect(
+            jsonEncode(
+              agent.controller
+                  .contextFor('dressing-room')
+                  .dataModel
+                  .getValue<Object?>(DataPath('/')),
+            ),
+            before,
+          );
+          expect(tester.takeException(), isNull);
+        }
+        // A genuinely taller brief can still reflow, but its following section
+        // moves through intermediate positions instead of jumping in one frame.
+        agent.controller
+            .contextFor('dressing-room')
+            .dataModel
+            .update(
+              DataPath('/brief'),
+              'Berlin first day with a much longer description of the occasion, '
+              'layering preferences, weather and the planned evening activities.',
+            );
+        await tester.pump();
+        await tester.pump();
+        expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+        await tester.pump(const Duration(milliseconds: 160));
+        final intermediateTop = tester.getTopLeft(selected).dy;
+        expect(intermediateTop, greaterThan(top));
+        await tester.pumpAndSettle();
+        expect(tester.getTopLeft(selected).dy, greaterThan(intermediateTop));
+        expect(tester.takeException(), isNull);
       } finally {
         debugDefaultTargetPlatformOverride = null;
         FoldablePlatform.instance = previous;
