@@ -4,6 +4,9 @@ import 'stylist_brief_surface.dart';
 
 const stylistCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
 String euro(num value) => '€${value.toStringAsFixed(2)}';
+String _budgetEuro(num value) => value == value.roundToDouble()
+    ? '€${value.toStringAsFixed(0)}'
+    : euro(value);
 
 Map<String, Object?> productFacts(Product product) => {
   'id': product.id,
@@ -84,14 +87,14 @@ List<Map<String, Object?>> renderStylistSurfaces({
   final dressingData = <String, Object?>{
     'title': 'Dressing room',
     'brief': occasion.isEmpty ? 'Build a look together' : occasion,
-    'planCaption': outfitPlan.complete
-        ? 'Your look is complete'
-        : '${outfitPlan.filledCount} of ${outfitPlan.slots.length} pieces selected',
+    'planCaption': '',
     'planComplete': outfitPlan.complete,
-    'spent': '${euro(spent)} spent · ${outfit.length} pieces',
+    'spent':
+        '${_budgetEuro(spent)} spent —\u00a0'
+        '${outfitPlan.filledCount} of ${outfitPlan.slots.length}',
     'left': budget == null
         ? 'Set a budget'
-        : '${euro((budget - spent).clamp(0, double.infinity))} left',
+        : '${_budgetEuro((budget - spent).clamp(0, double.infinity))} left',
     'progress': budget == null || budget == 0
         ? 0.0
         : (spent / budget).clamp(0, 1),

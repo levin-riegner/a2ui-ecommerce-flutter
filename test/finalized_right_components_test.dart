@@ -242,6 +242,7 @@ void main() {
         );
         final model = InMemoryDataModel();
         final events = <UiEvent>[];
+        data['planCaption'] = '1 of 4 pieces selected';
         await tester.pumpWidget(
           _harness(
             CommerceDressingRoomStyle(
@@ -259,6 +260,8 @@ void main() {
         final decoration =
             tester.widget<Container>(room).decoration as BoxDecoration;
         expect(decoration.color, Colors.black);
+        expect(find.text('1 of 4 pieces selected'), findsNothing);
+        expect(find.text('€874 spent'), findsOneWidget);
         if (scale == 1) expect(tester.getSize(room).height, lessThan(350));
         expect(
           tester.getBottomRight(rack).dy,

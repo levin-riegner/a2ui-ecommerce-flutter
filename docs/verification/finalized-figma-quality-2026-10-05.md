@@ -36,6 +36,12 @@ Corrected on 2026-10-06 against Figma screen `204:7733`, dressing-room node `204
 
 Native cover portrait inspection measured a 261-point card, down from 457 points. The recorded eight-checkpoint native sequence covers inner Open/Book portrait, cover landscape and inner Open/Book landscape, returning to portrait. Compact cards stayed at 261 points; split cards stayed at 565 points, with a black card in every posture and zero render errors. Outfit, budget, inline surface and composer identity survived these transitions. Evidence: `duo-compact-room-2026-10-06.json`. All 79 affected layout, screen and component tests pass, including compact cover/portrait wiring, enlarged-text rack scrolling and Change payloads. Analysis and formatting checks pass. The native runtime was restarted once to apply the added style field before checking transitions; fixtures made zero provider requests.
 
+## Figma budget/count placement
+
+Corrected on 2026-10-06 after comparison with Figma budget node `203:5142` and compact room `204:7860`. The separate selection/completion caption was an implementation addition; it and its spacing are removed from the finalized renderer and production copy. The grid uses the source budget format (`€35 spent — 1 of 4`); the compact room uses only `€35 spent`, matching the portrait example. Whole-euro amounts omit redundant decimals while fractional prices retain cents. The internal plan-completion state still drives progression.
+
+Fresh native accessibility checks confirmed absence of the extra caption and the correct budget copy in cover, Open and Book modes. The initial compact room measured 240 points; the expanded grid measured 536 points, with outfit, surface and composer state preserved and zero render errors. Evidence: `duo-figma-budget-2026-10-06.json`. All 90 affected progression, runtime, layout, component and screen tests pass; analysis and formatting are clean. The A2UI ingestion examples were regenerated without the unsupported caption.
+
 ## Source and integration scope
 
 Exact read-only Figma properties/assets were authorized after design-context extraction reached its connector limit. Original screen image bytes were checked against Figma image hashes; source copy and budget inconsistencies are documented in the screen manifest. No Figma nodes were changed.

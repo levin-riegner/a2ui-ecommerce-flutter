@@ -157,8 +157,9 @@ void main() {
       rows.where((row) => row['state'] == 'Next').single['category'],
       'bottom',
     );
-    expect(data['planCaption'], '1 of 4 pieces selected');
-    expect(data['left'], '€850.00 left');
+    expect(data['planCaption'], isEmpty);
+    expect(data['spent'], '€50 spent —\u00a01 of 4');
+    expect(data['left'], '€850 left');
   });
 
   test('selected optional pieces remain visible after completing the plan', () {
@@ -179,7 +180,8 @@ void main() {
       'accessory',
     ]);
     expect(rows.every((row) => row['state'] == 'Filled'), isTrue);
-    expect(data['planCaption'], 'Your look is complete');
+    expect(data['planCaption'], isEmpty);
+    expect(data['spent'], '€300 spent —\u00a04 of 4');
     expect(data['planComplete'], isTrue);
   });
 
@@ -255,7 +257,8 @@ void main() {
       };
       await harness.publish(surfaces(full, turn: 2));
       await tester.pumpAndSettle();
-      expect(find.text('Your look is complete'), findsOneWidget);
+      expect(find.text('Your look is complete'), findsNothing);
+      expect(find.text('€300 spent —\u00a04 of 4'), findsOneWidget);
       expect(find.text('Choosing now'), findsNothing);
       for (final category in full.keys) {
         expect(find.byKey(ValueKey('dressing-slot-$category')), findsOneWidget);

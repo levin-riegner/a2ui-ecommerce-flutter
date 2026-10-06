@@ -2011,7 +2011,6 @@ final finalizedDressingRoomCatalogItem = CatalogItem(
         'spent': '€874 spent · 1 of 4',
         'left': '€626 left',
         'progress': 874 / 1500,
-        'planCaption': 'Dress · layer · shoes · bag',
         'slots': [
           for (final piece in _fixturePieces)
             {
@@ -2046,7 +2045,6 @@ class _FinalizedRoomBindings extends StatelessWidget {
       'brief',
       'spent',
       'left',
-      'planCaption',
       if (!data.containsKey('slots'))
         for (final slot in ['dress', 'layer', 'shoes', 'bag'])
           for (final suffix in ['Name', 'Meta', 'Swatch', 'ImageAsset'])
@@ -2141,7 +2139,12 @@ class _FinalizedDressingRoom extends StatelessWidget {
     final budget = CommerceDressingRoomStyle(
       dark: dark,
       child: CommerceBudgetSummary(
-        spent: values['spent']!,
+        spent: compact
+            ? values['spent']!.replaceFirst(
+                RegExp(r'\s+[—·]\s*\d+ of \d+$'),
+                '',
+              )
+            : values['spent']!,
         left: values['left']!,
         progress: progress,
       ),
@@ -2183,10 +2186,6 @@ class _FinalizedDressingRoom extends StatelessWidget {
           ],
           const SizedBox(height: 10),
           roomText(values['brief']!, size: 12, muted: true),
-          if (values['planCaption']!.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            roomText(values['planCaption']!, size: 10, muted: true),
-          ],
           const SizedBox(height: 14),
           if (!compact) ...[budget, const SizedBox(height: 14)],
           LayoutBuilder(
