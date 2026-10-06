@@ -1,0 +1,1655 @@
+{
+  "format": "commerce-finalized-design-contracts/v1",
+  "figmaFileKey": "mG3g0dRExJiLZ6oWRM4CRg",
+  "sectionId": "53:3111",
+  "protocol": "A2UI v0.9",
+  "status": "implemented",
+  "components": [
+    {
+      "name": "SideBar",
+      "sourceId": "53:3112",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3112",
+      "status": "implemented",
+      "variants": [],
+      "visual": {
+        "width": 60,
+        "height": 669,
+        "statusPreview": "Native device status owns real cutout/time; statusPreview true explicitly renders Figma prototype status only in gallery."
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "iPhone Duo trailing-edge bar. Status bar + Dynamic Island at the top, then Close. Tabs intentionally omitted until those destinations exist.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "count": "number reference",
+        "closeAction": "action",
+        "bagAction": "action",
+        "statusPreview": "boolean; optional false (gallery-only system status simulation)"
+      },
+      "events": [
+        "close_stylist",
+        "open_bag"
+      ],
+      "assetMappings": [
+        {
+          "sourceId": "53:3117",
+          "asset": "assets/icons/finalized_shared/close.svg",
+          "rootWidth": 24,
+          "rootHeight": 24,
+          "export": "SVG_STRING unchanged"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "name": "ChoiceChip",
+      "sourceId": "53:3121",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3121",
+      "status": "implemented",
+      "variants": [
+        {
+          "name": "unselected",
+          "sourceId": "53:3122",
+          "status": "implemented"
+        },
+        {
+          "name": "selected",
+          "sourceId": "53:3124",
+          "status": "implemented"
+        }
+      ],
+      "visual": {
+        "width": 82,
+        "height": 38
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Single-select option chip used in stylist questions (formality, season). Tap toggles Selected.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "label": "string reference",
+        "selected": "boolean reference optional false",
+        "action": "action"
+      },
+      "events": [
+        "choose_formality (caller action); selected included"
+      ],
+      "assetMappings": [],
+      "gaps": []
+    },
+    {
+      "name": "PrimaryButton",
+      "sourceId": "53:3126",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3126",
+      "status": "implemented",
+      "variants": [],
+      "visual": {
+        "width": 360,
+        "height": 44,
+        "radius": 8,
+        "horizontalPadding": 16,
+        "fontFamily": "Jost",
+        "fontSize": 14,
+        "fontWeight": 400,
+        "lineHeight": 1.4
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Full-width primary action inside a stylist message. Label is short and verb-first.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "label": "A2uiSchemas.stringReference()",
+        "action": "A2uiSchemas.action()"
+      },
+      "events": [
+        "explicit event name and resolved JSON context"
+      ],
+      "assetMappings": [],
+      "gaps": []
+    },
+    {
+      "name": "Eyebrow",
+      "sourceId": "53:3128",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3128",
+      "status": "implemented",
+      "variants": [],
+      "visual": {
+        "fontFamily": "Inter",
+        "fontSize": 12,
+        "fontWeight": 500,
+        "color": "#71717a",
+        "letterSpacing": 0
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Small sentence-case label above a question or a group.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "text": "A2uiSchemas.stringReference()"
+      },
+      "events": [],
+      "assetMappings": [],
+      "gaps": []
+    },
+    {
+      "name": "OccasionTile",
+      "sourceId": "53:3130",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3130",
+      "status": "implemented",
+      "variants": [],
+      "visual": {
+        "width": 208,
+        "height": 223
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Image slot. Fill with a lifestyle photo — the layer name of each instance holds the Unsplash link to use.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "label": "string reference",
+        "imageAsset": "string reference optional bundled safe path",
+        "action": "action optional"
+      },
+      "events": [
+        "choose_occasion (caller action optional)"
+      ],
+      "assetMappings": [],
+      "gaps": []
+    },
+    {
+      "name": "LookTile",
+      "sourceId": "53:3131",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3131",
+      "status": "implemented",
+      "variants": [
+        {
+          "name": "dress",
+          "sourceId": "53:3132",
+          "status": "implemented"
+        },
+        {
+          "name": "top",
+          "sourceId": "53:3134",
+          "status": "implemented"
+        },
+        {
+          "name": "bottom",
+          "sourceId": "53:3136",
+          "status": "implemented"
+        },
+        {
+          "name": "layer",
+          "sourceId": "53:3138",
+          "status": "implemented"
+        },
+        {
+          "name": "shoes",
+          "sourceId": "53:3140",
+          "status": "implemented"
+        },
+        {
+          "name": "bag",
+          "sourceId": "53:3142",
+          "status": "implemented"
+        }
+      ],
+      "visual": {
+        "width": 120,
+        "categoryHeights": {
+          "dress": 240,
+          "top": 96,
+          "bottom": 136,
+          "layer": 150,
+          "shoes": 64,
+          "bag": 82
+        },
+        "glyphOrigins": {
+          "dress": [
+            12,
+            72
+          ],
+          "top": [
+            25,
+            13
+          ],
+          "bottom": [
+            25,
+            33
+          ],
+          "layer": [
+            25,
+            40
+          ],
+          "shoes": [
+            35,
+            7
+          ],
+          "bag": [
+            35,
+            16
+          ]
+        }
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Image-only product tile. Heights are proportioned so a Top (96) + Bottom (136) + 8 gap equals a Dress (240); Shoes and Bag are short. Swap the fill for the product image.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "category": "enum dress/top/bottom/layer/shoes/bag",
+        "label": "string reference",
+        "imageAsset": "string reference optional bundled safe path",
+        "action": "action optional"
+      },
+      "events": [
+        "caller-defined action optional"
+      ],
+      "assetMappings": [
+        {
+          "sourceId": "53:3133",
+          "asset": "assets/icons/finalized_shared/look-dress.svg",
+          "rootWidth": 96,
+          "rootHeight": 96,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3135",
+          "asset": "assets/icons/finalized_shared/look-top.svg",
+          "rootWidth": 70,
+          "rootHeight": 72,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3137",
+          "asset": "assets/icons/finalized_shared/look-bottom.svg",
+          "rootWidth": 70,
+          "rootHeight": 92,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3139",
+          "asset": "assets/icons/finalized_shared/look-layer.svg",
+          "rootWidth": 72,
+          "rootHeight": 89,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3141",
+          "asset": "assets/icons/finalized_shared/look-shoes.svg",
+          "rootWidth": 85,
+          "rootHeight": 50,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3143",
+          "asset": "assets/icons/finalized_shared/look-bag.svg",
+          "rootWidth": 76,
+          "rootHeight": 66,
+          "export": "SVG_STRING unchanged"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "name": "GarmentSilhouette",
+      "sourceId": "53:3144",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3144",
+      "status": "implemented",
+      "variants": [
+        {
+          "name": "dress",
+          "sourceId": "53:3145",
+          "status": "implemented"
+        },
+        {
+          "name": "top",
+          "sourceId": "53:3147",
+          "status": "implemented"
+        },
+        {
+          "name": "bottom",
+          "sourceId": "53:3149",
+          "status": "implemented"
+        },
+        {
+          "name": "layer",
+          "sourceId": "53:3151",
+          "status": "implemented"
+        },
+        {
+          "name": "shoes",
+          "sourceId": "53:3153",
+          "status": "implemented"
+        },
+        {
+          "name": "bag",
+          "sourceId": "53:3155",
+          "status": "implemented"
+        }
+      ],
+      "visual": {
+        "width": 100,
+        "height": 100
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Category glyph placed over image slots so the garment type reads before real photos are in. Remove once the product image is loaded.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "category": "enum dress/top/bottom/layer/shoes/bag"
+      },
+      "events": [],
+      "assetMappings": [
+        {
+          "sourceId": "53:3145",
+          "asset": "assets/icons/finalized_shared/silhouette-dress.svg",
+          "rootWidth": 100,
+          "rootHeight": 100,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3147",
+          "asset": "assets/icons/finalized_shared/silhouette-top.svg",
+          "rootWidth": 100,
+          "rootHeight": 100,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3149",
+          "asset": "assets/icons/finalized_shared/silhouette-bottom.svg",
+          "rootWidth": 100,
+          "rootHeight": 100,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3151",
+          "asset": "assets/icons/finalized_shared/silhouette-layer.svg",
+          "rootWidth": 100,
+          "rootHeight": 100,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3153",
+          "asset": "assets/icons/finalized_shared/silhouette-shoes.svg",
+          "rootWidth": 100,
+          "rootHeight": 100,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3155",
+          "asset": "assets/icons/finalized_shared/silhouette-bag.svg",
+          "rootWidth": 100,
+          "rootHeight": 100,
+          "export": "SVG_STRING unchanged"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "name": "BagIcon",
+      "sourceId": "53:3157",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3157",
+      "status": "implemented",
+      "variants": [
+        {
+          "name": "0",
+          "sourceId": "53:3158",
+          "status": "implemented"
+        },
+        {
+          "name": "1",
+          "sourceId": "53:3161",
+          "status": "implemented"
+        },
+        {
+          "name": "4",
+          "sourceId": "53:3166",
+          "status": "implemented"
+        },
+        {
+          "name": "5",
+          "sourceId": "53:3171",
+          "status": "implemented"
+        }
+      ],
+      "visual": {
+        "width": 44,
+        "height": 44
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Shared. Bag with item count. Lives in the side bar (landscape) or nav bar (portrait); tapping opens the Bag Preview overlay.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "count": "number reference; runtime clamps 0..999; exact SVG counts0/1/4/5, dynamically rendered other numbers",
+        "action": "action"
+      },
+      "events": [
+        "open_bag (caller action)"
+      ],
+      "assetMappings": [
+        {
+          "sourceId": "53:3158",
+          "asset": "assets/icons/finalized_shared/bag-0.svg",
+          "rootWidth": 44,
+          "rootHeight": 44,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3161",
+          "asset": "assets/icons/finalized_shared/bag-1.svg",
+          "rootWidth": 44,
+          "rootHeight": 44,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3166",
+          "asset": "assets/icons/finalized_shared/bag-4.svg",
+          "rootWidth": 44,
+          "rootHeight": 44,
+          "export": "SVG_STRING unchanged"
+        },
+        {
+          "sourceId": "53:3171",
+          "asset": "assets/icons/finalized_shared/bag-5.svg",
+          "rootWidth": 44,
+          "rootHeight": 44,
+          "export": "SVG_STRING unchanged"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "name": "Toast",
+      "sourceId": "53:3176",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3176",
+      "status": "implemented",
+      "variants": [],
+      "visual": {
+        "width": 211,
+        "height": 40,
+        "accessibilityAdaptation": "40px design visual inside48px tap area with4px transparent vertical padding; wraps message/action at high text scale."
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Shared. Confirmation after adding from the dressing room; the action opens the Bag Preview.",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "message": "string reference",
+        "actionLabel": "string reference",
+        "action": "action"
+      },
+      "events": [
+        "open_bag or undo_remove (caller-defined action)"
+      ],
+      "assetMappings": [
+        {
+          "sourceId": "53:3177",
+          "asset": "assets/icons/finalized_shared/toast-bag.svg",
+          "rootWidth": 18,
+          "rootHeight": 18,
+          "export": "SVG_STRING unchanged"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "name": "QuantityStepper",
+      "sourceId": "53:3181",
+      "sourceUrl": "https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg?node-id=53-3181",
+      "status": "implemented",
+      "variants": [],
+      "visual": {
+        "width": 84,
+        "height": 30,
+        "accessibilityAdaptation": "30px design controls expand to independent48px targets; whole pill grows to prevent overlapping hit areas."
+      },
+      "visualEvidence": "exact_native_figma_properties_plus_section_screenshot",
+      "note": "Shared. Used in the Bag Preview rows. Minus at 1 removes the item (with an undo toast).",
+      "noteEvidence": "exact_native_text_node",
+      "props": {
+        "value": "number reference; local/bound update",
+        "max": "integer optional99 (1..999)",
+        "action": "action dispatched on nonzero change with quantity",
+        "removeAction": "action dispatched at1 with quantity0"
+      },
+      "events": [
+        "change_quantity with quantity",
+        "remove_bag_item with quantity0"
+      ],
+      "assetMappings": [],
+      "gaps": []
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "shared-primary-and-eyebrow",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-components",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-components",
+            "components": [
+              {
+                "id": "root",
+                "component": "Column",
+                "align": "stretch",
+                "children": [
+                  "eyebrow",
+                  "button"
+                ]
+              },
+              {
+                "id": "eyebrow",
+                "component": "Eyebrow",
+                "text": {
+                  "path": "/prompt"
+                }
+              },
+              {
+                "id": "button",
+                "component": "PrimaryButton",
+                "label": {
+                  "path": "/label"
+                },
+                "action": {
+                  "event": {
+                    "name": "find_options",
+                    "context": {
+                      "occasion": {
+                        "path": "/occasion"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-components",
+            "value": {
+              "prompt": "How formal?",
+              "label": "Find options",
+              "occasion": "Berlin first day"
+            }
+          }
+        }
+      ],
+      "surfaceId": "shared-components"
+    },
+    {
+      "name": "shared-choicechip-0",
+      "surfaceId": "shared-choicechip-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-choicechip-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-choicechip-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "ChoiceChip",
+                "label": "Black tie",
+                "selected": false,
+                "action": {
+                  "event": {
+                    "name": "choose_formality",
+                    "context": {
+                      "value": "black-tie"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-choicechip-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-choicechip-1",
+      "surfaceId": "shared-choicechip-1",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-choicechip-1",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-choicechip-1",
+            "components": [
+              {
+                "id": "root",
+                "component": "ChoiceChip",
+                "label": "Black tie",
+                "selected": true,
+                "action": {
+                  "event": {
+                    "name": "choose_formality",
+                    "context": {
+                      "value": "black-tie"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-choicechip-1",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-bagicon-0",
+      "surfaceId": "shared-bagicon-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-bagicon-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-bagicon-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "BagIcon",
+                "count": 0,
+                "action": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-bagicon-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-bagicon-1",
+      "surfaceId": "shared-bagicon-1",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-bagicon-1",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-bagicon-1",
+            "components": [
+              {
+                "id": "root",
+                "component": "BagIcon",
+                "count": 1,
+                "action": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-bagicon-1",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-bagicon-2",
+      "surfaceId": "shared-bagicon-2",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-bagicon-2",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-bagicon-2",
+            "components": [
+              {
+                "id": "root",
+                "component": "BagIcon",
+                "count": 4,
+                "action": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-bagicon-2",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-bagicon-3",
+      "surfaceId": "shared-bagicon-3",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-bagicon-3",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-bagicon-3",
+            "components": [
+              {
+                "id": "root",
+                "component": "BagIcon",
+                "count": 5,
+                "action": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-bagicon-3",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-toast-0",
+      "surfaceId": "shared-toast-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-toast-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-toast-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "Toast",
+                "message": "4 items added",
+                "actionLabel": "View bag",
+                "action": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-toast-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-toast-1",
+      "surfaceId": "shared-toast-1",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-toast-1",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-toast-1",
+            "components": [
+              {
+                "id": "root",
+                "component": "Toast",
+                "message": "Item removed",
+                "actionLabel": "Undo",
+                "action": {
+                  "event": {
+                    "name": "undo_remove",
+                    "context": {
+                      "productId": "demo-0001"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-toast-1",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-quantity",
+      "surfaceId": "shared-quantitystepper-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-quantitystepper-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-quantitystepper-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "QuantityStepper",
+                "value": {
+                  "path": "/quantity"
+                },
+                "max": 99,
+                "action": {
+                  "event": {
+                    "name": "change_quantity",
+                    "context": {
+                      "productId": "demo-0001"
+                    }
+                  }
+                },
+                "removeAction": {
+                  "event": {
+                    "name": "remove_bag_item",
+                    "context": {
+                      "productId": "demo-0001"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-quantitystepper-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-occasiontile-0",
+      "surfaceId": "shared-occasiontile-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-occasiontile-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-occasiontile-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "OccasionTile",
+                "label": "Occasion placeholder"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-occasiontile-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-occasiontile-1",
+      "surfaceId": "shared-occasiontile-1",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-occasiontile-1",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-occasiontile-1",
+            "components": [
+              {
+                "id": "root",
+                "component": "OccasionTile",
+                "label": "Catalog occasion",
+                "imageAsset": "assets/images/occasions/start-01.png",
+                "action": {
+                  "event": {
+                    "name": "choose_occasion",
+                    "context": {
+                      "occasion": "Berlin"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-occasiontile-1",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-looktile-0",
+      "surfaceId": "shared-looktile-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-looktile-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-looktile-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
+                "category": "dress",
+                "label": "dress"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-looktile-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-looktile-1",
+      "surfaceId": "shared-looktile-1",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-looktile-1",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-looktile-1",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
+                "category": "top",
+                "label": "top"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-looktile-1",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-looktile-2",
+      "surfaceId": "shared-looktile-2",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-looktile-2",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-looktile-2",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
+                "category": "bottom",
+                "label": "bottom"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-looktile-2",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-looktile-3",
+      "surfaceId": "shared-looktile-3",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-looktile-3",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-looktile-3",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
+                "category": "layer",
+                "label": "layer"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-looktile-3",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-looktile-4",
+      "surfaceId": "shared-looktile-4",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-looktile-4",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-looktile-4",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
+                "category": "shoes",
+                "label": "shoes"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-looktile-4",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-looktile-5",
+      "surfaceId": "shared-looktile-5",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-looktile-5",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-looktile-5",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
+                "category": "bag",
+                "label": "bag"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-looktile-5",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-looktile-6",
+      "surfaceId": "shared-looktile-6",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-looktile-6",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-looktile-6",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
+                "category": "dress",
+                "label": "Catalog product",
+                "imageAsset": "assets/images/products/demo-0001.jpg"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-looktile-6",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-garmentsilhouette-0",
+      "surfaceId": "shared-garmentsilhouette-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-garmentsilhouette-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-garmentsilhouette-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "GarmentSilhouette",
+                "category": "dress"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-garmentsilhouette-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-garmentsilhouette-1",
+      "surfaceId": "shared-garmentsilhouette-1",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-garmentsilhouette-1",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-garmentsilhouette-1",
+            "components": [
+              {
+                "id": "root",
+                "component": "GarmentSilhouette",
+                "category": "top"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-garmentsilhouette-1",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-garmentsilhouette-2",
+      "surfaceId": "shared-garmentsilhouette-2",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-garmentsilhouette-2",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-garmentsilhouette-2",
+            "components": [
+              {
+                "id": "root",
+                "component": "GarmentSilhouette",
+                "category": "bottom"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-garmentsilhouette-2",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-garmentsilhouette-3",
+      "surfaceId": "shared-garmentsilhouette-3",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-garmentsilhouette-3",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-garmentsilhouette-3",
+            "components": [
+              {
+                "id": "root",
+                "component": "GarmentSilhouette",
+                "category": "layer"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-garmentsilhouette-3",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-garmentsilhouette-4",
+      "surfaceId": "shared-garmentsilhouette-4",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-garmentsilhouette-4",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-garmentsilhouette-4",
+            "components": [
+              {
+                "id": "root",
+                "component": "GarmentSilhouette",
+                "category": "shoes"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-garmentsilhouette-4",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-garmentsilhouette-5",
+      "surfaceId": "shared-garmentsilhouette-5",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-garmentsilhouette-5",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-garmentsilhouette-5",
+            "components": [
+              {
+                "id": "root",
+                "component": "GarmentSilhouette",
+                "category": "bag"
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-garmentsilhouette-5",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-sidebar-0",
+      "surfaceId": "shared-sidebar-0",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-sidebar-0",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-sidebar-0",
+            "components": [
+              {
+                "id": "root",
+                "component": "SideBar",
+                "count": 4,
+                "statusPreview": false,
+                "closeAction": {
+                  "event": {
+                    "name": "close_stylist",
+                    "context": {}
+                  }
+                },
+                "bagAction": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-sidebar-0",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "shared-sidebar-1",
+      "surfaceId": "shared-sidebar-1",
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "shared-sidebar-1",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "shared-sidebar-1",
+            "components": [
+              {
+                "id": "root",
+                "component": "SideBar",
+                "count": 4,
+                "statusPreview": true,
+                "closeAction": {
+                  "event": {
+                    "name": "close_stylist",
+                    "context": {}
+                  }
+                },
+                "bagAction": {
+                  "event": {
+                    "name": "open_bag",
+                    "context": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateDataModel": {
+            "surfaceId": "shared-sidebar-1",
+            "value": {
+              "quantity": 1
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "registration": "buildCommerceCatalog().copyWith(newItems: finalizedSharedItems)",
+  "coverage": {
+    "componentFamilies": 10,
+    "implementedFamilies": 10,
+    "blockedFamilies": 0,
+    "assetVerification": "18 unchanged native SVG_STRING exports; declared root dimensions preserved and exact instance origins recorded.",
+    "surfaceFixtures": 27,
+    "catalogExampleStates": 30
+  },
+  "nativeExportProvenance": {
+    "readTool": "figma_use_figma",
+    "pageId": "4:1125",
+    "sectionId": "53:3111",
+    "method": "read-only recursive property and note reads; node.exportAsync({format:SVG_STRING})",
+    "designMutations": false,
+    "fallbackAuthorization": "User approved exact native property/asset export after get_design_context quota exhaustion."
+  }
+}

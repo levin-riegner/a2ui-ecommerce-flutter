@@ -3,11 +3,14 @@ import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
 import 'package:a2ui_flutter_commerce/src/layout/adaptive_page.dart';
 import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
+import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:foldable/foldable.dart';
 
 void main() {
   void setWindow(WidgetTester tester, Size size) {
@@ -54,6 +57,167 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  for (final obstructed in [false, true]) {
+    testWidgets(
+      'split background covers safe margins while controls avoid them, hinge=$obstructed',
+      (tester) async {
+        setWindow(tester, const Size(951, 669));
+        await tester.pumpWidget(
+          _Harness(
+            secondaryBackgroundColor: Colors.black,
+            padding: const EdgeInsets.fromLTRB(0, 20, 84, 34),
+            features: obstructed
+                ? const [
+                    DisplayFeature(
+                      bounds: Rect.fromLTWH(455.5, 0, 40, 669),
+                      type: DisplayFeatureType.hinge,
+                      state: DisplayFeatureState.postureHalfOpened,
+                    ),
+                  ]
+                : const [],
+          ),
+        );
+        await tester.pumpAndSettle();
+        final background = tester.getRect(
+          find.byKey(const ValueKey('secondary-pane-background')),
+        );
+        expect(background.top, 0);
+        expect(background.bottom, 669);
+        expect(background.right, 951);
+        expect(background.left, obstructed ? 495.5 : 454);
+        final content = tester.getRect(find.byKey(const ValueKey('secondary')));
+        expect(content.left, greaterThanOrEqualTo(background.left + 16));
+        expect(content.right, lessThanOrEqualTo(951 - 84 - 16));
+        expect(content.top, greaterThanOrEqualTo(20 + 16));
+        expect(
+          tester
+              .widget<AnnotatedRegion<SystemUiOverlayStyle>>(
+                find.byType(AnnotatedRegion<SystemUiOverlayStyle>).first,
+              )
+              .value
+              .statusBarBrightness,
+          Brightness.dark,
+        );
+        await tester.enterText(find.byKey(const ValueKey('draft')), 'Keep me');
+        tester.view.physicalSize = const Size(466, 678);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('secondary-pane-background')),
+          findsNothing,
+        );
+        expect(find.text('Keep me'), findsOneWidget);
+        expect(
+          tester
+              .widget<AnnotatedRegion<SystemUiOverlayStyle>>(
+                find.byType(AnnotatedRegion<SystemUiOverlayStyle>).first,
+              )
+              .value
+              .statusBarBrightness,
+          Brightness.light,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('Book background fades and reverses without losing the draft', (
+    tester,
+  ) async {
+    setWindow(tester, const Size(951, 669));
+    Future<void> posture(HingeStatus status) => tester.pumpWidget(
+      _Harness(
+        secondaryBackgroundColor: Colors.black,
+        secondaryBackgroundOnlyInBookMode: true,
+        foldData: FoldableData.unsupported.copyWith(status: status),
+        padding: const EdgeInsets.fromLTRB(0, 20, 84, 34),
+        features: status == HingeStatus.partiallyOpen
+            ? const [
+                DisplayFeature(
+                  bounds: Rect.fromLTWH(455.5, 0, 40, 669),
+                  type: DisplayFeatureType.hinge,
+                  state: DisplayFeatureState.postureHalfOpened,
+                ),
+              ]
+            : const [],
+      ),
+    );
+    Color background() => tester
+        .widget<ColoredBox>(
+          find.byKey(const ValueKey('secondary-pane-background')),
+        )
+        .color;
+
+    await posture(HingeStatus.fullyOpen);
+    expect(background(), Colors.white);
+    await tester.enterText(
+      find.byKey(const ValueKey('draft')),
+      'Keep the draft',
+    );
+    final field = tester.state<EditableTextState>(find.byType(EditableText));
+    await posture(HingeStatus.partiallyOpen);
+    expect(background(), Colors.white);
+    await tester.pump(const Duration(milliseconds: 160));
+    final intermediate = background();
+    expect(intermediate.r, greaterThan(0));
+    expect(intermediate.r, lessThan(1));
+    await posture(HingeStatus.fullyOpen);
+    expect(background(), intermediate);
+    await tester.pump(const Duration(milliseconds: 160));
+    expect(background().r, greaterThan(intermediate.r));
+    await tester.pumpAndSettle();
+    expect(background(), Colors.white);
+    await posture(HingeStatus.partiallyOpen);
+    await tester.pumpAndSettle();
+    expect(background(), Colors.black);
+    expect(
+      tester.state<EditableTextState>(find.byType(EditableText)),
+      same(field),
+    );
+    expect(field.widget.controller.text, 'Keep the draft');
+    expect(field.widget.focusNode.hasFocus, isTrue);
+    tester.view.physicalSize = const Size(466, 678);
+    await posture(HingeStatus.closed);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('secondary-pane-background')),
+      findsNothing,
+    );
+    expect(
+      tester
+          .widget<AnnotatedRegion<SystemUiOverlayStyle>>(
+            find.byType(AnnotatedRegion<SystemUiOverlayStyle>).first,
+          )
+          .value
+          .statusBarBrightness,
+      Brightness.light,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Book background honours Reduce Motion', (tester) async {
+    setWindow(tester, const Size(951, 669));
+    Future<void> posture(HingeStatus status) => tester.pumpWidget(
+      _Harness(
+        secondaryBackgroundColor: Colors.black,
+        secondaryBackgroundOnlyInBookMode: true,
+        foldData: FoldableData.unsupported.copyWith(status: status),
+        disableAnimations: true,
+      ),
+    );
+    await posture(HingeStatus.fullyOpen);
+    await posture(HingeStatus.partiallyOpen);
+    await tester.pump();
+    expect(
+      tester
+          .widget<ColoredBox>(
+            find.byKey(const ValueKey('secondary-pane-background')),
+          )
+          .color,
+      Colors.black,
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('draft and focus survive compact/split resize', (tester) async {
     setWindow(tester, const Size(390, 844));
@@ -351,54 +515,70 @@ class _Harness extends StatelessWidget {
     this.padding = EdgeInsets.zero,
     this.keyboardHeight = 0,
     this.longContent = false,
+    this.secondaryBackgroundColor,
+    this.secondaryBackgroundOnlyInBookMode = false,
+    this.foldData = FoldableData.unsupported,
+    this.disableAnimations = false,
   });
 
   final List<DisplayFeature> features;
   final EdgeInsets padding;
   final double keyboardHeight;
   final bool longContent;
+  final Color? secondaryBackgroundColor;
+  final bool secondaryBackgroundOnlyInBookMode;
+  final FoldableData foldData;
+  final bool disableAnimations;
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    home: Builder(
-      builder: (context) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            displayFeatures: features,
-            padding: padding,
-            viewInsets: EdgeInsets.only(bottom: keyboardHeight),
-          ),
-          child: Scaffold(
-            body: AdaptivePaneLayout(
-              primary: Column(
-                key: const ValueKey('primary'),
-                children: [
-                  const Text('Conversation'),
-                  if (longContent) const SizedBox(height: 1000),
-                  const Text('Last recommendation'),
-                ],
-              ),
-              secondary: const SizedBox(
-                key: ValueKey('secondary'),
-                height: 180,
-                child: Text('Dressing room'),
-              ),
-              header: const Padding(
-                padding: EdgeInsets.all(12),
-                child: Text('Stylist'),
-              ),
-              footer: const Padding(
-                padding: EdgeInsets.all(12),
-                child: TextField(key: ValueKey('draft')),
-              ),
-              rail: const ColoredBox(
-                key: ValueKey('rail'),
-                color: Colors.white,
+  Widget build(BuildContext context) => DuoLayoutScope(
+    data: foldData,
+    child: MaterialApp(
+      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+      home: Builder(
+        builder: (context) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              displayFeatures: features,
+              padding: padding,
+              viewInsets: EdgeInsets.only(bottom: keyboardHeight),
+              disableAnimations: disableAnimations,
+            ),
+            child: Scaffold(
+              body: AdaptivePaneLayout(
+                secondaryBackgroundColor: secondaryBackgroundColor,
+                secondaryBackgroundOnlyInBookMode:
+                    secondaryBackgroundOnlyInBookMode,
+                primary: Column(
+                  key: const ValueKey('primary'),
+                  children: [
+                    const Text('Conversation'),
+                    if (longContent) const SizedBox(height: 1000),
+                    const Text('Last recommendation'),
+                  ],
+                ),
+                secondary: const SizedBox(
+                  key: ValueKey('secondary'),
+                  height: 180,
+                  child: Text('Dressing room'),
+                ),
+                header: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text('Stylist'),
+                ),
+                footer: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: TextField(key: ValueKey('draft')),
+                ),
+                rail: const ColoredBox(
+                  key: ValueKey('rail'),
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     ),
   );
 }

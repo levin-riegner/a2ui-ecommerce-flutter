@@ -1,0 +1,3517 @@
+{
+  "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+  "components": {
+    "Button": {
+      "type": "object",
+      "description": "An interactive button that triggers an action when pressed.",
+      "properties": {
+        "child": {
+          "type": "string",
+          "description": "The ID of a child widget. This should always be set, e.g. to the ID of a `Text` widget."
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "variant": {
+          "type": "string",
+          "description": "A hint for the button style.",
+          "enum": [
+            "primary",
+            "borderless"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "description": "Validation rules for this component.",
+          "items": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/CheckRule"
+          }
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Button"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "child",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "Card": {
+      "type": "object",
+      "description": "A visual container (card) that groups a single child widget.",
+      "properties": {
+        "child": {
+          "type": "string",
+          "description": "The ID of a component."
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Card"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "child"
+      ],
+      "additionalProperties": true
+    },
+    "CheckBox": {
+      "type": "object",
+      "description": "A selectable checkbox used for boolean toggles with a label.",
+      "properties": {
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "value": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
+        },
+        "checks": {
+          "type": "array",
+          "description": "Validation rules for this component.",
+          "items": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/CheckRule"
+          }
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "CheckBox"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "label",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "Column": {
+      "type": "object",
+      "description": "A layout widget that arranges its children vertically.",
+      "properties": {
+        "justify": {
+          "type": "string",
+          "description": "How children are aligned on the main axis. ",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "spaceBetween",
+            "spaceAround",
+            "spaceEvenly",
+            "stretch"
+          ]
+        },
+        "align": {
+          "type": "string",
+          "description": "How children are aligned on the cross axis. ",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "stretch"
+          ]
+        },
+        "children": {
+          "description": "Either an explicit list of widget IDs for the children, or a template with a data binding to the list of children.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Component ID"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "componentId": {
+                  "type": "string",
+                  "description": "The ID of a component."
+                },
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "componentId",
+                "path"
+              ]
+            }
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Column"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "children"
+      ],
+      "additionalProperties": true
+    },
+    "DateTimeInput": {
+      "type": "object",
+      "description": "A widget for selecting a date and/or time.",
+      "properties": {
+        "value": {
+          "description": "The selected date and/or time.",
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "variant": {
+          "type": "string",
+          "description": "The input type: date, time, or datetime.",
+          "enum": [
+            "date",
+            "time",
+            "datetime"
+          ]
+        },
+        "min": {
+          "type": "string",
+          "description": "The earliest selectable date (YYYY-MM-DD). Defaults to -9999-01-01."
+        },
+        "max": {
+          "type": "string",
+          "description": "The latest selectable date (YYYY-MM-DD). Defaults to 9999-12-31."
+        },
+        "label": {
+          "description": "The text label for the input field.",
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/CheckRule"
+          }
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "DateTimeInput"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "Divider": {
+      "type": "object",
+      "description": "A thin horizontal or vertical line used to separate content.",
+      "properties": {
+        "axis": {
+          "type": "string",
+          "enum": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Divider"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "Icon": {
+      "type": "object",
+      "description": "Displays an icon from a set of available icons.",
+      "properties": {
+        "name": {
+          "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/icon/name').",
+          "allOf": [
+            {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "accountCircle",
+                    "add",
+                    "arrowBack",
+                    "arrowForward",
+                    "attachFile",
+                    "calendarToday",
+                    "call",
+                    "camera",
+                    "check",
+                    "close",
+                    "delete",
+                    "download",
+                    "edit",
+                    "error",
+                    "event",
+                    "favorite",
+                    "favoriteOff",
+                    "folder",
+                    "help",
+                    "home",
+                    "info",
+                    "locationOn",
+                    "lock",
+                    "lockOpen",
+                    "mail",
+                    "menu",
+                    "moreHoriz",
+                    "moreVert",
+                    "notifications",
+                    "notificationsOff",
+                    "payment",
+                    "person",
+                    "phone",
+                    "photo",
+                    "print",
+                    "refresh",
+                    "search",
+                    "send",
+                    "settings",
+                    "share",
+                    "shoppingCart",
+                    "star",
+                    "starHalf",
+                    "starOff",
+                    "upload",
+                    "visibility",
+                    "visibilityOff",
+                    "warning"
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            }
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Icon"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "name"
+      ],
+      "additionalProperties": true
+    },
+    "List": {
+      "type": "object",
+      "description": "A scrollable list of child widgets.",
+      "properties": {
+        "children": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Component ID"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "componentId": {
+                  "type": "string",
+                  "description": "The ID of a component."
+                },
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "componentId",
+                "path"
+              ]
+            }
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "vertical",
+            "horizontal"
+          ]
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "stretch"
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "List"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "children"
+      ],
+      "additionalProperties": true
+    },
+    "Modal": {
+      "type": "object",
+      "description": "A modal overlay that slides up from the bottom of the screen.",
+      "properties": {
+        "trigger": {
+          "type": "string",
+          "description": "The widget that opens the modal."
+        },
+        "content": {
+          "type": "string",
+          "description": "The widget to display in the modal."
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Modal"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "trigger",
+        "content"
+      ],
+      "additionalProperties": true
+    },
+    "ChoicePicker": {
+      "type": "object",
+      "description": "A component that allows selecting one or more options from a list.",
+      "properties": {
+        "label": {
+          "description": "The label for the group of options.",
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "options": {
+          "description": "The list of available options to choose from.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "description": "The text to display for this option.",
+                    "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The stable value associated with this option."
+                  }
+                },
+                "required": [
+                  "label",
+                  "value"
+                ]
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "value": {
+          "description": "The list of currently selected values (or single value).",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "displayStyle": {
+          "type": "string",
+          "description": "The display style of the component.",
+          "enum": [
+            "checkbox",
+            "chips"
+          ]
+        },
+        "variant": {
+          "type": "string",
+          "description": "A hint for how the choice picker should be displayed and behave.",
+          "enum": [
+            "multipleSelection",
+            "mutuallyExclusive"
+          ]
+        },
+        "filterable": {
+          "type": "boolean",
+          "description": "Whether the options can be filtered by the user."
+        },
+        "checks": {
+          "type": "array",
+          "description": "Validation rules for this component.",
+          "items": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/CheckRule"
+          }
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ChoicePicker"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "options",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "Row": {
+      "type": "object",
+      "description": "A layout widget that arranges its children horizontally.",
+      "properties": {
+        "children": {
+          "description": "Either an explicit list of widget IDs for the children, or a template with a data binding to the list of children.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Component ID"
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "componentId": {
+                  "type": "string",
+                  "description": "The ID of a component."
+                },
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "componentId",
+                "path"
+              ]
+            }
+          ]
+        },
+        "justify": {
+          "type": "string",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "spaceBetween",
+            "spaceAround",
+            "spaceEvenly",
+            "stretch"
+          ]
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "stretch"
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Row"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "children"
+      ],
+      "additionalProperties": true
+    },
+    "Slider": {
+      "type": "object",
+      "description": "A slider for selecting a value from a range.",
+      "properties": {
+        "value": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "min": {
+          "type": "number",
+          "description": "The minimum value. Defaults to 0.0."
+        },
+        "max": {
+          "type": "number",
+          "description": "The maximum value. Defaults to 1.0."
+        },
+        "label": {
+          "description": "The label for the slider.",
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "checks": {
+          "type": "array",
+          "description": "Validation rules for this component.",
+          "items": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/CheckRule"
+          }
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Slider"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "value"
+      ],
+      "additionalProperties": true
+    },
+    "Tabs": {
+      "type": "object",
+      "description": "A tab layout to navigate between different child components.",
+      "properties": {
+        "tabs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "description": "The label for the tab.",
+                "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+              },
+              "content": {
+                "type": "string",
+                "description": "The content (widget ID) to display when this tab is active."
+              }
+            },
+            "required": [
+              "label",
+              "content"
+            ]
+          }
+        },
+        "activeTab": {
+          "description": "The index of the currently active tab.",
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Tabs"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "tabs"
+      ],
+      "additionalProperties": true
+    },
+    "Text": {
+      "type": "object",
+      "description": "A block of styled text.",
+      "properties": {
+        "text": {
+          "description": "While simple Markdown is supported (without HTML or image references), utilizing dedicated UI components is generally preferred for a richer and more structured presentation.",
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "variant": {
+          "type": "string",
+          "description": "A hint for the base text style.",
+          "enum": [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "caption",
+            "body"
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Text"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "text"
+      ],
+      "additionalProperties": true
+    },
+    "TextField": {
+      "type": "object",
+      "description": "A text input field.",
+      "properties": {
+        "value": {
+          "description": "The value of the text field.",
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "variant": {
+          "type": "string",
+          "description": "The kind of input the field accepts. shortText (the default) is a single line of text, longText is multi-line text, number only accepts numeric input, and obscured hides the typed characters, e.g. for passwords.",
+          "enum": [
+            "shortText",
+            "longText",
+            "number",
+            "obscured"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "description": "Validation rules for this component.",
+          "items": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/CheckRule"
+          }
+        },
+        "validationRegexp": {
+          "type": "string",
+          "description": "A regular expression the value has to match in full for the field to be valid. An empty field is exempt; use a `required` check to demand a value at all."
+        },
+        "onSubmittedAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "TextField"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "ChoiceChip": {
+      "type": "object",
+      "description": "A compact single-choice control for a structured prompt.",
+      "properties": {
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "selected": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ChoiceChip"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "label",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "ChoiceGroup": {
+      "type": "object",
+      "description": "A wrapping group of single-select commerce chips.",
+      "properties": {
+        "options": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicStringList"
+        },
+        "selected": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "selectionPath": {
+          "type": "string",
+          "description": "Optional local data-model path updated before form submission."
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ChoiceGroup"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "options"
+      ],
+      "additionalProperties": true
+    },
+    "PrimaryButton": {
+      "type": "object",
+      "description": "A single primary action button.",
+      "properties": {
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "PrimaryButton"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "label",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "BudgetSlider": {
+      "type": "object",
+      "description": "Bound outfit budget. Retains value/min/max compatibility; default write path /budget.",
+      "properties": {
+        "value": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "valuePath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "BudgetSlider"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "value",
+        "min",
+        "max"
+      ],
+      "additionalProperties": true
+    },
+    "StylistMessage": {
+      "type": "object",
+      "description": "Plain assistant text with one idea and an explicit next step.",
+      "properties": {
+        "text": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "StylistMessage"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "text"
+      ],
+      "additionalProperties": true
+    },
+    "Eyebrow": {
+      "type": "object",
+      "description": "A small sentence-case label above a question or group.",
+      "properties": {
+        "text": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Eyebrow"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "text"
+      ],
+      "additionalProperties": true
+    },
+    "ProductCard": {
+      "type": "object",
+      "description": "Recommendation with six image proportions, Default/Selected states; stable select_product/remove_product actions.",
+      "properties": {
+        "name": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "price": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "brandLine": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "tag": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "swatch": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "imageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "category": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "selected": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ProductCard"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "name",
+        "price",
+        "brandLine",
+        "tag",
+        "swatch",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "PieceSlot": {
+      "type": "object",
+      "description": "A finalized dressing-room hanger. All six garment categories are verified. Empty is still to find; Next is being chosen; Filled shows a product. A filled Change action emits a host event for Quick Adjust. Category-less legacy payloads retain the original presentation.",
+      "properties": {
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "meta": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "state": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "swatch": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "category": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "name": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "imageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "changeAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "PieceSlot"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "label",
+        "meta",
+        "state",
+        "swatch"
+      ],
+      "additionalProperties": true
+    },
+    "DressingRoom": {
+      "type": "object",
+      "description": "A persistent host-owned dressing-room summary surface.",
+      "properties": {
+        "title": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "brief": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "spent": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "left": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "progress": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "slots": {
+          "description": "The host-planned dressing-room slots, in journey order.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "state": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "category",
+                  "label",
+                  "name",
+                  "meta",
+                  "swatch",
+                  "state"
+                ]
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "planCaption": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "dressName": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "dressMeta": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "dressSwatch": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "dressImageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "layerName": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "layerMeta": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "layerSwatch": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "layerImageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "shoesName": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "shoesMeta": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "shoesSwatch": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "shoesImageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "bagName": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "bagMeta": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "bagSwatch": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "bagImageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "DressingRoom"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "component",
+        "title",
+        "brief",
+        "spent",
+        "left",
+        "progress"
+      ],
+      "additionalProperties": true
+    },
+    "UserMessage": {
+      "type": "object",
+      "description": "Right-aligned customer message; use actual typed or tapped text.",
+      "properties": {
+        "text": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "UserMessage"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "text"
+      ],
+      "additionalProperties": true
+    },
+    "ChatInput": {
+      "type": "object",
+      "description": "Bound draft and send action. Voice is disabled unless the host supplies microphoneAction.",
+      "properties": {
+        "value": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "placeholder": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "microphoneAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "valuePath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ChatInput"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "value",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "Suggestion": {
+      "type": "object",
+      "description": "Tappable example brief sends its exact text as a user message.",
+      "properties": {
+        "text": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Suggestion"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "text",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "PicksStrip": {
+      "type": "object",
+      "description": "Image-only product choices with real product IDs, category proportion and selected state.",
+      "properties": {
+        "products": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "category": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "selectedProductId": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "selectedProductIdPath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "PicksStrip"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "products",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "ThisOrThat": {
+      "type": "object",
+      "description": "Two product options, picked None/A/B, one tap returns a real product ID.",
+      "properties": {
+        "options": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "picked": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "question": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "pickedPath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ThisOrThat"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "options",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "ColourPicker": {
+      "type": "object",
+      "description": "Multi-select named colours, ring and dot, explicit selected array event.",
+      "properties": {
+        "options": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "selected": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "question": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "selectedPath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ColourPicker"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "selected",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "PhotoUpload": {
+      "type": "object",
+      "description": "Host-owned capture/library boundary. Never invent an upload or image analysis; choose/use/replace are explicit events. Bundled catalog imageAsset is a fixture only.",
+      "properties": {
+        "state": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "photoId": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "imageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "description": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "chooseAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "useAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "replaceAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "PhotoUpload"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "state",
+        "chooseAction"
+      ],
+      "additionalProperties": true
+    },
+    "FitSize": {
+      "type": "object",
+      "description": "Usual size and preferred fit bind separately; host persists and applies to product availability/fit notes.",
+      "properties": {
+        "sizes": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "fits": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "size": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "fit": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "sizePath": {
+          "type": "string"
+        },
+        "fitPath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "FitSize"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "size",
+        "fit",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "OccasionTimeline": {
+      "type": "object",
+      "description": "Editable activity/time/location segments. Host reruns recommendations from changed segments.",
+      "properties": {
+        "segments": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "selected": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "segmentsPath": {
+          "type": "string"
+        },
+        "selectedPath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "OccasionTimeline"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "segments",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "QuickAdjust": {
+      "type": "object",
+      "description": "Change one selected piece, preserving the other outfit pieces; host-owned recommendation rerun.",
+      "properties": {
+        "productId": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "productName": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "imageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "category": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "options": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "selected": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "selectedPath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "QuickAdjust"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "productId",
+        "productName",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "BrandPreferences": {
+      "type": "object",
+      "description": "Disjoint love/skip lists. Love biases and skip filters host search; host owns cross-visit persistence.",
+      "properties": {
+        "brands": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "love": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "skip": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "lovePath": {
+          "type": "string"
+        },
+        "skipPath": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "BrandPreferences"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "love",
+        "skip",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "StylistWorking": {
+      "type": "object",
+      "description": "Honest host/provider work description; omit progress when no measured fraction is available.",
+      "properties": {
+        "text": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "progress": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "StylistWorking"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "text"
+      ],
+      "additionalProperties": true
+    },
+    "BudgetMeter": {
+      "type": "object",
+      "description": "Finalized Figma BudgetMeter. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "spent": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "budget": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "pieceCount": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "totalPieces": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "proposedSpend": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "BudgetMeter"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "AddToBagButton": {
+      "type": "object",
+      "description": "Finalized Figma AddToBagButton. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "state": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "total": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "pieceCount": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "AddToBagButton"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "TypicalWeather": {
+      "type": "object",
+      "description": "Finalized Figma TypicalWeather. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "title": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "summary": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "disclaimer": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "days": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "TypicalWeather"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "MapCard": {
+      "type": "object",
+      "description": "Finalized Figma MapCard. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "mapAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "MapCard"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "ContextStrip": {
+      "type": "object",
+      "description": "Finalized Figma ContextStrip. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "location": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "venue": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "temperatures": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "rain": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "photoA": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "photoB": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "mapAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "weatherAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "ContextStrip"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "Look": {
+      "type": "object",
+      "description": "Finalized Figma Look. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "base": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "pieces": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Look"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "LookSummary": {
+      "type": "object",
+      "description": "Finalized Figma LookSummary. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "name": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "meta": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "pieces": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "saveAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "shareAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "resetAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "LookSummary"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "DeliveryEstimate": {
+      "type": "object",
+      "description": "Finalized Figma DeliveryEstimate. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "headline": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "detail": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "pieces": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "DeliveryEstimate"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "SavedLooksRail": {
+      "type": "object",
+      "description": "Finalized Figma SavedLooksRail. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "title": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "selectedId": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "looks": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "SavedLooksRail"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "FitNotes": {
+      "type": "object",
+      "description": "Finalized Figma FitNotes. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "title": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "pieces": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "FitNotes"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "AlternativePiece": {
+      "type": "object",
+      "description": "Finalized Figma AlternativePiece. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "title": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "productId": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "category": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "name": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "meta": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "imageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "swatch": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "AlternativePiece"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "IfWeatherTurns": {
+      "type": "object",
+      "description": "Finalized Figma IfWeatherTurns. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "verdict": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "condition": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "products": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "IfWeatherTurns"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "BagPreview": {
+      "type": "object",
+      "description": "Finalized Figma BagPreview. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
+      "properties": {
+        "items": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "meta": {
+                    "type": "string"
+                  },
+                  "imageAsset": {
+                    "type": "string"
+                  },
+                  "swatch": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "highlight": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "description": "A path to a list.",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "A relative or absolute path in the data model."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "string",
+                  "description": "The name of the function to call."
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments to pass to the function.",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "call"
+              ]
+            }
+          ]
+        },
+        "closeAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "removeAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "restoreAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "quantityAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "checkoutAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "BagPreview"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    },
+    "BagIcon": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "BagIcon"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "count",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "Toast": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "actionLabel": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "Toast"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "message",
+        "actionLabel",
+        "action"
+      ],
+      "additionalProperties": true
+    },
+    "QuantityStepper": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "removeAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "QuantityStepper"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "value",
+        "action",
+        "removeAction"
+      ],
+      "additionalProperties": true
+    },
+    "OccasionTile": {
+      "type": "object",
+      "properties": {
+        "imageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "OccasionTile"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "label"
+      ],
+      "additionalProperties": true
+    },
+    "LookTile": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "dress",
+            "top",
+            "bottom",
+            "layer",
+            "shoes",
+            "bag"
+          ]
+        },
+        "imageAsset": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "label": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+        },
+        "action": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "LookTile"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "category",
+        "label"
+      ],
+      "additionalProperties": true
+    },
+    "GarmentSilhouette": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "dress",
+            "top",
+            "bottom",
+            "layer",
+            "shoes",
+            "bag"
+          ]
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "GarmentSilhouette"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "category"
+      ],
+      "additionalProperties": true
+    },
+    "SideBar": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+        },
+        "closeAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "bagAction": {
+          "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+        },
+        "statusPreview": {
+          "type": "boolean"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "SideBar"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "count",
+        "closeAction",
+        "bagAction"
+      ],
+      "additionalProperties": true
+    },
+    "OccasionCollage": {
+      "type": "object",
+      "description": "Decorative occasion collage from exact bundled Figma image originals.",
+      "properties": {
+        "component": {
+          "type": "string",
+          "enum": [
+            "OccasionCollage"
+          ]
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "functions": [
+    {
+      "name": "required",
+      "description": "Checks that the value is not null, undefined, or empty.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {}
+        }
+      },
+      "returnType": "boolean"
+    },
+    {
+      "name": "regex",
+      "description": "Checks that the value matches a regular expression string.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          },
+          "pattern": {
+            "type": "string"
+          }
+        }
+      },
+      "returnType": "boolean"
+    },
+    {
+      "name": "length",
+      "description": "Checks string length constraints.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {},
+          "min": {
+            "type": "integer"
+          },
+          "max": {
+            "type": "integer"
+          }
+        }
+      },
+      "returnType": "any"
+    },
+    {
+      "name": "numeric",
+      "description": "Checks numeric range constraints.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          }
+        }
+      },
+      "returnType": "boolean"
+    },
+    {
+      "name": "email",
+      "description": "Checks that the value is a valid email address.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          }
+        }
+      },
+      "returnType": "boolean"
+    },
+    {
+      "name": "formatString",
+      "description": "Performs string interpolation of data model values and other functions in the\ncatalog functions list and returns the resulting string. The value string can\ncontain interpolated expressions in the ${expression} format. Supported\nexpression types include: JSON Pointer paths to the data model (e.g.,\n${/absolute/path} or ${relative/path}), and client-side function calls (e.g.,\n${now()}). Function arguments must be named (e.g.,\n${formatDate(value:${/currentDate}, format:'MM-dd')}). To include a literal ${\nsequence, escape it as \\${.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {}
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "name": "openUrl",
+      "description": "Opens the specified URL in a browser or handler. This function has no return value.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          }
+        }
+      },
+      "returnType": "void"
+    },
+    {
+      "name": "formatNumber",
+      "description": "Formats a number with the specified grouping and decimal precision.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+          },
+          "decimalPlaces": {
+            "type": "integer"
+          },
+          "useGrouping": {
+            "type": "boolean"
+          }
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "name": "formatCurrency",
+      "description": "Formats a number as a currency string.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+          },
+          "currencyCode": {
+            "type": "string"
+          }
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "name": "formatDate",
+      "description": "Formats a timestamp into a string using a pattern.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {},
+          "pattern": {
+            "type": "string"
+          }
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "name": "pluralize",
+      "description": "Returns a localized string based on the Common Locale Data Repository (CLDR) plural category of the count (zero, one, two, few, many, other). Requires an 'other' fallback.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicNumber"
+          },
+          "zero": {
+            "type": "string"
+          },
+          "one": {
+            "type": "string"
+          },
+          "two": {
+            "type": "string"
+          },
+          "few": {
+            "type": "string"
+          },
+          "many": {
+            "type": "string"
+          },
+          "other": {
+            "type": "string"
+          }
+        }
+      },
+      "returnType": "string"
+    },
+    {
+      "name": "and",
+      "description": "Performs a logical AND operation on a list of boolean values.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "returnType": "boolean"
+    },
+    {
+      "name": "or",
+      "description": "Performs a logical OR operation on a list of boolean values.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "returnType": "boolean"
+    },
+    {
+      "name": "not",
+      "description": "Performs a logical NOT operation on a boolean value.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {}
+        }
+      },
+      "returnType": "boolean"
+    }
+  ]
+}

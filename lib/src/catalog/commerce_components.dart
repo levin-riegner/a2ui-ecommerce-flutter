@@ -403,16 +403,20 @@ class CommerceDressingRoomStyle extends InheritedWidget {
   const CommerceDressingRoomStyle({
     super.key,
     required this.dark,
+    this.compact = false,
     this.contextImages = const [],
     required super.child,
   });
   final bool dark;
+  final bool compact;
   final List<String> contextImages;
   static CommerceDressingRoomStyle? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<CommerceDressingRoomStyle>();
   @override
   bool updateShouldNotify(CommerceDressingRoomStyle oldWidget) =>
-      dark != oldWidget.dark || contextImages != oldWidget.contextImages;
+      dark != oldWidget.dark ||
+      compact != oldWidget.compact ||
+      contextImages != oldWidget.contextImages;
 }
 
 class CommerceDressingRoom extends StatelessWidget {

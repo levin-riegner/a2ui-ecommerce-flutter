@@ -1,7 +1,7 @@
 name: a2ui_flutter_commerce
 description: >-
-  A public Flutter reference app for building commerce experiences with
-  declarative A2UI surfaces and local fixture data.
+  Alder personal stylist, built with Flutter, declarative A2UI surfaces,
+  and local fixture data.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -80,9 +80,21 @@ flutter:
     - assets/data/catalog/
     - assets/images/products/
     - assets/images/occasions/
+    - assets/images/finalized_left/
     - assets/icons/commerce/
+    - assets/icons/finalized_left/
+    - assets/icons/finalized_right/
+    - assets/icons/finalized_shared/
 
   fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter/Inter-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/inter/Inter-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/inter/Inter-Variable.ttf
+          weight: 600
     - family: Jost
       fonts:
         - asset: assets/fonts/jost/Jost-Variable.ttf

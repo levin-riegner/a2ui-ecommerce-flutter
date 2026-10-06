@@ -1,6 +1,10 @@
 import 'package:genui/genui.dart';
 
 import 'commerce_widgets.dart';
+import 'finalized_left_components.dart';
+import 'finalized_right_components.dart';
+import 'finalized_shared_components.dart';
+import 'finalized_screen_examples.dart';
 
 const commerceCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
 
@@ -26,6 +30,10 @@ Catalog buildCommerceCatalog() {
       productCardCatalogItem,
       pieceSlotCatalogItem,
       dressingRoomCatalogItem,
+      ...finalizedLeftItems,
+      ...finalizedRightItems,
+      ...finalizedSharedItems,
+      ...finalizedScreenItems,
     ],
   );
 }

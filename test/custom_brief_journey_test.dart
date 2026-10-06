@@ -56,7 +56,7 @@ void main() {
       expect(agent.activeJourney, isNull);
       expect(find.text('Where are you going?'), findsNothing);
       expect(find.text('How formal or relaxed?'), findsOneWidget);
-      expect(find.text('Budget for the whole outfit'), findsOneWidget);
+      expect(find.text('BUDGET FOR THE WHOLE OUTFIT'), findsOneWidget);
       expect(find.text('Find options'), findsOneWidget);
       expect(runtime.outfit['budget'], isNull);
       expect(runtime.outfit['items'], isEmpty);
@@ -77,7 +77,10 @@ void main() {
       await tester.tap(find.text('Find options'));
       await finishTurn(tester, agent);
       expect(calls, greaterThan(callsBefore));
-      expect(runtime.outfit['budget'], submittedBudget);
+      expect(
+        runtime.outfit['budget'],
+        closeTo(submittedBudget!.toDouble(), 0.005),
+      );
       expect(
         agent.controller
             .contextFor('dressing-room')
@@ -94,7 +97,7 @@ void main() {
       expect(id, isNotNull);
       expect(catalog.where((product) => product.id == id), hasLength(1));
       expect(find.text(name!), findsOneWidget);
-      expect(find.text('Choose this'), findsWidgets);
+      expect(find.text('Add to dressing room'), findsWidgets);
       expect(find.text('Dressing room'), findsOneWidget);
       expect(tester.takeException(), isNull);
 

@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:foldable/foldable.dart';
 import 'package:genui/genui.dart';
 
-Future<void> main() async {
+Future<GenkitAgent> createDuoFixtureAgent() async {
   WidgetsFlutterBinding.ensureInitialized();
   final products = parseCatalogProducts(
     await rootBundle.loadString('assets/data/catalog/products.csv'),
@@ -41,6 +41,11 @@ Future<void> main() async {
       ],
     ),
   );
+  return agent;
+}
+
+Future<void> main() async {
+  final agent = await createDuoFixtureAgent();
   runApp(ReferenceApp(agent: agent));
   developer.registerExtension('ext.duo.capture', (method, parameters) async {
     return developer.ServiceExtensionResponse.result(
@@ -108,8 +113,36 @@ Future<Map<String, Object?>> captureDuoState(GenkitAgent agent) async {
   final view = WidgetsBinding.instance.platformDispatcher.views.first;
   final fields = <Map<String, Object?>>[];
   final layouts = <String>[];
+  final backgrounds = <Map<String, Object?>>[];
+  final panels = <String, Object?>{};
   void visit(Element element) {
     final widget = element.widget;
+    if (widget.key is ValueKey &&
+        const {
+          'dressing-room-resize',
+          'selected-pieces-section',
+          'finalized-dressing-room',
+          'dressing-room-rack',
+        }.contains((widget.key as ValueKey).value)) {
+      final render = element.findRenderObject();
+      if (render is RenderBox && render.hasSize) {
+        panels[(widget.key as ValueKey).value as String] = {
+          'top': render.localToGlobal(Offset.zero).dy,
+          'height': render.size.height,
+          if (widget is Container && widget.decoration is BoxDecoration)
+            'color': (widget.decoration as BoxDecoration).color
+                ?.toARGB32()
+                .toRadixString(16),
+        };
+      }
+    }
+    if (widget is ColoredBox &&
+        widget.key == const ValueKey('secondary-pane-background')) {
+      backgrounds.add({
+        'color': widget.color.toARGB32().toRadixString(16).padLeft(8, '0'),
+        'bounds': '${element.findRenderObject()?.paintBounds}',
+      });
+    }
     if (widget.key is ValueKey &&
         const {
           'compact-pane-layout',
@@ -155,6 +188,8 @@ Future<Map<String, Object?>> captureDuoState(GenkitAgent agent) async {
         .toList(),
     'fields': fields,
     'layouts': layouts,
+    'backgrounds': backgrounds,
+    'panels': panels,
     'surface': agent.latestInlineSurfaceId,
     'journey': agent.activeJourney?.name,
     'agent': identityHashCode(agent),

@@ -4,6 +4,7 @@ import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
+import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_components.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
 import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
@@ -13,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:foldable/foldable.dart';
 import 'package:genui/genui.dart';
+
+import '../tool/duo_simulator_probe.dart' show createDuoFixtureAgent;
 
 const _available = FoldableCapabilities(
   supportLevel: FoldableSupportLevel.available,
@@ -814,8 +817,8 @@ void main() {
         await tester.ensureVisible(find.text('Find options'));
         await tester.tap(find.text('Find options'));
         await tester.pumpAndSettle();
-        await tester.ensureVisible(find.text('Choose this').first);
-        await tester.tap(find.text('Choose this').first);
+        await tester.ensureVisible(find.text('Add to dressing room').first);
+        await tester.tap(find.text('Add to dressing room').first);
         await tester.pumpAndSettle();
         final session = agent.conversation;
         final surfaceId = agent.latestInlineSurfaceId;
@@ -882,6 +885,158 @@ void main() {
           );
         }
         expect(fake.snapshots, greaterThan(1));
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+        FoldablePlatform.instance = previous;
+        await tester.pumpWidget(const SizedBox.shrink());
+      }
+    },
+  );
+
+  for (final size in [const Size(466, 678), const Size(669, 951)]) {
+    testWidgets('actual compact dressing room condenses at $size', (
+      tester,
+    ) async {
+      _window(tester, size);
+      final fake = _FakeFoldable(_data(HingeStatus.closed));
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final agent = (await tester.runAsync(() async {
+        final font = FontLoader('Jost')
+          ..addFont(rootBundle.load('assets/fonts/jost/Jost-Variable.ttf'));
+        await font.load();
+        return createDuoFixtureAgent();
+      }))!;
+      try {
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final room = find.byKey(const ValueKey('finalized-dressing-room'));
+        final decoration =
+            tester.widget<Container>(room).decoration as BoxDecoration;
+        expect(decoration.color, Colors.black);
+        expect(tester.getSize(room).height, lessThan(350));
+        expect(
+          tester
+              .widgetList<FinalizedPieceSlot>(find.byType(FinalizedPieceSlot))
+              .every((slot) => slot.compactHorizontal),
+          isTrue,
+        );
+        final selected = agent.controller.contextFor('dressing-room').dataModel;
+        final before = jsonEncode(selected.getValue<Object?>(DataPath('/')));
+        final session = agent.conversation;
+        tester.view.physicalSize = const Size(951, 669);
+        fake.emit(_data(HingeStatus.fullyOpen));
+        await tester.pumpAndSettle();
+        expect(tester.getSize(room).height, greaterThan(350));
+        tester.view.physicalSize = size;
+        fake.emit(_data(HingeStatus.closed));
+        await tester.pumpAndSettle();
+        expect(tester.getSize(room).height, lessThan(350));
+        expect(agent.conversation, same(session));
+        expect(jsonEncode(selected.getValue<Object?>(DataPath('/'))), before);
+        expect(tester.takeException(), isNull);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+        FoldablePlatform.instance = previous;
+        await tester.pumpWidget(const SizedBox.shrink());
+        await fake.dispose();
+      }
+    });
+  }
+  testWidgets(
+    'only the black dressing room remains stable between Open and Book',
+    (tester) async {
+      _window(tester, const Size(951, 669));
+      final fake = _FakeFoldable(
+        _data(
+          HingeStatus.fullyOpen,
+          regions: [_camera(const Rect.fromLTRB(867, 0, 951, 120))],
+        ),
+      );
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() {
+        FoldablePlatform.instance = previous;
+        debugDefaultTargetPlatformOverride = null;
+      });
+      addTearDown(fake.dispose);
+      await tester.runAsync(() async {
+        final font = FontLoader('Jost')
+          ..addFont(rootBundle.load('assets/fonts/jost/Jost-Variable.ttf'));
+        await font.load();
+      });
+      final agent = (await tester.runAsync(createDuoFixtureAgent))!;
+      try {
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final room = find.byKey(const ValueKey('finalized-dressing-room'));
+        expect(find.textContaining('Selected pieces'), findsNothing);
+        expect(find.text('Remove'), findsNothing);
+        final resize = find.byKey(const ValueKey('dressing-room-resize'));
+        final top = tester.getTopLeft(room).dy;
+        final height = tester.getSize(resize).height;
+        expect(top, lessThan(669 - 34));
+        final session = agent.conversation;
+        final before = jsonEncode(
+          agent.controller
+              .contextFor('dressing-room')
+              .dataModel
+              .getValue<Object?>(DataPath('/')),
+        );
+        for (final status in [
+          HingeStatus.partiallyOpen,
+          HingeStatus.fullyOpen,
+        ]) {
+          fake.emit(
+            _data(
+              status,
+              regions: [
+                _camera(const Rect.fromLTRB(867, 0, 951, 120)),
+                if (status == HingeStatus.partiallyOpen)
+                  _division(const Rect.fromLTWH(455.5, 0, 40, 669)),
+              ],
+            ),
+          );
+          await tester.pump();
+          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+          await tester.pump(const Duration(milliseconds: 160));
+          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+          await tester.pumpAndSettle();
+          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+          expect(tester.getSize(resize).height, closeTo(height, .01));
+          expect(agent.conversation, same(session));
+          expect(
+            jsonEncode(
+              agent.controller
+                  .contextFor('dressing-room')
+                  .dataModel
+                  .getValue<Object?>(DataPath('/')),
+            ),
+            before,
+          );
+          expect(tester.takeException(), isNull);
+        }
+        // A taller brief animates the room's height without moving its origin.
+        agent.controller
+            .contextFor('dressing-room')
+            .dataModel
+            .update(
+              DataPath('/brief'),
+              'Berlin first day with a much longer description of the occasion, '
+              'layering preferences, weather and the planned evening activities.',
+            );
+        await tester.pump();
+        await tester.pump();
+        expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+        await tester.pump(const Duration(milliseconds: 160));
+        final intermediateHeight = tester.getSize(resize).height;
+        expect(intermediateHeight, greaterThan(height));
+        await tester.pumpAndSettle();
+        expect(tester.getSize(resize).height, greaterThan(intermediateHeight));
+        expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+        expect(tester.takeException(), isNull);
       } finally {
         debugDefaultTargetPlatformOverride = null;
         FoldablePlatform.instance = previous;

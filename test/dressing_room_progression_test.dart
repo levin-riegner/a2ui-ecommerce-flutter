@@ -9,12 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 
-Product piece(ProductCategory category) => Product(
+Product piece(ProductCategory category, {double price = 50}) => Product(
   id: 'test-${category.name}',
   category: category,
   name: 'Selected ${category.name}',
   brand: 'Demo',
-  price: 50,
+  price: price,
   meta: 'Cotton',
   tag: 'A good fit',
   swatch: '#123456',
@@ -157,8 +157,17 @@ void main() {
       rows.where((row) => row['state'] == 'Next').single['category'],
       'bottom',
     );
-    expect(data['planCaption'], '1 of 4 pieces selected');
-    expect(data['left'], '€850.00 left');
+    expect(data['planCaption'], isEmpty);
+    expect(data['spent'], '€50 spent —\u00a01 of 4');
+    expect(data['left'], '€850 left');
+  });
+
+  test('Figma budget copy preserves fractional amounts', () {
+    final data = dressingData(
+      surfaces({'top': piece(ProductCategory.top, price: 50.25)}),
+    );
+    expect(data['spent'], '€50.25 spent —\u00a01 of 4');
+    expect(data['left'], '€849.75 left');
   });
 
   test('selected optional pieces remain visible after completing the plan', () {
@@ -179,7 +188,8 @@ void main() {
       'accessory',
     ]);
     expect(rows.every((row) => row['state'] == 'Filled'), isTrue);
-    expect(data['planCaption'], 'Your look is complete');
+    expect(data['planCaption'], isEmpty);
+    expect(data['spent'], '€300 spent —\u00a04 of 4');
     expect(data['planComplete'], isTrue);
   });
 
@@ -255,7 +265,8 @@ void main() {
       };
       await harness.publish(surfaces(full, turn: 2));
       await tester.pumpAndSettle();
-      expect(find.text('Your look is complete'), findsOneWidget);
+      expect(find.text('Your look is complete'), findsNothing);
+      expect(find.text('€300 spent —\u00a04 of 4'), findsOneWidget);
       expect(find.text('Choosing now'), findsNothing);
       for (final category in full.keys) {
         expect(find.byKey(ValueKey('dressing-slot-$category')), findsOneWidget);
@@ -264,38 +275,52 @@ void main() {
     },
   );
 
-  testWidgets(
-    'selected cards show Remove and recommendations show Choose this',
-    (tester) async {
-      final harness = _SurfaceHarness();
-      addTearDown(harness.dispose);
-      await harness.publish(surfaces({'top': piece(ProductCategory.top)}));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Surface(
-                    surfaceContext: harness.controller.contextFor('inline-1'),
+  testWidgets('stylist publishes only recommendations and the dressing room', (
+    tester,
+  ) async {
+    final harness = _SurfaceHarness();
+    addTearDown(harness.dispose);
+    final messages = surfaces({'top': piece(ProductCategory.top)});
+    expect(
+      messages
+          .map(
+            (message) =>
+                ((message['createSurface'] ??
+                        message['updateComponents'] ??
+                        message['updateDataModel'])
+                    as Map)['surfaceId'],
+          )
+          .toSet(),
+      {'dressing-room', 'inline-1'},
+    );
+    await harness.publish(messages);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Surface(
+                  surfaceContext: harness.controller.contextFor('inline-1'),
+                ),
+                Surface(
+                  surfaceContext: harness.controller.contextFor(
+                    'dressing-room',
                   ),
-                  Surface(
-                    surfaceContext: harness.controller.contextFor(
-                      'selected-products',
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('Remove'), findsOneWidget);
-      expect(find.text('Choose this'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Remove'), findsNothing);
+    expect(find.textContaining('Selected pieces'), findsNothing);
+    expect(find.text('Selected top'), findsOneWidget);
+    expect(find.text('Add to dressing room'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('old named-slot fixtures remain renderable', (tester) async {
     final agent = StubAgent();
