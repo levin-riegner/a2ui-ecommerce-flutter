@@ -47,6 +47,8 @@ dependencies:
   genkit_google_genai: 0.4.0
   schemantic: 0.2.3
   foldable: 1.0.5
+  # Native dictation: Android speech service, Apple Speech, and browser recognition.
+  speech_to_text: 7.5.0
 
 dev_dependencies:
   flutter_test:

@@ -1,10 +1,13 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../catalog/finalized_left_components.dart';
+import '../input/speech_dictation.dart';
 
-/// The shared docked input for a new occasion and an ongoing stylist thread.
-/// Its controller belongs to the screen so a layout change keeps the draft.
-class StylistComposer extends StatelessWidget {
+/// Shared text and dictation input. The host keeps ownership of the draft.
+class StylistComposer extends StatefulWidget {
   const StylistComposer({
     super.key,
     required this.controller,
@@ -14,6 +17,7 @@ class StylistComposer extends StatelessWidget {
     this.fieldLabel = 'Message your stylist',
     this.submitLabel = 'Send',
     this.padding = EdgeInsets.zero,
+    this.dictation,
   });
 
   final TextEditingController controller;
@@ -23,17 +27,190 @@ class StylistComposer extends StatelessWidget {
   final String fieldLabel;
   final String submitLabel;
   final EdgeInsets padding;
+  final SpeechDictation? dictation;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: padding,
-    child: FinalizedChatInput(
-      externalController: controller,
-      enabled: enabled,
-      fieldKey: fieldKey,
-      fieldLabel: fieldLabel,
-      submitLabel: submitLabel,
-      onSend: onSubmitted,
-    ),
+  State<StylistComposer> createState() => _StylistComposerState();
+}
+
+class _StylistComposerState extends State<StylistComposer>
+    with WidgetsBindingObserver {
+  SpeechDictation get dictation => widget.dictation ?? SpeechDictation.shared;
+  bool _writingTranscript = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    dictation.addListener(_changed);
+    widget.controller.addListener(_draftChanged);
+  }
+
+  void _changed() {
+    if (mounted) setState(() {});
+  }
+
+  void _draftChanged() {
+    // A manual edit takes precedence over any recognizer result still in flight.
+    if (!_writingTranscript) unawaited(dictation.cancel(this));
+  }
+
+  @override
+  void didUpdateWidget(StylistComposer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final previous = oldWidget.dictation ?? SpeechDictation.shared;
+    if (previous != dictation) {
+      previous.removeListener(_changed);
+      unawaited(previous.cancel(this));
+      dictation.addListener(_changed);
+    }
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_draftChanged);
+      widget.controller.addListener(_draftChanged);
+      unawaited(dictation.cancel(this));
+    }
+    if (!widget.enabled) unawaited(dictation.cancel(this));
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // iOS permission prompts briefly make the app inactive during startup.
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached ||
+        (state == AppLifecycleState.inactive &&
+            dictation.phase != DictationPhase.starting)) {
+      unawaited(dictation.cancel(this));
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    widget.controller.removeListener(_draftChanged);
+    dictation.removeListener(_changed);
+    unawaited(dictation.cancel(this));
+    super.dispose();
+  }
+
+  void _microphone() {
+    if (!widget.enabled) return;
+    if (dictation.owns(this)) {
+      if (dictation.phase == DictationPhase.listening) {
+        unawaited(dictation.stop(this));
+      } else {
+        unawaited(dictation.cancel(this));
+      }
+      return;
+    }
+    // Capture the insertion point before dismissing the keyboard.
+    final draft = widget.controller.value;
+    final selection = draft.selection.isValid
+        ? draft.selection
+        : TextSelection.collapsed(offset: draft.text.length);
+    final prefix = draft.text.substring(0, selection.start);
+    final suffix = draft.text.substring(selection.end);
+    FocusManager.instance.primaryFocus?.unfocus();
+    unawaited(
+      dictation.start(
+        this,
+        onWords: (words) {
+          if (!mounted || !widget.enabled || words.trim().isEmpty) return;
+          final transcript = words.trim();
+          final before = prefix.isNotEmpty && !RegExp(r'\s$').hasMatch(prefix)
+              ? '$prefix '
+              : prefix;
+          final after =
+              suffix.isNotEmpty && !RegExp(r'^\s|^[,.!?;:]').hasMatch(suffix)
+              ? ' $suffix'
+              : suffix;
+          _writingTranscript = true;
+          try {
+            widget.controller.value = TextEditingValue(
+              text: '$before$transcript$after',
+              selection: TextSelection.collapsed(
+                offset: before.length + transcript.length,
+              ),
+            );
+          } finally {
+            _writingTranscript = false;
+          }
+        },
+        onError: (message) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(message)));
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final active = dictation.owns(this);
+    return Padding(
+      padding: widget.padding,
+      child: Semantics(
+        liveRegion: active,
+        label: active ? 'Dictation active' : null,
+        child: FinalizedChatInput(
+          externalController: widget.controller,
+          enabled: widget.enabled,
+          fieldKey: widget.fieldKey,
+          fieldLabel: widget.fieldLabel,
+          submitLabel: widget.submitLabel,
+          onMicrophone: _microphone,
+          isDictating: active,
+          microphoneLabel: active
+              ? dictation.phase == DictationPhase.listening
+                    ? 'Stop dictation'
+                    : 'Cancel dictation'
+              : 'Dictate message',
+          onEditing: () => unawaited(dictation.cancel(this)),
+          onSend: (text) {
+            unawaited(dictation.cancel(this));
+            widget.onSubmitted(text);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+/// A fading glass backdrop for the composer where content scrolls underneath.
+/// Safe-area insets belong to AdaptivePaneLayout; this adds only a small gap.
+class StylistComposerDock extends StatelessWidget {
+  const StylistComposerDock({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Stack(
+    children: [
+      Positioned.fill(
+        child: IgnorePointer(
+          child: ClipRect(
+            child: ShaderMask(
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.white, Colors.white],
+                stops: [0, .4, 1],
+              ).createShader(bounds),
+              blendMode: BlendMode.dstIn,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                blendMode: BlendMode.src,
+                child: ColoredBox(
+                  color: Theme.of(context).scaffoldBackgroundColor
+                      .withValues(alpha: .82),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      Padding(padding: const EdgeInsets.fromLTRB(16, 24, 16, 4), child: child),
+    ],
   );
 }

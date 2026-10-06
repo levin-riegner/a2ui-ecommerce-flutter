@@ -32,6 +32,7 @@ class AdaptivePaneLayout extends StatefulWidget {
     this.secondaryBackgroundOnlyInBookMode = false,
     this.secondaryScrollable = true,
     this.compactSecondaryFirst = true,
+    this.overlayFooter = false,
   });
 
   /// Pane contents should not introduce their own vertical scroll view.
@@ -57,6 +58,10 @@ class AdaptivePaneLayout extends StatefulWidget {
   final bool secondaryScrollable;
   final bool compactSecondaryFirst;
 
+  /// Scrolls content behind a translucent footer, reserving its measured height
+  /// at the end of the scroll so the final controls remain reachable.
+  final bool overlayFooter;
+
   @override
   State<AdaptivePaneLayout> createState() => _AdaptivePaneLayoutState();
 }
@@ -70,6 +75,8 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
   final _compactScroll = ScrollController();
   final _primaryScroll = ScrollController();
   final _secondaryScroll = ScrollController();
+  double _footerHeight = 84;
+  bool _footerMeasurementPending = false;
 
   @override
   void dispose() {
@@ -83,7 +90,30 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
   Widget _secondary() =>
       KeyedSubtree(key: _secondaryKey, child: widget.secondary);
   Widget _header() => KeyedSubtree(key: _headerKey, child: widget.header);
-  Widget _footer() => KeyedSubtree(key: _footerKey, child: widget.footer);
+  Widget _footer() {
+    final footer = KeyedSubtree(key: _footerKey, child: widget.footer);
+    if (!widget.overlayFooter) return footer;
+    return NotificationListener<SizeChangedLayoutNotification>(
+      onNotification: (_) {
+        _measureFooter();
+        return true;
+      },
+      child: SizeChangedLayoutNotifier(child: footer),
+    );
+  }
+
+  void _measureFooter() {
+    if (_footerMeasurementPending) return;
+    _footerMeasurementPending = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _footerMeasurementPending = false;
+      if (!mounted || !widget.overlayFooter) return;
+      final box = _footerKey.currentContext?.findRenderObject();
+      if (box is RenderBox && box.hasSize && box.size.height != _footerHeight) {
+        setState(() => _footerHeight = box.size.height);
+      }
+    });
+  }
 
   Widget _background(double left) => Positioned(
     left: left,
@@ -131,20 +161,36 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
     );
   }
 
-  Widget _primaryPane() => Column(
+  Widget _pane(Widget Function(EdgeInsets padding) scroll) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       _header(),
       Expanded(
-        child: SingleChildScrollView(
-          key: const ValueKey('primary-pane-scroll'),
-          controller: _primaryScroll,
-          padding: widget.panePadding,
-          child: _primary(),
-        ),
+        child: widget.overlayFooter
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  scroll(
+                    widget.panePadding.copyWith(
+                      bottom: widget.panePadding.bottom + _footerHeight,
+                    ),
+                  ),
+                  Align(alignment: Alignment.bottomCenter, child: _footer()),
+                ],
+              )
+            : scroll(widget.panePadding),
       ),
-      _footer(),
+      if (!widget.overlayFooter) _footer(),
     ],
+  );
+
+  Widget _primaryPane() => _pane(
+    (padding) => SingleChildScrollView(
+      key: const ValueKey('primary-pane-scroll'),
+      controller: _primaryScroll,
+      padding: padding,
+      child: _primary(),
+    ),
   );
 
   Widget _secondaryPane({required bool showRail}) => Row(
@@ -167,29 +213,23 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
     ],
   );
 
-  Widget _compact() => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      _header(),
-      Expanded(
-        child: SingleChildScrollView(
-          key: const ValueKey('compact-pane-scroll'),
-          controller: _compactScroll,
-          padding: widget.panePadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: widget.compactSecondaryFirst
-                ? [_secondary(), const SizedBox(height: 24), _primary()]
-                : [_primary(), const SizedBox(height: 24), _secondary()],
-          ),
-        ),
+  Widget _compact() => _pane(
+    (padding) => SingleChildScrollView(
+      key: const ValueKey('compact-pane-scroll'),
+      controller: _compactScroll,
+      padding: padding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: widget.compactSecondaryFirst
+            ? [_secondary(), const SizedBox(height: 24), _primary()]
+            : [_primary(), const SizedBox(height: 24), _secondary()],
       ),
-      _footer(),
-    ],
+    ),
   );
 
   @override
   Widget build(BuildContext context) {
+    if (widget.overlayFooter) _measureFooter();
     return LayoutBuilder(
       builder: (context, constraints) {
         final size = constraints.biggest;
