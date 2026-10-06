@@ -38,9 +38,6 @@ class StubAgent extends CommerceAgent {
   @override
   bool get hasStarted => _hasStarted;
 
-  @override
-  bool get hasSelectedProductsSurface => false;
-
   bool get isBrief => _stage == _AgentStage.brief;
 
   @override

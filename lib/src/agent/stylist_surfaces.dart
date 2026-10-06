@@ -177,33 +177,6 @@ List<Map<String, Object?>> renderStylistSurfaces({
       ..clear()
       ..addAll(briefSurface.components);
   }
-  final selected = outfit.entries.toList();
-  final selectedData = <String, Object?>{
-    'message': selected.isEmpty
-        ? 'No pieces selected yet.'
-        : 'Selected pieces · tap a card to remove it',
-    'products': selected.map((entry) => _card(entry.value, entry.key)).toList(),
-  };
-  final selectedComponents = <Map<String, Object?>>[
-    {
-      'id': 'root',
-      'component': 'Column',
-      'align': 'stretch',
-      'children': [
-        'message',
-        for (var i = 0; i < selected.length; i++) 'selected-$i',
-      ],
-    },
-    {'id': 'message', 'component': 'StylistMessage', 'text': _path('/message')},
-    for (var i = 0; i < selected.length; i++)
-      _productComponent(
-        selected[i].value,
-        i,
-        'products',
-        'selected',
-        'remove_product',
-      ),
-  ];
   Map<String, Object?> create(String id) => {
     'version': 'v0.9',
     'createSurface': {
@@ -231,7 +204,5 @@ List<Map<String, Object?>> renderStylistSurfaces({
     ...update('dressing-room', dressingComponents, dressingData),
     create('inline-$turn'),
     ...update('inline-$turn', inlineComponents, inlineData),
-    if (turn == 1) create('selected-products'),
-    ...update('selected-products', selectedComponents, selectedData),
   ];
 }

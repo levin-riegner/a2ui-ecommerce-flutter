@@ -275,38 +275,52 @@ void main() {
     },
   );
 
-  testWidgets(
-    'selected cards show Remove and recommendations show Add to dressing room',
-    (tester) async {
-      final harness = _SurfaceHarness();
-      addTearDown(harness.dispose);
-      await harness.publish(surfaces({'top': piece(ProductCategory.top)}));
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Surface(
-                    surfaceContext: harness.controller.contextFor('inline-1'),
+  testWidgets('stylist publishes only recommendations and the dressing room', (
+    tester,
+  ) async {
+    final harness = _SurfaceHarness();
+    addTearDown(harness.dispose);
+    final messages = surfaces({'top': piece(ProductCategory.top)});
+    expect(
+      messages
+          .map(
+            (message) =>
+                ((message['createSurface'] ??
+                        message['updateComponents'] ??
+                        message['updateDataModel'])
+                    as Map)['surfaceId'],
+          )
+          .toSet(),
+      {'dressing-room', 'inline-1'},
+    );
+    await harness.publish(messages);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Surface(
+                  surfaceContext: harness.controller.contextFor('inline-1'),
+                ),
+                Surface(
+                  surfaceContext: harness.controller.contextFor(
+                    'dressing-room',
                   ),
-                  Surface(
-                    surfaceContext: harness.controller.contextFor(
-                      'selected-products',
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('Remove'), findsOneWidget);
-      expect(find.text('Add to dressing room'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    },
-  );
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Remove'), findsNothing);
+    expect(find.textContaining('Selected pieces'), findsNothing);
+    expect(find.text('Selected top'), findsOneWidget);
+    expect(find.text('Add to dressing room'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('old named-slot fixtures remain renderable', (tester) async {
     final agent = StubAgent();

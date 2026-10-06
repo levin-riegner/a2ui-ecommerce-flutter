@@ -945,7 +945,7 @@ void main() {
     });
   }
   testWidgets(
-    'selected section keeps its vertical anchor between Open and Book',
+    'only the black dressing room remains stable between Open and Book',
     (tester) async {
       _window(tester, const Size(951, 669));
       final fake = _FakeFoldable(
@@ -971,9 +971,11 @@ void main() {
       try {
         await tester.pumpWidget(ReferenceApp(agent: agent));
         await tester.pumpAndSettle();
-        final selected = find.byKey(const ValueKey('selected-pieces-section'));
+        final room = find.byKey(const ValueKey('finalized-dressing-room'));
+        expect(find.textContaining('Selected pieces'), findsNothing);
+        expect(find.text('Remove'), findsNothing);
         final resize = find.byKey(const ValueKey('dressing-room-resize'));
-        final top = tester.getTopLeft(selected).dy;
+        final top = tester.getTopLeft(room).dy;
         final height = tester.getSize(resize).height;
         expect(top, lessThan(669 - 34));
         final session = agent.conversation;
@@ -998,11 +1000,11 @@ void main() {
             ),
           );
           await tester.pump();
-          expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
           await tester.pump(const Duration(milliseconds: 160));
-          expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
           await tester.pumpAndSettle();
-          expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
           expect(tester.getSize(resize).height, closeTo(height, .01));
           expect(agent.conversation, same(session));
           expect(
@@ -1016,8 +1018,7 @@ void main() {
           );
           expect(tester.takeException(), isNull);
         }
-        // A genuinely taller brief can still reflow, but its following section
-        // moves through intermediate positions instead of jumping in one frame.
+        // A taller brief animates the room's height without moving its origin.
         agent.controller
             .contextFor('dressing-room')
             .dataModel
@@ -1028,12 +1029,13 @@ void main() {
             );
         await tester.pump();
         await tester.pump();
-        expect(tester.getTopLeft(selected).dy, closeTo(top, .01));
+        expect(tester.getTopLeft(room).dy, closeTo(top, .01));
         await tester.pump(const Duration(milliseconds: 160));
-        final intermediateTop = tester.getTopLeft(selected).dy;
-        expect(intermediateTop, greaterThan(top));
+        final intermediateHeight = tester.getSize(resize).height;
+        expect(intermediateHeight, greaterThan(height));
         await tester.pumpAndSettle();
-        expect(tester.getTopLeft(selected).dy, greaterThan(intermediateTop));
+        expect(tester.getSize(resize).height, greaterThan(intermediateHeight));
+        expect(tester.getTopLeft(room).dy, closeTo(top, .01));
         expect(tester.takeException(), isNull);
       } finally {
         debugDefaultTargetPlatformOverride = null;

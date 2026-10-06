@@ -47,6 +47,10 @@ outer margins and iOS-controls area white around the black dressing-room card;
 the Closed cover stays white. The background fades over 320 ms on posture
 changes, and Reduce Motion skips the fade. Safe control bounds stay reserved.
 
+The production right-side content contains only the black dressing room.
+Selected pieces remain inside its slots; no companion selected-products list
+is emitted or rendered beneath it.
+
 The production journey preserves local brief changes until submission,
 selected outfit/budget accounting and explicit select/remove events. Change on a
 filled piece requests affordable alternatives while keeping the current outfit

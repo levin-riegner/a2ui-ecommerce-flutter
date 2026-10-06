@@ -42,6 +42,12 @@ Corrected on 2026-10-06 after comparison with Figma budget node `203:5142` and c
 
 Fresh native accessibility checks confirmed absence of the extra caption and the correct budget copy in cover, Open and Book modes. The initial compact room measured 240 points; the expanded grid measured 536 points, with outfit, surface and composer state preserved and zero render errors. Evidence: `duo-figma-budget-2026-10-06.json`. All 90 affected progression, runtime, layout, component and screen tests pass; analysis and formatting are clean. The A2UI ingestion examples were regenerated without the unsupported caption.
 
+## Remove the extra selected-products view
+
+Corrected on 2026-10-06 following the design review: the companion “Selected pieces · tap a card to remove it” list was an implementation addition and is removed from the production pane and A2UI surface generator. Selected items remain in the black dressing room, with its existing Change actions. This supersedes the earlier selected-section positioning checks; the posture-specific outer backgrounds are unchanged.
+
+Native Open, Book and Closed checks confirm no companion list or Remove cards, the room remains black, and the selected item, budget, agent and composer state survive posture changes. Open margins are white and Book margins are black; the Closed room condenses to 240 points. Zero rendering errors and zero provider requests. Evidence: `duo-room-only-2026-10-06.json`. All 257 tests pass locally; analysis and formatting are clean.
+
 ## Source and integration scope
 
 Exact read-only Figma properties/assets were authorized after design-context extraction reached its connector limit. Original screen image bytes were checked against Figma image hashes; source copy and budget inconsistencies are documented in the screen manifest. No Figma nodes were changed.

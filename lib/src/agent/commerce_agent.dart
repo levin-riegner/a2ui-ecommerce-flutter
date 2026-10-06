@@ -8,7 +8,6 @@ abstract class CommerceAgent extends ChangeNotifier {
   bool get hasStarted;
   DemoJourney? get activeJourney;
   String? get latestInlineSurfaceId;
-  bool get hasSelectedProductsSurface;
   bool get hasDressingRoomSurface => hasStarted;
   bool get isBusy => false;
   String? get connectionError => null;

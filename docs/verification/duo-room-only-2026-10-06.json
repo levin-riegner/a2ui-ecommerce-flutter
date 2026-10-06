@@ -1,0 +1,291 @@
+{
+  "native": true,
+  "providerRequests": 0,
+  "purpose": "Remove the extra selected-products view; retain only the black dressing room and posture-specific outer background.",
+  "records": [
+    {
+      "mode": "Open",
+      "control": {
+        "frontBefore": 84966,
+        "action": "Open",
+        "axResult": 0,
+        "frontAfter": 84966
+      },
+      "state": {
+        "status": "fullyOpen",
+        "angle": 180.0,
+        "support": "available",
+        "strategy": "updateHandler",
+        "size": "Size(951.0, 669.0)",
+        "keyboard": 0.0,
+        "sizeClass": "regular",
+        "regions": [
+          {
+            "kind": "division",
+            "active": false,
+            "bounds": "Rect.fromLTRB(455.5, 0.0, 495.5, 669.0)"
+          },
+          {
+            "kind": "occlusion",
+            "active": true,
+            "bounds": "Rect.fromLTRB(867.0, 0.0, 951.0, 120.0)"
+          }
+        ],
+        "fields": [
+          {
+            "draft": "",
+            "focus": false,
+            "textScale": 1.0,
+            "bounds": "Rect.fromLTRB(40.0, 581.0, 325.0, 601.0)",
+            "state": 19387762
+          }
+        ],
+        "layouts": [
+          "[<'split-pane-layout'>]"
+        ],
+        "backgrounds": [
+          {
+            "color": "ffffffff",
+            "bounds": "Rect.fromLTRB(0.0, 0.0, 497.0, 669.0)"
+          }
+        ],
+        "panels": {
+          "dressing-room-resize": {
+            "top": 16.0,
+            "height": 544.0
+          },
+          "finalized-dressing-room": {
+            "top": 16.0,
+            "height": 544.0,
+            "color": "ff000000"
+          }
+        },
+        "surface": "inline-2",
+        "journey": "lisbon",
+        "agent": 384605964,
+        "spent": "\u20ac65 spent \u2014\u00a01 of 4",
+        "selected": [
+          "Aster Olive Sleeveless Top"
+        ],
+        "errors": []
+      },
+      "ui": {
+        "age_ms": 0,
+        "count": 17,
+        "keyboard": "hidden",
+        "mode": "act",
+        "rows": [
+          "1|button|New journey||enabled",
+          "2|staticText|ALDER||enabled",
+          "3|staticText|Selected Aster Olive Sleeveless Top. \u20ac685.00 left in your budget.\\n\\nOffline preview: here are some catalog options.\\n\\nNext, choose bottoms to continue the look.||enabled",
+          "4|staticText|Catalog options||enabled",
+          "5|button|celebration\\nTide Easy Shorts\\n\u20ac60.00\\nWoven Orbit \u00b7 tan \u00b7 cotton\\nDress\\nAdd to dressing room||enabled",
+          "6|button|everyday\\nAster Tailored Shorts\\n\u20ac85.00\\nQuiet Meridian \u00b7 black \u00b7 unspecified\\nDress\\nAdd to dressing room||enabled",
+          "7|button|Voice input unavailable||enabled",
+          "8|textField|Message your stylist\\nTell me about the occasion\u2026||enabled,empty",
+          "9|button|\u2191\\nSend||enabled",
+          "10|staticText|Dressing room||enabled",
+          "11|staticText|Lisbon long lunch \u00b7 smart casual \u00b7 summer \u00b7 under \u20ac750||enabled",
+          "12|staticText|\u20ac65 spent \u2014\u00a01 of 4||enabled",
+          "14|staticText||9|enabled",
+          "15|button|Change Aster Olive Sleeveless Top\\nAster Olive Sleeveless Top\\nPale Lantern \u00b7 \u20ac65.00||enabled",
+          "16|image|Bottoms\\nChoosing now||enabled",
+          "17|image|Shoes\\nNot yet||enabled",
+          "18|image|A bag\\nNot yet||enabled"
+        ],
+        "screen": "1b606ae2",
+        "seq": 355,
+        "udid": "473AFAD8-39CA-4DA6-8D3A-443070830101"
+      }
+    },
+    {
+      "mode": "Book",
+      "control": {
+        "action": "Book",
+        "frontBefore": 84966,
+        "frontAfter": 84966,
+        "axResult": 0
+      },
+      "state": {
+        "status": "partiallyOpen",
+        "angle": 127.77777862548828,
+        "support": "available",
+        "strategy": "updateHandler",
+        "size": "Size(951.0, 669.0)",
+        "keyboard": 0.0,
+        "sizeClass": "regular",
+        "regions": [
+          {
+            "kind": "division",
+            "active": true,
+            "bounds": "Rect.fromLTRB(455.5, 0.0, 495.5, 669.0)"
+          },
+          {
+            "kind": "occlusion",
+            "active": true,
+            "bounds": "Rect.fromLTRB(867.0, 0.0, 951.0, 120.0)"
+          }
+        ],
+        "fields": [
+          {
+            "draft": "",
+            "focus": false,
+            "textScale": 1.0,
+            "bounds": "Rect.fromLTRB(40.0, 581.0, 327.5, 601.0)",
+            "state": 19387762
+          }
+        ],
+        "layouts": [
+          "[<'obstructed-split-layout'>]"
+        ],
+        "backgrounds": [
+          {
+            "color": "ff000000",
+            "bounds": "Rect.fromLTRB(0.0, 0.0, 455.5, 669.0)"
+          }
+        ],
+        "panels": {
+          "dressing-room-resize": {
+            "top": 16.0,
+            "height": 556.0
+          },
+          "finalized-dressing-room": {
+            "top": 16.0,
+            "height": 556.0,
+            "color": "ff000000"
+          }
+        },
+        "surface": "inline-2",
+        "journey": "lisbon",
+        "agent": 384605964,
+        "spent": "\u20ac65 spent \u2014\u00a01 of 4",
+        "selected": [
+          "Aster Olive Sleeveless Top"
+        ],
+        "errors": []
+      },
+      "ui": {
+        "age_ms": 0,
+        "count": 18,
+        "keyboard": "hidden",
+        "mode": "act",
+        "rows": [
+          "1|button|New journey||enabled",
+          "2|staticText|ALDER||enabled",
+          "3|staticText|Selected Aster Olive Sleeveless Top. \u20ac685.00 left in your budget.\\n\\nOffline preview: here are some catalog options.\\n\\nNext, choose bottoms to continue the look.||enabled",
+          "4|staticText|Catalog options||enabled",
+          "5|button|celebration\\nTide Easy Shorts\\n\u20ac60.00\\nWoven Orbit \u00b7 tan \u00b7 cotton\\nDress\\nAdd to dressing room||enabled",
+          "6|button|everyday\\nAster Tailored Shorts\\n\u20ac85.00\\nQuiet Meridian \u00b7 black \u00b7 unspecified\\nDress\\nAdd to dressing room||enabled",
+          "7|button|Voice input unavailable||enabled",
+          "8|textField|Message your stylist\\nTell me about the occasion\u2026||enabled,empty",
+          "9|button|\u2191\\nSend||enabled",
+          "10|staticText|Dressing room||enabled",
+          "11|staticText|Lisbon long lunch \u00b7 smart casual \u00b7 summer \u00b7 under \u20ac750||enabled",
+          "12|staticText|\u20ac65 spent \u2014\u00a01 of 4||enabled",
+          "13|staticText|\u20ac685 left||enabled",
+          "14|staticText||9|enabled",
+          "15|button|Change Aster Olive Sleeveless Top\\nAster Olive Sleeveless Top\\nPale Lantern \u00b7 \u20ac65.00||enabled",
+          "16|image|Bottoms\\nChoosing now||enabled",
+          "17|image|Shoes\\nNot yet||enabled",
+          "18|image|A bag\\nNot yet||enabled"
+        ],
+        "screen": "36925a3c",
+        "seq": 357,
+        "udid": "473AFAD8-39CA-4DA6-8D3A-443070830101"
+      }
+    },
+    {
+      "mode": "Closed",
+      "control": {
+        "axResult": 0,
+        "action": "Closed",
+        "frontBefore": 84966,
+        "frontAfter": 84966
+      },
+      "state": {
+        "status": "closed",
+        "angle": 6.491969585418702,
+        "support": "available",
+        "strategy": "updateHandler",
+        "size": "Size(466.0, 678.0)",
+        "keyboard": 0.0,
+        "sizeClass": "compact",
+        "regions": [
+          {
+            "kind": "occlusion",
+            "active": true,
+            "bounds": "Rect.fromLTRB(399.7, 29.3, 436.7, 66.3)"
+          },
+          {
+            "kind": "occlusion",
+            "active": true,
+            "bounds": "Rect.fromLTRB(382.0, 0.0, 466.0, 170.0)"
+          }
+        ],
+        "fields": [
+          {
+            "draft": "",
+            "focus": false,
+            "textScale": 1.0,
+            "bounds": "Rect.fromLTRB(40.0, 590.0, 254.0, 610.0)",
+            "state": 19387762
+          }
+        ],
+        "layouts": [
+          "[<'compact-pane-layout'>]"
+        ],
+        "backgrounds": [],
+        "panels": {
+          "dressing-room-resize": {
+            "top": 72.0,
+            "height": 240.0
+          },
+          "finalized-dressing-room": {
+            "top": 72.0,
+            "height": 240.0,
+            "color": "ff000000"
+          },
+          "dressing-room-rack": {
+            "top": 152.0,
+            "height": 96.0
+          }
+        },
+        "surface": "inline-2",
+        "journey": "lisbon",
+        "agent": 384605964,
+        "spent": "\u20ac65 spent \u2014\u00a01 of 4",
+        "selected": [
+          "Aster Olive Sleeveless Top"
+        ],
+        "errors": []
+      },
+      "ui": {
+        "age_ms": 0,
+        "count": 15,
+        "keyboard": "hidden",
+        "mode": "act",
+        "rows": [
+          "1|button|New journey||enabled",
+          "2|staticText|ALDER||enabled",
+          "3|staticText|Dressing room||enabled",
+          "4|staticText|Lisbon long lunch \u00b7 smart casual \u00b7 summer \u00b7 under \u20ac750||enabled",
+          "5|button|Change Aster Olive Sleeveless Top\\nAster Olive Sleeveless Top\\nPale Lantern \u00b7 \u20ac65.00||enabled",
+          "6|image|Bottoms\\nChoosing now||enabled",
+          "7|staticText|\u20ac65 spent||enabled",
+          "8|staticText|\u20ac685 left||enabled",
+          "9|staticText||9|enabled",
+          "10|staticText|Selected Aster Olive Sleeveless Top. \u20ac685.00 left in your budget.\\n\\nOffline preview: here are some catalog options.\\n\\nNext, choose bottoms to continue the look.||enabled",
+          "11|staticText|Catalog options||enabled",
+          "12|button|celebration\\nTide Easy Shorts\\n\u20ac60.00\\nWoven Orbit \u00b7 tan \u00b7 cotton\\nDress\\nAdd to dressing room||enabled",
+          "13|textField|Message your stylist\\nTell me about the occasion\u2026||enabled,empty",
+          "14|button|Voice input unavailable||enabled",
+          "15|button|\u2191\\nSend||enabled",
+          "!perception|zero_size_elements_omitted|3 omitted|Elements with accessibility content but zero-size frames were omitted. Give them a nonzero frame (1x1 points is enough)."
+        ],
+        "screen": "f9eb806d",
+        "seq": 358,
+        "udid": "473AFAD8-39CA-4DA6-8D3A-443070830101"
+      }
+    }
+  ]
+}

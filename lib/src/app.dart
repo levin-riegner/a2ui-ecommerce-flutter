@@ -799,10 +799,6 @@ class _DressingPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backdropDark =
-        (AdaptivePaneScope.secondaryBackgroundColorOf(context) ?? Colors.white)
-            .computeLuminance() <
-        .5;
     final surface = AnimatedBuilder(
       animation: agent,
       builder: (context, _) {
@@ -811,35 +807,16 @@ class _DressingPanel extends StatelessWidget {
           excluding: agent.isBusy || agent.connectionError != null,
           child: IgnorePointer(
             ignoring: agent.isBusy || agent.connectionError != null,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AnimatedSize(
-                  key: const ValueKey('dressing-room-resize'),
-                  duration: MediaQuery.disableAnimationsOf(context)
-                      ? Duration.zero
-                      : AdaptivePaneLayout.transitionDuration,
-                  curve: Curves.easeInOutCubic,
-                  alignment: Alignment.topLeft,
-                  child: Surface(
-                    surfaceContext: agent.controller.contextFor(
-                      'dressing-room',
-                    ),
-                  ),
-                ),
-                if (agent.hasSelectedProductsSurface) ...[
-                  const SizedBox(height: 12),
-                  CommerceDressingRoomStyle(
-                    dark: backdropDark,
-                    child: Surface(
-                      key: const ValueKey('selected-pieces-section'),
-                      surfaceContext: agent.controller.contextFor(
-                        'selected-products',
-                      ),
-                    ),
-                  ),
-                ],
-              ],
+            child: AnimatedSize(
+              key: const ValueKey('dressing-room-resize'),
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : AdaptivePaneLayout.transitionDuration,
+              curve: Curves.easeInOutCubic,
+              alignment: Alignment.topLeft,
+              child: Surface(
+                surfaceContext: agent.controller.contextFor('dressing-room'),
+              ),
             ),
           ),
         );
