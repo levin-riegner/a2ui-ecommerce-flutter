@@ -1,6 +1,6 @@
 # Component catalog
 
-The app registers the GenUI basic catalog plus nine commerce components. The combined vocabulary is intentionally visible so contributors can add components without guessing where the boundary is.
+The app registers the GenUI basic catalog, the finalized Figma component families, and compatible host-owned journey compositions. See [the finalized catalog and ingestion guide](design/README.md) for the current schema export, state fixtures, source mapping and host integration boundaries. The original nine journey contracts below remain supported.
 
 ## Basic catalog components
 
@@ -19,10 +19,10 @@ These come from the GenUI basic catalog and are available to every surface:
 | `BudgetSlider` | Budget range control | local data-model update | number reference |
 | `PrimaryButton` | Primary journey action | explicit event | string reference |
 | `ProductCard` | Recommendation selection or removal | explicit event with product ID; `remove_product` shows Remove | string references |
-| `PieceSlot` | Reusable empty/next/filled slot primitive | none | string references |
-| `DressingRoom` | Persistent outfit summary with the host's dynamic slot plan | data-model updates | string/number references and slot-list reference |
+| `PieceSlot` | Reusable empty/next/filled slot primitive | explicit Change event | string references |
+| `DressingRoom` | Persistent outfit summary with the host's dynamic slot plan | data-model updates and Change event | string/number references and slot-list reference |
 
-This gives the starter a 24-component vocabulary: 15 basic components plus 9 commerce components. The custom items are deliberately small and schema-driven; a future component should add its schema, builder, fixture message, interaction behavior, and test together.
+The custom items are schema-driven; a future component should add its schema, builder, fixture message, interaction behavior, and test together.
 
 `DressingRoom.slots` binds to an ordered list of rows with `category`, `label`, `name`, `meta`, `swatch`, optional `imageAsset`, and `state` (`Empty`, `Next`, or `Filled`). The host's outfit plan supplies required pieces and any selected optional pieces, including tops, bottoms, and accessories. `Next` marks the category currently being considered; a complete look has no next badge. `planCaption` explains progress or completion separately from the budget bar. Slot cards wrap according to their available width.
 
@@ -32,7 +32,7 @@ The brief form binds `ChoiceGroup.selected` to its surface data and supplies `se
 
 ## Growth path
 
-The next useful additions are explicit state variants and visual examples for `ProductGrid`, `OutfitSummary`, `ImageWithReason`, `LoadingState`, `ErrorState`, and `ChatInput`. Those should remain catalog items only when the state cannot be expressed clearly with the existing basic vocabulary.
+The finalized catalog includes chat input, working indicators, product and slot states, look summaries, fit controls, context and bag previews. Add a new item only when its behavior cannot be expressed clearly with the existing vocabulary.
 
 ## Reusing the presentation layer
 
@@ -46,4 +46,4 @@ Product cards use their own available width and text scale to switch between a t
 
 The formal wide-screen design uses a black dressing room, light budget meter, a budget above the rack, and a white next-piece badge below the image. Scope that presentation around a surface with `CommerceDressingRoomStyle(dark: true, contextImages: [...], child: surface)`. The default light presentation retains the original compact design and category-specific image heights. `contextImages` accepts screen-owned bundled occasion photographs; it does not invent weather or location data. Next and empty formal slots use the supplied local SVG assets at their original dimensions. Product photographs stay dynamic and resolve only from the bundled public catalog.
 
-The existing nine A2UI component schemas, event names, local choice/budget updates, and legacy named dressing-room bindings remain compatible. Additional formal designs such as photo upload, fit/size, saved looks, bag quantity, weather, and delivery need their corresponding data and interaction contracts before they become runtime catalog items.
+The existing nine A2UI component schemas, event names, local choice/budget updates, and legacy named dressing-room bindings remain compatible. Photo upload, fit/size, saved looks, bag quantity, weather and delivery are registered with explicit properties and event contracts; their live services require host integration. See design/README.md for those boundaries.

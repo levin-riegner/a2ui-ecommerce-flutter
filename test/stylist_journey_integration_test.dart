@@ -94,7 +94,7 @@ void main() {
         final dressing = agent.controller.contextFor('dressing-room').dataModel;
         expect(
           dressing.getValue<String>(DataPath('/left')),
-          '€${(entry.key.budget - spent).toStringAsFixed(2)} left',
+          '€${(entry.key.budget - spent).toStringAsFixed(0)} left',
         );
         expect((runtime.outfit['items'] as Map).values, containsAll(selected));
       }
@@ -127,7 +127,7 @@ void main() {
       final dressing = agent.controller.contextFor('dressing-room').dataModel;
       expect(
         dressing.getValue<String>(DataPath('/left')),
-        '€${(entry.key.budget - spent + productFor(reopened).price).toStringAsFixed(2)} left',
+        '€${(entry.key.budget - spent + productFor(reopened).price).toStringAsFixed(0)} left',
       );
       await agent.conversation.sendRequest(_action('select_product', reopened));
       expect(agent.connectionError, isNull);
@@ -153,7 +153,7 @@ void main() {
     await tester.pumpAndSettle();
     final top = productFor(_options(agent).first['id'] as String);
     await tester.runAsync(() async {
-      await tester.tap(find.text('Choose this').first);
+      await tester.tap(find.text('Add to dressing room').first);
       final deadline = DateTime.now().add(const Duration(seconds: 5));
       while (agent.isBusy && DateTime.now().isBefore(deadline)) {
         await Future<void>.delayed(const Duration(milliseconds: 10));

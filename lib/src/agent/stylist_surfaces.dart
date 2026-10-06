@@ -4,6 +4,9 @@ import 'stylist_brief_surface.dart';
 
 const stylistCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
 String euro(num value) => '€${value.toStringAsFixed(2)}';
+String _budgetEuro(num value) => value == value.roundToDouble()
+    ? '€${value.toStringAsFixed(0)}'
+    : euro(value);
 
 Map<String, Object?> productFacts(Product product) => {
   'id': product.id,
@@ -82,16 +85,16 @@ List<Map<String, Object?>> renderStylistSurfaces({
     ProductCategory.accessory: 'An accessory',
   };
   final dressingData = <String, Object?>{
-    'title': 'Your dressing room',
+    'title': 'Dressing room',
     'brief': occasion.isEmpty ? 'Build a look together' : occasion,
-    'planCaption': outfitPlan.complete
-        ? 'Your look is complete'
-        : '${outfitPlan.filledCount} of ${outfitPlan.slots.length} pieces selected',
+    'planCaption': '',
     'planComplete': outfitPlan.complete,
-    'spent': '${euro(spent)} spent · ${outfit.length} pieces',
+    'spent':
+        '${_budgetEuro(spent)} spent —\u00a0'
+        '${outfitPlan.filledCount} of ${outfitPlan.slots.length}',
     'left': budget == null
         ? 'Set a budget'
-        : '${euro((budget - spent).clamp(0, double.infinity))} left',
+        : '${_budgetEuro((budget - spent).clamp(0, double.infinity))} left',
     'progress': budget == null || budget == 0
         ? 0.0
         : (spent / budget).clamp(0, 1),
@@ -174,33 +177,6 @@ List<Map<String, Object?>> renderStylistSurfaces({
       ..clear()
       ..addAll(briefSurface.components);
   }
-  final selected = outfit.entries.toList();
-  final selectedData = <String, Object?>{
-    'message': selected.isEmpty
-        ? 'No pieces selected yet.'
-        : 'Selected pieces · tap a card to remove it',
-    'products': selected.map((entry) => _card(entry.value, entry.key)).toList(),
-  };
-  final selectedComponents = <Map<String, Object?>>[
-    {
-      'id': 'root',
-      'component': 'Column',
-      'align': 'stretch',
-      'children': [
-        'message',
-        for (var i = 0; i < selected.length; i++) 'selected-$i',
-      ],
-    },
-    {'id': 'message', 'component': 'StylistMessage', 'text': _path('/message')},
-    for (var i = 0; i < selected.length; i++)
-      _productComponent(
-        selected[i].value,
-        i,
-        'products',
-        'selected',
-        'remove_product',
-      ),
-  ];
   Map<String, Object?> create(String id) => {
     'version': 'v0.9',
     'createSurface': {
@@ -228,7 +204,5 @@ List<Map<String, Object?>> renderStylistSurfaces({
     ...update('dressing-room', dressingComponents, dressingData),
     create('inline-$turn'),
     ...update('inline-$turn', inlineComponents, inlineData),
-    if (turn == 1) create('selected-products'),
-    ...update('selected-products', selectedComponents, selectedData),
   ];
 }

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'duo_layout_adapter.dart';
 
@@ -12,6 +13,7 @@ import 'duo_layout_adapter.dart';
 /// Display features use viewport coordinates, so place this directly in a
 /// Scaffold body rather than inside an already inset or centered container.
 class AdaptivePaneLayout extends StatefulWidget {
+  static const transitionDuration = Duration(milliseconds: 320);
   const AdaptivePaneLayout({
     super.key,
     required this.primary,
@@ -26,6 +28,8 @@ class AdaptivePaneLayout extends StatefulWidget {
     this.railMinWidth = 900,
     this.panePadding = const EdgeInsets.all(16),
     this.secondaryPadding,
+    this.secondaryBackgroundColor,
+    this.secondaryBackgroundOnlyInBookMode = false,
     this.secondaryScrollable = true,
     this.compactSecondaryFirst = true,
   });
@@ -43,6 +47,13 @@ class AdaptivePaneLayout extends StatefulWidget {
   final double railMinWidth;
   final EdgeInsets panePadding;
   final EdgeInsets? secondaryPadding;
+
+  /// Paints the split pane through safe-area margins without moving controls
+  /// into hardware-reserved regions. Compact layouts keep the page background.
+  final Color? secondaryBackgroundColor;
+
+  /// Leaves split-pane margins in the page color when Duo is fully open.
+  final bool secondaryBackgroundOnlyInBookMode;
   final bool secondaryScrollable;
   final bool compactSecondaryFirst;
 
@@ -55,6 +66,7 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
   final _secondaryKey = GlobalKey();
   final _headerKey = GlobalKey();
   final _footerKey = GlobalKey();
+  final _canvasKey = GlobalKey();
   final _compactScroll = ScrollController();
   final _primaryScroll = ScrollController();
   final _secondaryScroll = ScrollController();
@@ -72,6 +84,52 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
       KeyedSubtree(key: _secondaryKey, child: widget.secondary);
   Widget _header() => KeyedSubtree(key: _headerKey, child: widget.header);
   Widget _footer() => KeyedSubtree(key: _footerKey, child: widget.footer);
+
+  Widget _background(double left) => Positioned(
+    left: left,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    child: Builder(
+      builder: (context) => ColoredBox(
+        key: const ValueKey('secondary-pane-background'),
+        color: AdaptivePaneScope.secondaryBackgroundColorOf(context)!,
+      ),
+    ),
+  );
+
+  Widget _canvas({required bool split, required List<Widget> children}) {
+    final canvas = Stack(children: children);
+    if (widget.secondaryBackgroundColor == null) return canvas;
+    final useSecondaryColor =
+        split &&
+        (!widget.secondaryBackgroundOnlyInBookMode ||
+            DuoLayoutScope.of(context).isPartiallyOpen);
+    final color = useSecondaryColor
+        ? widget.secondaryBackgroundColor!
+        : Theme.of(context).scaffoldBackgroundColor;
+    // Keep the tween's identity while the panes move between flat and
+    // hinge-separated parents, so a fold event cannot restart the fade.
+    return TweenAnimationBuilder<Color?>(
+      key: _canvasKey,
+      tween: ColorTween(end: color),
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : AdaptivePaneLayout.transitionDuration,
+      curve: Curves.easeInOutCubic,
+      child: canvas,
+      builder: (context, animatedColor, child) => AdaptivePaneScope(
+        isSplit: split,
+        secondaryBackgroundColor: animatedColor,
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: (split ? animatedColor! : color).computeLuminance() < .5
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
+          child: child!,
+        ),
+      ),
+    );
+  }
 
   Widget _primaryPane() => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -166,21 +224,26 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
         if (separatingRegions) {
           return AdaptivePaneScope(
             isSplit: true,
-            child: Stack(
+            child: KeyedSubtree(
               key: const ValueKey('obstructed-split-layout'),
-              children: [
-                Positioned.fromRect(rect: regions[0], child: _primaryPane()),
-                Positioned.fromRect(
-                  rect: regions[1],
-                  child: _secondaryPane(
-                    showRail:
-                        widget.rail != null &&
-                        size.width >= widget.railMinWidth &&
-                        regions[1].width - widget.railWidth >=
-                            minSecondaryWidth,
+              child: _canvas(
+                split: true,
+                children: [
+                  if (widget.secondaryBackgroundColor != null)
+                    _background(regions[1].left),
+                  Positioned.fromRect(rect: regions[0], child: _primaryPane()),
+                  Positioned.fromRect(
+                    rect: regions[1],
+                    child: _secondaryPane(
+                      showRail:
+                          widget.rail != null &&
+                          size.width >= widget.railMinWidth &&
+                          regions[1].width - widget.railWidth >=
+                              minSecondaryWidth,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }
@@ -217,8 +280,11 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                 2;
         return AdaptivePaneScope(
           isSplit: split,
-          child: Stack(
+          child: _canvas(
+            split: split,
             children: [
+              if (split && widget.secondaryBackgroundColor != null)
+                _background(centered.left + primaryWidth + 1),
               Positioned.fromRect(
                 rect: centered,
                 child: split
@@ -249,10 +315,16 @@ class AdaptivePaneScope extends InheritedWidget {
   const AdaptivePaneScope({
     super.key,
     required this.isSplit,
+    this.secondaryBackgroundColor,
     required super.child,
   });
 
   final bool isSplit;
+  final Color? secondaryBackgroundColor;
+
+  static Color? secondaryBackgroundColorOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<AdaptivePaneScope>()
+      ?.secondaryBackgroundColor;
 
   static bool isSplitOf(BuildContext context) =>
       context
@@ -262,5 +334,6 @@ class AdaptivePaneScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(AdaptivePaneScope oldWidget) =>
-      isSplit != oldWidget.isSplit;
+      isSplit != oldWidget.isSplit ||
+      secondaryBackgroundColor != oldWidget.secondaryBackgroundColor;
 }

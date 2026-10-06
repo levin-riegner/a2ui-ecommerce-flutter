@@ -1,0 +1,549 @@
+{
+  "native": true,
+  "providerRequests": 0,
+  "figmaNode": "204:7860",
+  "records": [
+    {
+      "name": "Open portrait",
+      "nativeControl": null,
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(669.0, 951.0)",
+      "keyboard": 0.0,
+      "sizeClass": "regular",
+      "regions": [
+        {
+          "kind": "division",
+          "active": false,
+          "bounds": "Rect.fromLTRB(0.0, 455.5, 669.0, 495.5)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(535.0, 0.0, 669.0, 82.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(40.0, 863.0, 541.0, 883.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'compact-pane-layout'>]"
+      ],
+      "backgrounds": [],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 154.0,
+          "height": 261.0
+        },
+        "finalized-dressing-room": {
+          "top": 154.0,
+          "height": 261.0,
+          "color": "ff000000"
+        },
+        "dressing-room-rack": {
+          "top": 255.0,
+          "height": 96.0
+        },
+        "selected-pieces-section": {
+          "top": 427.0,
+          "height": 168.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    },
+    {
+      "name": "Book portrait",
+      "nativeControl": {
+        "axResult": 0,
+        "frontAfter": 84966,
+        "frontBefore": 84966,
+        "action": "Book"
+      },
+      "status": "partiallyOpen",
+      "angle": 170.72279357910156,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(669.0, 951.0)",
+      "keyboard": 0.0,
+      "sizeClass": "regular",
+      "regions": [
+        {
+          "kind": "division",
+          "active": true,
+          "bounds": "Rect.fromLTRB(0.0, 455.5, 669.0, 495.5)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(535.0, 0.0, 669.0, 82.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(40.0, 863.0, 541.0, 883.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'compact-pane-layout'>]"
+      ],
+      "backgrounds": [],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 567.5,
+          "height": 261.0
+        },
+        "finalized-dressing-room": {
+          "top": 567.5,
+          "height": 261.0,
+          "color": "ff000000"
+        },
+        "dressing-room-rack": {
+          "top": 668.5,
+          "height": 96.0
+        },
+        "selected-pieces-section": {
+          "top": 840.5,
+          "height": 168.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    },
+    {
+      "name": "Closed cover",
+      "nativeControl": {
+        "action": "Closed",
+        "axResult": 0,
+        "frontBefore": 84966,
+        "frontAfter": 84966
+      },
+      "status": "closed",
+      "angle": 33.49275588989258,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(678.0, 466.0)",
+      "keyboard": 0.0,
+      "sizeClass": "compact",
+      "regions": [
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(29.3, 29.3, 66.3, 66.3)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(0.0, 0.0, 82.0, 190.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(124.0, 378.0, 550.0, 398.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'compact-pane-layout'>]"
+      ],
+      "backgrounds": [],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 72.0,
+          "height": 261.0
+        },
+        "finalized-dressing-room": {
+          "top": 72.0,
+          "height": 261.0,
+          "color": "ff000000"
+        },
+        "dressing-room-rack": {
+          "top": 173.0,
+          "height": 96.0
+        },
+        "selected-pieces-section": {
+          "top": 345.0,
+          "height": 168.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    },
+    {
+      "name": "Open portrait restored",
+      "nativeControl": {
+        "frontAfter": 84966,
+        "action": "Open",
+        "axResult": 0,
+        "frontBefore": 84966
+      },
+      "status": "partiallyOpen",
+      "angle": 149.5228576660156,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(669.0, 951.0)",
+      "keyboard": 0.0,
+      "sizeClass": "regular",
+      "regions": [
+        {
+          "kind": "division",
+          "active": false,
+          "bounds": "Rect.fromLTRB(0.0, 455.5, 669.0, 495.5)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(535.0, 0.0, 669.0, 82.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(40.0, 863.0, 541.0, 883.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'compact-pane-layout'>]"
+      ],
+      "backgrounds": [],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 154.0,
+          "height": 261.0
+        },
+        "finalized-dressing-room": {
+          "top": 154.0,
+          "height": 261.0,
+          "color": "ff000000"
+        },
+        "dressing-room-rack": {
+          "top": 255.0,
+          "height": 96.0
+        },
+        "selected-pieces-section": {
+          "top": 427.0,
+          "height": 168.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    },
+    {
+      "name": "Open landscape",
+      "nativeControl": {
+        "frontAfter": 84966,
+        "frontBefore": 84966,
+        "axResult": 0,
+        "action": "Rotate Right"
+      },
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "sizeClass": "regular",
+      "regions": [
+        {
+          "kind": "division",
+          "active": false,
+          "bounds": "Rect.fromLTRB(455.5, 0.0, 495.5, 669.0)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(867.0, 0.0, 951.0, 120.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(40.0, 581.0, 325.0, 601.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'split-pane-layout'>]"
+      ],
+      "backgrounds": [
+        {
+          "color": "ffffffff",
+          "bounds": "Rect.fromLTRB(0.0, 0.0, 497.0, 669.0)"
+        }
+      ],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 16.0,
+          "height": 565.0
+        },
+        "finalized-dressing-room": {
+          "top": 16.0,
+          "height": 565.0,
+          "color": "ff000000"
+        },
+        "selected-pieces-section": {
+          "top": 593.0,
+          "height": 168.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    },
+    {
+      "name": "Book landscape",
+      "nativeControl": {
+        "frontAfter": 84966,
+        "axResult": 0,
+        "action": "Book",
+        "frontBefore": 84966
+      },
+      "status": "partiallyOpen",
+      "angle": 152.87110900878906,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "sizeClass": "regular",
+      "regions": [
+        {
+          "kind": "division",
+          "active": true,
+          "bounds": "Rect.fromLTRB(455.5, 0.0, 495.5, 669.0)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(867.0, 0.0, 951.0, 120.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(40.0, 581.0, 327.5, 601.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'obstructed-split-layout'>]"
+      ],
+      "backgrounds": [
+        {
+          "color": "ff000000",
+          "bounds": "Rect.fromLTRB(0.0, 0.0, 455.5, 669.0)"
+        }
+      ],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 16.0,
+          "height": 565.0
+        },
+        "finalized-dressing-room": {
+          "top": 16.0,
+          "height": 565.0,
+          "color": "ff000000"
+        },
+        "selected-pieces-section": {
+          "top": 593.0,
+          "height": 254.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    },
+    {
+      "name": "Open landscape restored",
+      "nativeControl": {
+        "action": "Open",
+        "axResult": 0,
+        "frontBefore": 84966,
+        "frontAfter": 84966
+      },
+      "status": "partiallyOpen",
+      "angle": 165.4243621826172,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(951.0, 669.0)",
+      "keyboard": 0.0,
+      "sizeClass": "regular",
+      "regions": [
+        {
+          "kind": "division",
+          "active": true,
+          "bounds": "Rect.fromLTRB(455.5, 0.0, 495.5, 669.0)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(867.0, 0.0, 951.0, 120.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(40.0, 581.0, 327.5, 601.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'obstructed-split-layout'>]"
+      ],
+      "backgrounds": [
+        {
+          "color": "ff000000",
+          "bounds": "Rect.fromLTRB(0.0, 0.0, 455.5, 669.0)"
+        }
+      ],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 16.0,
+          "height": 565.0
+        },
+        "finalized-dressing-room": {
+          "top": 16.0,
+          "height": 565.0,
+          "color": "ff000000"
+        },
+        "selected-pieces-section": {
+          "top": 593.0,
+          "height": 254.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    },
+    {
+      "name": "Open portrait final",
+      "nativeControl": {
+        "axResult": 0,
+        "frontBefore": 84966,
+        "frontAfter": 84966,
+        "action": "Rotate Right"
+      },
+      "status": "fullyOpen",
+      "angle": 180.0,
+      "support": "available",
+      "strategy": "updateHandler",
+      "size": "Size(669.0, 951.0)",
+      "keyboard": 0.0,
+      "sizeClass": "regular",
+      "regions": [
+        {
+          "kind": "division",
+          "active": false,
+          "bounds": "Rect.fromLTRB(0.0, 455.5, 669.0, 495.5)"
+        },
+        {
+          "kind": "occlusion",
+          "active": true,
+          "bounds": "Rect.fromLTRB(535.0, 0.0, 669.0, 82.0)"
+        }
+      ],
+      "fields": [
+        {
+          "draft": "",
+          "focus": false,
+          "textScale": 1.0,
+          "bounds": "Rect.fromLTRB(40.0, 863.0, 541.0, 883.0)",
+          "state": 181554548
+        }
+      ],
+      "layouts": [
+        "[<'compact-pane-layout'>]"
+      ],
+      "backgrounds": [],
+      "panels": {
+        "dressing-room-resize": {
+          "top": 154.0,
+          "height": 261.0
+        },
+        "finalized-dressing-room": {
+          "top": 154.0,
+          "height": 261.0,
+          "color": "ff000000"
+        },
+        "dressing-room-rack": {
+          "top": 255.0,
+          "height": 96.0
+        },
+        "selected-pieces-section": {
+          "top": 427.0,
+          "height": 168.0
+        }
+      },
+      "surface": "inline-2",
+      "journey": "berlin",
+      "agent": 384605964,
+      "spent": "\u20ac35.00 spent \u00b7 1 pieces",
+      "selected": [
+        "Morrow Draped Top"
+      ],
+      "errors": []
+    }
+  ]
+}

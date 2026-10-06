@@ -106,9 +106,6 @@ class GenkitAgent extends CommerceAgent {
   @override
   bool get canRetry => _failedTurn != null && !isBusy;
   @override
-  bool get hasSelectedProductsSurface =>
-      _surfaceIds.contains('selected-products');
-  @override
   bool get hasDressingRoomSurface => _surfaceIds.contains('dressing-room');
 
   @override

@@ -1,0 +1,1099 @@
+{
+  "schemaVersion": 1,
+  "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+  "section": "53:2383",
+  "acquiredAt": "2026-10-05",
+  "protocol": "A2UI v0.9",
+  "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+  "componentContractSource": "Runtime CatalogItem.dataSchema; root runtime exporter writes exact ingestible schema + fixtures.",
+  "verifiedVisualSources": {
+    "highFidelityContexts": 46,
+    "initialSectionScreenshot": true,
+    "rawCapture": "/private/tmp/finalized-left-context.json"
+  },
+  "components": [
+    {
+      "name": "UserMessage",
+      "figmaNodes": [
+        "53:2384"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2384",
+          "componentDimensions": [
+            "300"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "text": "bound string"
+      },
+      "events": {},
+      "stateBehavior": "display",
+      "usageNote": {
+        "nodeId": "53:2719",
+        "text": "What the customer typed or tapped. Right-aligned in the chat column."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": null
+    },
+    {
+      "name": "StylistMessage",
+      "figmaNodes": [
+        "53:2386"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2386",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "text": "bound string"
+      },
+      "events": {},
+      "stateBehavior": "display",
+      "usageNote": {
+        "nodeId": "53:2720",
+        "text": "The associate speaks in plain text, no bubble — like someone standing next to you. Warm, decisive, one idea per message, always ends with what happens next."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": null
+    },
+    {
+      "name": "ChatInput",
+      "figmaNodes": [
+        "53:2388"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2388",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "value": "bound string",
+        "placeholder": "bound string"
+      },
+      "events": {
+        "action": "send_message(text)",
+        "microphoneAction": "request_voice_input()"
+      },
+      "stateBehavior": "Draft binds to supplied value.path/valuePath. Whitespace cannot send. Voice disabled unless host supplies action.",
+      "usageNote": {
+        "nodeId": "53:2721",
+        "text": "Docked at the bottom of the chat column. Send is disabled (grey) until there is text."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Draft binds to supplied value.path/valuePath. Whitespace cannot send. Voice disabled unless host supplies action.",
+      "presentationWidgetAPI": {
+        "externalController": "Optional host-owned TextEditingController, preserves draft/selection and is never disposed by this widget.",
+        "enabled": "false disables field, send and microphone",
+        "fieldKey": "Optional host integration key",
+        "submitLabel": "Defaults to Send message; button key stylist-submit-<label>",
+        "fieldLabel": "Defaults to Tell me about the occasion; accessible field label"
+      }
+    },
+    {
+      "name": "Suggestion",
+      "figmaNodes": [
+        "53:2392"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2392",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "text": "bound string"
+      },
+      "events": {
+        "action": "send_message(text)"
+      },
+      "stateBehavior": "Exact example text supplied in event.",
+      "usageNote": {
+        "nodeId": "53:2722",
+        "text": "Tappable example brief on the empty state. Tapping sends it as the user message."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": null
+    },
+    {
+      "name": "BudgetSlider",
+      "figmaNodes": [
+        "53:2395"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2395",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "value": "bound number",
+        "min": "number",
+        "max": "number"
+      },
+      "events": {
+        "action": "set_budget(value)"
+      },
+      "stateBehavior": "value.path/valuePath or legacy /budget; finite bounds validated before native Slider.",
+      "usageNote": {
+        "nodeId": "53:2723",
+        "text": "Budget control rendered inside a stylist message. Value updates the outfit panel on the right."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": null
+    },
+    {
+      "name": "ProductCard",
+      "figmaNodes": [
+        "53:2404",
+        "53:2418",
+        "53:2432",
+        "53:2446",
+        "53:2460",
+        "53:2474",
+        "53:2488",
+        "53:2502",
+        "53:2516",
+        "53:2530",
+        "53:2544",
+        "53:2558"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2404",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Dress\""
+            ],
+            [
+              "state",
+              "\"Default\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2418",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Dress\""
+            ],
+            [
+              "state",
+              "\"Selected\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2432",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Top\""
+            ],
+            [
+              "state",
+              "\"Default\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2446",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Top\""
+            ],
+            [
+              "state",
+              "\"Selected\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2460",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Bottom\""
+            ],
+            [
+              "state",
+              "\"Default\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2474",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Bottom\""
+            ],
+            [
+              "state",
+              "\"Selected\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2488",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Layer\""
+            ],
+            [
+              "state",
+              "\"Default\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2502",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Layer\""
+            ],
+            [
+              "state",
+              "\"Selected\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2516",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "state",
+              "\"Default\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2530",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "state",
+              "\"Selected\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2544",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Bag\""
+            ],
+            [
+              "state",
+              "\"Default\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2558",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Bag\""
+            ],
+            [
+              "state",
+              "\"Selected\""
+            ]
+          ]
+        }
+      ],
+      "props": {
+        "name": "bound string",
+        "price": "bound string",
+        "brandLine": "bound string",
+        "tag": "bound string",
+        "swatch": "bound string",
+        "imageAsset": "bound string",
+        "category": "bound string",
+        "selected": "bound boolean"
+      },
+      "events": {
+        "action": "select_product(productId) / remove_product(productId)"
+      },
+      "stateBehavior": "Six proportions. Host owns outfit mutation, selected state. Legacy remove action renders Remove. Images resolve only approved assets/images/products filenames.",
+      "usageNote": {
+        "nodeId": "53:2724",
+        "text": "Left. A recommendation. Tapping adds the piece to the dressing room on the right (Selected = it’s there). Tag = the associate’s one-line reason. Category sets the image proportion."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Six proportions. Host owns outfit mutation, selected state. Legacy remove action renders Remove. Images resolve only approved assets/images/products filenames."
+    },
+    {
+      "name": "PicksStrip",
+      "figmaNodes": [
+        "53:2573",
+        "53:2577",
+        "53:2581"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2573",
+          "componentDimensions": [
+            "240",
+            "120",
+            "96"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Dress\""
+            ],
+            [
+              "category",
+              "\"Dress\""
+            ],
+            [
+              "category",
+              "\"Dress\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2577",
+          "componentDimensions": [
+            "100"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Top\""
+            ],
+            [
+              "category",
+              "\"Top\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2581",
+          "componentDimensions": [
+            "100"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "category",
+              "\"Shoes\""
+            ]
+          ]
+        }
+      ],
+      "props": {
+        "products": "bound list",
+        "category": "bound string",
+        "selectedProductId": "bound string"
+      },
+      "events": {
+        "action": "select_product(productId)"
+      },
+      "stateBehavior": "Write selectedProductId.path/selectedProductIdPath; local selection for literals.",
+      "usageNote": {
+        "nodeId": "53:2725",
+        "text": "Three recommendations shown as images only. Use when the associate has already said why; tap a tile to choose."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": null
+    },
+    {
+      "name": "ThisOrThat",
+      "figmaNodes": [
+        "53:2586",
+        "53:2595",
+        "53:2604"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2586",
+          "componentDimensions": [
+            "64",
+            "120",
+            "50",
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "picked",
+              "\"None\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2595",
+          "componentDimensions": [
+            "64",
+            "120",
+            "50",
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "picked",
+              "\"A\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2604",
+          "componentDimensions": [
+            "64",
+            "120",
+            "50",
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "category",
+              "\"Shoes\""
+            ],
+            [
+              "picked",
+              "\"B\""
+            ]
+          ]
+        }
+      ],
+      "props": {
+        "options": "bound list",
+        "picked": "bound string",
+        "question": "bound string"
+      },
+      "events": {
+        "action": "select_product(productId)"
+      },
+      "stateBehavior": "picked stores actual option productId (empty is Figma None). A/B mapping in options. Write picked.path/pickedPath; local selection for literals.",
+      "usageNote": {
+        "nodeId": "53:2726",
+        "text": "Left panel. The associate narrows it to two and asks. One tap answers; no text needed."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": null
+    },
+    {
+      "name": "ColourPicker",
+      "figmaNodes": [
+        "53:2613"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2613",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "options": "bound list",
+        "selected": "bound list",
+        "question": "bound string"
+      },
+      "events": {
+        "action": "set_colours(colours[])"
+      },
+      "stateBehavior": "Multi-select named colours. Write selected.path/selectedPath. Exact exported selected assets for matching Black/Navy/Chocolate swatches. Other supplied colour data remains dynamic.",
+      "usageNote": {
+        "nodeId": "53:2727",
+        "text": "Left panel. Multi-select swatches inside a stylist question. Selected swatches get a dark ring and a dot."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": null
+    },
+    {
+      "name": "PhotoUpload",
+      "figmaNodes": [
+        "53:2629",
+        "53:2635"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2629",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "state",
+              "\"Empty\""
+            ]
+          ]
+        },
+        {
+          "nodeId": "53:2635",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": [
+            [
+              "state",
+              "\"Uploaded\""
+            ]
+          ]
+        }
+      ],
+      "props": {
+        "state": "bound string",
+        "photoId": "bound string",
+        "imageAsset": "bound string",
+        "description": "bound string"
+      },
+      "events": {
+        "chooseAction": "choose_photo()",
+        "useAction": "use_photo(photoId)",
+        "replaceAction": "replace_photo(photoId)"
+      },
+      "stateBehavior": "Events request host capture/library/upload/analysis. Component never synthesizes real photo capture or analysis. Uploaded design fixture uses original gradient, honestly labelled fixture. Presentation widget accepts host-supplied photo Widget. JSON imageAsset is approved bundled fixture only.",
+      "usageNote": {
+        "nodeId": "53:2728",
+        "text": "Left panel. Empty = camera/library drop zone. Uploaded = the customer’s photo with what the associate noticed, and Use / Replace."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Events request host capture/library/upload/analysis. Component never synthesizes real photo capture or analysis. Uploaded design fixture uses original gradient, honestly labelled fixture. Presentation widget accepts host-supplied photo Widget. JSON imageAsset is approved bundled fixture only."
+    },
+    {
+      "name": "FitSize",
+      "figmaNodes": [
+        "53:2650"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2650",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "sizes": "bound list",
+        "fits": "bound list",
+        "size": "bound string",
+        "fit": "bound string"
+      },
+      "events": {
+        "action": "set_fit_size(size,fit)"
+      },
+      "stateBehavior": "Independent size.path/sizePath and fit.path/fitPath; host owns cross-visit persistence and availability/fit notes.",
+      "usageNote": {
+        "nodeId": "53:2714",
+        "text": "Left. Asked once, then remembered. Feeds the size on every product card and the Fit Notes on the right."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Independent size.path/sizePath and fit.path/fitPath; host owns cross-visit persistence and availability/fit notes."
+    },
+    {
+      "name": "OccasionTimeline",
+      "figmaNodes": [
+        "53:2664"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2664",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "segments": "bound list",
+        "selected": "bound string"
+      },
+      "events": {
+        "action": "edit_occasion_segment(segment)"
+      },
+      "stateBehavior": "Native edit dialog time/activity/location; Cancel emits nothing. Writes segments.path/segmentsPath; selected.path/selectedPath. Host reruns recommendations.",
+      "usageNote": {
+        "nodeId": "53:2715",
+        "text": "Left. The associate’s read of the day, pulled from the brief. Editing a segment (outdoors → indoors) changes what gets recommended — e.g. drops the layer."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Native edit dialog time/activity/location; Cancel emits nothing. Writes segments.path/segmentsPath; selected.path/selectedPath. Host reruns recommendations."
+    },
+    {
+      "name": "QuickAdjust",
+      "figmaNodes": [
+        "53:2679"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2679",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "productId": "bound string",
+        "productName": "bound string",
+        "imageAsset": "bound string",
+        "category": "bound string",
+        "options": "bound list",
+        "selected": "bound string"
+      },
+      "events": {
+        "action": "adjust_piece(productId,category,adjustment)"
+      },
+      "stateBehavior": "Writes selected.path/selectedPath. Host reruns single-piece search preserving other chosen pieces.",
+      "usageNote": {
+        "nodeId": "53:2716",
+        "text": "Left. Appears in the chat when you tap “Change” on a hanger in the dressing room. One-tap nudges re-run the search for that piece and keep everything else on the rack."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Writes selected.path/selectedPath. Host reruns single-piece search preserving other chosen pieces."
+    },
+    {
+      "name": "BrandPreferences",
+      "figmaNodes": [
+        "53:2692"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2692",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "brands": "bound list",
+        "love": "bound list",
+        "skip": "bound list"
+      },
+      "events": {
+        "action": "set_brand_preferences(love[],skip[])"
+      },
+      "stateBehavior": "Disjoint love and skip arrays. Custom-brand dialog functional. Writes love.path/lovePath and skip.path/skipPath. Host biases/filters search and owns durable persistence.",
+      "usageNote": {
+        "nodeId": "53:2717",
+        "text": "Left. Optional. Love-list biases the search; Skip-list hard-filters it. Remembered across visits."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Disjoint love and skip arrays. Custom-brand dialog functional. Writes love.path/lovePath and skip.path/skipPath. Host biases/filters search and owns durable persistence."
+    },
+    {
+      "name": "StylistWorking",
+      "figmaNodes": [
+        "53:2705"
+      ],
+      "variants": [
+        {
+          "nodeId": "53:2705",
+          "componentDimensions": [
+            "400"
+          ],
+          "referenceDownloaded": true,
+          "figmaProperties": []
+        }
+      ],
+      "props": {
+        "text": "bound string",
+        "progress": "bound number"
+      },
+      "events": {},
+      "stateBehavior": "Live region; measured progress clamps 0..1; omitted progress is indeterminate. Host supplies honest search counts.",
+      "usageNote": {
+        "nodeId": "53:2718",
+        "text": "Left. Shown while the associate searches. Says what it’s doing in plain words so the wait feels like work, not a spinner."
+      },
+      "fixtureSource": "finalizedLeftFixtures / CatalogItem.exampleData, direct v0.9 components",
+      "hostResponsibilities": "Live region; measured progress clamps 0..1; omitted progress is indeterminate. Host supplies honest search counts."
+    }
+  ],
+  "assets": [
+    {
+      "path": "assets/icons/finalized_left/c22cb.svg",
+      "sourceNodes": [
+        "53:2404",
+        "53:2418"
+      ],
+      "intrinsicRoot": {
+        "width": "56",
+        "height": "88",
+        "viewBox": "0 0 56 88"
+      },
+      "bytes": 316,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/5f3fb.svg",
+      "sourceNodes": [
+        "53:2460",
+        "53:2474"
+      ],
+      "intrinsicRoot": {
+        "width": "56",
+        "height": "92",
+        "viewBox": "0 0 56 92"
+      },
+      "bytes": 296,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/a2efe.svg",
+      "sourceNodes": [
+        "53:2488",
+        "53:2502"
+      ],
+      "intrinsicRoot": {
+        "width": "72",
+        "height": "89",
+        "viewBox": "0 0 72 89"
+      },
+      "bytes": 319,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/27acc.svg",
+      "sourceNodes": [
+        "53:2613"
+      ],
+      "intrinsicRoot": {
+        "width": "40",
+        "height": "40",
+        "viewBox": "0 0 40 40"
+      },
+      "bytes": 399,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/28493.svg",
+      "sourceNodes": [
+        "53:2432",
+        "53:2446"
+      ],
+      "intrinsicRoot": {
+        "width": "68",
+        "height": "72",
+        "viewBox": "0 0 68 72"
+      },
+      "bytes": 323,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/735f4.svg",
+      "sourceNodes": [
+        "53:2613"
+      ],
+      "intrinsicRoot": {
+        "width": "40",
+        "height": "40",
+        "viewBox": "0 0 40 40"
+      },
+      "bytes": 400,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/357bc.svg",
+      "sourceNodes": [
+        "53:2388"
+      ],
+      "intrinsicRoot": {
+        "width": "11.6667",
+        "height": "14.3333",
+        "viewBox": "0 0 11.6667 14.3333"
+      },
+      "bytes": 783,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/73eb0.svg",
+      "sourceNodes": [
+        "53:2577"
+      ],
+      "intrinsicRoot": {
+        "width": "100",
+        "height": "100",
+        "viewBox": "0 0 100 100"
+      },
+      "bytes": 333,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/eb269.svg",
+      "sourceNodes": [
+        "53:2573"
+      ],
+      "intrinsicRoot": {
+        "width": "100",
+        "height": "100",
+        "viewBox": "0 0 100 100"
+      },
+      "bytes": 326,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/d6108.svg",
+      "sourceNodes": [
+        "53:2544",
+        "53:2558"
+      ],
+      "intrinsicRoot": {
+        "width": "76",
+        "height": "68",
+        "viewBox": "0 0 76 68"
+      },
+      "bytes": 330,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/98299.svg",
+      "sourceNodes": [
+        "53:2516",
+        "53:2530"
+      ],
+      "intrinsicRoot": {
+        "width": "88",
+        "height": "56",
+        "viewBox": "0 0 88 56"
+      },
+      "bytes": 434,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/b55ec.svg",
+      "sourceNodes": [
+        "53:2613"
+      ],
+      "intrinsicRoot": {
+        "width": "40",
+        "height": "40",
+        "viewBox": "0 0 40 40"
+      },
+      "bytes": 404,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/ba79f.svg",
+      "sourceNodes": [
+        "53:2392"
+      ],
+      "intrinsicRoot": {
+        "width": "14.2575",
+        "height": "14.2575",
+        "viewBox": "0 0 14.2575 14.2575"
+      },
+      "bytes": 1409,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/470fb.svg",
+      "sourceNodes": [
+        "53:2629"
+      ],
+      "intrinsicRoot": {
+        "width": "24",
+        "height": "24",
+        "viewBox": "0 0 24 24"
+      },
+      "bytes": 501,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/3932e.svg",
+      "sourceNodes": [
+        "53:2679"
+      ],
+      "intrinsicRoot": {
+        "width": "48",
+        "height": "88",
+        "viewBox": "0 0 48 88"
+      },
+      "bytes": 316,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/177cc.svg",
+      "sourceNodes": [
+        "53:2705"
+      ],
+      "intrinsicRoot": {
+        "width": "26",
+        "height": "6",
+        "viewBox": "0 0 26 6"
+      },
+      "bytes": 517,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/c3a13.svg",
+      "sourceNodes": [
+        "53:2581",
+        "53:2586",
+        "53:2595",
+        "53:2604"
+      ],
+      "intrinsicRoot": {
+        "width": "100",
+        "height": "100",
+        "viewBox": "0 0 100 100"
+      },
+      "bytes": 444,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    },
+    {
+      "path": "assets/icons/finalized_left/efdf2.svg",
+      "sourceNodes": [
+        "53:2395"
+      ],
+      "intrinsicRoot": {
+        "width": "20",
+        "height": "20",
+        "viewBox": "0 0 20 20"
+      },
+      "bytes": 262,
+      "callsite": "FinalizedLeftIcon in finalized_left_components.dart",
+      "policy": "Root dimensions preserved, container owns Figma slot size; dynamic catalog product photos replace only documented garment placeholders."
+    }
+  ],
+  "adaptivePolicy": "Wrap prose/choices; stack product and two-choice content at narrow width or large text; strip scrolls horizontally; follow native text scale. CommerceChoice has enlarged 48px semantic tap targets versus 38px Figma visual chips. Budget slider uses 48px native hit height, 4px track and exact 20px thumb. Product tags move outside clipped image at large text.",
+  "limitations": [
+    "Host must connect new explicit preference/edit/photo events to domain persistence/provider reruns.",
+    "Cross-visit preference persistence, real photo capture/upload and vision analysis are not claimed by presentational/catalog components.",
+    "Only approved bundled catalog photographs may be selected via JSON imageAsset.",
+    "Native screenshot quality pass is performed by coordinating agent, not component tests."
+  ]
+}

@@ -35,7 +35,6 @@ void main() {
       addTearDown(agent.dispose);
       await agent.startJourney(DemoJourney.lisbon);
       expect(agent.latestInlineSurfaceId, 'inline-1');
-      expect(agent.hasSelectedProductsSurface, isTrue);
       expect(agent.hasDressingRoomSurface, isTrue);
       await agent.conversation.sendRequest(select('top-1'));
       expect(runtime.outfit['items'], {'top': 'top-1'});

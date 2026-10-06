@@ -8,6 +8,9 @@ import 'agent/model_connection.dart';
 import 'agent/genkit_agent.dart';
 import 'catalog/commerce_examples.dart';
 import 'catalog/commerce_components.dart';
+import 'catalog/finalized_component_gallery.dart';
+import 'catalog/finalized_screen_gallery.dart';
+import 'catalog/finalized_shared_components.dart';
 import 'data/models.dart';
 import 'layout/adaptive_page.dart';
 import 'layout/adaptive_pane_layout.dart';
@@ -62,7 +65,7 @@ class _ReferenceAppState extends State<ReferenceApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'A2UI Flutter Commerce',
+      title: 'Alder',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       builder: (context, child) => DuoLayoutAdapter(child: child!),
@@ -502,6 +505,23 @@ class _ComponentGallery extends StatelessWidget {
               '9 commerce components · 15 GenUI basic components',
               style: Theme.of(context).textTheme.labelLarge,
             ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const FinalizedComponentGallery(),
+                ),
+              ),
+              child: const Text('Finalized Figma components'),
+            ),
+            OutlinedButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const FinalizedScreenGallery(),
+                ),
+              ),
+              child: const Text('Finalized Figma screens'),
+            ),
             const SizedBox(height: 28),
             LayoutBuilder(
               builder: (context, constraints) {
@@ -612,6 +632,8 @@ class _ResponsiveShell extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     body: AdaptivePaneLayout(
       primary: _ChatSurface(agent: agent),
+      secondaryBackgroundColor: Colors.black,
+      secondaryBackgroundOnlyInBookMode: true,
       secondary: _DressingPanel(agent: agent),
       header: _MobileHeader(onNewJourney: onNewJourney),
       footer: _ChatComposer(
@@ -785,28 +807,24 @@ class _DressingPanel extends StatelessWidget {
           excluding: agent.isBusy || agent.connectionError != null,
           child: IgnorePointer(
             ignoring: agent.isBusy || agent.connectionError != null,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Surface(
-                  surfaceContext: agent.controller.contextFor('dressing-room'),
-                ),
-                if (agent.hasSelectedProductsSurface) ...[
-                  const SizedBox(height: 12),
-                  Surface(
-                    surfaceContext: agent.controller.contextFor(
-                      'selected-products',
-                    ),
-                  ),
-                ],
-              ],
+            child: AnimatedSize(
+              key: const ValueKey('dressing-room-resize'),
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : AdaptivePaneLayout.transitionDuration,
+              curve: Curves.easeInOutCubic,
+              alignment: Alignment.topLeft,
+              child: Surface(
+                surfaceContext: agent.controller.contextFor('dressing-room'),
+              ),
             ),
           ),
         );
       },
     );
     return CommerceDressingRoomStyle(
-      dark: AdaptivePaneScope.isSplitOf(context),
+      dark: true,
+      compact: !AdaptivePaneScope.isSplitOf(context),
       child: surface,
     );
   }
@@ -843,41 +861,33 @@ class _SideRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
+    final background =
+        AdaptivePaneScope.secondaryBackgroundColorOf(context) ?? Colors.white;
+    final dark = background.computeLuminance() < .5;
+    return ColoredBox(
+      color: background,
       child: Column(
         children: [
           const SizedBox(height: 12),
-          Container(
-            width: 10,
-            height: 36,
-            decoration: BoxDecoration(
-              color: const Color(0xff18181b),
-              borderRadius: BorderRadius.circular(5),
+          IconButton(
+            onPressed: onNewJourney,
+            tooltip: 'New journey',
+            icon: Icon(
+              Icons.close,
+              size: 24,
+              color: dark ? Colors.white : Colors.black,
             ),
-          ),
-          const SizedBox(height: 4),
-          RotatedBox(
-            quarterTurns: 1,
-            child: Text(
-              '9:41',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: const Color(0xff18181b),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: 44,
-            height: 44,
-            child: IconButton(
-              onPressed: onNewJourney,
-              icon: const Icon(Icons.close, size: 24),
-              tooltip: 'New journey',
-            ),
+            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
           ),
           const Spacer(),
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              dark ? Colors.white54 : Colors.black54,
+              BlendMode.srcIn,
+            ),
+            child: const FinalizedBagIcon(count: 0),
+          ),
+          const SizedBox(height: 14),
         ],
       ),
     );

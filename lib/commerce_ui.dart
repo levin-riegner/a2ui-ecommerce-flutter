@@ -6,6 +6,11 @@ library;
 
 export 'src/catalog/commerce_components.dart';
 export 'src/catalog/commerce_examples.dart';
+export 'src/catalog/finalized_left_components.dart';
+export 'src/catalog/finalized_right_components.dart';
+export 'src/catalog/finalized_shared_components.dart';
+export 'src/catalog/catalog_export.dart';
+export 'src/catalog/finalized_screen_examples.dart';
 export 'src/data/models.dart' show ProductCategory;
 export 'src/layout/adaptive_page.dart';
 export 'src/layout/adaptive_pane_layout.dart';
