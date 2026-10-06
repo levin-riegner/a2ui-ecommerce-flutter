@@ -225,6 +225,7 @@ class FinalizedScreenGalleryState extends State<FinalizedScreenGallery> {
       builder: (context, constraints) => Stack(
         children: [
           AdaptivePaneLayout(
+            secondaryBackgroundOnlyInBookMode: true,
             secondaryBackgroundColor: example.id == 'start'
                 ? null
                 : Colors.black,

@@ -42,6 +42,11 @@ Product images in real journeys remain the approved catalog assets.
 
 ## Behavior boundaries
 
+On Duo, Book mode paints the whole right pane black. Fully open keeps its
+outer margins and iOS-controls area white around the black dressing-room card;
+the Closed cover stays white. The background fades over 320 ms on posture
+changes, and Reduce Motion skips the fade. Safe control bounds stay reserved.
+
 The production journey preserves local brief changes until submission,
 selected outfit/budget accounting and explicit select/remove events. Change on a
 filled piece requests affordable alternatives while keeping the current outfit

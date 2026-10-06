@@ -113,8 +113,16 @@ Future<Map<String, Object?>> captureDuoState(GenkitAgent agent) async {
   final view = WidgetsBinding.instance.platformDispatcher.views.first;
   final fields = <Map<String, Object?>>[];
   final layouts = <String>[];
+  final backgrounds = <Map<String, Object?>>[];
   void visit(Element element) {
     final widget = element.widget;
+    if (widget is ColoredBox &&
+        widget.key == const ValueKey('secondary-pane-background')) {
+      backgrounds.add({
+        'color': widget.color.toARGB32().toRadixString(16).padLeft(8, '0'),
+        'bounds': '${element.findRenderObject()?.paintBounds}',
+      });
+    }
     if (widget.key is ValueKey &&
         const {
           'compact-pane-layout',
@@ -160,6 +168,7 @@ Future<Map<String, Object?>> captureDuoState(GenkitAgent agent) async {
         .toList(),
     'fields': fields,
     'layouts': layouts,
+    'backgrounds': backgrounds,
     'surface': agent.latestInlineSurfaceId,
     'journey': agent.activeJourney?.name,
     'agent': identityHashCode(agent),

@@ -633,6 +633,7 @@ class _ResponsiveShell extends StatelessWidget {
     body: AdaptivePaneLayout(
       primary: _ChatSurface(agent: agent),
       secondaryBackgroundColor: Colors.black,
+      secondaryBackgroundOnlyInBookMode: true,
       secondary: _DressingPanel(agent: agent),
       header: _MobileHeader(onNewJourney: onNewJourney),
       footer: _ChatComposer(
@@ -798,6 +799,10 @@ class _DressingPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final backdropDark =
+        (AdaptivePaneScope.secondaryBackgroundColorOf(context) ?? Colors.white)
+            .computeLuminance() <
+        .5;
     final surface = AnimatedBuilder(
       animation: agent,
       builder: (context, _) {
@@ -814,9 +819,12 @@ class _DressingPanel extends StatelessWidget {
                 ),
                 if (agent.hasSelectedProductsSurface) ...[
                   const SizedBox(height: 12),
-                  Surface(
-                    surfaceContext: agent.controller.contextFor(
-                      'selected-products',
+                  CommerceDressingRoomStyle(
+                    dark: backdropDark,
+                    child: Surface(
+                      surfaceContext: agent.controller.contextFor(
+                        'selected-products',
+                      ),
                     ),
                   ),
                 ],
@@ -863,24 +871,36 @@ class _SideRail extends StatelessWidget {
   final VoidCallback onNewJourney;
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: Colors.black,
-    child: Column(
-      children: [
-        const SizedBox(height: 12),
-        IconButton(
-          onPressed: onNewJourney,
-          tooltip: 'New journey',
-          icon: const Icon(Icons.close, size: 24, color: Colors.white),
-          constraints: const BoxConstraints.tightFor(width: 48, height: 48),
-        ),
-        const Spacer(),
-        const ColorFiltered(
-          colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
-          child: FinalizedBagIcon(count: 0),
-        ),
-        const SizedBox(height: 14),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final background =
+        AdaptivePaneScope.secondaryBackgroundColorOf(context) ?? Colors.white;
+    final dark = background.computeLuminance() < .5;
+    return ColoredBox(
+      color: background,
+      child: Column(
+        children: [
+          const SizedBox(height: 12),
+          IconButton(
+            onPressed: onNewJourney,
+            tooltip: 'New journey',
+            icon: Icon(
+              Icons.close,
+              size: 24,
+              color: dark ? Colors.white : Colors.black,
+            ),
+            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+          ),
+          const Spacer(),
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              dark ? Colors.white54 : Colors.black54,
+              BlendMode.srcIn,
+            ),
+            child: const FinalizedBagIcon(count: 0),
+          ),
+          const SizedBox(height: 14),
+        ],
+      ),
+    );
+  }
 }

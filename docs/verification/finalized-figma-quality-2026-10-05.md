@@ -20,7 +20,9 @@ Branch: `feat/finalized-figma-catalog`, based on main `5586800`.
 
 ## Right pane background
 
-The split dressing pane now paints black through its top, bottom and far-right margins while controls retain their safe bounds. The native Duo capture confirmed white system time/connectivity indicators and readable selected-piece text. A subsequent native Book-state probe retained the selected top, €35 spend and composer identity with no render errors. An actual Closed/cover screenshot then confirmed the white page background and dark system indicators, with the same selected outfit and composer identity. Both flat and hinge-separated widget tests verify the background geometry, safe controls and restoration of the compact appearance; all 74 targeted tests and analysis pass.
+Corrected on 2026-10-06 after the user clarified the intended Open state: the outer right background is black only in Book mode. Fully open keeps white margins and a white iOS-controls area around the black dressing-room card; Closed/cover remains white. A 320 ms fade follows actual Duo posture, supports mid-transition reversal, and honours Reduce Motion. System indicators, the optional rail and selected-piece headings follow the animated background's contrast.
+
+Native Open and Book screenshots confirmed the two endpoint appearances. The native probe observed three intermediate grey colours in each direction, with the selected top, €35 spend, inline surface and composer identity retained, and no render errors. Evidence: `duo-book-background-2026-10-06.json`. All 57 affected layout/screen tests and analysis pass, including interrupted fades and Reduce Motion.
 
 ## Source and integration scope
 
