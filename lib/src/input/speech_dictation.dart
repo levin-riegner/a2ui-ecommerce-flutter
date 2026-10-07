@@ -60,6 +60,9 @@ class SpeechDictation extends ChangeNotifier {
   final DictationRecognizer _recognizer;
   Future<void>? _pending;
   Timer? _startupTimer;
+  Timer? _completionTimer;
+  Object? _completedOwner;
+  ValueChanged<String>? _completedError;
   bool _ready = false;
   bool _acceptEvents = false;
   Object? _owner;
@@ -84,6 +87,7 @@ class SpeechDictation extends ChangeNotifier {
     required ValueChanged<String> onWords,
     required ValueChanged<String> onError,
   }) {
+    _clearCompletion();
     final session = ++_session;
     _acceptEvents = false;
     _startupTimer?.cancel();
@@ -150,6 +154,7 @@ class SpeechDictation extends ChangeNotifier {
   }
 
   Future<void> cancel(Object owner) {
+    if (identical(_completedOwner, owner)) _clearCompletion();
     if (!owns(owner)) return Future.value();
     _finish();
     return _cancelNative();
@@ -167,8 +172,18 @@ class SpeechDictation extends ChangeNotifier {
   void _status(String status) {
     if (_owner == null || !_acceptEvents) return;
     if (status == SpeechToText.doneStatus) {
+      final owner = _owner;
+      final onError = _onError;
       _finish();
-      _cancelNative();
+      // iOS sends doneNoResult before notifyError on recognition failure.
+      // Cancelling here also makes speech_to_text suppress that error.
+      // The native task has already ended; retain its error route briefly.
+      _completedOwner = owner;
+      _completedError = onError;
+      _completionTimer = Timer(
+        const Duration(milliseconds: 500),
+        _clearCompletion,
+      );
     } else if (status == SpeechToText.listeningStatus) {
       _startupTimer?.cancel();
       _phase = DictationPhase.listening;
@@ -180,14 +195,28 @@ class SpeechDictation extends ChangeNotifier {
   }
 
   void _error(String code) {
-    if (_owner == null || !_acceptEvents) return;
-    _fail(switch (code) {
+    final message = switch (code) {
       'error_no_match' || 'error_speech_timeout' =>
         'No speech detected. Tap the microphone to try again.',
       'error_permission' || 'error_audio' || 'error_not_allowed' =>
         'Check microphone and speech recognition permissions, then try again.',
+      'error_unknown (300)' => 'Speech recognition could not initialize on this device. Please try again or type your message.',
       _ => 'Dictation is unavailable right now. Please try again or type your message.',
-    });
+    };
+    if (_owner == null || !_acceptEvents) {
+      final onError = _completedError;
+      _clearCompletion();
+      onError?.call(message);
+      return;
+    }
+    _fail(message);
+  }
+
+  void _clearCompletion() {
+    _completionTimer?.cancel();
+    _completionTimer = null;
+    _completedOwner = null;
+    _completedError = null;
   }
 
   void _fail(String message) {
@@ -199,6 +228,7 @@ class SpeechDictation extends ChangeNotifier {
 
   @override
   void dispose() {
+    _clearCompletion();
     ++_session;
     _startupTimer?.cancel();
     _acceptEvents = false;
@@ -209,6 +239,7 @@ class SpeechDictation extends ChangeNotifier {
   }
 
   void _finish() {
+    _clearCompletion();
     ++_session;
     _startupTimer?.cancel();
     _acceptEvents = false;

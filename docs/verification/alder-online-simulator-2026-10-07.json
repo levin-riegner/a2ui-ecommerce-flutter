@@ -246,5 +246,17 @@
         }
       }
     }
-  ]
+  ],
+  "dictationFollowUp": {
+    "symptom": "Microphone becomes inactive immediately; journey does not reset.",
+    "nativeError": "kLSRErrorDomain 300: Failed to initialize recognizer",
+    "assetFailure": "Apple local recognition fails to load AssetData/mini.json for both en-GB and en-US.",
+    "appBug": "iOS emits doneNoResult before notifyError; cancelling and clearing the owner on done suppressed the error.",
+    "appFix": "Briefly retain the completed session error route and let the finished native task close itself.",
+    "journeyRetained": true,
+    "draftRetained": true,
+    "hotReloadWithoutRestart": true,
+    "transcriptionVerified": false,
+    "limitation": "The Duo simulator recognition assets still fail to initialize."
+  }
 }

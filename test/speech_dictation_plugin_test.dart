@@ -85,6 +85,27 @@ void main() {
       await tester.tap(find.byTooltip('Send'));
       expect(sent, ['A wedding in Berlin, under €800.']);
       expect(SpeechDictation.shared.phase, DictationPhase.idle);
+
+      // The iOS plugin reports doneNoResult before the terminal error. Do not
+      // cancel between these callbacks or speech_to_text hides the failure.
+      controller.text = 'Keep my draft';
+      await tester.tap(find.byTooltip('Dictate message'));
+      await tester.pumpAndSettle();
+      await native('notifyStatus', 'listening');
+      final cancels = calls.where((call) => call.method == 'cancel').length;
+      await native('notifyStatus', 'doneNoResult');
+      expect(SpeechDictation.shared.phase, DictationPhase.idle);
+      expect(
+        calls.where((call) => call.method == 'cancel'),
+        hasLength(cancels),
+      );
+      await native(
+        'notifyError',
+        jsonEncode({'errorMsg': 'error_unknown (300)', 'permanent': true}),
+      );
+      expect(find.textContaining('could not initialize'), findsOneWidget);
+      expect(controller.text, 'Keep my draft');
+      expect(sent, ['A wedding in Berlin, under €800.']);
       await tester.pumpWidget(const SizedBox());
       await tester.pump();
       controller.dispose();
