@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'agent/commerce_agent.dart';
+import 'agent/conversation_entry.dart';
 import 'agent/model_connection.dart';
 import 'agent/genkit_agent.dart';
 import 'catalog/commerce_examples.dart';
@@ -646,20 +647,131 @@ class _ResponsiveShell extends StatelessWidget {
   );
 }
 
-class _ChatSurface extends StatelessWidget {
+class _ChatSurface extends StatefulWidget {
   const _ChatSurface({required this.agent});
 
   final CommerceAgent agent;
 
   @override
+  State<_ChatSurface> createState() => _ChatSurfaceState();
+}
+
+class _ChatSurfaceState extends State<_ChatSurface> {
+  bool _followScheduled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.agent.addListener(_followConversation);
+  }
+
+  @override
+  void didUpdateWidget(_ChatSurface oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.agent != widget.agent) {
+      oldWidget.agent.removeListener(_followConversation);
+      widget.agent.addListener(_followConversation);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.agent.removeListener(_followConversation);
+    super.dispose();
+  }
+
+  void _followConversation() {
+    if (_followScheduled) return;
+    final scroll = Scrollable.maybeOf(context)?.position;
+    if (scroll == null ||
+        !scroll.hasContentDimensions ||
+        scroll.maxScrollExtent - scroll.pixels > 80) {
+      return;
+    }
+    _followScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _followScheduled = false;
+      if (!mounted || Scrollable.maybeOf(context)?.position != scroll) return;
+      if (MediaQuery.disableAnimationsOf(context)) {
+        scroll.jumpTo(scroll.maxScrollExtent);
+      } else {
+        scroll.animateTo(
+          scroll.maxScrollExtent,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final agent = widget.agent;
     return AnimatedBuilder(
       animation: agent,
       builder: (context, _) {
         final surfaceId = agent.latestInlineSurfaceId;
+        final entries = agent.conversationEntries;
+        final pendingId = agent.pendingInlineSurfaceId;
+        final controlsDisabled =
+            agent.isBusy || agent.connectionError != null || pendingId != null;
         return Column(
+          key: const ValueKey('stylist-conversation'),
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            for (final entry in entries)
+              switch (entry) {
+                CommerceUserMessage(:final id, :final text) => Padding(
+                  key: ValueKey('user-message-$id'),
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xfff4f4f5),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(text),
+                    ),
+                  ),
+                ),
+                CommerceSurfaceEntry(surfaceId: final entryId) => Padding(
+                  key: ValueKey('conversation-surface-$entryId'),
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (entryId != surfaceId)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            'Previous response',
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ),
+                      _ConversationSurface(
+                        agent: agent,
+                        surfaceId: entryId,
+                        inactive: controlsDisabled || entryId != surfaceId,
+                      ),
+                    ],
+                  ),
+                ),
+              },
+            if (pendingId != null)
+              Padding(
+                key: ValueKey('pending-surface-$pendingId'),
+                padding: const EdgeInsets.only(bottom: 20),
+                child: _ConversationSurface(
+                  agent: agent,
+                  surfaceId: pendingId,
+                  inactive: true,
+                ),
+              ),
             if (agent.isBusy)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
@@ -691,22 +803,38 @@ class _ChatSurface extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Text(agent.connectionNotice!),
               ),
-            if (surfaceId != null)
-              IgnorePointer(
-                ignoring: agent.isBusy || agent.connectionError != null,
-                child: ExcludeFocus(
-                  excluding: agent.isBusy || agent.connectionError != null,
-                  child: Surface(
-                    key: ValueKey(surfaceId),
-                    surfaceContext: agent.controller.contextFor(surfaceId),
-                  ),
-                ),
-              ),
           ],
         );
       },
     );
   }
+}
+
+class _ConversationSurface extends StatelessWidget {
+  const _ConversationSurface({
+    required this.agent,
+    required this.surfaceId,
+    required this.inactive,
+  });
+
+  final CommerceAgent agent;
+  final String surfaceId;
+  final bool inactive;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    blockUserActions: inactive,
+    child: IgnorePointer(
+      ignoring: inactive,
+      child: ExcludeFocus(
+        excluding: inactive,
+        child: Surface(
+          key: ValueKey(surfaceId),
+          surfaceContext: agent.controller.contextFor(surfaceId),
+        ),
+      ),
+    ),
+  );
 }
 
 class _ConnectionNotice extends StatelessWidget {
@@ -769,6 +897,7 @@ class _ChatComposerState extends State<_ChatComposer> {
     final text = textController.text.trim();
     if (text.isEmpty ||
         widget.agent.isBusy ||
+        widget.agent.pendingInlineSurfaceId != null ||
         widget.agent.connectionError != null) {
       return;
     }
@@ -780,6 +909,7 @@ class _ChatComposerState extends State<_ChatComposer> {
   Widget build(BuildContext context) {
     final canSend =
         !widget.agent.isBusy &&
+        widget.agent.pendingInlineSurfaceId == null &&
         widget.agent.connectionError == null &&
         widget.agent.latestInlineSurfaceId != null;
     return StylistComposer(
@@ -802,19 +932,26 @@ class _DressingPanel extends StatelessWidget {
       animation: agent,
       builder: (context, _) {
         if (!agent.hasDressingRoomSurface) return const SizedBox.shrink();
-        return ExcludeFocus(
-          excluding: agent.isBusy || agent.connectionError != null,
-          child: IgnorePointer(
-            ignoring: agent.isBusy || agent.connectionError != null,
-            child: AnimatedSize(
-              key: const ValueKey('dressing-room-resize'),
-              duration: MediaQuery.disableAnimationsOf(context)
-                  ? Duration.zero
-                  : AdaptivePaneLayout.transitionDuration,
-              curve: Curves.easeInOutCubic,
-              alignment: Alignment.topLeft,
-              child: Surface(
-                surfaceContext: agent.controller.contextFor('dressing-room'),
+        final inactive =
+            agent.isBusy ||
+            agent.connectionError != null ||
+            agent.pendingInlineSurfaceId != null;
+        return Semantics(
+          blockUserActions: inactive,
+          child: ExcludeFocus(
+            excluding: inactive,
+            child: IgnorePointer(
+              ignoring: inactive,
+              child: AnimatedSize(
+                key: const ValueKey('dressing-room-resize'),
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : AdaptivePaneLayout.transitionDuration,
+                curve: Curves.easeInOutCubic,
+                alignment: Alignment.topLeft,
+                child: Surface(
+                  surfaceContext: agent.controller.contextFor('dressing-room'),
+                ),
               ),
             ),
           ),

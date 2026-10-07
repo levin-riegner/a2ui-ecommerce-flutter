@@ -31,8 +31,70 @@ Map<String, Object?> _card(Product p, String tag) => {
   'tag': tag,
   'swatch': p.swatch,
   'imageAsset': p.imageAsset,
+  'category': p.category.name,
 };
 Map<String, Object?> _path(String value) => {'path': value};
+
+/// Provisional display only: it never updates the authoritative dressing room
+/// and carries no action or model-authored product facts.
+List<Map<String, Object?>> renderPendingStylistSurface({
+  required String surfaceId,
+  List<Product>? picks,
+}) => [
+  {
+    'version': 'v0.9',
+    'createSurface': {
+      'surfaceId': surfaceId,
+      'catalogId': stylistCatalogId,
+      'sendDataModel': true,
+    },
+  },
+  {
+    'version': 'v0.9',
+    'updateComponents': {
+      'surfaceId': surfaceId,
+      'components': [
+        {
+          'id': 'root',
+          'component': 'Column',
+          'children': ['status', 'preview'],
+        },
+        {
+          'id': 'status',
+          'component': 'StylistMessage',
+          'text': _path('/status'),
+        },
+        {
+          'id': 'preview',
+          'component': picks == null
+              ? 'RecommendationSkeleton'
+              : 'RecommendationPreview',
+          if (picks != null) 'products': _path('/recommendations'),
+        },
+      ],
+    },
+  },
+  {
+    'version': 'v0.9',
+    'updateDataModel': {
+      'surfaceId': surfaceId,
+      'value': {
+        'status': picks == null
+            ? 'Preparing your recommendations…'
+            : 'Adding styling advice…',
+        'recommendations': [
+          for (final product in picks ?? const <Product>[])
+            _card(
+              product,
+              product.occasion.isEmpty
+                  ? product.category.name
+                  : product.occasion,
+            ),
+        ],
+      },
+    },
+  },
+];
 Map<String, Object?> _productComponent(
   Product product,
   int index,
@@ -49,6 +111,7 @@ Map<String, Object?> _productComponent(
     'tag',
     'swatch',
     'imageAsset',
+    'category',
   ])
     property: _path('/$collection/$index/$property'),
   'action': {

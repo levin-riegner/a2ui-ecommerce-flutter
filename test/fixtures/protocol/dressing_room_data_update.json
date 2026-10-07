@@ -1,0 +1,55 @@
+[
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "dressing-room",
+      "value": {
+        "title": "Dressing room",
+        "brief": "Spring city visit",
+        "planCaption": "",
+        "planComplete": false,
+        "spent": "€85 spent — 1 of 4",
+        "left": "€815 left",
+        "progress": 0.09444444444444444,
+        "slots": [
+          {
+            "category": "top",
+            "label": "A top",
+            "name": "Solstice Button Shirt",
+            "meta": "Quiet Meridian · €85.00",
+            "swatch": "#e4e4e7",
+            "imageAsset": "assets/images/products/demo-0001.jpg",
+            "state": "Filled"
+          },
+          {
+            "category": "bottom",
+            "label": "Bottoms",
+            "name": "",
+            "meta": "Next piece",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Next"
+          },
+          {
+            "category": "shoes",
+            "label": "Shoes",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          },
+          {
+            "category": "bag",
+            "label": "A bag",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          }
+        ]
+      }
+    }
+  }
+]

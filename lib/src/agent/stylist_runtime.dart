@@ -11,6 +11,8 @@ import 'outfit_plan.dart';
 import 'stylist_brief.dart';
 
 typedef StylistModel = Future<ModelResponse> Function(ModelRequest request);
+typedef StylistProgress = void Function(List<Product> products);
+typedef StylistResultValidator = void Function(Map<String, dynamic> result);
 
 const _instructions =
     'You are a personal stylist in a fictional demo catalog. '
@@ -363,6 +365,7 @@ class StylistRuntime {
           });
         }
         scope.picks = ids.map((id) => state.seen[id]!).toList();
+        scope.onProgress?.call(List<Product>.unmodifiable(scope.picks));
         return ToolResult.response({'presentedIds': ids});
       },
     );
@@ -439,7 +442,12 @@ class StylistRuntime {
       name: 'stylistTurn',
       inputSchema: _turnSchema,
       outputSchema: _object({'type': 'object'}),
-      fn: (input, context) => _enqueue(input, cancel: context.cancel),
+      fn: (input, context) => _enqueue(
+        input,
+        cancel: context.cancel,
+        onProgress: Zone.current[_progressKey] as StylistProgress?,
+        validateResult: Zone.current[_validationKey] as StylistResultValidator?,
+      ),
     );
   }
 
@@ -450,6 +458,8 @@ class StylistRuntime {
   final void Function()? onCancelTurn;
   late final Flow<Map<String, dynamic>, Map<String, dynamic>, void, void> flow;
   final _zoneKey = Object();
+  final _progressKey = Object();
+  final _validationKey = Object();
   _StylistState _state = _StylistState();
   final Set<CancellationController> _active = {};
   bool _disposed = false;
@@ -472,14 +482,35 @@ class StylistRuntime {
   Future<Map<String, dynamic>> turn(
     Map<String, dynamic> input, {
     CancellationToken? cancel,
-  }) => flow(input, cancel: cancel);
+    StylistProgress? onProgress,
+    StylistResultValidator? validateResult,
+  }) => runZoned(
+    () => flow(input, cancel: cancel),
+    zoneValues: {_progressKey: onProgress, _validationKey: validateResult},
+  );
+
+  /// Invalidates draft work without discarding the last committed outfit.
+  void cancelActiveTurn() {
+    for (final cancellation in _active.toList()) {
+      cancellation.cancel('Stylist turn superseded');
+    }
+  }
 
   Future<Map<String, dynamic>> _enqueue(
     Map<String, dynamic> input, {
     CancellationToken? cancel,
+    StylistProgress? onProgress,
+    StylistResultValidator? validateResult,
   }) {
     if (_disposed) return Future.error(StateError('Model connection closed'));
-    final result = _pending.then((_) => _execute(input, cancel: cancel));
+    final result = _pending.then(
+      (_) => _execute(
+        input,
+        cancel: cancel,
+        onProgress: onProgress,
+        validateResult: validateResult,
+      ),
+    );
     _pending = result.then<void>((_) {}, onError: (Object _, StackTrace _) {});
     return result;
   }
@@ -487,6 +518,8 @@ class StylistRuntime {
   Future<Map<String, dynamic>> _execute(
     Map<String, dynamic> input, {
     CancellationToken? cancel,
+    StylistProgress? onProgress,
+    StylistResultValidator? validateResult,
   }) async {
     if (_disposed) throw StateError('Model connection closed');
     if ((await _turnSchema.validate(input)).isNotEmpty) {
@@ -500,7 +533,7 @@ class StylistRuntime {
       () => cancellation.cancel('Stylist turn timed out'),
     );
     final state = _state.copy();
-    final scope = _TurnScope(state, cancellation);
+    final scope = _TurnScope(state, cancellation, onProgress);
     onBeginTurn?.call();
     final removeCancel = cancellation.token.onCancel(
       () => onCancelTurn?.call(),
@@ -514,6 +547,7 @@ class StylistRuntime {
       );
       cancellation.token.throwIfCancelled();
       if (_disposed) throw StateError('Model connection closed');
+      validateResult?.call(result);
       _state = state;
       return result;
     } finally {
@@ -892,9 +926,10 @@ class _StylistState {
 }
 
 class _TurnScope {
-  _TurnScope(this.state, this.cancel);
+  _TurnScope(this.state, this.cancel, this.onProgress);
   final _StylistState state;
   final CancellationController cancel;
+  final StylistProgress? onProgress;
   int requests = 0;
   bool searchFoundProducts = false;
   int searches = 0;

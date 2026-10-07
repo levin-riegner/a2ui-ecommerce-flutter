@@ -1,0 +1,63 @@
+[
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "pending-turn-1",
+      "components": [
+        {
+          "id": "root",
+          "component": "Column",
+          "children": [
+            "status",
+            "preview"
+          ]
+        },
+        {
+          "id": "status",
+          "component": "StylistMessage",
+          "text": {
+            "path": "/status"
+          }
+        },
+        {
+          "id": "preview",
+          "component": "RecommendationPreview",
+          "products": {
+            "path": "/recommendations"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "pending-turn-1",
+      "value": {
+        "status": "Adding styling advice…",
+        "recommendations": [
+          {
+            "id": "demo-0001",
+            "name": "Solstice Button Shirt",
+            "price": "€85.00",
+            "brandLine": "Quiet Meridian · brown · unspecified",
+            "tag": "travel",
+            "swatch": "#e4e4e7",
+            "imageAsset": "assets/images/products/demo-0001.jpg",
+            "category": "top"
+          },
+          {
+            "id": "demo-0002",
+            "name": "Arc Ribbed Knit",
+            "price": "€125.00",
+            "brandLine": "Soft Current · green · cashmere",
+            "tag": "weekend",
+            "swatch": "#e4e4e7",
+            "imageAsset": "assets/images/products/demo-0002.jpg",
+            "category": "top"
+          }
+        ]
+      }
+    }
+  }
+]

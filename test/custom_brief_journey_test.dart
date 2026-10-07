@@ -88,7 +88,32 @@ void main() {
             .getValue<String>(DataPath('/brief')),
         contains('smart casual'),
       );
-      expect(find.text('Find options'), findsNothing);
+      final currentSurface = find.byKey(ValueKey(agent.latestInlineSurfaceId));
+      expect(
+        find.descendant(
+          of: currentSurface,
+          matching: find.text('Find options'),
+        ),
+        findsNothing,
+      );
+      // The submitted brief stays readable in the inactive conversation history.
+      expect(find.text('Find options'), findsOneWidget);
+      final previousSurface = find.byKey(
+        const ValueKey('conversation-surface-inline-1'),
+      );
+      expect(
+        tester
+            .widget<IgnorePointer>(
+              find
+                  .descendant(
+                    of: previousSurface,
+                    matching: find.byType(IgnorePointer),
+                  )
+                  .first,
+            )
+            .ignoring,
+        isTrue,
+      );
       final data = agent.controller
           .contextFor(agent.latestInlineSurfaceId!)
           .dataModel;

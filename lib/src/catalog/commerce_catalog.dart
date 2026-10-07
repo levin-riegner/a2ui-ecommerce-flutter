@@ -1,6 +1,7 @@
 import 'package:genui/genui.dart';
 
 import 'commerce_widgets.dart';
+import 'recommendation_skeleton.dart';
 import 'finalized_left_components.dart';
 import 'finalized_right_components.dart';
 import 'finalized_shared_components.dart';
@@ -28,6 +29,8 @@ Catalog buildCommerceCatalog() {
       stylistMessageCatalogItem,
       eyebrowCatalogItem,
       productCardCatalogItem,
+      recommendationSkeletonCatalogItem,
+      recommendationPreviewCatalogItem,
       pieceSlotCatalogItem,
       dressingRoomCatalogItem,
       ...finalizedLeftItems,

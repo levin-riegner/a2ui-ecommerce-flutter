@@ -1,0 +1,32 @@
+[
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "inline-1",
+      "value": {
+        "message": "Choose the cotton shirt for a light starting point.",
+        "eyebrow": "Catalog options",
+        "recommendations": [
+          {
+            "id": "demo-0001",
+            "name": "Solstice Button Shirt",
+            "price": "€85.00",
+            "brandLine": "Quiet Meridian · brown · unspecified",
+            "tag": "travel",
+            "swatch": "#e4e4e7",
+            "imageAsset": "assets/images/products/demo-0001.jpg"
+          },
+          {
+            "id": "demo-0002",
+            "name": "Arc Ribbed Knit",
+            "price": "€125.00",
+            "brandLine": "Soft Current · green · cashmere",
+            "tag": "weekend",
+            "swatch": "#e4e4e7",
+            "imageAsset": "assets/images/products/demo-0002.jpg"
+          }
+        ]
+      }
+    }
+  }
+]

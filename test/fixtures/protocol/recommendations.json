@@ -1,0 +1,235 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "dressing-room",
+      "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "dressing-room",
+      "components": [
+        {
+          "id": "root",
+          "component": "DressingRoom",
+          "title": {
+            "path": "/title"
+          },
+          "brief": {
+            "path": "/brief"
+          },
+          "spent": {
+            "path": "/spent"
+          },
+          "left": {
+            "path": "/left"
+          },
+          "progress": {
+            "path": "/progress"
+          },
+          "slots": {
+            "path": "/slots"
+          },
+          "planCaption": {
+            "path": "/planCaption"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "dressing-room",
+      "value": {
+        "title": "Dressing room",
+        "brief": "Spring city visit",
+        "planCaption": "",
+        "planComplete": false,
+        "spent": "€0 spent — 0 of 4",
+        "left": "€900 left",
+        "progress": 0.0,
+        "slots": [
+          {
+            "category": "top",
+            "label": "A top",
+            "name": "",
+            "meta": "Next piece",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Next"
+          },
+          {
+            "category": "bottom",
+            "label": "Bottoms",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          },
+          {
+            "category": "shoes",
+            "label": "Shoes",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          },
+          {
+            "category": "bag",
+            "label": "A bag",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "inline-1",
+      "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "inline-1",
+      "components": [
+        {
+          "id": "root",
+          "component": "Column",
+          "align": "stretch",
+          "children": [
+            "message",
+            "eyebrow",
+            "product-0",
+            "product-1"
+          ]
+        },
+        {
+          "id": "message",
+          "component": "StylistMessage",
+          "text": {
+            "path": "/message"
+          }
+        },
+        {
+          "id": "eyebrow",
+          "component": "Eyebrow",
+          "text": {
+            "path": "/eyebrow"
+          }
+        },
+        {
+          "id": "product-0",
+          "component": "ProductCard",
+          "name": {
+            "path": "/recommendations/0/name"
+          },
+          "price": {
+            "path": "/recommendations/0/price"
+          },
+          "brandLine": {
+            "path": "/recommendations/0/brandLine"
+          },
+          "tag": {
+            "path": "/recommendations/0/tag"
+          },
+          "swatch": {
+            "path": "/recommendations/0/swatch"
+          },
+          "imageAsset": {
+            "path": "/recommendations/0/imageAsset"
+          },
+          "action": {
+            "event": {
+              "name": "select_product",
+              "context": {
+                "productId": "demo-0001"
+              }
+            }
+          },
+          "category": {
+            "path": "/recommendations/0/category"
+          }
+        },
+        {
+          "id": "product-1",
+          "component": "ProductCard",
+          "name": {
+            "path": "/recommendations/1/name"
+          },
+          "price": {
+            "path": "/recommendations/1/price"
+          },
+          "brandLine": {
+            "path": "/recommendations/1/brandLine"
+          },
+          "tag": {
+            "path": "/recommendations/1/tag"
+          },
+          "swatch": {
+            "path": "/recommendations/1/swatch"
+          },
+          "imageAsset": {
+            "path": "/recommendations/1/imageAsset"
+          },
+          "action": {
+            "event": {
+              "name": "select_product",
+              "context": {
+                "productId": "demo-0002"
+              }
+            }
+          },
+          "category": {
+            "path": "/recommendations/1/category"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "inline-1",
+      "value": {
+        "message": "Start with a comfortable shirt for your spring city visit.",
+        "eyebrow": "Catalog options",
+        "recommendations": [
+          {
+            "id": "demo-0001",
+            "name": "Solstice Button Shirt",
+            "price": "€85.00",
+            "brandLine": "Quiet Meridian · brown · unspecified",
+            "tag": "travel",
+            "swatch": "#e4e4e7",
+            "imageAsset": "assets/images/products/demo-0001.jpg",
+            "category": "top"
+          },
+          {
+            "id": "demo-0002",
+            "name": "Arc Ribbed Knit",
+            "price": "€125.00",
+            "brandLine": "Soft Current · green · cashmere",
+            "tag": "weekend",
+            "swatch": "#e4e4e7",
+            "imageAsset": "assets/images/products/demo-0002.jpg",
+            "category": "top"
+          }
+        ]
+      }
+    }
+  }
+]
