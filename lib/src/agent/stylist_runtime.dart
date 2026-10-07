@@ -7,6 +7,7 @@ import 'package:schemantic/schemantic.dart';
 
 import '../data/models.dart';
 import 'stylist_surfaces.dart';
+import 'city_context.dart';
 import 'outfit_plan.dart';
 import 'stylist_brief.dart';
 
@@ -36,7 +37,11 @@ const _instructions =
     'Last presented IDs. For verbal removal call remove_from_outfit with a selected ID. '
     'Call save_outfit to record explicit changes to style, season, occasion or preferences; '
     'never assume missing dressCode or budget. After an edit, use the updated tool result '
-    'to search and present the next category in the same turn.';
+    'to search and present the next category in the same turn. '
+    'Save an explicitly mentioned destination city using save_outfit city. '
+    'Use host city/forecast facts for practical temperature and rain advice. '
+    'Never invent weather or claim a forecast covers dates outside its listed dates. '
+    'If city context is unavailable, say so; do not replace it with made-up weather.';
 
 SchemanticType<Map<String, dynamic>> _object(Map<String, Object?> schema) =>
     SchemanticType.from(
@@ -94,7 +99,14 @@ final _productIdSchema = _object({
 final _briefSchema = _object({
   'type': 'object',
   'properties': {
-    for (final name in ['occasion', 'dressCode', 'season', 'palette', 'notes'])
+    for (final name in [
+      'occasion',
+      'dressCode',
+      'season',
+      'palette',
+      'notes',
+      'city',
+    ])
       name: {'type': 'string'},
     'budget': {'type': 'number', 'minimum': 0},
   },
@@ -126,6 +138,7 @@ class StylistRuntime {
     StylistModel? model,
     ModelResponse Function(ModelResponse)? normalizeResponse,
     bool developerTools = false,
+    this.cityContextSource,
     this.onBeginTurn,
     this.onModelRequest,
     this.onCancelTurn,
@@ -371,21 +384,32 @@ class StylistRuntime {
     );
     ai.defineTool(
       name: 'save_outfit',
-      description: 'Save explicit occasion, dressCode, season, budget, palette or notes from the person. Never invent missing fields. Returns the authoritative next step.',
+      description: 'Save explicit destination city, occasion, dressCode, season, budget, palette or notes from the person. Never invent missing fields. Returns the authoritative next step.',
       inputSchema: _briefSchema,
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
         try {
-          final next = scope.state.briefState.merge(
-            Map<String, Object?>.from(input),
-          );
+          final patch = Map<String, Object?>.from(input);
+          final city = patch.remove('city');
+          if (city != null &&
+              (city is! String ||
+                  city.trim().length < 2 ||
+                  city.length > 100)) {
+            throw const FormatException('Enter a city name');
+          }
+          final next = scope.state.briefState.merge(patch);
           if (next.budget != null && next.budget! < scope.state.spent) {
             return ToolResult.response({
               'error': 'Budget is below selected outfit total',
             });
           }
           scope.state.briefState = next;
+          if (city is String) {
+            scope.state.city = city.trim();
+            await _loadCityContext(scope.state);
+            scope.cancel.token.throwIfCancelled();
+          }
           scope.allowEdits = false;
           _refreshProgress(scope, requested: scope.requested);
           return ToolResult.response(_progressFacts(scope));
@@ -453,6 +477,7 @@ class StylistRuntime {
 
   final Genkit ai;
   final List<Product> products;
+  final CityContextSource? cityContextSource;
   final void Function()? onBeginTurn;
   final void Function(ModelRequest request)? onModelRequest;
   final void Function()? onCancelTurn;
@@ -477,7 +502,14 @@ class StylistRuntime {
     ..briefState = journey == null
         ? const StylistBrief()
         : StylistBrief.fromJourney(journey)
-    ..catalogOccasion = journey?.catalogOccasion ?? '';
+    ..catalogOccasion = journey?.catalogOccasion ?? ''
+    ..city = switch (journey) {
+      DemoJourney.paris => 'Paris, France',
+      DemoJourney.berlin => 'Berlin, Germany',
+      DemoJourney.lisbon => 'Lisbon, Portugal',
+      DemoJourney.cotswolds => 'Cotswolds, United Kingdom',
+      null => '',
+    };
 
   Future<Map<String, dynamic>> turn(
     Map<String, dynamic> input, {
@@ -573,7 +605,44 @@ class StylistRuntime {
     ProductCategory? adjustedCategory;
     if (action != null) {
       final context = action['context'] as Map;
-      if (action['name'] == 'find_options') {
+      if (action['name'] == 'refresh_city_context' &&
+          cityContextSource != null &&
+          state.city.isNotEmpty) {
+        await _loadCityContext(state, refresh: true);
+        scope.cancel.token.throwIfCancelled();
+        return {
+          'messages':
+              renderStylistSurfaces(
+                turn: state.turn,
+                reply: state.lastReply,
+                picks: state.lastPresented
+                    .map((id) => state.seen[id]!)
+                    .toList(),
+                outfit: state.outfit,
+                budget: state.budget,
+                occasion: state.briefState.summary,
+                clarification: state.briefState.canSearch
+                    ? null
+                    : {
+                        'missingFields': state.briefState.missingFields,
+                        ...state.briefState.toMap(),
+                      },
+                plan: OutfitPlan.from(
+                  brief: state.briefState.planningText,
+                  outfit: state.outfit,
+                ),
+                nextCategory: state.lastNextCategory,
+                cityContext: state.cityContext,
+                cityContextNotice: state.cityContextNotice,
+                city: state.city,
+              ).where((message) {
+                final update =
+                    message['updateComponents'] ?? message['updateDataModel'];
+                return update is Map &&
+                    update['surfaceId'] == 'inline-${state.turn}';
+              }).toList(),
+        };
+      } else if (action['name'] == 'find_options') {
         final next = state.briefState.merge({
           for (final name in ['dressCode', 'season', 'budget'])
             if (context[name] != null) name: context[name],
@@ -644,6 +713,21 @@ class StylistRuntime {
       }
     }
     state.briefState = state.briefState.recordMessage(message, budget: budget);
+    final mentionedCity = RegExp(
+      r'\bin\s+(Berlin|Paris|Lisbon|Oxford)(?:,\s*(Germany|France|Portugal|United Kingdom|United States|USA|[A-Z]{2})\b)?\b',
+      caseSensitive: false,
+    ).firstMatch(message);
+    if (mentionedCity != null) {
+      final name = mentionedCity.group(1)!;
+      final country = mentionedCity.group(2);
+      // A repeated city name must not erase a previously explicit country.
+      if (country != null ||
+          state.city.split(',').first.toLowerCase() != name.toLowerCase()) {
+        state.city = [name, ?country].join(', ');
+      }
+    }
+    await _loadCityContext(state);
+    scope.cancel.token.throwIfCancelled();
     final openingJourney =
         state.catalogOccasion.isNotEmpty && message == state.brief;
     scope.requested =
@@ -722,6 +806,8 @@ class StylistRuntime {
           !scope.needsProducts)
         nextStep,
     ].where((text) => text.isNotEmpty).join('\n\n');
+    state.lastReply = reply;
+    state.lastNextCategory = scope.target;
     state.lastPresented = scope.picks.map((product) => product.id).toList();
     if (state.history.isNotEmpty && state.history.last.role == Role.model) {
       state.history[state.history.length - 1] = Message(
@@ -755,6 +841,9 @@ class StylistRuntime {
               },
         plan: plan,
         nextCategory: scope.target,
+        cityContext: state.cityContext,
+        cityContextNotice: state.cityContextNotice,
+        city: state.city,
       ),
     };
   }
@@ -808,6 +897,9 @@ class StylistRuntime {
 
   Map<String, Object?> _progressFacts(_TurnScope scope) => {
     'brief': scope.state.briefState.toMap(),
+    'city': scope.state.city,
+    if (scope.state.cityContext != null)
+      'cityContext': scope.state.cityContext!.facts,
     'missingFields': scope.state.briefState.missingFields,
     'outfit': scope.state.outfit.values.map(productFacts).toList(),
     'spent': scope.state.spent,
@@ -833,6 +925,7 @@ class StylistRuntime {
         'Preferences: ${state.preferences.join('; ')}. Settled brief: ${state.briefState.toMap()}.\n'
         'Budget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. '
         'Already spent: ${euro(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : euro(state.remaining)}.\n'
+        'Destination city: ${state.city}. Verified context: ${state.cityContext?.facts ?? state.cityContextNotice ?? 'not loaded'}.\n'
         'Host outfit facts: ${state.outfit.values.map(productFacts).toList()}.\n'
         '${scope.adjustingProductId == null ? '' : 'The person is adjusting ${scope.target?.name}. Keep ${scope.adjustingProductId} selected until a replacement is chosen. Present different product IDs.\n'}'
         'Last presented IDs, in display order: ${state.lastPresented}.\n'
@@ -842,7 +935,36 @@ class StylistRuntime {
         'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : euro(scope.availableBudget)}. $next';
   }
 
+  Future<void> _loadCityContext(
+    _StylistState state, {
+    bool refresh = false,
+  }) async {
+    final source = cityContextSource;
+    if (source == null || state.city.isEmpty) {
+      return;
+    }
+    state.cityContext = null;
+    final cancel = _scope.cancel.token;
+    cancel.throwIfCancelled();
+    try {
+      state.cityContext = await Future.any<CityContext>([
+        source.fetch(state.city, refresh: refresh),
+        cancel.whenCancelled.then((_) {
+          cancel.throwIfCancelled();
+          throw StateError('Context fetch cancelled');
+        }),
+      ]);
+      cancel.throwIfCancelled();
+      state.cityContextNotice = null;
+    } catch (_) {
+      cancel.throwIfCancelled();
+      state.cityContextNotice =
+          'Could not load the forecast for ${state.city}. Try refreshing it.';
+    }
+  }
+
   Future<void> dispose() async {
+    cityContextSource?.dispose();
     _disposed = true;
     for (final cancellation in _active.toList()) {
       cancellation.cancel('Model disconnected');
@@ -908,6 +1030,11 @@ class _StylistState {
   String brief = '';
   List<String> preferences = [];
   String catalogOccasion = '';
+  String city = '';
+  String lastReply = '';
+  ProductCategory? lastNextCategory;
+  CityContext? cityContext;
+  String? cityContextNotice;
   String get season => briefState.season;
   List<String> lastPresented = [];
   double get spent => outfit.values.fold(0, (sum, p) => sum + p.price);
@@ -922,6 +1049,11 @@ class _StylistState {
     ..brief = brief
     ..preferences = List.of(preferences)
     ..catalogOccasion = catalogOccasion
+    ..city = city
+    ..lastReply = lastReply
+    ..lastNextCategory = lastNextCategory
+    ..cityContext = cityContext
+    ..cityContextNotice = cityContextNotice
     ..lastPresented = List.of(lastPresented);
 }
 

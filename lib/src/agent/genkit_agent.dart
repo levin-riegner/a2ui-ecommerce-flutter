@@ -15,6 +15,7 @@ import 'model_settings.dart';
 import 'genkit_providers.dart';
 import 'stylist_runtime.dart';
 import 'stylist_surfaces.dart';
+import 'city_context.dart';
 
 /// Runs Genkit inside Flutter and publishes catalog-backed A2UI surfaces.
 class GenkitAgent extends CommerceAgent {
@@ -34,6 +35,7 @@ class GenkitAgent extends CommerceAgent {
     required String apiKey,
     String? baseUrl,
     http.Client? client,
+    bool onlineContext = false,
   }) async {
     final settings = ModelSettings(
       provider: provider,
@@ -50,6 +52,9 @@ class GenkitAgent extends CommerceAgent {
       return GenkitAgent(
         StylistRuntime(
           products: products,
+          cityContextSource: onlineContext
+              ? OpenMeteoCityContextSource()
+              : null,
           plugins: [connection.plugin],
           providerModel: connection.model,
           normalizeResponse: connection.normalizeResponse,
@@ -347,7 +352,7 @@ class GenkitAgent extends CommerceAgent {
       if (!_disposed && !_revoked && epoch == _epoch) {
         _recordFailure(
           turn,
-          'Your model could not respond. Check your API key, model settings, and connection, then try again.',
+          _provider?.failureMessage ?? 'Your model could not respond. Check your API key, model settings, and connection, then try again.',
         );
       }
       return false;

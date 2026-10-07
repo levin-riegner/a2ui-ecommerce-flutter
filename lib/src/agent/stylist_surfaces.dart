@@ -1,5 +1,6 @@
 import '../data/models.dart';
 import 'outfit_plan.dart';
+import 'city_context.dart';
 import 'stylist_brief_surface.dart';
 
 const stylistCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
@@ -133,6 +134,9 @@ List<Map<String, Object?>> renderStylistSurfaces({
   OutfitPlan? plan,
   ProductCategory? nextCategory,
   Map<String, Object?>? clarification,
+  CityContext? cityContext,
+  String? cityContextNotice,
+  String city = '',
 }) {
   final spent = outfit.values.fold<double>(0, (sum, p) => sum + p.price);
   final outfitPlan = plan ?? OutfitPlan.from(brief: occasion, outfit: outfit);
@@ -239,6 +243,51 @@ List<Map<String, Object?>> renderStylistSurfaces({
     inlineComponents
       ..clear()
       ..addAll(briefSurface.components);
+  }
+  if (cityContext != null || cityContextNotice != null) {
+    inlineData['cityLabel'] = cityContext?.label ?? city;
+    inlineData['weather'] = cityContext?.weatherCard;
+    inlineData['contextNotice'] = cityContextNotice ?? '';
+    final rootChildren = List<String>.from(
+      inlineComponents.first['children'] as List,
+    );
+    inlineComponents.first['children'] = rootChildren;
+    rootChildren.insertAll(1, [
+      'city-location',
+      cityContext != null ? 'city-weather' : 'city-context-notice',
+      'refresh-context',
+    ]);
+    inlineComponents.addAll([
+      {
+        'id': 'city-location',
+        'component': 'Eyebrow',
+        'text': _path('/cityLabel'),
+      },
+      if (cityContext != null)
+        {
+          'id': 'city-weather',
+          'component': 'TypicalWeather',
+          for (final property in ['title', 'summary', 'disclaimer', 'days'])
+            property: _path('/weather/$property'),
+        }
+      else
+        {
+          'id': 'city-context-notice',
+          'component': 'StylistMessage',
+          'text': _path('/contextNotice'),
+        },
+      {
+        'id': 'refresh-context',
+        'component': 'PrimaryButton',
+        'label': 'Refresh forecast',
+        'action': {
+          'event': {
+            'name': 'refresh_city_context',
+            'context': <String, Object?>{},
+          },
+        },
+      },
+    ]);
   }
   Map<String, Object?> create(String id) => {
     'version': 'v0.9',

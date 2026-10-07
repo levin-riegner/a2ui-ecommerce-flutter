@@ -214,18 +214,15 @@ void main() {
     );
     expect(client.tools, containsAll(['search_products', 'present_products']));
     expect(connected.latestInlineSurfaceId, 'inline-2');
-    final selected = connected.controller
-        .contextFor('selected-products')
-        .dataModel;
-    expect(selected.getValue<String>(DataPath('/products/0/id')), id);
     final dressing = connected.controller.contextFor('dressing-room').dataModel;
-    expect(dressing.getValue<String>(DataPath('/spent')), contains('1 pieces'));
+    expect(dressing.getValue<String>(DataPath('/spent')), contains('1 of 4'));
     expectOptionsFor(ProductCategory.bottom);
     expectNext(ProductCategory.bottom);
     expect(recommendationIds(), isNot(contains(id)));
+    final remaining = 900 - selectedProduct.price;
     expect(
       dressing.getValue<String>(DataPath('/left')),
-      '€${(900 - selectedProduct.price).toStringAsFixed(2)} left',
+      '€${remaining.toStringAsFixed(remaining == remaining.roundToDouble() ? 0 : 2)} left',
     );
     final filled = dressingSlots().singleWhere(
       (slot) => slot['category'] == 'top',
@@ -242,12 +239,15 @@ void main() {
       );
       expect(connected.connectionError, isNull);
       expect(connected.latestInlineSurfaceId, 'inline-3');
-      expect(selected.getValue<List<Object?>>(DataPath('/products')), isEmpty);
+      expect(
+        dressingSlots().where((slot) => slot['state'] == 'Filled'),
+        isEmpty,
+      );
       expect(
         dressing.getValue<String>(DataPath('/spent')),
-        '€0.00 spent · 0 pieces',
+        '€0 spent —\u00a00 of 4',
       );
-      expect(dressing.getValue<String>(DataPath('/left')), '€900.00 left');
+      expect(dressing.getValue<String>(DataPath('/left')), '€900 left');
       expectOptionsFor(ProductCategory.top);
       expectNext(ProductCategory.top);
       expect(inlineMessage(), contains('Removed ${selectedProduct.name}'));
