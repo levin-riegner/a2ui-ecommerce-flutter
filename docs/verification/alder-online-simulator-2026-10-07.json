@@ -1,0 +1,262 @@
+{
+  "date": "2026-10-07",
+  "device": "iPhone Duo simulator / iOS 27.1",
+  "entryPoint": "tool/alder_online_demo.dart",
+  "mode": "ALDER_DEMO_OFFLINE=true",
+  "model": "deterministic offline fixture",
+  "paidProviderRequests": 0,
+  "forecast": "Live Open-Meteo/GeoNames destination lookups",
+  "observations": [
+    "Native speech and microphone permission sheets appeared; no recognized transcript was produced.",
+    "Accessibility activation focused the editable draft; keyboard input remained unsent until Start my look.",
+    "Preparing your recommendations and catalog-validated Adding styling advice previews appeared before completion.",
+    "A2UI selection recorded Morrow Draped Top at EUR35 and offered bottom recommendations.",
+    "Refresh retained the current surface, selected top, history entries, and six offline requests.",
+    "The basic offline model did not interpret Remove my top; native removal was verified with the offline-only A2UI event probe.",
+    "A later native message In Paris fetched Paris forecast dates and retained the conversation surfaces."
+  ],
+  "limits": [
+    "Simulator permission/typed-input checks do not prove physical microphone transcription.",
+    "Selection used the native UI; removal used an injected A2UI interaction, not live natural-language generation.",
+    "Read-only history, rollback, forecast failures, and cancellation are additionally covered by mocked regression tests.",
+    "No live model calls, live inventory, or production hosting were validated."
+  ],
+  "checkpoints": [
+    {
+      "step": "selected-top",
+      "state": {
+        "surface": "inline-2",
+        "journey": null,
+        "spent": "€35 spent — 1 of 4",
+        "selected": [
+          "Morrow Draped Top"
+        ],
+        "errors": [],
+        "offlineModel": true,
+        "modelRequests": 6,
+        "busy": false,
+        "pendingSurface": null,
+        "entries": [
+          "turn-1",
+          "inline-1",
+          "inline-2"
+        ],
+        "connectionError": null,
+        "size": "Size(951.0, 669.0)",
+        "layouts": [
+          "[<'obstructed-split-layout'>]"
+        ],
+        "forecast": {
+          "title": "Berlin — forecast",
+          "summary": "2026-10-07 · Europe/Berlin",
+          "dates": [
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09",
+            "2026-10-10",
+            "2026-10-11"
+          ]
+        }
+      }
+    },
+    {
+      "step": "refreshed-forecast",
+      "state": {
+        "surface": "inline-2",
+        "journey": null,
+        "spent": "€35 spent — 1 of 4",
+        "selected": [
+          "Morrow Draped Top"
+        ],
+        "errors": [],
+        "offlineModel": true,
+        "modelRequests": 6,
+        "busy": false,
+        "pendingSurface": null,
+        "entries": [
+          "turn-1",
+          "inline-1",
+          "inline-2"
+        ],
+        "connectionError": null,
+        "size": "Size(951.0, 669.0)",
+        "layouts": [
+          "[<'obstructed-split-layout'>]"
+        ],
+        "forecast": {
+          "title": "Berlin — forecast",
+          "summary": "2026-10-07 · Europe/Berlin",
+          "dates": [
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09",
+            "2026-10-10",
+            "2026-10-11"
+          ]
+        }
+      }
+    },
+    {
+      "step": "verbal-removal-not-supported-by-offline-model",
+      "state": {
+        "surface": "inline-3",
+        "journey": null,
+        "spent": "€35 spent — 1 of 4",
+        "selected": [
+          "Morrow Draped Top"
+        ],
+        "errors": [],
+        "offlineModel": true,
+        "modelRequests": 9,
+        "busy": false,
+        "pendingSurface": null,
+        "entries": [
+          "turn-1",
+          "inline-1",
+          "inline-2",
+          "turn-3",
+          "inline-3"
+        ],
+        "connectionError": null,
+        "size": "Size(951.0, 669.0)",
+        "layouts": [
+          "[<'obstructed-split-layout'>]"
+        ],
+        "forecast": {
+          "title": "Berlin — forecast",
+          "summary": "2026-10-07 · Europe/Berlin",
+          "dates": [
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09",
+            "2026-10-10",
+            "2026-10-11"
+          ]
+        }
+      }
+    },
+    {
+      "step": "selected-top-final",
+      "state": {
+        "surface": "inline-2",
+        "journey": "berlin",
+        "spent": "€35 spent — 1 of 4",
+        "selected": [
+          "Morrow Draped Top"
+        ],
+        "errors": [],
+        "offlineModel": true,
+        "modelRequests": 6,
+        "busy": false,
+        "pendingSurface": null,
+        "entries": [
+          "turn-1",
+          "inline-1",
+          "inline-2"
+        ],
+        "connectionError": null,
+        "size": "Size(951.0, 669.0)",
+        "layouts": [
+          "[<'obstructed-split-layout'>]"
+        ],
+        "forecast": {
+          "title": "Berlin — forecast",
+          "summary": "2026-10-07 · Europe/Berlin",
+          "dates": [
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09",
+            "2026-10-10",
+            "2026-10-11"
+          ]
+        }
+      }
+    },
+    {
+      "step": "removed-top-by-a2ui-probe",
+      "state": {
+        "surface": "inline-3",
+        "journey": "berlin",
+        "spent": "€0 spent — 0 of 4",
+        "selected": [],
+        "errors": [],
+        "offlineModel": true,
+        "modelRequests": 9,
+        "busy": false,
+        "pendingSurface": null,
+        "entries": [
+          "turn-1",
+          "inline-1",
+          "inline-2",
+          "inline-3"
+        ],
+        "connectionError": null,
+        "size": "Size(951.0, 669.0)",
+        "layouts": [
+          "[<'obstructed-split-layout'>]"
+        ],
+        "forecast": {
+          "title": "Berlin — forecast",
+          "summary": "2026-10-07 · Europe/Berlin",
+          "dates": [
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09",
+            "2026-10-10",
+            "2026-10-11"
+          ]
+        }
+      }
+    },
+    {
+      "step": "changed-destination-paris",
+      "state": {
+        "surface": "inline-4",
+        "journey": "berlin",
+        "spent": "€0 spent — 0 of 4",
+        "selected": [],
+        "errors": [],
+        "offlineModel": true,
+        "modelRequests": 12,
+        "busy": false,
+        "pendingSurface": null,
+        "entries": [
+          "turn-1",
+          "inline-1",
+          "inline-2",
+          "inline-3",
+          "turn-4",
+          "inline-4"
+        ],
+        "connectionError": null,
+        "size": "Size(951.0, 669.0)",
+        "layouts": [
+          "[<'obstructed-split-layout'>]"
+        ],
+        "forecast": {
+          "title": "Paris — forecast",
+          "summary": "2026-10-07 · Europe/Paris",
+          "dates": [
+            "2026-10-07",
+            "2026-10-08",
+            "2026-10-09",
+            "2026-10-10",
+            "2026-10-11"
+          ]
+        }
+      }
+    }
+  ],
+  "dictationFollowUp": {
+    "symptom": "Microphone becomes inactive immediately; journey does not reset.",
+    "nativeError": "kLSRErrorDomain 300: Failed to initialize recognizer",
+    "assetFailure": "Apple local recognition fails to load AssetData/mini.json for both en-GB and en-US.",
+    "appBug": "iOS emits doneNoResult before notifyError; cancelling and clearing the owner on done suppressed the error.",
+    "appFix": "Briefly retain the completed session error route and let the finished native task close itself.",
+    "journeyRetained": true,
+    "draftRetained": true,
+    "hotReloadWithoutRestart": true,
+    "transcriptionVerified": false,
+    "limitation": "The Duo simulator recognition assets still fail to initialize."
+  }
+}

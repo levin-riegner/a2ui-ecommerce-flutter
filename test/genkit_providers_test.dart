@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:a2ui_flutter_commerce/src/agent/genkit_providers.dart';
@@ -537,6 +538,103 @@ void main() {
         },
       );
     }
+  }
+
+  test(
+    'a retired allowance response cannot contaminate the next turn',
+    () async {
+      final started = Completer<void>();
+      final response = Completer<http.Response>();
+      final connection = GenkitProvider(
+        ModelSettings(
+          provider: 'openai-compatible',
+          model: 'test-model',
+          apiKey: 'private-test-key',
+          baseUrl: 'http://127.0.0.1:8788/v1',
+        ),
+        client: MockClient((_) {
+          started.complete();
+          return response.future;
+        }),
+      );
+      final runtime = StylistRuntime(
+        products: products,
+        plugins: [connection.plugin],
+        providerModel: connection.model,
+        onBeginTurn: connection.beginTurn,
+        onModelRequest: connection.prepareRequest,
+        onCancelTurn: connection.cancelTurn,
+      );
+      addTearDown(() async {
+        connection.dispose();
+        await runtime.dispose();
+      });
+      final failure = expectLater(
+        runtime.turn({'message': 'Under €100'}),
+        throwsA(anything),
+      );
+      await started.future;
+      connection.cancelTurn();
+      connection.beginTurn();
+      response.complete(
+        http.Response(
+          '{}',
+          429,
+          headers: {'x-alder-demo-error': 'allowance_exhausted'},
+        ),
+      );
+      await failure;
+      expect(connection.failureMessage, isNull);
+    },
+  );
+
+  for (final scenario in ['local-cap', 'provider-limit', 'remote-header']) {
+    test(
+      'demo allowance hint is restricted to local bridge: $scenario',
+      () async {
+        final connection = GenkitProvider(
+          ModelSettings(
+            provider: 'openai-compatible',
+            model: 'test-model',
+            apiKey: 'private-test-key',
+            baseUrl: scenario == 'remote-header'
+                ? 'https://compatible.example/v1'
+                : 'http://127.0.0.1:8788/v1',
+          ),
+          client: MockClient(
+            (request) async => http.Response(
+              'private-test-key must never appear',
+              429,
+              headers: scenario == 'provider-limit'
+                  ? {}
+                  : {'x-alder-demo-error': 'allowance_exhausted'},
+            ),
+          ),
+        );
+        final runtime = StylistRuntime(
+          products: products,
+          plugins: [connection.plugin],
+          providerModel: connection.model,
+          onBeginTurn: connection.beginTurn,
+          onModelRequest: connection.prepareRequest,
+          onCancelTurn: connection.cancelTurn,
+        );
+        addTearDown(() async {
+          connection.dispose();
+          await runtime.dispose();
+        });
+        await expectLater(
+          runtime.turn({'message': 'Under €100'}),
+          throwsA(anything),
+        );
+        expect(
+          connection.failureMessage,
+          scenario == 'local-cap' ? contains('request allowance') : isNull,
+        );
+        connection.beginTurn();
+        expect(connection.failureMessage, isNull);
+      },
+    );
   }
 
   test(
