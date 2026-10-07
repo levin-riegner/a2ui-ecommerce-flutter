@@ -228,6 +228,11 @@ void main() {
       findsNothing,
     );
 
+    // New responses follow the scroll to their end; reveal the selected card
+    // after that animation before interacting with it.
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text(options[1].name));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(options[1].name));
     await tester.pumpAndSettle();
     expect(find.text(options[1].name), findsNWidgets(2));

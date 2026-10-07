@@ -1,0 +1,47 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "pending-turn-1",
+      "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "pending-turn-1",
+      "components": [
+        {
+          "id": "root",
+          "component": "Column",
+          "children": [
+            "status",
+            "preview"
+          ]
+        },
+        {
+          "id": "status",
+          "component": "StylistMessage",
+          "text": {
+            "path": "/status"
+          }
+        },
+        {
+          "id": "preview",
+          "component": "RecommendationSkeleton"
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "pending-turn-1",
+      "value": {
+        "status": "Preparing your recommendations…",
+        "recommendations": []
+      }
+    }
+  }
+]
