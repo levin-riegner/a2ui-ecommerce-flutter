@@ -44,6 +44,7 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
     });
     try {
       final agent = await GenkitAgent.connect(
+        onlineContext: true,
         provider: _provider,
         model: _model.text.trim(),
         apiKey: _key.text.trim(),

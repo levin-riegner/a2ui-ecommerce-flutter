@@ -53,6 +53,8 @@ class GenkitProvider {
   late final GenkitPlugin plugin;
   late final ModelRef model;
 
+  String? get failureMessage => _transport.failureMessage;
+
   void beginTurn() => _transport.beginTurn();
   void prepareRequest(ModelRequest request) =>
       _transport.prepareRequest(request);
@@ -100,7 +102,10 @@ class _CredentialTransport extends http.BaseClient {
   int _epoch = 0;
   String? _toolChoice;
   Completer<void> _abort = Completer<void>();
+  String? failureMessage;
+
   void beginTurn() {
+    failureMessage = null;
     _epoch++;
     _abort = Completer<void>();
     _requests = 0;
@@ -211,6 +216,15 @@ class _CredentialTransport extends http.BaseClient {
       final response = await inner
           .send(forwarded)
           .timeout(const Duration(seconds: 60));
+      if (!_closed &&
+          !_cancelled &&
+          epoch == _epoch &&
+          settings.provider == 'openai-compatible' &&
+          const {'127.0.0.1', 'localhost', '::1'}.contains(expected.host) &&
+          response.statusCode == 429 &&
+          response.headers['x-alder-demo-error'] == 'allowance_exhausted') {
+        failureMessage = 'This demo has reached its request allowance. Start a new demo session to continue.';
+      }
       if (_closed ||
           _cancelled ||
           epoch != _epoch ||
