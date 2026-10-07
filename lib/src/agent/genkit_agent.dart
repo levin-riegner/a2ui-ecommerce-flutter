@@ -9,10 +9,12 @@ import 'package:http/http.dart' as http;
 import '../catalog/commerce_catalog.dart';
 import '../data/models.dart';
 import 'commerce_agent.dart';
+import 'conversation_entry.dart';
 import '../data/catalog_products.dart';
 import 'model_settings.dart';
 import 'genkit_providers.dart';
 import 'stylist_runtime.dart';
+import 'stylist_surfaces.dart';
 
 /// Runs Genkit inside Flutter and publishes catalog-backed A2UI surfaces.
 class GenkitAgent extends CommerceAgent {
@@ -69,6 +71,11 @@ class GenkitAgent extends CommerceAgent {
 
   Future<void> disconnect() async {
     if (_revoked) return;
+    _supersedeTurn();
+    _clearSurfaces();
+    _failedTurn = null;
+    _connectionError = null;
+    if (!_disposed) notifyListeners();
     _revoked = true;
     final runtime = _runtime;
     _runtime = null;
@@ -94,6 +101,14 @@ class GenkitAgent extends CommerceAgent {
   DemoJourney? activeJourney;
   @override
   String? latestInlineSurfaceId;
+  @override
+  String? pendingInlineSurfaceId;
+  final List<CommerceConversationEntry> _entries = [];
+  int _turnId = 0;
+  int _epoch = 0;
+  @override
+  List<CommerceConversationEntry> get conversationEntries =>
+      List.unmodifiable(_entries);
 
   @override
   bool get hasStarted => _hasStarted;
@@ -109,18 +124,22 @@ class GenkitAgent extends CommerceAgent {
   bool get hasDressingRoomSurface => _surfaceIds.contains('dressing-room');
 
   @override
-  Future<void> startJourney(DemoJourney journey) => _enqueue(() async {
-    _clearSurfaces();
-    await Future<void>.delayed(Duration.zero);
-    if (_disposed) return;
-    activeJourney = journey;
-    _runtime?.reset(journey: journey);
-    _hasStarted = true;
-    notifyListeners();
-    await _performTurn(
-      _AgentTurn(message: '${journey.title}. ${journey.brief}'),
-    );
-  });
+  Future<void> startJourney(DemoJourney journey) {
+    final epoch = _supersedeTurn();
+    return _enqueue(() async {
+      if (epoch != _epoch) return;
+      _clearSurfaces();
+      await Future<void>.delayed(Duration.zero);
+      if (_disposed || _revoked || epoch != _epoch) return;
+      activeJourney = journey;
+      _runtime?.reset(journey: journey);
+      _hasStarted = true;
+      notifyListeners();
+      await _performTurn(
+        _AgentTurn(message: '${journey.title}. ${journey.brief}'),
+      );
+    });
+  }
 
   @override
   bool get canStartBrief => true;
@@ -129,10 +148,12 @@ class GenkitAgent extends CommerceAgent {
   Future<void> startBrief(String message) {
     final text = message.trim();
     if (text.isEmpty) return Future<void>.value();
+    final epoch = _supersedeTurn();
     return _enqueue(() async {
+      if (epoch != _epoch) return;
       _clearSurfaces();
       await Future<void>.delayed(Duration.zero);
-      if (_disposed) return;
+      if (_disposed || _revoked || epoch != _epoch) return;
       activeJourney = null;
       _runtime?.reset();
       _hasStarted = true;
@@ -143,14 +164,37 @@ class GenkitAgent extends CommerceAgent {
 
   void _clearSurfaces() {
     for (final surfaceId in _surfaceIds) {
-      transport.addMessage(core.DeleteSurfaceMessage(surfaceId: surfaceId));
+      if (!_disposed) {
+        transport.addMessage(core.DeleteSurfaceMessage(surfaceId: surfaceId));
+      }
     }
     _surfaceIds.clear();
     latestInlineSurfaceId = null;
+    pendingInlineSurfaceId = null;
+    _entries.clear();
+  }
+
+  int _supersedeTurn() {
+    _epoch++;
+    _runtime?.cancelActiveTurn();
+    _clearPending();
+    return _epoch;
+  }
+
+  void _clearPending() {
+    final id = pendingInlineSurfaceId;
+    if (id == null) return;
+    if (!_disposed) {
+      transport.addMessage(core.DeleteSurfaceMessage(surfaceId: id));
+    }
+    _surfaceIds.remove(id);
+    pendingInlineSurfaceId = null;
+    if (!_disposed) notifyListeners();
   }
 
   Future<void> _handleSend(ChatMessage message) async {
     if (_disposed || isBusy || _connectionError != null) return;
+    if (!_acceptsInteractions(message)) return;
     final action = _actionFrom(message);
     final text = message.text.trim();
     if (action == null && text.isEmpty) return;
@@ -168,11 +212,12 @@ class GenkitAgent extends CommerceAgent {
 
   Future<void> _enqueue(Future<void> Function() turn) {
     if (_disposed || _revoked) return Future<void>.value();
+    final epoch = _epoch;
     _queuedTurns++;
     notifyListeners();
     final next = _pendingTurn.then((_) async {
       try {
-        if (_disposed || _revoked) return;
+        if (_disposed || _revoked || epoch != _epoch) return;
         _connectionError = null;
         _connectionNotice = null;
         _failedTurn = null;
@@ -201,27 +246,85 @@ class GenkitAgent extends CommerceAgent {
     return null;
   }
 
+  // History and provisional surfaces are read-only even if a caller bypasses
+  // the widget's interaction guards. Dressing-room actions remain current.
+  bool _acceptsInteractions(ChatMessage message) {
+    for (final part in message.parts.uiInteractionParts) {
+      try {
+        final decoded = jsonDecode(part.interaction);
+        if (decoded is! Map || decoded['action'] is! Map) return false;
+        final action = decoded['action'] as Map;
+        final surfaceId = action['surfaceId'] ?? decoded['surfaceId'];
+        if (surfaceId != null &&
+            (surfaceId is! String ||
+                !_surfaceIds.contains(surfaceId) ||
+                (surfaceId != latestInlineSurfaceId &&
+                    surfaceId != 'dressing-room'))) {
+          return false;
+        }
+      } on FormatException {
+        return false;
+      }
+    }
+    return true;
+  }
+
   Future<bool> _performTurn(_AgentTurn turn) async {
+    final epoch = _epoch;
+    final id = turn.id ??= 'turn-${++_turnId}';
+    if (!turn.recorded && turn.message.isNotEmpty) {
+      _entries.add(CommerceUserMessage(id: id, text: turn.message));
+      turn.recorded = true;
+    }
+    final pendingId = 'pending-$id';
+    void publishProgress(List<Product>? picks) {
+      if (_disposed || _revoked || epoch != _epoch) return;
+      final messages = renderPendingStylistSurface(
+        surfaceId: pendingId,
+        picks: picks,
+      );
+      for (final raw in messages) {
+        final event = core.A2uiMessage.fromJson(Map<String, dynamic>.from(raw));
+        if (event is core.CreateSurfaceMessage &&
+            _surfaceIds.contains(pendingId)) {
+          continue;
+        }
+        transport.addMessage(event);
+      }
+      _surfaceIds.add(pendingId);
+      pendingInlineSurfaceId = pendingId;
+      notifyListeners();
+    }
+
     try {
       final runtime = _runtime;
       if (runtime == null) throw StateError('Model disconnected');
-      final payload = await runtime.turn({
-        if (turn.message.isNotEmpty) 'message': turn.message,
-        if (turn.action != null) 'action': turn.action,
-      });
-      if (_disposed || _revoked) return false;
+      publishProgress(null);
+      final payload = await runtime.turn(
+        {
+          if (turn.message.isNotEmpty) 'message': turn.message,
+          if (turn.action != null) 'action': turn.action,
+        },
+        onProgress: publishProgress,
+        validateResult: (payload) {
+          if (_disposed || _revoked || epoch != _epoch) {
+            throw StateError('Turn superseded');
+          }
+          _validateSurfaces(_parseEvents(payload));
+        },
+      );
+      if (_disposed || _revoked || epoch != _epoch) return false;
       // Parse the whole batch before publishing any part of it to the renderer.
-      final events = (payload['messages'] as List).map((raw) {
-        if (raw is! Map) throw const FormatException('Invalid A2UI message');
-        return core.A2uiMessage.fromJson(Map<String, dynamic>.from(raw));
-      }).toList();
+      final events = _parseEvents(payload);
       _validateSurfaces(events);
+      _clearPending();
       for (final event in events) {
         transport.addMessage(event);
         if (event is core.CreateSurfaceMessage) {
           _surfaceIds.add(event.surfaceId);
           if (event.surfaceId.startsWith('inline-')) {
             latestInlineSurfaceId = event.surfaceId;
+            _entries.add(CommerceSurfaceEntry(surfaceId: event.surfaceId));
           }
         } else if (event is core.DeleteSurfaceMessage) {
           _surfaceIds.remove(event.surfaceId);
@@ -233,7 +336,7 @@ class GenkitAgent extends CommerceAgent {
       await Future<void>.delayed(Duration.zero);
       return !_disposed;
     } on FormatException {
-      if (!_disposed) {
+      if (!_disposed && !_revoked && epoch == _epoch) {
         _recordFailure(
           turn,
           'Your stylist sent an incomplete response. Please try again.',
@@ -241,14 +344,25 @@ class GenkitAgent extends CommerceAgent {
       }
       return false;
     } catch (_) {
-      if (!_disposed) {
+      if (!_disposed && !_revoked && epoch == _epoch) {
         _recordFailure(
           turn,
           'Your model could not respond. Check your API key, model settings, and connection, then try again.',
         );
       }
       return false;
+    } finally {
+      if (epoch == _epoch) _clearPending();
     }
+  }
+
+  List<core.A2uiMessage> _parseEvents(Map<String, dynamic> payload) {
+    final messages = payload['messages'];
+    if (messages is! List) throw const FormatException('Invalid A2UI batch');
+    return messages.map((raw) {
+      if (raw is! Map) throw const FormatException('Invalid A2UI message');
+      return core.A2uiMessage.fromJson(Map<String, dynamic>.from(raw));
+    }).toList();
   }
 
   // Check the candidate definitions without mutating the live renderer. The
@@ -322,7 +436,9 @@ class GenkitAgent extends CommerceAgent {
 }
 
 class _AgentTurn {
-  const _AgentTurn({this.message = '', this.action});
+  _AgentTurn({this.message = '', this.action});
   final String message;
   final Map<String, Object?>? action;
+  String? id;
+  bool recorded = false;
 }

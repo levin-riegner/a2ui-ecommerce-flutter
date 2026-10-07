@@ -1,0 +1,194 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "dressing-room",
+      "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "dressing-room",
+      "components": [
+        {
+          "id": "root",
+          "component": "DressingRoom",
+          "title": {
+            "path": "/title"
+          },
+          "brief": {
+            "path": "/brief"
+          },
+          "spent": {
+            "path": "/spent"
+          },
+          "left": {
+            "path": "/left"
+          },
+          "progress": {
+            "path": "/progress"
+          },
+          "slots": {
+            "path": "/slots"
+          },
+          "planCaption": {
+            "path": "/planCaption"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "dressing-room",
+      "value": {
+        "title": "Dressing room",
+        "brief": "Spring city visit",
+        "planCaption": "",
+        "planComplete": false,
+        "spent": "€0 spent — 0 of 4",
+        "left": "Set a budget",
+        "progress": 0.0,
+        "slots": [
+          {
+            "category": "top",
+            "label": "A top",
+            "name": "",
+            "meta": "Next piece",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Next"
+          },
+          {
+            "category": "bottom",
+            "label": "Bottoms",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          },
+          {
+            "category": "shoes",
+            "label": "Shoes",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          },
+          {
+            "category": "bag",
+            "label": "A bag",
+            "name": "",
+            "meta": "Not yet",
+            "swatch": "#e4e4e7",
+            "imageAsset": "",
+            "state": "Empty"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "inline-1",
+      "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+      "sendDataModel": true
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "inline-1",
+      "components": [
+        {
+          "id": "root",
+          "component": "Column",
+          "align": "stretch",
+          "children": [
+            "message",
+            "style-label",
+            "style-options",
+            "brief-budget",
+            "find-options"
+          ]
+        },
+        {
+          "id": "message",
+          "component": "StylistMessage",
+          "text": {
+            "path": "/message"
+          }
+        },
+        {
+          "id": "style-label",
+          "component": "Eyebrow",
+          "text": "How formal or relaxed?"
+        },
+        {
+          "id": "style-options",
+          "component": "ChoiceGroup",
+          "options": [
+            "casual",
+            "smart-casual",
+            "business",
+            "cocktail",
+            "black-tie",
+            "outdoorsy"
+          ],
+          "selected": {
+            "path": "/dressCode"
+          },
+          "selectionPath": "/dressCode"
+        },
+        {
+          "id": "brief-budget",
+          "component": "BudgetSlider",
+          "value": {
+            "path": "/budget"
+          },
+          "min": 50,
+          "max": 2500
+        },
+        {
+          "id": "find-options",
+          "component": "PrimaryButton",
+          "label": "Find options",
+          "action": {
+            "event": {
+              "name": "find_options",
+              "context": {
+                "dressCode": {
+                  "path": "/dressCode"
+                },
+                "season": {
+                  "path": "/season"
+                },
+                "budget": {
+                  "path": "/budget"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "inline-1",
+      "value": {
+        "message": "What style and budget should we use?",
+        "dressCode": "",
+        "season": "spring",
+        "budget": 750.0
+      }
+    }
+  }
+]
