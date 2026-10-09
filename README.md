@@ -16,6 +16,15 @@ fvm flutter run
 
 Choose an iOS or Android device, or use `fvm flutter run -d chrome` for web. Choose **Connect your model**, select Google Gemini, OpenAI, Anthropic, or OpenAI-compatible, then enter a model ID that supports function tools and your API key. Compatible providers also require their API base URL, including its version path (for example `https://your-provider.example/v1`). HTTPS is required for remote providers; loopback HTTP is accepted for local compatible providers. Native operating systems may require additional configuration to permit local HTTP.
 
+iOS builds require the **iOS 27.1 SDK or newer** to use the full Duo display area and reserved regions. Runner enforces this at compilation for simulator and device builds in Debug, Profile, and Release. Select Xcode 27.1 or newer, or select it per command without changing the global Xcode setting:
+
+```sh
+DEVELOPER_DIR=/Applications/Xcode-27.1.0-Beta.app/Contents/Developer \
+  fvm flutter run -d <ios-device-id>
+```
+
+Use the path to your installed Xcode. The deployment target remains iOS 15.0; the build SDK requirement does not raise the minimum supported OS version.
+
 Connecting loads the bundled catalog and configures Genkit without calling a model or checking the key. Starting a journey, chatting, selecting/removing pieces, and Retry can make paid requests, with at most four model requests per interaction. The app sends requests directly to the chosen provider. Browser use additionally requires that provider to support browser requests (CORS); a native build does not have this browser restriction.
 
 The key stays in memory on the device and is added only to the provider's outgoing HTTP headers. It is not saved to files or browser storage and is never a Genkit flow input or generation option. **New journey → Disconnect model** clears the key and session. Reloading or closing the app requires configuring it again. Never embed keys in source, assets, or `--dart-define` values.

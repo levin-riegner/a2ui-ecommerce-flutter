@@ -253,9 +253,13 @@ void main() {
       await mount(tester);
       final mic = find.byKey(const ValueKey('stylist-microphone'));
       final send = find.byKey(const ValueKey('stylist-submit-Send'));
-      expect(tester.getSize(mic), const Size(48, 48));
-      expect(tester.getSize(send), const Size(48, 48));
-      await tester.tapAt(tester.getTopLeft(mic) + const Offset(2, 24));
+      expect(tester.getSize(mic), const Size(44, 48));
+      expect(tester.getSize(send), const Size(44, 48));
+      expect(
+        tester.getRect(mic).right,
+        lessThanOrEqualTo(tester.getRect(send).left),
+      );
+      await tester.tapAt(tester.getTopRight(mic) + const Offset(-2, 24));
       await tester.pump();
       expect(dictation.phase, DictationPhase.listening);
       await tester.enterText(find.byType(TextField), '  A dinner  ');
@@ -308,9 +312,16 @@ void main() {
       final mic = tester.getRect(
         find.byKey(const ValueKey('stylist-microphone')),
       );
-      // 4px dock padding and 4px pill padding above the home-indicator inset.
+      // The visible circle keeps 8px pill padding; its larger touch target
+      // extends another 6px within the pill.
       expect(tester.getRect(find.byType(StylistComposer)).bottom, 844 - 34 - 4);
-      expect(mic.bottom, lessThanOrEqualTo(844 - 34 - 8));
+      expect(mic.bottom, lessThanOrEqualTo(844 - 34 - 6));
+      expect(
+        tester
+            .getRect(find.byKey(const ValueKey('stylist-microphone-circle')))
+            .bottom,
+        lessThanOrEqualTo(844 - 34 - 12),
+      );
       controller.text = 'A wedding in Berlin\nAn outdoor ceremony\nCocktail dress code\nAround €800\nComfortable shoes';
       await tester.pumpAndSettle();
       final scroll = tester.widget<SingleChildScrollView>(

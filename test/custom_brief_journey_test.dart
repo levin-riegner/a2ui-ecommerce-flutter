@@ -1,7 +1,6 @@
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:a2ui_flutter_commerce/src/data/product_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -126,21 +125,34 @@ void main() {
       expect(find.text('Dressing room'), findsOneWidget);
       expect(tester.takeException(), isNull);
 
-      // Returning to a preset replaces the custom brief rather than retaining it.
+      // Starting an example replaces the prior brief and selected outfit.
       await tester.tap(find.byTooltip('New journey').first);
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text(DemoJourney.paris.title));
-      await tester.tap(find.text(DemoJourney.paris.title));
+      final parisExample = find.textContaining(
+        'Anniversary dinner at a smart restaurant',
+      );
+      await Scrollable.ensureVisible(
+        tester.element(parisExample),
+        alignment: .5,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(parisExample);
       await finishTurn(tester, agent);
-      expect(agent.activeJourney, DemoJourney.paris);
-      expect(runtime.outfit['budget'], DemoJourney.paris.budget);
+      expect(agent.activeJourney, isNull);
+      expect(runtime.outfit['budget'], 1500);
+      expect(runtime.outfit['items'], isEmpty);
       expect(
         agent.controller
             .contextFor('dressing-room')
             .dataModel
             .getValue<String>(DataPath('/brief')),
-        contains(DemoJourney.paris.title),
+        allOf(
+          contains('Anniversary dinner'),
+          contains('Paris in October'),
+          contains('black tie'),
+        ),
       );
+      expect(find.text('A spring day in Berlin'), findsNothing);
     },
   );
 

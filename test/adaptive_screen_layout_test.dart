@@ -85,7 +85,7 @@ void main() {
         expect(background.top, 0);
         expect(background.bottom, 669);
         expect(background.right, 951);
-        expect(background.left, obstructed ? 495.5 : 454);
+        expect(background.left, obstructed ? 495.5 : 453.5);
         final content = tester.getRect(find.byKey(const ValueKey('secondary')));
         expect(content.left, greaterThanOrEqualTo(background.left + 16));
         expect(content.right, lessThanOrEqualTo(951 - 84 - 16));
@@ -120,6 +120,103 @@ void main() {
       },
     );
   }
+
+  for (final obstructed in [false, true]) {
+    testWidgets(
+      'decorative pane reaches the edges while controls remain safe, hinge=$obstructed',
+      (tester) async {
+        setWindow(tester, const Size(951, 669));
+        await tester.pumpWidget(
+          _Harness(
+            extendSecondaryToEdges: true,
+            padding: const EdgeInsets.fromLTRB(20, 20, 84, 34),
+            features: obstructed
+                ? const [
+                    DisplayFeature(
+                      bounds: Rect.fromLTWH(455.5, 0, 40, 669),
+                      type: DisplayFeatureType.hinge,
+                      state: DisplayFeatureState.postureHalfOpened,
+                    ),
+                  ]
+                : const [],
+          ),
+        );
+        await tester.pumpAndSettle();
+        final artwork = tester.getRect(find.byKey(const ValueKey('secondary')));
+        final primary = tester.getRect(find.byKey(const ValueKey('primary')));
+        final draft = tester.getRect(find.byKey(const ValueKey('draft')));
+        expect(artwork.top, 0);
+        expect(artwork.bottom, 669);
+        expect(artwork.right, 951);
+        expect(artwork.left, greaterThan(primary.right));
+        expect(artwork.left, 951 / 2);
+        expect(artwork.width, 951 / 2);
+        expect(primary.left, greaterThanOrEqualTo(20));
+        expect(primary.top, greaterThanOrEqualTo(20));
+        expect(draft.bottom, lessThanOrEqualTo(635));
+        await tester.enterText(find.byKey(const ValueKey('draft')), 'Keep me');
+        tester.view.physicalSize = const Size(466, 678);
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const ValueKey('compact-pane-layout')),
+          findsOneWidget,
+        );
+        expect(find.text('Keep me'), findsOneWidget);
+        expect(
+          tester.getRect(find.byKey(const ValueKey('secondary'))).right,
+          lessThanOrEqualTo(466 - 84),
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('opening mosaic fills outer margins on the inner display', (
+    tester,
+  ) async {
+    setWindow(tester, const Size(951, 669));
+    tester.view.padding = const FakeViewPadding(
+      left: 20,
+      top: 20,
+      right: 84,
+      bottom: 34,
+    );
+    addTearDown(tester.view.resetPadding);
+    await tester.pumpWidget(const ReferenceApp());
+    await tester.pumpAndSettle();
+    final mosaic = tester.getRect(
+      find.byKey(const ValueKey('occasion-mosaic')),
+    );
+    expect(mosaic.top, 0);
+    expect(mosaic.left, 951 / 2);
+    expect(mosaic.width, 951 / 2);
+    expect(mosaic.right, 951);
+    expect(mosaic.bottom, 669);
+    expect(
+      tester.getRect(find.text('Where are you going?')).left,
+      greaterThanOrEqualTo(20 + 16),
+    );
+    expect(
+      tester.getRect(find.text('Connect your model')).bottom,
+      lessThanOrEqualTo(669 - 34),
+    );
+    final header = find.byKey(const ValueKey('alder-header'));
+    final headerBefore = tester.getRect(header);
+    final scroll = find.byKey(const ValueKey('primary-pane-scroll'));
+    expect(tester.getRect(scroll).top, headerBefore.top);
+    expect(
+      find.descendant(of: header, matching: find.byType(BackdropFilter)),
+      findsOneWidget,
+    );
+    await tester.drag(scroll, const Offset(0, -100));
+    await tester.pumpAndSettle();
+    expect(tester.getRect(header), headerBefore);
+    expect(
+      tester.getRect(find.text('Where are you going?')).bottom,
+      lessThan(headerBefore.bottom),
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('Book background fades and reverses without losing the draft', (
     tester,
@@ -468,7 +565,7 @@ void main() {
       );
       expect(
         tester.getSize(find.byKey(const ValueKey('stylist-submit-Send'))),
-        const Size(48, 48),
+        const Size(44, 48),
       );
       await tester.enterText(find.byType(TextField), '  a spring wedding  ');
       await tester.pump();
@@ -486,7 +583,15 @@ void main() {
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await tester.pumpWidget(const ReferenceApp());
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Explore component catalog'));
+    await Scrollable.ensureVisible(
+      tester.element(find.text('Explore component catalog')),
+      alignment: .5,
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Explore component catalog').hitTestable(),
+      findsOneWidget,
+    );
     await tester.tap(find.text('Explore component catalog'));
     await tester.pumpAndSettle();
     expect(find.text('Catalog components'), findsOneWidget);
@@ -517,6 +622,7 @@ class _Harness extends StatelessWidget {
     this.longContent = false,
     this.secondaryBackgroundColor,
     this.secondaryBackgroundOnlyInBookMode = false,
+    this.extendSecondaryToEdges = false,
     this.foldData = FoldableData.unsupported,
     this.disableAnimations = false,
   });
@@ -527,6 +633,7 @@ class _Harness extends StatelessWidget {
   final bool longContent;
   final Color? secondaryBackgroundColor;
   final bool secondaryBackgroundOnlyInBookMode;
+  final bool extendSecondaryToEdges;
   final FoldableData foldData;
   final bool disableAnimations;
 
@@ -546,6 +653,11 @@ class _Harness extends StatelessWidget {
             ),
             child: Scaffold(
               body: AdaptivePaneLayout(
+                extendSecondaryToEdges: extendSecondaryToEdges,
+                secondaryScrollable: !extendSecondaryToEdges,
+                secondaryPadding: extendSecondaryToEdges
+                    ? EdgeInsets.zero
+                    : null,
                 secondaryBackgroundColor: secondaryBackgroundColor,
                 secondaryBackgroundOnlyInBookMode:
                     secondaryBackgroundOnlyInBookMode,
