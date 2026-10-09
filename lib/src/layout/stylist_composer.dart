@@ -181,8 +181,15 @@ class _StylistComposerState extends State<StylistComposer>
 /// A fading glass backdrop for the composer where content scrolls underneath.
 /// Safe-area insets belong to AdaptivePaneLayout; this adds only a small gap.
 class StylistComposerDock extends StatelessWidget {
-  const StylistComposerDock({super.key, required this.child});
+  const StylistComposerDock({
+    super.key,
+    required this.child,
+    this.horizontalPadding = 16,
+    this.padding,
+  });
   final Widget child;
+  final double horizontalPadding;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -210,7 +217,12 @@ class StylistComposerDock extends StatelessWidget {
           ),
         ),
       ),
-      Padding(padding: const EdgeInsets.fromLTRB(16, 24, 16, 4), child: child),
+      Padding(
+        padding:
+            padding ??
+            EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 4),
+        child: child,
+      ),
     ],
   );
 }

@@ -221,11 +221,10 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
             color: _wash,
             borderRadius: BorderRadius.circular(28),
           ),
-          padding: const EdgeInsets.fromLTRB(20, 4, 4, 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
             children: [
-              Expanded(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 96, 8),
                 child: Semantics(
                   label: widget.fieldLabel,
                   child: TextField(
@@ -236,17 +235,22 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
                     textInputAction: TextInputAction.send,
                     minLines: 1,
                     maxLines: 5,
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 14, height: 20 / 14),
                     decoration: InputDecoration(
                       hintText: widget.isDictating
                           ? 'Listening…'
                           : widget.placeholder,
-                      hintStyle: const TextStyle(color: _muted, fontSize: 14),
+                      hintMaxLines: 1,
+                      hintStyle: const TextStyle(
+                        color: _muted,
+                        fontSize: 14,
+                        height: 20 / 14,
+                      ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       filled: false,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
                       isDense: true,
                     ),
                     onChanged: (value) {
@@ -257,44 +261,95 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
                   ),
                 ),
               ),
-              IconButton(
-                key: const ValueKey('stylist-microphone'),
-                tooltip: widget.onMicrophone == null
-                    ? 'Voice input unavailable'
-                    : widget.microphoneLabel,
-                onPressed: widget.enabled ? widget.onMicrophone : null,
-                icon: widget.isDictating
-                    ? const Icon(Icons.stop_rounded, size: 22)
-                    : const FinalizedLeftIcon('357bc.svg'),
-                style: IconButton.styleFrom(
-                  fixedSize: const Size(48, 48),
-                  minimumSize: const Size(48, 48),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  backgroundColor: widget.isDictating
-                      ? _ink
-                      : const Color(0xffe6e6e6),
-                  foregroundColor: widget.isDictating ? Colors.white : _ink,
+              // Figma's circles are 36 points. The invisible 44 × 48 targets
+              // remain disjoint within the 52-point composer.
+              Positioned(
+                right: 48,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    key: const ValueKey('stylist-microphone'),
+                    tooltip: widget.onMicrophone == null
+                        ? 'Voice input unavailable'
+                        : widget.microphoneLabel,
+                    onPressed: widget.enabled ? widget.onMicrophone : null,
+                    icon: Container(
+                      key: const ValueKey('stylist-microphone-circle'),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: widget.isDictating
+                            ? _ink
+                            : const Color(0xffe6e6e6),
+                      ),
+                      alignment: Alignment.center,
+                      child: widget.isDictating
+                          ? const Icon(
+                              Icons.stop_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            )
+                          : const FinalizedLeftIcon('357bc.svg'),
+                    ),
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size(44, 48),
+                      minimumSize: const Size(44, 48),
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(width: 8),
-              IconButton(
-                key: ValueKey('stylist-submit-${widget.submitLabel}'),
-                tooltip: widget.submitLabel,
-                onPressed:
-                    !widget.enabled ||
-                        controller.text.trim().isEmpty ||
-                        widget.onSend == null
-                    ? null
-                    : send,
-                icon: const Icon(Icons.arrow_upward_rounded, size: 24),
-                style: IconButton.styleFrom(
-                  fixedSize: const Size(48, 48),
-                  minimumSize: const Size(48, 48),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  backgroundColor: _ink,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: _line,
-                  disabledForegroundColor: _muted,
+              Positioned(
+                right: 4,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    key: ValueKey('stylist-submit-${widget.submitLabel}'),
+                    tooltip: widget.submitLabel,
+                    onPressed:
+                        !widget.enabled ||
+                            controller.text.trim().isEmpty ||
+                            widget.onSend == null
+                        ? null
+                        : send,
+                    icon: Container(
+                      key: const ValueKey('stylist-submit-circle'),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color:
+                            !widget.enabled ||
+                                controller.text.trim().isEmpty ||
+                                widget.onSend == null
+                            ? _line
+                            : _ink,
+                      ),
+                      alignment: Alignment.center,
+                      child: SvgPicture.asset(
+                        'assets/images/occasions/send-arrow.svg',
+                        colorFilter: ColorFilter.mode(
+                          !widget.enabled ||
+                                  controller.text.trim().isEmpty ||
+                                  widget.onSend == null
+                              ? _muted
+                              : Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                        excludeFromSemantics: true,
+                      ),
+                    ),
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size(44, 48),
+                      minimumSize: const Size(44, 48),
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
                 ),
               ),
             ],
