@@ -200,7 +200,12 @@ void main() {
     );
     expect(find.text('Where are you going?'), findsOneWidget);
 
-    await tester.tap(find.text(DemoJourney.paris.title));
+    final parisExample = find.textContaining(
+      'Anniversary dinner at a smart restaurant',
+    );
+    await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
+    await tester.pumpAndSettle();
+    await tester.tap(parisExample);
     await tester.pumpAndSettle();
 
     expect(find.text('Dressing room'), findsOneWidget);
@@ -284,7 +289,12 @@ void main() {
     await tester.pumpWidget(
       ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
     );
-    await tester.tap(find.text(DemoJourney.paris.title));
+    final parisExample = find.textContaining(
+      'Anniversary dinner at a smart restaurant',
+    );
+    await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
+    await tester.pumpAndSettle();
+    await tester.tap(parisExample);
     await tester.pumpAndSettle();
 
     final dressingRoomLabel = find.text('Dressing room');
@@ -305,7 +315,12 @@ void main() {
     await tester.pumpWidget(
       ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
     );
-    await tester.tap(find.text(DemoJourney.paris.title));
+    final parisExample = find.textContaining(
+      'Anniversary dinner at a smart restaurant',
+    );
+    await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
+    await tester.pumpAndSettle();
+    await tester.tap(parisExample);
     await tester.pumpAndSettle();
 
     final dressingRoomTitle = find.text('Dressing room');
@@ -326,13 +341,24 @@ void main() {
     await tester.pumpWidget(
       ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
     );
-    await tester.tap(find.text(DemoJourney.paris.title));
+    final parisExample = find.textContaining(
+      'Anniversary dinner at a smart restaurant',
+    );
+    await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
+    await tester.pumpAndSettle();
+    await tester.tap(parisExample);
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('New journey'));
     await tester.pumpAndSettle();
     expect(find.text('Where are you going?'), findsOneWidget);
 
-    await tester.tap(find.text(DemoJourney.berlin.title));
+    final berlinExample = find.textContaining('First day at a creative agency');
+    await Scrollable.ensureVisible(
+      tester.element(berlinExample),
+      alignment: .5,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(berlinExample);
     await tester.pumpAndSettle();
     expect(find.text('Dressing room'), findsOneWidget);
     expect(find.text('Where are you going?'), findsNothing);

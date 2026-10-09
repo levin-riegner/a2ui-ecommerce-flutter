@@ -1,7 +1,11 @@
+import 'dart:math' as math;
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:foldable/foldable.dart';
 
 import 'agent/commerce_agent.dart';
 import 'agent/conversation_entry.dart';
@@ -187,125 +191,177 @@ class _StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: AdaptivePaneLayout(
-      compactSecondaryFirst: false,
-      overlayFooter: onStartBrief != null,
-      secondaryScrollable: false,
-      secondaryPadding: EdgeInsets.zero,
-      panePadding: const EdgeInsets.fromLTRB(32, 8, 32, 24),
-      header: const Padding(
-        padding: EdgeInsets.fromLTRB(32, 24, 32, 16),
-        child: _BrandLockup(),
-      ),
-      primary: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Where are you going?',
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-              fontSize: 30,
-              fontWeight: FontWeight.w400,
-              height: 1.2,
-              letterSpacing: -.75,
+    body: LayoutBuilder(
+      builder: (context, constraints) {
+        final fold = DuoLayoutScope.of(context);
+        final closed = fold.status == HingeStatus.closed;
+        final threadMinHeight = math.max(
+          0.0,
+          constraints.maxHeight - (closed ? 72 : 80) - (closed ? 8 : 32) - 76,
+        );
+        return AdaptivePaneLayout(
+          compactSecondaryFirst: false,
+          showSecondaryInCompact: !closed,
+          primaryBottomInset: closed ? 8 : 32,
+          overlayHeader: true,
+          overlayFooter: onStartBrief != null,
+          secondaryScrollable: false,
+          extendSecondaryToEdges: true,
+          secondaryBackgroundColor: Colors.black,
+          secondaryPadding: EdgeInsets.zero,
+          panePadding: closed
+              ? const EdgeInsets.fromLTRB(16, 8, 8, 8)
+              : const EdgeInsets.fromLTRB(32, 0, 32, 24),
+          header: ClipRect(
+            key: const ValueKey('alder-header'),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: ColoredBox(
+                color: Colors.white.withValues(alpha: .8),
+                child: Padding(
+                  padding: closed
+                      ? const EdgeInsets.fromLTRB(16, 24, 8, 16)
+                      : const EdgeInsets.fromLTRB(32, 32, 32, 24),
+                  child: const _BrandLockup(),
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Tell me the occasion, where it is and roughly what you’d like to spend. I’ll pull the whole look together from what we carry, and you can change anything as we go.',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 15,
-              height: 1.4,
-              color: Colors.black.withValues(alpha: .75),
-            ),
+          primary: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(minHeight: threadMinHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const _StartIntroduction(),
+                    const SizedBox(height: 24),
+                    const Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Color(0x0d000000),
+                    ),
+                    const SizedBox(height: 24),
+                    Semantics(
+                      label: 'HERE ARE SOME EXAMPLES',
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: SizedBox(
+                          width: 151,
+                          height: 7,
+                          child: OverflowBox(
+                            alignment: Alignment.topLeft,
+                            minWidth: 151,
+                            maxWidth: 151,
+                            minHeight: 8,
+                            maxHeight: 8,
+                            child: SvgPicture.asset(
+                              'assets/images/occasions/start-eyebrow.svg',
+                              excludeFromSemantics: true,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    for (final example in _occasionExamples) ...[
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: _OccasionSuggestion(
+                            message: example.message,
+                            onPressed: isBusy || onSelect == null
+                                ? null
+                                : () {
+                                    if (onStartBrief != null) {
+                                      onStartBrief!(example.message);
+                                    } else {
+                                      onSelect!(example.journey);
+                                    }
+                                  },
+                          ),
+                        ),
+                      ),
+                      if (example != _occasionExamples.last)
+                        const SizedBox(height: 8),
+                    ],
+                  ],
+                ),
+              ),
+              // Keep host catalog/settings actions accessible below the opening
+              // composition, outside the space reserved for the docked input.
+              const SizedBox(height: 76),
+              OutlinedButton.icon(
+                onPressed: onOpenGallery,
+                icon: const Icon(Icons.grid_view_outlined),
+                label: const Text('Explore component catalog'),
+              ),
+              if (onDisconnect != null)
+                TextButton(
+                  onPressed: isBusy ? null : onDisconnect,
+                  child: const Text('Disconnect model'),
+                ),
+            ],
           ),
-          const SizedBox(height: 24),
-          const Divider(height: 1),
-          const SizedBox(height: 24),
-          if (onSelect != null && onStartBrief == null) ...[
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final journey in DemoJourney.values)
-                  ActionChip(
-                    label: Text(journey.title),
-                    onPressed: isBusy ? null : () => onSelect!(journey),
+          secondary: const _MosaicPreview(),
+          footer: onStartBrief != null
+              ? StylistComposerDock(
+                  horizontalPadding: 32,
+                  padding: closed
+                      ? const EdgeInsets.fromLTRB(16, 24, 8, 0)
+                      : const EdgeInsets.fromLTRB(32, 24, 32, 0),
+                  child: _CustomBriefEntry(
+                    onStart: onStartBrief!,
+                    isBusy: isBusy,
                   ),
-              ],
-            ),
-            const SizedBox(height: 16),
-          ],
-          Text(
-            'HERE ARE SOME EXAMPLES',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontSize: 10,
-              letterSpacing: 1,
-              color: Colors.black.withValues(alpha: .4),
-            ),
-          ),
-          const SizedBox(height: 8),
-          for (final example in _occasionExamples) ...[
-            _OccasionSuggestion(
-              message: example.message,
-              onPressed: isBusy || onSelect == null
-                  ? null
-                  : () {
-                      if (onStartBrief != null) {
-                        onStartBrief!(example.message);
-                      } else {
-                        onSelect!(example.journey);
-                      }
-                    },
-            ),
-            const SizedBox(height: 8),
-          ],
-          if (onStartBrief != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              'Preset journeys',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final journey in DemoJourney.values)
-                  ActionChip(
-                    label: Text(journey.title),
-                    onPressed: isBusy ? null : () => onSelect!(journey),
-                  ),
-              ],
-            ),
-          ],
-          const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: onOpenGallery,
-            icon: const Icon(Icons.grid_view_outlined),
-            label: const Text('Explore component catalog'),
-          ),
-          if (onDisconnect != null)
-            TextButton(
-              onPressed: isBusy ? null : onDisconnect,
-              child: const Text('Disconnect model'),
-            ),
-        ],
-      ),
-      secondary: const _MosaicPreview(),
-      footer: onStartBrief != null
-          ? StylistComposerDock(
-              child: _CustomBriefEntry(onStart: onStartBrief!, isBusy: isBusy),
-            )
-          : Padding(
-              padding: const EdgeInsets.fromLTRB(32, 16, 32, 24),
-              child: onConnect != null
-                  ? FilledButton(
-                      onPressed: onConnect,
-                      child: const Text('Connect your model'),
-                    )
-                  : const SizedBox.shrink(),
-            ),
+                )
+              : Padding(
+                  padding: closed
+                      ? const EdgeInsets.fromLTRB(16, 16, 8, 0)
+                      : const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  child: onConnect != null
+                      ? FilledButton(
+                          onPressed: onConnect,
+                          child: const Text('Connect your model'),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+        );
+      },
     ),
+  );
+}
+
+class _StartIntroduction extends StatelessWidget {
+  const _StartIntroduction();
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Text(
+        'Where are you going?',
+        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+          fontSize: 30,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xff18181b),
+          height: 1.2,
+          letterSpacing: -.75,
+        ),
+      ),
+      const SizedBox(height: 8),
+      Text(
+        'Tell me the occasion, where it is and roughly what you’d like to spend. I’ll pull the whole look together from what we carry, and you can change anything as we go.',
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          fontSize: 15,
+          height: 22 / 15,
+          letterSpacing: 0,
+          color: Colors.black.withValues(alpha: .75),
+        ),
+      ),
+    ],
   );
 }
 
@@ -331,7 +387,7 @@ class _OccasionSuggestion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-    color: const Color(0xfff3f3f3),
+    color: const Color(0xfff2f2f2),
     borderRadius: BorderRadius.circular(8),
     child: InkWell(
       onTap: onPressed,
@@ -341,13 +397,24 @@ class _OccasionSuggestion extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SvgPicture.asset('assets/images/occasions/suggestion-sparkle.svg'),
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/images/occasions/suggestion-sparkle.svg',
+                ),
+              ),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 message,
-                style: Theme.of(context).textTheme.bodyLarge
-                    ?.copyWith(fontSize: 16, height: 1.4, letterSpacing: -.25),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontSize: 16,
+                  height: 22 / 16,
+                  letterSpacing: -.25,
+                ),
               ),
             ),
           ],
@@ -399,18 +466,13 @@ class _BrandLockup extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Align(
     alignment: Alignment.centerLeft,
-    child: Container(
-      color: Colors.black,
-      padding: const EdgeInsets.fromLTRB(6, 4, 3, 5),
-      child: Text(
-        'ALDER',
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-          letterSpacing: 4,
-          height: 1.1,
-        ),
+    heightFactor: 1,
+    child: Semantics(
+      label: 'ALDER',
+      image: true,
+      child: SvgPicture.asset(
+        'assets/images/occasions/alder-wordmark.svg',
+        excludeFromSemantics: true,
       ),
     ),
   );
@@ -426,42 +488,53 @@ class _MosaicPreview extends StatelessWidget {
       final height = constraints.hasBoundedHeight
           ? constraints.maxHeight
           : width * 1.4;
-      final columnWidth = (width - 8) / 2.4;
+      final columnWidth = AdaptivePaneScope.isSplitOf(context)
+          ? (width - DuoLayoutScope.mediaForLayout(context).padding.right - 4) /
+                2
+          : (width - 8) / 2.4;
       return SizedBox(
+        key: const ValueKey('occasion-mosaic'),
         height: height,
-        child: ClipRect(
-          child: Stack(
-            children: [
-              for (final column in [
-                (index: 0, images: [1, 2, 3]),
-                (index: 1, images: [4, 5, 6, 7]),
-                (index: 2, images: [8, 9, 10]),
-              ])
-                Positioned(
-                  left: column.index * (columnWidth + 4),
-                  top: 0,
-                  bottom: 0,
-                  width: columnWidth,
-                  child: OverflowBox(
-                    maxHeight: double.infinity,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (final number in column.images) ...[
-                          Image.asset(
-                            'assets/images/occasions/start-${number.toString().padLeft(2, '0')}.png',
-                            width: columnWidth,
-                            height: columnWidth * 4 / 3,
-                            fit: BoxFit.cover,
-                            excludeFromSemantics: true,
-                          ),
-                          const SizedBox(height: 4),
+        child: ColoredBox(
+          color: Colors.white,
+          child: ClipRect(
+            child: Stack(
+              children: [
+                for (final column in [
+                  (index: 0, images: [1, 2, 3]),
+                  (index: 1, images: [4, 5, 6, 7]),
+                  (index: 2, images: [8, 9, 10]),
+                ])
+                  Positioned(
+                    left: column.index * (columnWidth + 4),
+                    top: 0,
+                    bottom: 0,
+                    width: columnWidth,
+                    child: OverflowBox(
+                      maxHeight: double.infinity,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (final number in column.images) ...[
+                            Image.asset(
+                              'assets/images/occasions/start-${number.toString().padLeft(2, '0')}.png',
+                              width: columnWidth,
+                              height: columnWidth * 4 / 3,
+                              fit: BoxFit.cover,
+                              alignment: number == 6
+                                  ? Alignment.topCenter
+                                  : Alignment.center,
+                              excludeFromSemantics: true,
+                            ),
+                            if (number != column.images.last)
+                              const SizedBox(height: 4),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -636,12 +709,16 @@ class _ResponsiveShell extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     body: AdaptivePaneLayout(
       overlayFooter: true,
+      panePadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       primary: _ChatSurface(agent: agent),
       secondaryBackgroundColor: Colors.black,
       secondaryBackgroundOnlyInBookMode: true,
       secondary: _DressingPanel(agent: agent),
       header: _MobileHeader(onNewJourney: onNewJourney),
-      footer: StylistComposerDock(child: _ChatComposer(agent: agent)),
+      footer: StylistComposerDock(
+        horizontalPadding: 8,
+        child: _ChatComposer(agent: agent),
+      ),
       rail: _SideRail(onNewJourney: onNewJourney),
     ),
   );

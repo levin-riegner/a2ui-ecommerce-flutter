@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
+import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_components.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
 import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
+import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -132,6 +135,93 @@ void _window(WidgetTester tester, Size size) {
 }
 
 void main() {
+  testWidgets(
+    'cover keeps one content column and preserves draft across poses',
+    (tester) async {
+      _window(tester, const Size(466, 678));
+      tester.view.padding = const FakeViewPadding(right: 84, bottom: 34);
+      addTearDown(tester.view.resetPadding);
+      final previous = FoldablePlatform.instance;
+      final fake = _FakeFoldable(
+        _data(
+          HingeStatus.closed,
+          regions: [_camera(const Rect.fromLTWH(382, 0, 84, 170))],
+        ),
+      );
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() async {
+        FoldablePlatform.instance = previous;
+        debugDefaultTargetPlatformOverride = null;
+        await fake.dispose();
+      });
+      await tester.pumpWidget(
+        ReferenceApp(agent: GenkitAgent(StylistRuntime(products: []))),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('occasion-mosaic')), findsNothing);
+      expect(
+        tester.getRect(find.text('Where are you going?')).right,
+        lessThanOrEqualTo(382),
+      );
+      final scroll = find.byKey(const ValueKey('compact-pane-scroll'));
+      expect(tester.getRect(scroll).right, 382);
+      final card = find.byType(InkWell).first;
+      expect(tester.getRect(card).right, 374);
+      expect(tester.getRect(find.byType(Divider)).right, 374);
+      final composer = find.byType(StylistComposer);
+      expect(tester.getRect(composer).right, 374);
+      expect(tester.getRect(composer).bottom, 670);
+      await tester.enterText(find.byType(TextField), 'Keep this occasion');
+      final editable = tester.state<EditableTextState>(
+        find.byType(EditableText),
+      );
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      await tester.pumpAndSettle();
+      expect(find.text('Keep this occasion'), findsOneWidget);
+      expect(tester.getRect(composer).bottom, lessThanOrEqualTo(378));
+      tester.view.resetViewInsets();
+      tester.view.physicalSize = const Size(951, 669);
+      fake.emit(_data(HingeStatus.fullyOpen));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('occasion-mosaic')), findsOneWidget);
+      expect(find.byType(VerticalDivider), findsNothing);
+      expect(tester.getRect(find.text('Where are you going?')).left, 32);
+      expect(
+        tester.getRect(find.byKey(const ValueKey('alder-header'))).height,
+        80,
+      );
+      expect(tester.getRect(card).width, 400);
+      expect(tester.getRect(card).left, 32);
+      expect(tester.getRect(composer).height, 52);
+      expect(tester.getRect(composer).bottom, 669 - 32);
+      expect(
+        tester.getSize(find.byKey(const ValueKey('stylist-submit-circle'))),
+        const Size(36, 36),
+      );
+      expect(
+        tester.state<EditableTextState>(find.byType(EditableText)),
+        same(editable),
+      );
+      tester.view.physicalSize = const Size(466, 678);
+      fake.emit(
+        _data(
+          HingeStatus.closed,
+          regions: [_camera(const Rect.fromLTWH(382, 0, 84, 170))],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('occasion-mosaic')), findsNothing);
+      expect(find.text('Keep this occasion'), findsOneWidget);
+      await tester.drag(scroll, const Offset(0, -400));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(scroll).right, 382);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    },
+  );
+
   testWidgets(
     'snapshot and event updates recover after snapshot and stream errors',
     (tester) async {

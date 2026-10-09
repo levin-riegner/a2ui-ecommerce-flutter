@@ -62,8 +62,12 @@ void main() {
       ),
     );
     await tester.pumpWidget(ReferenceApp(agent: agent));
-    await tester.ensureVisible(find.text(DemoJourney.paris.title));
-    await tester.tap(find.text(DemoJourney.paris.title));
+    final parisExample = find.textContaining(
+      'Anniversary dinner at a smart restaurant',
+    );
+    await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
+    await tester.pumpAndSettle();
+    await tester.tap(parisExample);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 20));
     expect(find.text('Asking your stylist…'), findsOneWidget);
