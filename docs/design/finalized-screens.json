@@ -19508,7 +19508,7 @@
   "assets": [
     {
       "path": "assets/images/finalized_left/restaurant.png",
-      "sha1": "0843e6efd9bc4690940de28ad0095b2fa77226f4",
+      "sha1": "500644fcfc41e8a825824af917cfa1ed54969718",
       "sourceNodes": [
         "186:4473",
         "186:4532",
@@ -19517,12 +19517,13 @@
       ],
       "width": 1740,
       "height": 1160,
-      "bytes": 2135543,
-      "policy": "Exact original uploaded image bytes from Figma download_assets, SHA1 verified against native imageHash. No screenshots as widgets. Figma source names may be copied inaccurately."
+      "bytes": 1793109,
+      "policy": "Licensed CC0 replacement; historicalFigmaSha1 retains original design evidence. See docs/assets/collage-provenance.json for source/creator/license and modifications.",
+      "historicalFigmaSha1": "0843e6efd9bc4690940de28ad0095b2fa77226f4"
     },
     {
       "path": "assets/images/finalized_left/creative-studio.png",
-      "sha1": "b80fc6c65c0fd789a564035a77b184788ab34be1",
+      "sha1": "8f4349c2ba02c1f3bee413953e03f7b33b34ab5b",
       "sourceNodes": [
         "203:5019",
         "203:5684",
@@ -19536,12 +19537,13 @@
       ],
       "width": 1742,
       "height": 1161,
-      "bytes": 1414074,
-      "policy": "Exact original uploaded image bytes from Figma download_assets, SHA1 verified against native imageHash. No screenshots as widgets. Figma source names may be copied inaccurately."
+      "bytes": 1934831,
+      "policy": "Licensed CC0 replacement; historicalFigmaSha1 retains original design evidence. See docs/assets/collage-provenance.json for source/creator/license and modifications.",
+      "historicalFigmaSha1": "b80fc6c65c0fd789a564035a77b184788ab34be1"
     },
     {
       "path": "assets/images/finalized_left/berlin-landmark.png",
-      "sha1": "c0f941460e58112a2a51f296c2d2e50511db3305",
+      "sha1": "6212af642646c2bcc8ebd7bb77ce51754d3cd611",
       "sourceNodes": [
         "203:5018",
         "203:5683",
@@ -19555,12 +19557,13 @@
       ],
       "width": 1740,
       "height": 1160,
-      "bytes": 2157950,
-      "policy": "Exact original uploaded image bytes from Figma download_assets, SHA1 verified against native imageHash. No screenshots as widgets. Figma source names may be copied inaccurately."
+      "bytes": 2469884,
+      "policy": "Licensed CC0 replacement; historicalFigmaSha1 retains original design evidence. See docs/assets/collage-provenance.json for source/creator/license and modifications.",
+      "historicalFigmaSha1": "c0f941460e58112a2a51f296c2d2e50511db3305"
     },
     {
       "path": "assets/images/finalized_left/paris-autumn.png",
-      "sha1": "309b2b6019a2d6035f919d51363fa794abc8d1f3",
+      "sha1": "4834e576818d50e7268cf3915a2161624b028ce5",
       "sourceNodes": [
         "186:4472",
         "186:4531",
@@ -19569,8 +19572,9 @@
       ],
       "width": 1548,
       "height": 1161,
-      "bytes": 3298692,
-      "policy": "Exact original uploaded image bytes from Figma download_assets, SHA1 verified against native imageHash. No screenshots as widgets. Figma source names may be copied inaccurately."
+      "bytes": 4125034,
+      "policy": "Licensed CC0 replacement; historicalFigmaSha1 retains original design evidence. See docs/assets/collage-provenance.json for source/creator/license and modifications.",
+      "historicalFigmaSha1": "309b2b6019a2d6035f919d51363fa794abc8d1f3"
     }
   ],
   "startCollage": {
@@ -19647,7 +19651,9 @@
         ]
       }
     ],
-    "allTenSourceHashesMatchExistingBundledFiles": true
+    "allTenSourceHashesMatchExistingBundledFiles": false,
+    "sourceHashesPolicy": "Historical Figma originals only. Current bundled replacements and licenses are recorded in docs/assets/collage-provenance.json.",
+    "replacementLedger": "docs/assets/collage-provenance.json"
   },
   "reviewPolicy": "Executable fixtures preserve real domain item identity and recompute spending. Literal contradictory Figma copy is retained for review. Native bezel/status chrome is outside app content. Figma examples are fixtures, never live forecast/stock/provider evidence.",
   "layoutPolicy": "Landscape splits chat/room; inner portrait orders room before chat; folded safe division handled by app Duo layout adapter. BagPreview is an overlay fixture, not forced inline into the production hierarchy."

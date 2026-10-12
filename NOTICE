@@ -23,7 +23,98 @@ Copyright 2020 The Inter Project Authors (https://github.com/rsms/inter).
 Licensed under the SIL Open Font License, Version 1.1, bundled as
 assets/fonts/inter/OFL.txt. Distributed unmodified from Google Fonts.
 
-Start-screen collage photographs in assets/images/occasions/ were supplied in
-the project design reference. Their source credits and redistribution terms
-have not yet been recorded. They are separate from the approved catalog-photo
-grant above; this project does not assert an Apache license for those assets.
+Start-screen collage and finalized gallery photographs:
+The ten assets/images/occasions/start-*.png files and the four photographs in
+assets/images/finalized_left/ are licensed replacements, separate from the
+product-photo grant above. They are supplied under CC0 1.0 Universal, not
+relicensed as Apache-2.0. License: https://creativecommons.org/publicdomain/zero/1.0/
+They are cropped, resized and converted to RGB PNG without source metadata.
+CC0 does not require attribution; the following credits preserve provenance.
+No photographer, depicted person, museum, site or venue endorses Alder.
+
+assets/images/occasions/start-01.png:
+Wedding dress detail — Joanna Malinowska
+Source: https://freestocks.org/photo/wedding-dress-detail/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-02.png:
+Female wearing a coat on a sunny autumn afternoon closeup 4 — Joanna Malinowska
+Source: https://freestocks.org/photo/female-wearing-a-coat-on-a-sunny-autumn-afternoon-closeup-4/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-03.png:
+Tie — freestocks.org
+Source: https://freestocks.org/photo/tie/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-04.png:
+Scarf in female hand — Joanna Malinowska
+Source: https://freestocks.org/photo/scarf-female-hand/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-05.png:
+Stylish fall outfit 2 — Joanna Malinowska
+Source: https://freestocks.org/photo/stylish-fall-outfit-2/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-06.png:
+Backless dress in the woods — freestocks.org
+Source: https://freestocks.org/photo/backless-dress-woods/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-07.png:
+Fall lace up boots — Joanna Malinowska
+Source: https://freestocks.org/photo/fall-lace-boots/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-08.png:
+Sunglasses on a table — Joanna Malinowska
+Source: https://freestocks.org/photo/sunglasses-on-a-table/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-09.png:
+Espadrilles — freestocks.org
+Source: https://freestocks.org/photo/espadrilles/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/occasions/start-10.png:
+Wedding shoes 2 — Joanna Malinowska
+Source: https://freestocks.org/photo/wedding-shoes-2/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+assets/images/finalized_left/berlin-landmark.png:
+Brandenburger Tor Berlin, 2024 — Affe2011
+Source: https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_Berlin,_2024.jpg
+CC0 evidence: https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_Berlin,_2024.jpg
+
+assets/images/finalized_left/paris-autumn.png:
+Tree in autumn yellow, Paris — Gerda Arendt
+Source: https://commons.wikimedia.org/wiki/File:Tree_in_autumn_yellow,_Paris.jpg
+CC0 evidence: https://commons.wikimedia.org/w/index.php?title=File:Tree_in_autumn_yellow,_Paris.jpg&oldid=1213930735
+
+assets/images/finalized_left/creative-studio.png:
+Blue Photo Studio, backplate DSC_0564 — Sergej Majboroda / Poly Haven
+Source: https://polyhaven.com/a/blue_photo_studio
+CC0 evidence: https://polyhaven.com/license
+
+assets/images/finalized_left/restaurant.png:
+Latte and a cheesecake on a café table — Joanna Malinowska
+Source: https://freestocks.org/photo/latte-and-a-cheesecake-on-a-cafe-table/
+CC0 evidence: https://freestocks.org/terms-of-use/
+
+The previous Figma-exported photographs had no recorded author/license grant
+and are no longer the current bundled files. Historical source hashes are
+retained as design evidence only, not as permission. Per-file source URLs,
+source/output hashes, crops and original-rights findings:
+docs/assets/collage-provenance.json and docs/asset-rights.md.
+
+Weather data (when Open-Meteo destination context is enabled):
+Open-Meteo forecasts and GeoNames location data via Open-Meteo are provided
+under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Source and attribution policy: https://open-meteo.com/en/licence
+Daily values are selected/rounded and display labels derived by Alder.
+Source/license links must accompany displayed data; this notice alone is not
+a substitute. Free-service access is limited to noncommercial use, separately
+from the data license: https://open-meteo.com/en/terms
+The hosted promotional demo needs the service decision recorded in
+docs/weather-service-review.md before live weather is enabled.

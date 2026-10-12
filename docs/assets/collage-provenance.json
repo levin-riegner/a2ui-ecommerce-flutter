@@ -1,0 +1,595 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-12T22:45:03Z",
+  "baselineCommit": "b3263ce205315599523118e956839207b4a04a90",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "scope": "Ten Start collage and four finalized gallery photographs; product-photo grant and fonts remain separate.",
+  "assets": [
+    {
+      "path": "assets/images/occasions/start-01.png",
+      "title": "Wedding dress detail",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/wedding-dress-detail/",
+      "downloadUrl": "https://freestocks.org/?download=4658",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "154c7ca2d35a363d5bc61de14090b17ef732096709d17a1e81a42269fa319d16",
+      "sourceDimensions": [
+        5028,
+        3352
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5028,
+        3352
+      ],
+      "outputDimensions": [
+        896,
+        1344
+      ],
+      "sha256": "f3dc1c36b92a1781884817d2d4ae6b3d0d531675d9b7aa16d321b4bdddf01152",
+      "sha1": "59a5e273f0b334ea5845ba677b5d1892240cdcf9",
+      "bytes": 1420096,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "3945d1fd61750f40a135f490f90c7e5a5604ea96",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "175:3675"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-02.png",
+      "title": "Female wearing a coat on a sunny autumn afternoon closeup 4",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/female-wearing-a-coat-on-a-sunny-autumn-afternoon-closeup-4/",
+      "downloadUrl": "https://freestocks.org/?download=13735",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "81da69539f6deab1a1be0b05b1aa6bb5113df47e329f43f88648108b8f6a4ef8",
+      "sourceDimensions": [
+        3772,
+        5658
+      ],
+      "sourceCropPixels": [
+        0,
+        1131,
+        3772,
+        5658
+      ],
+      "outputDimensions": [
+        896,
+        1344
+      ],
+      "sha256": "bcb3c857c56ccab1d82e849f1dd5541d8ebd24f4e609cd574e886e6256c9f7cd",
+      "sha1": "dbb31ed1e5a824fd09cec083f8b43593e8793fc3",
+      "bytes": 1607488,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "4fd5fede40aabe214bb882553dc9975f74c2345b",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "175:3674"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-03.png",
+      "title": "Tie",
+      "creator": "freestocks.org",
+      "sourcePage": "https://freestocks.org/photo/tie/",
+      "downloadUrl": "https://freestocks.org/?download=1681",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "f619aa2323ec219f2f12646c195036ec56ea5bd541a0af3d188a3070a96667a4",
+      "sourceDimensions": [
+        5472,
+        3648
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5472,
+        3648
+      ],
+      "outputDimensions": [
+        1200,
+        1799
+      ],
+      "sha256": "80a4e5c9509ad9b492ed9f9b5baf5ea9c232b8f107e449e8a4613ff87c9e50c7",
+      "sha1": "0cb05cf44faa4dc39d2e26ac1bc7580960872efd",
+      "bytes": 3003796,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "32853108429201af800a679baf2a893c64658fe3",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "175:3676"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-04.png",
+      "title": "Scarf in female hand",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/scarf-female-hand/",
+      "downloadUrl": "https://freestocks.org/?download=4765",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "dea9cccc9a126570df1ff77fc8c0f442629ad27b873082aa7a2b99cbe92a2050",
+      "sourceDimensions": [
+        5472,
+        3648
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5472,
+        3648
+      ],
+      "outputDimensions": [
+        736,
+        981
+      ],
+      "sha256": "8ef0024548bb4231ad87fc87dd46807e085eb96c078fc5e3a291d313d504d382",
+      "sha1": "ddc4939e9e6ed76ef087c721b5110b0513a3652f",
+      "bytes": 926610,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "538f9a28fc1178f821287e636df1fafb16ee71ee",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "175:3677"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-05.png",
+      "title": "Stylish fall outfit 2",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/stylish-fall-outfit-2/",
+      "downloadUrl": "https://freestocks.org/?download=4602",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "d73a29ff162dd7d31c713e03aaabe4bc95cbedd329536d6183829f9f79c6aa19",
+      "sourceDimensions": [
+        5472,
+        3648
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5472,
+        3648
+      ],
+      "outputDimensions": [
+        736,
+        1104
+      ],
+      "sha256": "8e5f3bf50fb21b922e2fa2c8df89b9592667e13ccd430b07b8b6d8294d53923d",
+      "sha1": "8e478918d0098b557b580cb47cc386a48eabc9dc",
+      "bytes": 1257390,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "6877e62bb0b5a408997abfbff83117f0849230a8",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "175:3681"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-06.png",
+      "title": "Backless dress in the woods",
+      "creator": "freestocks.org",
+      "sourcePage": "https://freestocks.org/photo/backless-dress-woods/",
+      "downloadUrl": "https://freestocks.org/?download=4547",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "1b84f107299f46accb8a35e04d98b499eb51a70c3a6063bc613c374de4b5e9ed",
+      "sourceDimensions": [
+        5340,
+        3560
+      ],
+      "sourceCropPixels": [
+        0,
+        818,
+        5340,
+        3560
+      ],
+      "outputDimensions": [
+        800,
+        1319
+      ],
+      "sha256": "94c3fa7b55ba8d83e437ededbc14cd17ff2a97948a6e6c05eed78965bc70978b",
+      "sha1": "5b32c2a5c2185950ffebe6a215a25236f0e4851c",
+      "bytes": 1552205,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "3d750ea812a2336984e5a7ed39aab050b8ee1419",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "175:3679"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-07.png",
+      "title": "Fall lace up boots",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/fall-lace-boots/",
+      "downloadUrl": "https://freestocks.org/?download=4424",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "4550976e3a7a37a7c8dbd239568c6ba448e3fa6ec2f132d93105b7c48616eeb1",
+      "sourceDimensions": [
+        5017,
+        3345
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5017,
+        3345
+      ],
+      "outputDimensions": [
+        750,
+        1000
+      ],
+      "sha256": "4081c1dbdf192dfc93a87f67c09c1e8e9a2c0189d3279651638530fe2f6ad639",
+      "sha1": "53b6dc70cf9f28b3757bddc18bc8c72cd5c8ee01",
+      "bytes": 1479094,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "303b16c3ac188eaaa2dbc0c7a0fda932014542b3",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "175:3678"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-08.png",
+      "title": "Sunglasses on a table",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/sunglasses-on-a-table/",
+      "downloadUrl": "https://freestocks.org/?download=2881",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "30061ca96a7edc10e1150f2c3142aa8514fb698e66c1144398deda6d9030eaa3",
+      "sourceDimensions": [
+        5472,
+        3648
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5472,
+        3648
+      ],
+      "outputDimensions": [
+        800,
+        1200
+      ],
+      "sha256": "3c6aea3e8c34b52d018994dacd0dd17dae1e11316560c4ea51e286a5ba09e819",
+      "sha1": "79fc5800f1294d5a35f60b2e73de9e2b94c2d199",
+      "bytes": 1198314,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "663f9e0912decaa8871b9ab9bbdfd3ce1d68190a",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "178:4231"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-09.png",
+      "title": "Espadrilles",
+      "creator": "freestocks.org",
+      "sourcePage": "https://freestocks.org/photo/espadrilles/",
+      "downloadUrl": "https://freestocks.org/?download=3556",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "944ba5dfe1cc5cde0669bd0bd514cf2e034b7d75a53d4a3ff633aca7aef93d3f",
+      "sourceDimensions": [
+        5351,
+        3567
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5351,
+        3567
+      ],
+      "outputDimensions": [
+        1200,
+        1800
+      ],
+      "sha256": "856e980945a1e98f503001490bd66e37fe4bb5b92b87dcafda11b7a95bd3e8fe",
+      "sha1": "9c60d11547e663dbfacdc60c715f398aad6b74ee",
+      "bytes": 2874066,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "b4a7298315b14c2b92c56098031033a1140613f0",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "178:4232"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/occasions/start-10.png",
+      "title": "Wedding shoes 2",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/wedding-shoes-2/",
+      "downloadUrl": "https://freestocks.org/?download=4722",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "942aedbfec7752f562cd328b486492f1afab2f0fab3c3c16e7a21b6d43957fca",
+      "sourceDimensions": [
+        4608,
+        3072
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        4608,
+        3072
+      ],
+      "outputDimensions": [
+        1200,
+        1598
+      ],
+      "sha256": "9c3f1278ada8cf38799814ce8f4486075c283ef8ff48d576709134d7f8d24da4",
+      "sha1": "3c3c6dae9aff294e90a4ed7cb125956d7e7b2bf4",
+      "bytes": 2034729,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "25437d290bbe1dab3fae2776f3f832372289e47d",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "178:4233"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/finalized_left/berlin-landmark.png",
+      "title": "Brandenburger Tor Berlin, 2024",
+      "creator": "Affe2011",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_Berlin,_2024.jpg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Brandenburger_Tor_Berlin%2C_2024.jpg",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://commons.wikimedia.org/wiki/File:Brandenburger_Tor_Berlin,_2024.jpg",
+      "sourceSha256": "aebb8ba119b8cee2b74a52a56efe1902fe38475ca1cca596026a1e1488c43752",
+      "sourceDimensions": [
+        3024,
+        4032
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        3024,
+        4032
+      ],
+      "outputDimensions": [
+        1740,
+        1160
+      ],
+      "sha256": "b4f40a807e4476498b4c6fc285f1f2ce42e9b2ec97de65a3a700f5c601e1bdb5",
+      "sha1": "6212af642646c2bcc8ebd7bb77ce51754d3cd611",
+      "bytes": 2469884,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "c0f941460e58112a2a51f296c2d2e50511db3305",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "203:5018",
+          "203:5683",
+          "203:5124",
+          "203:5446",
+          "203:6060",
+          "204:6514",
+          "204:6687",
+          "204:7235",
+          "204:7480"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/finalized_left/paris-autumn.png",
+      "title": "Tree in autumn yellow, Paris",
+      "creator": "Gerda Arendt",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Tree_in_autumn_yellow,_Paris.jpg",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Tree_in_autumn_yellow%2C_Paris.jpg",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://commons.wikimedia.org/w/index.php?title=File:Tree_in_autumn_yellow,_Paris.jpg&oldid=1213930735",
+      "sourceSha256": "5c55d57840cabc21db973d646c4fa5d9ca8953a53ee6a0dea6c55c7af417bae1",
+      "sourceDimensions": [
+        4000,
+        3000
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        4000,
+        3000
+      ],
+      "outputDimensions": [
+        1548,
+        1161
+      ],
+      "sha256": "a48c4c796d9c36fcaec6042c8374e08b6f085e9f61594db44219acf0ec7b5917",
+      "sha1": "4834e576818d50e7268cf3915a2161624b028ce5",
+      "bytes": 4125034,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "309b2b6019a2d6035f919d51363fa794abc8d1f3",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "visualChange": "Paris autumn foliage replaces Eiffel Tower-with-foliage view; remains destination illustration, not live evidence.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "186:4472",
+          "186:4531",
+          "204:7863",
+          "205:8068"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/finalized_left/creative-studio.png",
+      "title": "Blue Photo Studio, backplate DSC_0564",
+      "creator": "Sergej Majboroda / Poly Haven",
+      "sourcePage": "https://polyhaven.com/a/blue_photo_studio",
+      "downloadUrl": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Backplates/blue_photo_studio/jpg_pretty/DSC_0564.jpg",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://polyhaven.com/license",
+      "sourceSha256": "a975e4395d4e9549b75d623a73b775f24ffd6d7753a5e359b4c16163a290d7c4",
+      "sourceDimensions": [
+        5568,
+        3712
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        5568,
+        3712
+      ],
+      "outputDimensions": [
+        1742,
+        1161
+      ],
+      "sha256": "cfa961736ffc462f81d3959b9f8aacad070c626ab2e21693cf1003a450c11ed9",
+      "sha1": "8f4349c2ba02c1f3bee413953e03f7b33b34ab5b",
+      "bytes": 1934831,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "b80fc6c65c0fd789a564035a77b184788ab34be1",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "visualChange": "Empty photography studio replaces model/film shoot; same creative studio subject, no depicted model.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "203:5019",
+          "203:5684",
+          "203:5125",
+          "203:5447",
+          "203:6061",
+          "204:6515",
+          "204:6688",
+          "204:7236",
+          "204:7481"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    },
+    {
+      "path": "assets/images/finalized_left/restaurant.png",
+      "title": "Latte and a cheesecake on a café table",
+      "creator": "Joanna Malinowska",
+      "sourcePage": "https://freestocks.org/photo/latte-and-a-cheesecake-on-a-cafe-table/",
+      "downloadUrl": "https://freestocks.org/?download=12158",
+      "license": "CC0-1.0",
+      "licenseEvidence": "https://freestocks.org/terms-of-use/",
+      "sourceSha256": "aa3bdc4b86b63da18d03d7499e0b5b8ceb6454f6403fa8ee2775bc458f7dcdd2",
+      "sourceDimensions": [
+        6000,
+        4000
+      ],
+      "sourceCropPixels": [
+        0,
+        0,
+        6000,
+        4000
+      ],
+      "outputDimensions": [
+        1740,
+        1160
+      ],
+      "sha256": "2254974cfd5e241884e43130c8d6175ebe59b3664d8d37772c01b60fa63d49d6",
+      "sha1": "500644fcfc41e8a825824af917cfa1ed54969718",
+      "bytes": 1793109,
+      "modifications": "EXIF orientation applied; crop to recorded rectangle; center-fit to original bundled dimensions; resample with Lanczos; RGB PNG; metadata omitted. Runtime also uses existing cover crop.",
+      "replacedOriginalSha1": "0843e6efd9bc4690940de28ad0095b2fa77226f4",
+      "originalRightsStatus": "Figma-export provenance only; no creator/license/redistribution permission substantiated in repository history or embedded metadata; replaced.",
+      "visualChange": "Café tabletop replaces formal wine/cutlery setting; remains illustrative dining context, not a venue claim.",
+      "originalProvenance": {
+        "kind": "Figma design export",
+        "manifest": "docs/design/finalized-screens.json",
+        "sourceNodes": [
+          "186:4473",
+          "186:4532",
+          "204:7864",
+          "205:8069"
+        ],
+        "author": null,
+        "license": null,
+        "redistributionGrant": null
+      }
+    }
+  ]
+}
