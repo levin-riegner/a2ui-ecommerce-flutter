@@ -2,13 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:genkit/genkit.dart';
-import 'package:genkit/plugin.dart' show GenkitPlugin;
-// These pinned plugins expose HTTP injection on their implementation classes,
-// but not yet on their public factory handles. Keep that preview API here.
-// ignore: implementation_imports
-import 'package:genkit_anthropic/src/plugin_impl.dart';
-// ignore: implementation_imports
-import 'package:genkit_google_genai/src/google_api_client.dart';
+import 'package:genkit_anthropic/genkit_anthropic.dart';
+import 'package:genkit_google_genai/genkit_google_genai.dart';
 import 'package:genkit_openai/genkit_openai.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,15 +17,9 @@ class GenkitProvider {
         client == null,
       ) {
     const placeholder = 'byok-runtime-key';
-    plugin = switch (settings.provider) {
-      'googleai' => GoogleGenAiPluginImpl(
-        apiKey: placeholder,
-        httpClient: _transport,
-      ),
-      'anthropic' => AnthropicPluginImpl(
-        apiKey: placeholder,
-        httpClient: _transport,
-      ),
+    final plugin = switch (settings.provider) {
+      'googleai' => googleAI(apiKey: placeholder),
+      'anthropic' => anthropic(apiKey: placeholder, httpClient: _transport),
       _ => openAI(
         apiKey: placeholder,
         baseUrl: settings.provider == 'openai-compatible'
@@ -39,28 +28,52 @@ class GenkitProvider {
         httpClient: _transport,
       ),
     };
-    model = modelRef(
-      '${switch (settings.provider) {
-        'googleai' => 'googleai',
-        'anthropic' => 'anthropic',
-        _ => 'openai',
-      }}/${settings.model}',
+    // Resolve through Genkit's public plugin API; setup performs no HTTP.
+    final providerModel = plugin.model(settings.model);
+    model = Model(
+      name: providerModel.name,
+      customOptions: providerModel.customOptions,
+      fn: (request, context) {
+        if (settings.provider == 'openai' && settings.model == 'gpt-6-luna') {
+          // This model supports Chat Completions tools without reasoning.
+          // Use the plugin's public options rather than patching its wire JSON.
+          request = ModelRequest.fromJson(request.toJson())
+            ..config = {
+              ...?request.config,
+              ...OpenAIChatOptions(reasoningEffort: 'none').toJson(),
+            };
+        }
+        Future<ModelResponse> invoke() async => _normalizeResponse(
+          await providerModel(
+            request,
+            cancel: context.cancel,
+            context: context.context,
+            onChunk: context.streamingRequested ? context.sendChunk : null,
+          ),
+        );
+
+        // Google 1.0 has no public httpClient argument. Scope the documented
+        // package:http client factory to this invocation, including its async
+        // work, rather than importing the plugin's test-only implementation.
+        // Each borrowed client can be closed by the plugin without closing the
+        // connection-owned transport. No Flutter callbacks depend on this Zone.
+        return settings.provider == 'googleai'
+            ? http.runWithClient(invoke, () => _BorrowedClient(_transport))
+            : invoke();
+      },
     );
   }
 
   final ModelSettings settings;
   final _CredentialTransport _transport;
-  late final GenkitPlugin plugin;
-  late final ModelRef model;
+  late final Model model;
 
   String? get failureMessage => _transport.failureMessage;
 
   void beginTurn() => _transport.beginTurn();
-  void prepareRequest(ModelRequest request) =>
-      _transport.prepareRequest(request);
   void cancelTurn() => _transport.cancelTurn();
-  ModelResponse normalizeResponse(ModelResponse response) {
-    // genkit_openai 0.5.0 maps the SDK's camel-case enum name, whereas its
+  ModelResponse _normalizeResponse(ModelResponse response) {
+    // genkit_openai 1.0.0 still maps the SDK's camel-case enum name, whereas its
     // converter expects the wire value "tool_calls". Accept only that explicit
     // finish reason with real tool requests; truncated output stays rejected.
     if ((settings.provider == 'openai' ||
@@ -84,9 +97,6 @@ class GenkitProvider {
   void dispose() {
     settings.clear();
     _transport.close();
-    // The same pinned plugin instance owns the injected SDK client.
-    // ignore: invalid_use_of_visible_for_testing_member
-    if (plugin case final AnthropicPluginImpl anthropic) anthropic.close();
   }
 }
 
@@ -100,7 +110,6 @@ class _CredentialTransport extends http.BaseClient {
   bool _cancelled = false;
   int _requests = 0;
   int _epoch = 0;
-  String? _toolChoice;
   Completer<void> _abort = Completer<void>();
   String? failureMessage;
 
@@ -110,11 +119,6 @@ class _CredentialTransport extends http.BaseClient {
     _abort = Completer<void>();
     _requests = 0;
     _cancelled = false;
-    _toolChoice = null;
-  }
-
-  void prepareRequest(ModelRequest request) {
-    _toolChoice = request.toolChoice;
   }
 
   void cancelTurn() {
@@ -128,7 +132,6 @@ class _CredentialTransport extends http.BaseClient {
       throw StateError('Model request unavailable');
     }
     final epoch = _epoch;
-    final toolChoice = _toolChoice;
     final expected = switch (settings.provider) {
       'googleai' => Uri.parse('https://generativelanguage.googleapis.com/'),
       'anthropic' => Uri.parse('https://api.anthropic.com/v1/'),
@@ -144,49 +147,8 @@ class _CredentialTransport extends http.BaseClient {
     }
     final bytes = await request.finalize().toBytes();
     final body = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
-    // These preview plugins ignore Genkit toolChoice for OpenAI and Gemini.
-    // Translate the host's per-request choice at the existing credential boundary.
-    if (settings.provider == 'googleai' && toolChoice != null) {
-      final mode = switch (toolChoice) {
-        'any' => 'ANY',
-        'none' => 'NONE',
-        'auto' => 'AUTO',
-        _ => null,
-      };
-      if (mode != null) {
-        body['toolConfig'] = {
-          ...(body['toolConfig'] as Map<String, dynamic>? ?? {}),
-          'functionCallingConfig': {'mode': mode},
-        };
-      }
-    } else if ((settings.provider == 'openai' ||
-            settings.provider == 'openai-compatible') &&
-        toolChoice != null) {
-      final choice = switch (toolChoice) {
-        'any' => 'required',
-        'none' => 'none',
-        'auto' => 'auto',
-        _ => null,
-      };
-      if (choice != null) body['tool_choice'] = choice;
-    }
-    final hasTools =
-        (body['tools'] as List?)?.any((tool) {
-          if (settings.provider != 'googleai') return tool is Map;
-          return tool is Map &&
-              (tool['functionDeclarations'] as List?)?.isNotEmpty == true;
-        }) ??
-        false;
-    if (!hasTools) {
-      // With no declarations the provider already defaults to prose. Some
-      // endpoints reject a tool choice without its corresponding tools field.
-      body.remove('tool_choice');
-      body.remove('toolConfig');
-    }
     if (settings.provider == 'openai') {
       body['store'] = false;
-      // Luna supports Chat Completions tools only without reasoning.
-      if (settings.model == 'gpt-6-luna') body['reasoning_effort'] = 'none';
     }
     final query = Map<String, String>.from(request.url.queryParameters)
       ..remove('key');
@@ -246,4 +208,17 @@ class _CredentialTransport extends http.BaseClient {
     cancelTurn();
     if (ownsClient) inner.close();
   }
+}
+
+/// A plugin may close its per-request client; the connection owns the transport.
+class _BorrowedClient extends http.BaseClient {
+  _BorrowedClient(this._inner);
+  final http.Client _inner;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) =>
+      _inner.send(request);
+
+  @override
+  void close() {}
 }

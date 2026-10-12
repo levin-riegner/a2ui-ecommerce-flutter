@@ -55,11 +55,8 @@ class GenkitAgent extends CommerceAgent {
           cityContextSource: onlineContext
               ? OpenMeteoCityContextSource()
               : null,
-          plugins: [connection.plugin],
           providerModel: connection.model,
-          normalizeResponse: connection.normalizeResponse,
           onBeginTurn: connection.beginTurn,
-          onModelRequest: connection.prepareRequest,
           onCancelTurn: connection.cancelTurn,
         ),
         provider: connection,
