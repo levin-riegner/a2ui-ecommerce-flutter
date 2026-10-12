@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:genkit/genkit.dart';
-import 'package:genkit/plugin.dart' show GenkitPlugin;
 import 'package:schemantic/schemantic.dart';
 
 import '../data/models.dart';
@@ -133,20 +132,14 @@ double? parseStylistBudget(String message) {
 class StylistRuntime {
   StylistRuntime({
     required this.products,
-    List<GenkitPlugin> plugins = const [],
-    ModelRef? providerModel,
+    Model? providerModel,
     StylistModel? model,
-    ModelResponse Function(ModelResponse)? normalizeResponse,
     bool developerTools = false,
     this.cityContextSource,
     this.onBeginTurn,
     this.onModelRequest,
     this.onCancelTurn,
-  }) : ai = Genkit(
-         plugins: plugins,
-         isDevEnv: developerTools,
-         promptDir: null,
-       ) {
+  }) : ai = Genkit(isDevEnv: developerTools, promptDir: null) {
     ai.defineModel(
       name: 'stylist/model',
       fn: (request, context) async {
@@ -155,6 +148,9 @@ class StylistRuntime {
         if (++scope.requests > 4) {
           throw StateError('Model request limit reached');
         }
+        // ModelRequest remains mutable in 1.0; copy once before applying host
+        // policy so the generator's input is not changed behind its back.
+        request = ModelRequest.fromJson(request.toJson());
         final needsPicks = scope.needsProducts && scope.picks.isEmpty;
         final forceSearch =
             needsPicks && scope.searches == 0 && !scope.allowEdits;
@@ -166,91 +162,62 @@ class StylistRuntime {
             (scope.target == null &&
                 scope.plan?.complete == true &&
                 !scope.allowEdits)) {
-          request = ModelRequest.fromJson({
-            ...request.toJson(),
-            'tools': [],
-            'toolChoice': 'none',
-          });
+          request.tools = [];
+          request.toolChoice = ToolChoice.none;
         } else if (scope.plan?.complete == true &&
             scope.allowEdits &&
             (scope.target == null || scope.removing)) {
-          request = ModelRequest.fromJson({
-            ...request.toJson(),
-            'tools': request.tools!
-                .where(
-                  (tool) => [
-                    'save_outfit',
-                    'add_to_outfit',
-                    'remove_from_outfit',
-                  ].contains(tool.name),
-                )
-                .map((tool) => tool.toJson())
-                .toList(),
-          });
+          request.tools = request.tools!
+              .where(
+                (tool) => [
+                  'save_outfit',
+                  'add_to_outfit',
+                  'remove_from_outfit',
+                ].contains(tool.name),
+              )
+              .toList();
         } else if (forceSearch || forcePresentation) {
-          request = ModelRequest.fromJson({
-            ...request.toJson(),
-            'tools': request.tools!
-                .where(
-                  (tool) =>
-                      tool.name ==
-                      (forceSearch ? 'search_products' : 'present_products'),
-                )
-                .map((tool) => tool.toJson())
-                .toList(),
-            'toolChoice': 'any',
-          });
+          request.tools = request.tools!
+              .where(
+                (tool) =>
+                    tool.name ==
+                    (forceSearch ? 'search_products' : 'present_products'),
+              )
+              .toList();
+          request.toolChoice = ToolChoice.required;
         } else if (needsPicks && scope.searchFoundProducts) {
-          request = ModelRequest.fromJson({
-            ...request.toJson(),
-            'toolChoice': 'any',
-          });
+          request.toolChoice = ToolChoice.required;
         }
         if ((scope.searches > 0 || scope.adjustingProductId != null) &&
             request.tools?.isNotEmpty == true) {
-          request = ModelRequest.fromJson({
-            ...request.toJson(),
-            'tools': request.tools!
-                .where(
-                  (tool) => [
-                    'search_products',
-                    'present_products',
-                  ].contains(tool.name),
-                )
-                .map((tool) => tool.toJson())
-                .toList(),
-          });
+          request.tools = request.tools!
+              .where(
+                (tool) =>
+                    ['search_products', 'present_products'].contains(tool.name),
+              )
+              .toList();
         }
         // Tool edits update the same draft; every subsequent model request sees
         // the revised plan and financial facts rather than stale opening state.
-        request = ModelRequest.fromJson({
-          ...request.toJson(),
-          'messages': request.messages
-              .map(
-                (message) => message.role == Role.system
-                    ? Message(
-                        role: Role.system,
-                        content: [TextPart(text: _systemFor(scope))],
-                      ).toJson()
-                    : message.toJson(),
-              )
-              .toList(),
-        });
+        request.messages = request.messages
+            .map(
+              (message) => message.role == Role.system
+                  ? Message(
+                      role: Role.system,
+                      content: [TextPart(text: _systemFor(scope))],
+                    )
+                  : message,
+            )
+            .toList();
         onModelRequest?.call(request);
         ModelResponse response;
         if (model != null) {
           response = await model(request);
         } else if (providerModel != null) {
-          final action = await ai.registry.lookupAction(
-            ActionType.model,
-            providerModel.name,
-          ) as Model?;
-          if (action == null) throw StateError('Model unavailable');
-          response = await action(request, cancel: scope.cancel.token);
+          response = await providerModel(request, cancel: scope.cancel.token);
         } else {
           response = await offlineStylistModel(request);
         }
-        response = normalizeResponse?.call(response) ?? response;
         scope.cancel.token.throwIfCancelled();
         if (response.finishReason != FinishReason.stop ||
             response.message == null ||
@@ -270,7 +237,7 @@ class StylistRuntime {
         )) {
           throw StateError('Stylist requested an unavailable tool');
         }
-        if (request.toolChoice == 'any' &&
+        if (request.toolChoice == ToolChoice.required &&
             !response.message!.content.any((part) => part.isToolRequest)) {
           throw StateError('Stylist did not continue the outfit journey');
         }
@@ -764,6 +731,9 @@ class StylistRuntime {
         'remove_from_outfit',
       ],
       maxTurns: 4,
+      // Retries are opt-in in Genkit 1.0. Keep each turn bounded; a failed
+      // turn rolls back and the user can explicitly retry it.
+      use: const [],
       cancel: scope.cancel.token,
     );
     scope.cancel.token.throwIfCancelled();

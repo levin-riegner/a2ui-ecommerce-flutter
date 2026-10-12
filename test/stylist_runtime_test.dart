@@ -382,7 +382,7 @@ void main() {
           calls++;
           if (calls == 4) {
             expect(r.tools, isEmpty);
-            expect(r.toolChoice, 'none');
+            expect(r.toolChoice, ToolChoice.none);
           }
           return toolResponse('search_products', {'query': 'not-in-catalog'});
         },
@@ -396,6 +396,32 @@ void main() {
       expect(runtime.outfit['budget'], isNull);
     },
   );
+
+  test('retryable Genkit errors require an explicit new turn', () async {
+    var calls = 0;
+    final runtime = StylistRuntime(
+      products: products,
+      model: (_) async {
+        if (++calls == 1) {
+          throw GenkitException(
+            'Temporarily unavailable',
+            status: StatusCode.unavailable,
+          );
+        }
+        return textResponse('Ready');
+      },
+    );
+    addTearDown(runtime.dispose);
+    await expectLater(
+      runtime.turn({'message': 'Under €100'}),
+      throwsStateError, // Genkit returns a failed result; the host rejects it.
+    );
+    expect(calls, 1);
+    expect(runtime.outfit['budget'], isNull);
+    final result = await runtime.turn({'message': 'Under €100'});
+    expect(result['reply'], contains('Ready'));
+    expect(calls, 2);
+  });
 
   test('truncated generation never publishes a partial turn', () async {
     final runtime = StylistRuntime(

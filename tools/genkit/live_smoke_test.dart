@@ -80,22 +80,16 @@ void main() {
         ModelSettings(provider: 'openai', model: model, apiKey: key),
         client: client,
       );
-      late final StylistRuntime runtime;
-      runtime = StylistRuntime(
+      final runtime = StylistRuntime(
         products: catalog,
-        plugins: [connection.plugin],
-        model: (request) async {
-          if (usePreviewModel) return offlineStylistModel(request);
-          final action = await runtime.ai.registry.lookupAction(
-            g.ActionType.model,
-            connection.model.name,
-          ) as g.Model?;
-          if (action == null) throw StateError('Provider model unavailable');
-          return action(request);
-        },
-        normalizeResponse: connection.normalizeResponse,
+        providerModel: g.Model(
+          name: 'live-smoke/provider',
+          fn: (request, context) async {
+            if (usePreviewModel) return offlineStylistModel(request);
+            return connection.model(request, cancel: context.cancel);
+          },
+        ),
         onBeginTurn: connection.beginTurn,
-        onModelRequest: connection.prepareRequest,
         onCancelTurn: connection.cancelTurn,
       );
       connected = GenkitAgent(runtime, provider: connection);
