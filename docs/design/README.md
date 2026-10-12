@@ -35,10 +35,13 @@ context. After the connector quota was reached, the user authorized exact
 read-only Plugin API properties, usage notes and original asset exports for the
 remaining families. No Figma nodes were edited.
 
-Static SVGs retain their exported geometry. Four screen photos are exported
-original image bytes with Figma image-hash verification; the original Start
-collage already matches the bundled photos. Jost and Inter are bundled locally.
-Product images in real journeys remain the approved catalog assets.
+Static SVGs retain their exported geometry. The four screen photos have Figma
+export and image-hash provenance; those checks establish origin, not redistribution
+permission. The Start collage has a separate asset review and may use replacement
+imagery. Jost and Inter are bundled with their font licenses. Product images in
+real journeys use the catalog assets covered by the permission recorded in
+[NOTICE](../../NOTICE). Check the [submission checklist](../google-reviewer-checklist.md)
+for remaining image-rights and reviewer-access decisions before public distribution.
 
 ## Behavior boundaries
 

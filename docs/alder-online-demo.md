@@ -1,100 +1,200 @@
-# Alder online demo
+# Alder reviewer walkthrough
 
-Alder uses the existing Genkit stylist, bundled fictional catalog, and Flutter
-GenUI/A2UI renderer. Open-Meteo destination lookup and a five-day forecast feed
-both the weather card and model facts. The destination is a named city, not GPS.
-Application code constructs the layouts from validated products.
+Alder is a Flutter personal stylist using Genkit Dart and GenUI/A2UI. The model
+searches a bundled fictional catalog; the host validates product IDs, prices and
+image paths before constructing recommendation and dressing-room surfaces.
+There is no live inventory, checkout or separate agent service.
 
-## Free native verification
+The landing screen has full-sentence occasion examples and a custom occasion
+composer. Follow the typed journey below; it does not rely on the removed preset
+journey buttons. Hosted/staging access is tracked in the
+[October 16 handoff checklist](google-reviewer-checklist.md). No verified hosted
+URL is recorded yet.
 
-This explicit developer mode runs the real app with the deterministic offline
-model and live, free forecast endpoints. It starts at the landing page and delays
-model responses so the loading/validated preview can be inspected. It requires
-no provider credentials and makes no paid model calls.
+## Setup and key safety
+
+For a local build, use [README setup](../README.md#run), including Git LFS and
+the pinned Flutter SDK. Launch web with `fvm flutter run -d chrome`, or select a
+supported native device with `fvm flutter devices` and `fvm flutter run -d <device-id>`.
+iOS requires the iOS 27.1 build SDK described in README.
+
+1. Open **Connect your model**. Choose **Provider**, enter **Model ID** and your
+   **API key**, then press **Connect model**. Use a model with function-tool support.
+   **OpenAI-compatible** also requires **Provider API base URL**, including its
+   version path. Remote endpoints require HTTPS; loopback HTTP is accepted for
+   local development, subject to native platform restrictions.
+2. Connecting loads the catalog and configures the provider. It does not send a
+   model request or validate authentication. The first journey request can still
+   fail because of an invalid key, model access, quota or transport restrictions.
+3. Web additionally requires the provider to allow browser requests through CORS.
+   A successful local/native test does not establish hosted browser compatibility.
+   If the chosen provider blocks browser access, use a supported native build to
+   review the live journey and the browser gallery to review components.
+
+The key is masked, remains in memory, and is sent directly to the selected
+provider in request headers. It is not saved to files or browser storage.
+Starting a journey, submitting chat, selecting or removing pieces, **Change**,
+and **Retry** may incur provider charges; each interaction is capped at four
+model requests. Editing clarification controls and exploring the catalog do
+not request generation.
+
+Use **New journey → Disconnect model** to clear the connection and session.
+Reloading/closing the app requires configuring it again. Keep credentials out
+of source, assets, build defines, screenshots and shared logs. Connect before
+recording screenshots so the key-entry form is excluded.
+
+## Reproducible review journey
+
+After connecting, type this in **Your occasion**:
+
+> A smart casual work day in Berlin, Germany today, budget €900. Build a look with a top, bottoms, shoes and a bag.
+
+1. Use the send arrow labelled **Start my look**. Wait for the turn to finish.
+   A working surface may precede catalog-validated card previews; previews and
+   chat/product actions stay disabled until the complete turn succeeds.
+   Expect top recommendations with bundled photos, fictional names, brands and
+   euro prices, plus a **Dressing room** with outfit slots and a €900 budget.
+2. Choose a top using **Add to dressing room** on a recommendation. Record its
+   displayed name and price. When the continuation succeeds, expect that top's
+   photo/name in the filled slot, spending equal to its catalog price, remaining
+   budget equal to €900 minus that price, and bottom recommendations. The next
+   slot is marked **Choosing now**. Scroll the conversation to the latest cards;
+   previous responses remain readable but their controls are inactive.
+3. Send `Remove the top named <selected product name> from my outfit`, replacing
+   the placeholder with the exact displayed name. Removal uses a model tool call.
+   When it succeeds, expect the top slot to reopen, spending to return to €0,
+   remaining budget to return to €900, and top recommendations to resume. Check
+   the slot and totals to confirm the edit; generated prose alone is insufficient.
+4. Select a top again, then select bottoms, shoes and a bag from each latest
+   response. If the saved brief adds a required layer, follow that slot too. Each
+   successful selection keeps the other pieces and advances the category. A
+   completed look has filled required slots and no next-piece badge.
+5. To inspect replacement behavior, use **Change** on a filled slot. Expect
+   alternatives for that category while the current item and totals remain until
+   a replacement is selected. **Change** is different from the typed removal in
+   step 3; there is no separate selected-products list below the dressing room.
+
+Exact products, ordering, descriptions and verbal-edit interpretation vary by
+provider and model. The checks above describe validated state transitions, not
+an identical transcript or a guarantee that every model will complete a turn.
+No scripted fallback takes over after a live failure. If no affordable option
+exists, revise the budget or selected pieces rather than expecting invented stock.
+
+For the clarification path, start another journey with `A spring day in Berlin`.
+The missing-style/budget form shows **How formal or relaxed?**, **smart-casual**,
+**BUDGET FOR THE WHOLE OUTFIT** and **Find options**. Select the style and adjust
+the slider, then submit **Find options** once. Those edits stay local until
+submission. If the full Berlin prompt already supplies the required facts,
+this form need not appear.
+
+## Component catalog
+
+On the landing screen, scroll below the occasion examples and open
+**Explore component catalog**. It works before connecting a model. From a journey,
+use the close icon with tooltip **New journey** to return to the landing screen.
+
+**Catalog components** shows the commerce vocabulary and GenUI basic primitives.
+Open **Finalized Figma components** to inspect the schema-rendered families and
+states, and **Finalized Figma screens** for composed examples. Gallery interactions
+are local fixtures. Photo upload, fit/size, saved looks, bag quantity, delivery and
+checkout examples do not establish live services. The
+[Figma catalog guide and schema exports](design/README.md) document the contracts.
+
+## Recovery and live context
+
+- A failed model turn discards its pending preview and draft outfit edits, retains
+  previously completed surfaces and the last committed outfit, and offers **Retry**.
+  Retry repeats that interaction without duplicating the submitted user message;
+  it can make more paid requests. Check provider access/quota before retrying.
+- To change provider/model/key, return through **New journey**, disconnect, and
+  configure again. Starting a new brief resets the outfit and conversation;
+  returning to the landing screen alone keeps the connection.
+- Main's destination context uses Open-Meteo geocoding and a five-day forecast for
+  the named city, without GPS. Forecasts are current dated facts, not conditions
+  for a future trip outside the returned date range. Dates, values and availability
+  change between runs; weather is not a fixed assertion for the journey above.
+- **Refresh forecast**, when available, refreshes only the latest response. It
+  makes no model request and preserves the outfit, choices and history. The cache
+  lasts 15 minutes; previous response controls remain read-only. A lookup failure
+  shows an unavailable notice and clears the old city's forecast. A failed model
+  turn rolls back its destination change along with the outfit draft.
+
+Hosted weather needs a separate service and attribution decision. Open-Meteo's
+[terms](https://open-meteo.com/en/terms) restrict the free service to non-commercial
+use and list commercial products/promotional activities as commercial use. A
+hosted ecommerce showcase must not assume eligibility. If the final build disables
+weather, record that limitation in the handoff; an unavailable notice is not a
+verified forecast. Review attribution against the
+[forecast API](https://open-meteo.com/en/docs) and
+[geocoding/GeoNames documentation](https://open-meteo.com/en/docs/geocoding-api).
+
+Dictation is optional. Type the journey for reproducibility. Microphone/speech
+permissions, recognition availability and remote processing depend on the device
+or browser; simulator permission checks do not establish physical transcription.
+
+## Verification evidence
+
+On current main `b3263ce` (PR12), 130 existing offline Flutter tests passed for
+BYOK masking/configuration, custom briefs, catalog access, selection/progression,
+typed edit tool contracts, Change, rollback/retry, progressive surfaces, history,
+forecast refresh/failure and responsive layout. Reproduce those focused checks:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode-27.1.0-Beta.app/Contents/Developer \
-fvm flutter run -d 473AFAD8-39CA-4DA6-8D3A-443070830101 \
-  -t tool/alder_online_demo.dart --dart-define=ALDER_DEMO_OFFLINE=true --no-pub
+fvm flutter test \
+  test/byok_test.dart test/custom_brief_journey_test.dart \
+  test/stylist_journey_integration_test.dart test/dressing_room_progression_test.dart \
+  test/stylist_adjust_piece_test.dart test/progressive_agent_test.dart \
+  test/conversation_history_test.dart test/reusable_components_test.dart \
+  test/finalized_catalog_integration_test.dart test/online_context_integration_test.dart \
+  test/widget_test.dart test/stylist_runtime_test.dart \
+  test/agent_connection_test.dart test/adaptive_screen_layout_test.dart
 ```
 
-Select another available device ID if necessary. This is a developer entry point;
-the normal app still requires a model connection and has no scripted fallback.
-The local `ext.alder.capture` VM extension reports UI errors, conversation rows,
-forecast, pending surface, and offline request count without recording credentials.
-The basic offline model does not interpret verbal outfit edits. An offline-only
-`ext.alder.remove` extension accepts a selected `productId` and sends the normal
-A2UI removal event for native regression checks; that is a simulated user action.
+These tests render the actual app widgets and use offline models or mocked HTTP.
+The typed-removal tests supply explicit model tool responses; they do not prove
+natural-language interpretation by a live provider. No live provider requests,
+hosted-browser success, physical dictation or new screenshots are claimed here.
+The [October 7 simulator record](verification/alder-online-simulator-2026-10-07.json)
+is historical evidence for an older revision. Repeat the walkthrough on the final
+deployed commit and record provider/model, date, result and limitations without keys.
 
-## Bounded live demonstration
+## Optional developer verification
 
-Live model calls require explicit approval for a bounded run. Put
-`OPENAI_API_KEY` and `OPENAI_MODEL` in the ignored `.env.local` file. After approval,
-start the development bridge:
+The normal app requires BYOK. For explicit offline-model inspection, run the
+developer entry point on a supported native device:
+
+```sh
+fvm flutter run -d <device-id> \
+  -t tool/alder_online_demo.dart --dart-define=ALDER_DEMO_OFFLINE=true
+```
+
+This mode starts at the landing page and delays deterministic responses. It makes
+no paid model calls, but still attempts live weather requests under the service
+conditions above. Its basic offline model does not interpret verbal outfit edits.
+The offline-only `ext.alder.remove` VM extension sends a normal removal event for
+regression checks; using it is a simulated action, not the live step 3 result.
+`ext.alder.capture` reports UI errors and state without recording credentials.
+
+For a deliberately bounded live developer run, the existing local bridge reads
+`OPENAI_API_KEY` and `OPENAI_MODEL` from ignored `.env.local` or the process
+environment:
 
 ```sh
 python3 tool/alder_online_proxy.py --live --max-requests 12
 ```
 
-In another terminal:
+In another terminal, select the supported native device:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode-27.1.0-Beta.app/Contents/Developer \
-fvm flutter run -d 473AFAD8-39CA-4DA6-8D3A-443070830101 \
-  -t tool/alder_online_demo.dart \
-  --dart-define-from-file=/private/tmp/alder-online-session.json --no-pub
+fvm flutter run -d <device-id> -t tool/alder_online_demo.dart \
+  --dart-define-from-file=/private/tmp/alder-online-session.json
 ```
 
-The entry point starts a smart casual Berlin work-day brief under €900. This is
-one paid interaction; relaunching starts another. Each turn permits at most four
-provider requests. The bridge defaults to a session allowance of twelve requests
-and rejects non-positive/unbounded allowances. Stop both processes when finished.
-Keep session files, provider keys, VM URLs, and auth evidence private.
-
-The Mac holds the provider key. The app receives a temporary bridge token and model
-name. The bridge binds loopback, authenticates that token, forwards only to a fixed
-HTTPS endpoint, rejects redirects, sanitizes provider errors, and deletes its
-private session file on normal shutdown. It is local development tooling.
-Exhausting its allowance shows a specific message; an upstream provider 429 keeps
-the normal provider error. Restarting the bridge replenishes the allowance and is
-another live run that needs authorization.
-
-## Interaction checks
-
-1. Dictate an occasion into an editable draft, review/edit it, then send. Recognition
-   availability and permissions depend on the device; simulator permission checks
-   and mocked speech callbacks do not establish physical microphone transcription.
-2. Inspect loading and catalog-validated recommendation previews, then final guidance.
-3. Choose/remove products and verify the next category, dressing-room slots, and budget.
-4. Change the destination (for example, ask for Paris today). Preset cities and common
-   demo destinations can be resolved before generation; the stylist can save any
-   explicit city using `save_outfit`. Include the country for ambiguous names.
-5. Refresh the latest forecast. It makes no model call and changes no recommendations,
-   clarification controls, outfit, conversation rows, or previous responses. Previous
-   response controls remain read-only.
-6. If lookup fails, the current destination shows an unavailable notice rather than
-   retaining the previous city's forecast. A failed model turn rolls back the entire
-   draft. Cancellation discards pending forecast results and releases a new journey.
-
-The source validates coordinates, units, consecutive dates, WMO codes, and daily
-columns, caches results for 15 minutes, and bypasses the cache on explicit refresh.
-Forecast dates are supplied to the model; they are not historical seasonal averages
-or evidence for travel dates outside that range.
-
-Forecast attribution: [Open-Meteo forecast API](https://open-meteo.com/en/docs),
-[Open-Meteo geocoding / GeoNames](https://open-meteo.com/en/docs/geocoding-api).
-The public service is used for private prototyping under its
-[terms](https://open-meteo.com/en/terms); commercial hosting requires an appropriately
-licensed service.
-
-## Evidence boundaries
-
-The preserved October 6 notes describe an older live Duo run. They are historical
-and do not validate this combined implementation. The normal Flutter/Python suites
-use offline models and mocked HTTP; Android/web builds verify compilation. Current
-[native simulator evidence and remaining gaps](verification/alder-online-simulator-2026-10-07.json)
-are recorded separately. The combined checkout passed 311 Flutter tests and eight
-Python tests, formatting, analyzer, catalog validation, saved checkpoint validation,
-and Android/web builds. Live-provider
-behavior, physical microphone transcription, real inventory, production hosting,
-and unrestricted model-generated layouts are separate work.
+This live entry point automatically starts a Berlin work-day brief under €900;
+relaunching makes another paid interaction. Each turn permits four provider
+requests and the bridge enforces the positive session allowance. Keep keys,
+session tokens/files and VM URLs private, and stop both processes when finished.
+The Mac holds the provider key; the app receives a temporary bridge token. The
+authenticated loopback bridge forwards only to its fixed HTTPS endpoint and is
+development tooling, not the hosted demo. Exhaustion shows a specific allowance
+error; restarting replenishes the allowance for another run.

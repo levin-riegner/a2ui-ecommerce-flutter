@@ -6,7 +6,7 @@ The personal stylist runs inside Flutter with Genkit Dart. It searches the bundl
 
 ## Run
 
-Use the SDK pinned in [.fvmrc](.fvmrc):
+Use the SDK pinned in [.fvmrc](.fvmrc). Install Git LFS before cloning, or run `git lfs install && git lfs pull` in an existing checkout; the product JPEGs and Start collage require image bytes rather than LFS pointer files.
 
 ```sh
 fvm install
@@ -31,13 +31,23 @@ The key stays in memory on the device and is added only to the provider's outgoi
 
 Without a model connection, journeys are disabled and the component gallery remains available. The conversation keeps submitted messages and previous recommendations in order; only the latest completed recommendation accepts input. During a turn, the app displays a loading surface, then previews catalog-validated cards as they become available, with chat/product actions disabled until the full turn succeeds. The final stylist explanation appears after validation. Failed turns remove the preview, show Retry, and retain the previous outfit and completed surfaces. Retrying keeps the original user message without adding a duplicate. No scripted fallback runs in the app.
 
-Once connected, choose a preset journey or enter your own occasion with **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. Choosing a piece immediately offers the next part of the look. You can also choose or remove pieces in words, refine the brief, and revisit a completed outfit. The dressing room follows the current outfit plan, including tops and bottoms.
+Once connected, tap a full-sentence occasion example or type in **Your occasion** and use the send arrow labelled **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. **Add to dressing room** selects a recommendation and requests the next category. **Change** on a filled slot requests alternatives while keeping the current piece until a replacement is selected. To remove a piece, send a message naming it. The dressing room follows the current outfit plan, including tops and bottoms.
 
 Destination forecasts use Open-Meteo geocoding and weather endpoints. Only the named destination is looked up; the app does not request GPS. Verified dates, temperature, and rain probability reach both the weather card and stylist. Unavailable forecasts show a notice; changing the destination clears the previous city's weather. **Refresh forecast** updates only the current response, makes no model request, and preserves the outfit, choices, and history. Forecasts are cached for 15 minutes; previous responses remain read-only. See [the online demo guide](docs/alder-online-demo.md) for the bounded local bridge and offline simulator mode.
 
 Tap the microphone in the occasion or chat composer to dictate, and tap it again to stop. Speech recognition fills the editable draft; sending uses the same GenUI/Genkit text path as typing. Microphone and speech permissions are requested on the first tap. Recognition availability and any remote speech processing depend on the device or browser. Rebuild the native app after installing the speech plugin; hot reload cannot register a new native plugin.
 
 Dictation uses the community-maintained [`speech_to_text`](https://pub.dev/packages/speech_to_text) package, pinned to 7.5.0. Android uses the device’s configured speech recognition service, which can be Google; iOS uses Apple Speech and web uses the browser’s recognition support. This keeps dictation independent of the chosen Genkit model and requires no additional Google Cloud credentials. It does not guarantee offline recognition or a Google recognizer on every platform.
+
+## Review the app
+
+Open **Explore component catalog** on the landing screen, scrolling below the occasion examples if needed. It works without a key. **Catalog components** links to **Finalized Figma components** and **Finalized Figma screens**; these are local previews, including integration contracts for services that are not implemented in the journey.
+
+For a live journey, connect your own tool-capable model, then enter:
+
+> A smart casual work day in Berlin, Germany today, budget €900. Build a look with a top, bottoms, shoes and a bag.
+
+Use **Start my look**, wait for completed recommendations, then **Add to dressing room** on a top. Expect the selected top to remain in its slot, its catalog price to reduce the remaining budget, and the next choices to be bottoms. Send `Remove the top named <selected product name> from my outfit` with the displayed name substituted to reopen that category. Exact products and prose depend on the model. See the [reviewer walkthrough](docs/alder-online-demo.md) for selection, removal, recovery, and live requirements, and the [October 16 submission checklist](docs/google-reviewer-checklist.md) for handoff gaps.
 
 ## Genkit developer tools
 
@@ -68,7 +78,7 @@ genkit start -- fvm dart run tools/genkit/stylist.dart
 
 Open `http://localhost:4000` and run `stylistTurn` with `{"message":"A summer dress under €250"}`. This developer entry point always uses an offline preview model, so it requires no key and makes no paid requests. The Flutter app uses BYOK provider plugins and does not expose its connected credentials or live model actions through a reflection server. Node is needed only for the optional developer CLI, not to run or bundle the Flutter app.
 
-Product JPEGs are tracked with Git LFS. Install Git LFS before cloning or run `git lfs install && git lfs pull` in an existing checkout so Flutter receives the image bytes rather than pointer files. CI fetches LFS assets and validates their JPEG signatures before building.
+CI fetches LFS assets and validates the product JPEG signatures before building.
 
 ## Architecture and A2UI shape
 
@@ -86,7 +96,7 @@ The CSV parser handles quoted commas, escaped quotes, and multiline fields. Run 
 
 The CSV uses fictional names, brands, descriptions, prices, and IDs. The approved product photographs are reused as local assets, resized and saved without image metadata. Visible marks on products and reverse image search can still identify a photographed item; the image bundle does not provide image-level unlinkability. For future catalog expansion, `tools/catalog/import_images.py` accepts a private, ordered URL file and an explicit `--allowed-host`, then writes renamed JPEGs. Keep that URL file outside the repository; the importer requires Pillow.
 
-The bundled catalog photographs are used with permission for this public demo. They are existing photographs, not presented as AI-generated images. The ten Start collage photographs supplied in the design reference still need recorded source credits and redistribution terms. See [NOTICE](NOTICE) for image and project credits.
+The bundled catalog photographs are existing photographs, not presented as AI-generated images. [NOTICE](NOTICE) records the catalog-photo permission and third-party credits. The Start collage and other design-reference imagery require a separate rights review before public distribution; the project license alone does not clear those assets. Track the current handoff status in the [submission checklist](docs/google-reviewer-checklist.md).
 
 ## Verification
 
@@ -102,4 +112,4 @@ fvm flutter build web
 
 ## License
 
-Apache-2.0 for the project and approved bundled catalog photographs. Jost retains its SIL Open Font License in `assets/fonts/jost/OFL.txt`. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
+Project code is Apache-2.0. Bundled photographs and design assets follow their recorded permissions in [NOTICE](NOTICE); public redistribution requires those permissions to cover the final bundle. Jost and Inter retain their SIL Open Font Licenses in `assets/fonts/jost/OFL.txt` and `assets/fonts/inter/OFL.txt`. See [LICENSE](LICENSE) and the [submission checklist](docs/google-reviewer-checklist.md).
