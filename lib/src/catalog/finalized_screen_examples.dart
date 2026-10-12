@@ -72,7 +72,8 @@ final finalizedScreenExamples = <FinalizedScreenExample>[
     FinalizedScreenExample._(Map<String, Object?>.from(source as Map)),
 ];
 
-/// Reuses the exact ten existing PNG originals verified against Figma hashes.
+/// Displays the ten bundled fashion photographs; see NOTICE for source and
+/// license details. Historical Figma image hashes do not describe replacements.
 /// It preserves the three-column four-pixel-gap centered stagger, including
 /// source photo 6's top-aligned crop. A collage is decoration, not a screenshot.
 class FinalizedOccasionCollage extends StatelessWidget {
@@ -140,7 +141,7 @@ final finalizedScreenItems = <CatalogItem>[
   CatalogItem(
     name: 'OccasionCollage',
     dataSchema: S.object(
-      description: 'Decorative occasion collage from exact bundled Figma image originals.',
+      description: 'Decorative occasion collage from bundled fashion photographs; see NOTICE for source and license details.',
       properties: {},
     ),
     exampleData: [
