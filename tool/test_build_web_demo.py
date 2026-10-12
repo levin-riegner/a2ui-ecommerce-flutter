@@ -17,10 +17,14 @@ class BundleAuditTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         for name in ('index.html', 'main.dart.js', 'flutter_bootstrap.js'):
             (self.root / name).write_text('public fixture')
+        for name in build.LEGAL_FILES.values():
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('license fixture')
 
     def test_public_bundle_has_content_hashes(self):
         files = build.audit_bundle(self.root)
-        self.assertEqual(len(files), 3)
+        self.assertEqual(len(files), 7)
         self.assertEqual(len(files['main.dart.js']), 64)
 
     def test_credential_error_never_echoes_matching_content(self):
@@ -46,6 +50,11 @@ class BundleAuditTests(unittest.TestCase):
 
     def test_missing_app_is_rejected(self):
         (self.root / 'main.dart.js').unlink()
+        with self.assertRaises(ValueError):
+            build.audit_bundle(self.root)
+
+    def test_missing_notices_are_rejected(self):
+        (self.root / 'NOTICE.txt').unlink()
         with self.assertRaises(ValueError):
             build.audit_bundle(self.root)
 

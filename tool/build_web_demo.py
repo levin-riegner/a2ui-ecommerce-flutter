@@ -18,6 +18,12 @@ SECRET_PATTERNS = (
     re.compile(rb"gh[pousr]_[A-Za-z0-9]{30,}"),
     re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 )
+LEGAL_FILES = {
+    'LICENSE': 'LICENSE.txt',
+    'NOTICE': 'NOTICE.txt',
+    'assets/fonts/inter/OFL.txt': 'licenses/Inter-OFL.txt',
+    'assets/fonts/jost/OFL.txt': 'licenses/Jost-OFL.txt',
+}
 
 
 def audit_bundle(directory):
@@ -42,7 +48,8 @@ def audit_bundle(directory):
         if any(pattern.search(data) for pattern in SECRET_PATTERNS):
             raise ValueError(f'Credential-shaped content: {relative}')
         files[relative] = hashlib.sha256(data).hexdigest()
-    for required in ('index.html', 'main.dart.js', 'flutter_bootstrap.js'):
+    for required in ('index.html', 'main.dart.js', 'flutter_bootstrap.js',
+                     *LEGAL_FILES.values()):
         if required not in files:
             raise ValueError(f'Missing web entry point: {required}')
     return files
@@ -83,6 +90,12 @@ def main():
         if marker.is_symlink() or marker.read_bytes():
             raise ValueError('Unexpected non-empty asset directory marker')
         marker.unlink()
+    # Flutter packages dependency notices, but does not automatically bundle
+    # this app's NOTICE or font license text. Preserve the actual source files.
+    for source, destination in LEGAL_FILES.items():
+        target = output / destination
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(root / source, target)
     manifest = {
         'commit': revision,
         'dirty': dirty,
