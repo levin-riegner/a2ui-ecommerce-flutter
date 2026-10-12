@@ -35,13 +35,18 @@ context. After the connector quota was reached, the user authorized exact
 read-only Plugin API properties, usage notes and original asset exports for the
 remaining families. No Figma nodes were edited.
 
-Static SVGs retain their exported geometry. The four screen photos have Figma
-export and image-hash provenance; those checks establish origin, not redistribution
-permission. The Start collage has a separate asset review and may use replacement
-imagery. Jost and Inter are bundled with their font licenses. Product images in
-real journeys use the catalog assets covered by the permission recorded in
-[NOTICE](../../NOTICE). Check the [submission checklist](../google-reviewer-checklist.md)
-for remaining image-rights and reviewer-access decisions before public distribution.
+Static SVGs retain their exported geometry. The baseline's photo hashes establish
+Figma origin, not redistribution permission. [Draft PR15](https://github.com/levin-riegner/a2ui-ecommerce-flutter/pull/15)
+replaces all ten Start collage and four gallery photos with documented CC0-1.0
+images while retaining their filenames and dimensions. Its
+[rights ledger](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/237cfb638e8fc60ead1a183be8c7a113db6bb649/docs/asset-rights.md)
+records source/creator/license evidence, crops, hashes and visual substitutions.
+The original Figma hashes remain historical style/provenance evidence. These
+illustrative gallery photos do not establish venue or forecast facts.
+Jost and Inter retain their font licenses; product photos follow the existing
+permission in [NOTICE](../../NOTICE). Integrate the replacement images and notices
+before public packaging, and resolve the historical-photo/public-history gate in
+the [submission checklist](../google-reviewer-checklist.md).
 
 ## Behavior boundaries
 

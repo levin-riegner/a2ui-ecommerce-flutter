@@ -33,7 +33,7 @@ iOS requires the iOS 27.1 build SDK described in README.
 
 The key is masked, remains in memory, and is sent directly to the selected
 provider in request headers. It is not saved to files or browser storage.
-Starting a journey, submitting chat, selecting or removing pieces, **Change**,
+Starting a journey, submitting chat, selecting or removing pieces, changing a slot,
 and **Retry** may incur provider charges; each interaction is capped at four
 model requests. Editing clarification controls and exploring the catalog do
 not request generation.
@@ -69,9 +69,10 @@ After connecting, type this in **Your occasion**:
    response. If the saved brief adds a required layer, follow that slot too. Each
    successful selection keeps the other pieces and advances the category. A
    completed look has filled required slots and no next-piece badge.
-5. To inspect replacement behavior, use **Change** on a filled slot. Expect
+5. To inspect replacement behavior, tap a filled dressing-room slot's photo/name.
+   Its accessibility action is **Change** followed by the product name. Expect
    alternatives for that category while the current item and totals remain until
-   a replacement is selected. **Change** is different from the typed removal in
+   a replacement is selected. This changes a piece rather than removing it as in
    step 3; there is no separate selected-products list below the dressing room.
 
 Exact products, ordering, descriptions and verbal-edit interpretation vary by
@@ -100,6 +101,66 @@ are local fixtures. Photo upload, fit/size, saved looks, bag quantity, delivery 
 checkout examples do not establish live services. The
 [Figma catalog guide and schema exports](design/README.md) document the contracts.
 
+## Pending web demo integration
+
+[Draft PR14](https://github.com/levin-riegner/a2ui-ecommerce-flutter/pull/14), reviewed
+source `7eae0a331ab163cc9c1e5c304181285c8cecbf2a`, prepares a direct `/#/catalog`
+route and a [release builder](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/7eae0a331ab163cc9c1e5c304181285c8cecbf2a/tool/build_web_demo.py).
+These are pending changes, not a verified hosted deployment. For the reviewer
+package, integrate PR14 and PR15's replacement images/notices, complete FVM setup,
+then build from a clean commit:
+
+```sh
+python3 tool/build_web_demo.py --flutter .fvm/flutter_sdk/bin/flutter
+```
+
+The builder uses `lib/main.dart` in BYOK mode, excludes source maps, filters
+credential-named environment variables, scans the bundle for credential-shaped
+content, and sets `ALDER_ENABLE_OPEN_METEO=false`. It records the source commit,
+entry point, weather mode, catalog path and file hashes in generated
+`build/web/alder-build.json`. It includes the app's `LICENSE.txt`, `NOTICE.txt` and
+`licenses/Inter-OFL.txt` / `licenses/Jost-OFL.txt`, separately from Flutter's package
+notices. `--allow-dirty` is for local QA only. The heuristic scan does not establish
+asset rights or prove that arbitrary data is safe to publish.
+
+The reviewed earlier local artifact at `8a8f201` has 330 matching file hashes, clean input,
+`modelMode: BYOK`, `liveWeather: false` and `catalogPath: /#/catalog`. The web form
+discloses **Live weather is unavailable in this web demo.** Do not enable public
+weather requests without the service decision described below. This builder
+prepares files only; it does not deploy or choose a hosting project.
+Rebuild and recheck the final combined commit rather than deploying that earlier
+pre-replacement artifact.
+
+The hosting task's local Chrome record exercised the same Berlin prompt, direct
+catalog open/refresh without a key, zero-request connection setup, a €35 top
+advancing to bottoms, injected 503 rollback, explicit Retry, a synthetic removal
+tool refund/reopened top, and a four-piece €255 look with €645 left. Reviewed
+screenshots show the catalog and selected-top/next-bottom states. Replies came
+from a loopback synthetic HTTP provider; there were zero real model calls.
+Local same-origin QA does not validate real-provider CORS, authentication,
+natural-language interpretation, weather or a deployed build. Those local images
+are QA evidence, not the final submission screenshot package.
+
+## Pending image clearance integration
+
+[Draft PR15](https://github.com/levin-riegner/a2ui-ecommerce-flutter/pull/15), commit
+`237cfb638e8fc60ead1a183be8c7a113db6bb649`, replaces all fourteen previously
+undocumented Start/gallery photos with individually credited CC0-1.0 images.
+Its [rights ledger](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/237cfb638e8fc60ead1a183be8c7a113db6bb649/docs/asset-rights.md)
+and [per-file provenance](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/237cfb638e8fc60ead1a183be8c7a113db6bb649/docs/assets/collage-provenance.json)
+record sources, creators, licenses, crops and hashes; NOTICE retains credits and
+separates CC0 replacements from the existing product-photo permission and font
+licenses. All fourteen local PNG hashes, byte counts and dimensions match the
+ledger. The licensing task records 47 existing tests, actual Flutter captures,
+analysis and a web build in its
+[verification notes](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/237cfb638e8fc60ead1a183be8c7a113db6bb649/docs/verification/image-rights-2026-10-12.md).
+
+This clears the documented fourteen-photo scope after integration, not the old
+photo bytes still present in Git history/LFS. Public repository publication
+requires an owner decision on historical permissions or a clean public export.
+No history rewrite or visibility change has been performed. Product-photo
+permission is retained rather than newly substantiated or broadened.
+
 ## Recovery and live context
 
 - A failed model turn discards its pending preview and draft outfit edits, retains
@@ -109,7 +170,7 @@ checkout examples do not establish live services. The
 - To change provider/model/key, return through **New journey**, disconnect, and
   configure again. Starting a new brief resets the outfit and conversation;
   returning to the landing screen alone keeps the connection.
-- Main's destination context uses Open-Meteo geocoding and a five-day forecast for
+- Baseline `b3263ce` uses Open-Meteo geocoding and a five-day forecast for
   the named city, without GPS. Forecasts are current dated facts, not conditions
   for a future trip outside the returned date range. Dates, values and availability
   change between runs; weather is not a fixed assertion for the journey above.
@@ -153,7 +214,8 @@ fvm flutter test \
 These tests render the actual app widgets and use offline models or mocked HTTP.
 The typed-removal tests supply explicit model tool responses; they do not prove
 natural-language interpretation by a live provider. No live provider requests,
-hosted-browser success, physical dictation or new screenshots are claimed here.
+hosted-browser success or physical dictation are claimed here; PR14's local
+synthetic browser evidence is recorded separately above.
 The [October 7 simulator record](verification/alder-online-simulator-2026-10-07.json)
 is historical evidence for an older revision. Repeat the walkthrough on the final
 deployed commit and record provider/model, date, result and limitations without keys.

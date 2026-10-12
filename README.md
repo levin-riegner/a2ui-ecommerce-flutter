@@ -31,7 +31,7 @@ The key stays in memory on the device and is added only to the provider's outgoi
 
 Without a model connection, journeys are disabled and the component gallery remains available. The conversation keeps submitted messages and previous recommendations in order; only the latest completed recommendation accepts input. During a turn, the app displays a loading surface, then previews catalog-validated cards as they become available, with chat/product actions disabled until the full turn succeeds. The final stylist explanation appears after validation. Failed turns remove the preview, show Retry, and retain the previous outfit and completed surfaces. Retrying keeps the original user message without adding a duplicate. No scripted fallback runs in the app.
 
-Once connected, tap a full-sentence occasion example or type in **Your occasion** and use the send arrow labelled **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. **Add to dressing room** selects a recommendation and requests the next category. **Change** on a filled slot requests alternatives while keeping the current piece until a replacement is selected. To remove a piece, send a message naming it. The dressing room follows the current outfit plan, including tops and bottoms.
+Once connected, tap a full-sentence occasion example or type in **Your occasion** and use the send arrow labelled **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. **Add to dressing room** selects a recommendation and requests the next category. Tap a filled dressing-room slot to request alternatives while keeping the current piece until a replacement is selected; its accessibility action is **Change** followed by the product name. To remove a piece, send a message naming it. The dressing room follows the current outfit plan, including tops and bottoms.
 
 Destination forecasts use Open-Meteo geocoding and weather endpoints. Only the named destination is looked up; the app does not request GPS. Verified dates, temperature, and rain probability reach both the weather card and stylist. Unavailable forecasts show a notice; changing the destination clears the previous city's weather. **Refresh forecast** updates only the current response, makes no model request, and preserves the outfit, choices, and history. Forecasts are cached for 15 minutes; previous responses remain read-only. See [the online demo guide](docs/alder-online-demo.md) for the bounded local bridge and offline simulator mode.
 
@@ -48,6 +48,8 @@ For a live journey, connect your own tool-capable model, then enter:
 > A smart casual work day in Berlin, Germany today, budget €900. Build a look with a top, bottoms, shoes and a bag.
 
 Use **Start my look**, wait for completed recommendations, then **Add to dressing room** on a top. Expect the selected top to remain in its slot, its catalog price to reduce the remaining budget, and the next choices to be bottoms. Send `Remove the top named <selected product name> from my outfit` with the displayed name substituted to reopen that category. Exact products and prose depend on the model. See the [reviewer walkthrough](docs/alder-online-demo.md) for selection, removal, recovery, and live requirements, and the [October 16 submission checklist](docs/google-reviewer-checklist.md) for handoff gaps.
+
+[Draft PR14](https://github.com/levin-riegner/a2ui-ecommerce-flutter/pull/14) prepares a direct `/#/catalog` route and an audited BYOK web builder with live weather disabled. These changes still need integration and hosting approval; no deployed URL or live-provider browser success is recorded. See the [pending web integration notes](docs/alder-online-demo.md#pending-web-demo-integration) before building the reviewer package.
 
 ## Genkit developer tools
 
@@ -82,7 +84,7 @@ CI fetches LFS assets and validates the product JPEG signatures before building.
 
 ## Architecture and A2UI shape
 
-See [architecture.md](docs/architecture.md) for the layer boundaries, surface lifecycle, message shape, and event flow. Open the **Explore component catalog** action on the landing screen to see the complete 24-component vocabulary in a compact visual index.
+See [architecture.md](docs/architecture.md) for the layer boundaries, surface lifecycle, message shape, and event flow. Open **Explore component catalog** on the landing screen for the commerce/basic component index and links to the finalized Figma families and screen examples.
 
 Reusable presentation widgets and layouts are exported through `package:a2ui_flutter_commerce/commerce_ui.dart`. The A2UI catalog adapters and interactive component gallery use those same widgets. The gallery includes choice, disabled action, choose/remove, slot, completion, and light/dark dressing-room examples; its controls make no provider requests.
 
@@ -96,7 +98,7 @@ The CSV parser handles quoted commas, escaped quotes, and multiline fields. Run 
 
 The CSV uses fictional names, brands, descriptions, prices, and IDs. The approved product photographs are reused as local assets, resized and saved without image metadata. Visible marks on products and reverse image search can still identify a photographed item; the image bundle does not provide image-level unlinkability. For future catalog expansion, `tools/catalog/import_images.py` accepts a private, ordered URL file and an explicit `--allowed-host`, then writes renamed JPEGs. Keep that URL file outside the repository; the importer requires Pillow.
 
-The bundled catalog photographs are existing photographs, not presented as AI-generated images. [NOTICE](NOTICE) records the catalog-photo permission and third-party credits. The Start collage and other design-reference imagery require a separate rights review before public distribution; the project license alone does not clear those assets. Track the current handoff status in the [submission checklist](docs/google-reviewer-checklist.md).
+The bundled catalog photographs are existing photographs, not presented as AI-generated images. [NOTICE](NOTICE) records the catalog-photo permission and third-party credits. [Draft PR15](https://github.com/levin-riegner/a2ui-ecommerce-flutter/pull/15) replaces all ten Start collage and four gallery photographs with individually documented CC0-1.0 images. Integrate those replacements and their notices before public packaging. Previous unlicensed photo bytes remain in Git history/LFS, so public repository release still needs the owner's history/permissions decision. Track the current handoff status in the [submission checklist](docs/google-reviewer-checklist.md).
 
 ## Verification
 
@@ -112,4 +114,4 @@ fvm flutter build web
 
 ## License
 
-Project code is Apache-2.0. Bundled photographs and design assets follow their recorded permissions in [NOTICE](NOTICE); public redistribution requires those permissions to cover the final bundle. Jost and Inter retain their SIL Open Font Licenses in `assets/fonts/jost/OFL.txt` and `assets/fonts/inter/OFL.txt`. See [LICENSE](LICENSE) and the [submission checklist](docs/google-reviewer-checklist.md).
+Project code is Apache-2.0. Product photographs follow the permission recorded in [NOTICE](NOTICE); pending PR15's fourteen replacement images retain CC0-1.0 rather than being relicensed as Apache-2.0. Jost and Inter retain their SIL Open Font Licenses in `assets/fonts/jost/OFL.txt` and `assets/fonts/inter/OFL.txt`. Public distribution requires the final bundle's notices and the separate historical-photo decision. See [LICENSE](LICENSE) and the [submission checklist](docs/google-reviewer-checklist.md).
