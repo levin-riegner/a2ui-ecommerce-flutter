@@ -5,6 +5,7 @@ import 'package:a2ui_flutter_commerce/src/agent/genkit_providers.dart';
 import 'package:a2ui_flutter_commerce/src/agent/model_settings.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genkit/genkit.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -139,11 +140,8 @@ void main() {
       );
       final runtime = StylistRuntime(
         products: products,
-        plugins: [connection.plugin],
         providerModel: connection.model,
-        normalizeResponse: connection.normalizeResponse,
         onBeginTurn: connection.beginTurn,
-        onModelRequest: connection.prepareRequest,
         onCancelTurn: connection.cancelTurn,
       );
       addTearDown(() async {
@@ -177,11 +175,8 @@ void main() {
         final connection = GenkitProvider(settings, client: client);
         final runtime = StylistRuntime(
           products: products,
-          plugins: [connection.plugin],
           providerModel: connection.model,
-          normalizeResponse: connection.normalizeResponse,
           onBeginTurn: connection.beginTurn,
-          onModelRequest: connection.prepareRequest,
           onCancelTurn: connection.cancelTurn,
         );
         addTearDown(() async {
@@ -278,11 +273,8 @@ void main() {
         );
         final runtime = StylistRuntime(
           products: products,
-          plugins: [connection.plugin],
           providerModel: connection.model,
-          normalizeResponse: connection.normalizeResponse,
           onBeginTurn: connection.beginTurn,
-          onModelRequest: connection.prepareRequest,
           onCancelTurn: connection.cancelTurn,
         );
         addTearDown(() async {
@@ -337,14 +329,11 @@ void main() {
           );
           final runtime = StylistRuntime(
             products: products,
-            plugins: [connection.plugin],
             providerModel: connection.model,
-            normalizeResponse: connection.normalizeResponse,
             onBeginTurn: connection.beginTurn,
             onCancelTurn: connection.cancelTurn,
             onModelRequest: (request) {
-              request.toolChoice = choice;
-              connection.prepareRequest(request);
+              request.toolChoice = ToolChoice(choice);
             },
           );
           addTearDown(() async {
@@ -407,12 +396,9 @@ void main() {
         );
         final runtime = StylistRuntime(
           products: products,
-          plugins: [connection.plugin],
           providerModel: connection.model,
-          normalizeResponse: connection.normalizeResponse,
           onBeginTurn: connection.beginTurn,
           onCancelTurn: connection.cancelTurn,
-          onModelRequest: connection.prepareRequest,
         );
         addTearDown(() async {
           connection.dispose();
@@ -489,6 +475,55 @@ void main() {
       },
     );
 
+    test('$provider cancellation aborts HTTP and a later turn can succeed', () async {
+      final client = _AbortableProviderClient(provider);
+      final connection = GenkitProvider(
+        ModelSettings(
+          provider: provider,
+          model: 'test-model',
+          apiKey: 'private-test-key',
+          baseUrl: provider == 'openai-compatible'
+              ? 'https://compatible.example/v1'
+              : null,
+        ),
+        client: client,
+      );
+      final runtime = StylistRuntime(
+        products: products,
+        providerModel: connection.model,
+        onBeginTurn: connection.beginTurn,
+        onCancelTurn: connection.cancelTurn,
+      );
+      addTearDown(() async {
+        connection.dispose();
+        await runtime.dispose();
+        client.close();
+      });
+      final failed = expectLater(
+        runtime.turn({'message': 'Under €100'}),
+        throwsA(anything),
+      );
+      await client.started.future;
+      connection.cancelTurn();
+      await client.aborted.future;
+      await failed;
+      expect(runtime.outfit['budget'], isNull);
+      expect(client.calls, 1);
+      expect(client.closed, isFalse);
+
+      final recovered = await runtime.turn({'message': 'Under €100'});
+      expect(recovered['reply'], contains('Ready'));
+      expect(client.calls, 2);
+      // Per-call SDK cleanup must not close a borrowed client, even for Google.
+      expect(client.closed, isFalse);
+      connection.dispose();
+      expect(
+        client.closed,
+        isFalse,
+        reason: 'Injected clients belong to the caller',
+      );
+    });
+
     for (final status in [401, 429, 500, 302]) {
       test(
         '$provider provider status $status is sanitized and never retried',
@@ -515,11 +550,8 @@ void main() {
           );
           final runtime = StylistRuntime(
             products: products,
-            plugins: [connection.plugin],
             providerModel: connection.model,
-            normalizeResponse: connection.normalizeResponse,
             onBeginTurn: connection.beginTurn,
-            onModelRequest: connection.prepareRequest,
             onCancelTurn: connection.cancelTurn,
           );
           addTearDown(() async {
@@ -541,6 +573,94 @@ void main() {
   }
 
   test(
+    'concurrent Google invocations keep HTTP scopes and keys isolated',
+    () async {
+      final bothStarted = Completer<void>();
+      var started = 0;
+      final runtimes = <StylistRuntime>[];
+      for (final key in ['connection-a', 'connection-b']) {
+        final client = MockClient((request) async {
+          expect(request.headers['x-goog-api-key'], key);
+          if (++started == 2) bothStarted.complete();
+          await bothStarted.future;
+          expect(request.body, isNot(contains(key)));
+          return providerReply('googleai', text: key);
+        });
+        final connection = GenkitProvider(
+          ModelSettings(provider: 'googleai', model: 'test-model', apiKey: key),
+          client: client,
+        );
+        final runtime = StylistRuntime(
+          products: products,
+          providerModel: connection.model,
+          onBeginTurn: connection.beginTurn,
+          onCancelTurn: connection.cancelTurn,
+        );
+        runtimes.add(runtime);
+        addTearDown(() async {
+          connection.dispose();
+          await runtime.dispose();
+          client.close();
+        });
+      }
+      final results = await Future.wait([
+        for (final runtime in runtimes) runtime.turn({'message': 'Under €100'}),
+      ]);
+      expect(results[0]['reply'], contains('connection-a'));
+      expect(results[1]['reply'], contains('connection-b'));
+      expect(started, 2);
+    },
+  );
+
+  for (final reason in ['length', 'content_filter', 'unknown']) {
+    test(
+      'OpenAI $reason tool response is not normalized into success',
+      () async {
+        var calls = 0;
+        final client = MockClient((request) async {
+          calls++;
+          final body = jsonDecode(
+            providerToolReply('openai', 'search_products', {
+              'query': 'dress',
+            }).body,
+          ) as Map<String, dynamic>;
+          body['choices'][0]['finish_reason'] = reason;
+          return http.Response(
+            jsonEncode(body),
+            200,
+            headers: {'content-type': 'application/json'},
+          );
+        });
+        final connection = GenkitProvider(
+          ModelSettings(
+            provider: 'openai',
+            model: 'test-model',
+            apiKey: 'test-key',
+          ),
+          client: client,
+        );
+        final runtime = StylistRuntime(
+          products: products,
+          providerModel: connection.model,
+          onBeginTurn: connection.beginTurn,
+          onCancelTurn: connection.cancelTurn,
+        );
+        addTearDown(() async {
+          connection.dispose();
+          await runtime.dispose();
+          client.close();
+        });
+        await expectLater(
+          runtime.turn({'message': 'Dress under €100'}),
+          throwsA(anything),
+        );
+        expect(calls, 1);
+        expect(runtime.outfit['budget'], isNull);
+      },
+    );
+  }
+
+  test(
     'a retired allowance response cannot contaminate the next turn',
     () async {
       final started = Completer<void>();
@@ -559,10 +679,8 @@ void main() {
       );
       final runtime = StylistRuntime(
         products: products,
-        plugins: [connection.plugin],
         providerModel: connection.model,
         onBeginTurn: connection.beginTurn,
-        onModelRequest: connection.prepareRequest,
         onCancelTurn: connection.cancelTurn,
       );
       addTearDown(() async {
@@ -613,10 +731,8 @@ void main() {
         );
         final runtime = StylistRuntime(
           products: products,
-          plugins: [connection.plugin],
           providerModel: connection.model,
           onBeginTurn: connection.beginTurn,
-          onModelRequest: connection.prepareRequest,
           onCancelTurn: connection.cancelTurn,
         );
         addTearDown(() async {
@@ -686,4 +802,38 @@ void main() {
       isNot(contains('secret')),
     );
   });
+}
+
+/// Emulates an HTTP implementation that honours AbortableRequest, without a socket.
+class _AbortableProviderClient extends http.BaseClient {
+  _AbortableProviderClient(this.provider);
+  final String provider;
+  final started = Completer<void>();
+  final aborted = Completer<void>();
+  var calls = 0;
+  var closed = false;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    expect(closed, isFalse);
+    await request.finalize().drain<void>();
+    if (++calls == 1) {
+      expect(request, isA<http.AbortableRequest>());
+      final abort = (request as http.AbortableRequest).abortTrigger;
+      expect(abort, isNotNull);
+      started.complete();
+      await abort;
+      aborted.complete();
+      throw http.RequestAbortedException(request.url);
+    }
+    final response = providerReply(provider);
+    return http.StreamedResponse(
+      Stream.value(response.bodyBytes),
+      200,
+      headers: response.headers,
+    );
+  }
+
+  @override
+  void close() => closed = true;
 }

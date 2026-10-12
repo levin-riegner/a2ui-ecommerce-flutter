@@ -41,7 +41,7 @@ Dictation uses the community-maintained [`speech_to_text`](https://pub.dev/packa
 
 ## Genkit developer tools
 
-The app bundles the Dart runtime and official provider plugins. Genkit Dart is currently in preview; package versions are pinned, and HTTP transport injection for the Google and Anthropic plugins is isolated in `genkit_providers.dart` until their factory handles expose it.
+The app pins Genkit Dart, its three official provider plugins, and Schemantic to 1.0.0. The integration uses public APIs only. See the [Genkit 1.0 implementation reference](docs/genkit-reference.md) for provider setup, typed tool selection, cancellation, retry policy, transport ownership, and the remaining upstream compatibility exception.
 
 For an explicitly opted-in live OpenAI smoke test, put `OPENAI_API_KEY` and `OPENAI_MODEL` in the ignored `.env.local` file or your process environment, then run:
 
