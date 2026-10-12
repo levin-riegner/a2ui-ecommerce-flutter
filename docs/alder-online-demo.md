@@ -107,8 +107,8 @@ checkout examples do not establish live services. The
 source `7eae0a331ab163cc9c1e5c304181285c8cecbf2a`, prepares a direct `/#/catalog`
 route and a [release builder](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/7eae0a331ab163cc9c1e5c304181285c8cecbf2a/tool/build_web_demo.py).
 These are pending changes, not a verified hosted deployment. For the reviewer
-package, integrate PR14 and PR15's replacement images/notices, complete FVM setup,
-then build from a clean commit:
+package, integrate the hosting changes with the restored original Figma assets
+and accurate notices, complete FVM setup, then build from a clean commit:
 
 ```sh
 python3 tool/build_web_demo.py --flutter .fvm/flutter_sdk/bin/flutter
@@ -128,8 +128,9 @@ The reviewed earlier local artifact at `8a8f201` has 330 matching file hashes, c
 discloses **Live weather is unavailable in this web demo.** Do not enable public
 weather requests without the service decision described below. This builder
 prepares files only; it does not deploy or choose a hosting project.
-Rebuild and recheck the final combined commit rather than deploying that earlier
-pre-replacement artifact.
+Rebuild and recheck the final combined commit after the original-asset decision
+is reflected. The replacement-based `b33cf8c` build/export is superseded and must
+not be deployed. The earlier local QA artifact is not the final reviewer package.
 
 The hosting task's local Chrome record exercised the same Berlin prompt, direct
 catalog open/refresh without a key, zero-request connection setup, a €35 top
@@ -141,25 +142,20 @@ Local same-origin QA does not validate real-provider CORS, authentication,
 natural-language interpretation, weather or a deployed build. Those local images
 are QA evidence, not the final submission screenshot package.
 
-## Pending image clearance integration
+## Original Figma imagery and permission record
 
-[Draft PR15](https://github.com/levin-riegner/a2ui-ecommerce-flutter/pull/15), commit
-`237cfb638e8fc60ead1a183be8c7a113db6bb649`, replaces all fourteen previously
-undocumented Start/gallery photos with individually credited CC0-1.0 images.
-Its [rights ledger](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/237cfb638e8fc60ead1a183be8c7a113db6bb649/docs/asset-rights.md)
-and [per-file provenance](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/237cfb638e8fc60ead1a183be8c7a113db6bb649/docs/assets/collage-provenance.json)
-record sources, creators, licenses, crops and hashes; NOTICE retains credits and
-separates CC0 replacements from the existing product-photo permission and font
-licenses. All fourteen local PNG hashes, byte counts and dimensions match the
-ledger. The licensing task records 47 existing tests, actual Flutter captures,
-analysis and a web build in its
-[verification notes](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/237cfb638e8fc60ead1a183be8c7a113db6bb649/docs/verification/image-rights-2026-10-12.md).
+Use the ten original Start collage photos and four original gallery photos
+provided through Figma, as Kelvin requested. The replacement-image approach and
+its clearance evidence are superseded. Kelvin has stated that prior authorization
+exists; the repository currently records provenance but not that authorization's
+scope for hosted display or public repository redistribution.
 
-This clears the documented fourteen-photo scope after integration, not the old
-photo bytes still present in Git history/LFS. Public repository publication
-requires an owner decision on historical permissions or a clean public export.
-No history rewrite or visibility change has been performed. Product-photo
-permission is retained rather than newly substantiated or broadened.
+Record that scope, including existing Git/LFS photo bytes, with accurate credits
+and notices before asserting public redistribution readiness. Figma source/hash
+verification establishes origin rather than an image license. The existing
+product-photo permission is retained; Jost and Inter keep their OFL licenses.
+Hosting code/tests remain separate from the image restoration. Rebuild and verify
+the final package with the original files after restoration is reflected.
 
 ## Recovery and live context
 
