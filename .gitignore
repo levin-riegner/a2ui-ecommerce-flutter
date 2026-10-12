@@ -55,3 +55,5 @@ app.*.map.json
 !.env.example
 node_modules/
 .genkit/
+.firebase/
+firebase-debug.log

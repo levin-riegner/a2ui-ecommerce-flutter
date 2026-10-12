@@ -74,6 +74,12 @@ class _ReferenceAppState extends State<ReferenceApp> {
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       builder: (context, child) => DuoLayoutAdapter(child: child!),
+      routes: {
+        '/catalog': (context) => _ComponentGallery(
+          onBack: () =>
+              Navigator.of(context).popUntil(ModalRoute.withName('/')),
+        ),
+      },
       home: _AppHome(
         key: ObjectKey(agent),
         agent: agent,
@@ -110,7 +116,6 @@ class _AppHome extends StatefulWidget {
 }
 
 class _AppHomeState extends State<_AppHome> {
-  bool showGallery = false;
   bool showStartScreen = false;
 
   @override
@@ -119,11 +124,6 @@ class _AppHomeState extends State<_AppHome> {
     return AnimatedBuilder(
       animation: agent ?? const AlwaysStoppedAnimation(0),
       builder: (context, _) {
-        if (showGallery) {
-          return _ComponentGallery(
-            onBack: () => setState(() => showGallery = false),
-          );
-        }
         if (agent == null || showStartScreen || !agent.hasStarted) {
           return _StartScreen(
             onConnect: agent == null
@@ -160,7 +160,7 @@ class _AppHomeState extends State<_AppHome> {
                   }
                 : null,
             isBusy: agent?.isBusy ?? false,
-            onOpenGallery: () => setState(() => showGallery = true),
+            onOpenGallery: () => Navigator.of(context).pushNamed('/catalog'),
           );
         }
         return _ResponsiveShell(

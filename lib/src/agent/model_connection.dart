@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'genkit_agent.dart';
 import 'model_settings.dart';
+
+// Public browser demos must not call a service restricted to non-commercial
+// prototyping. Explicitly enable only after clearing the intended service use.
+const _onlineContextEnabled = bool.fromEnvironment(
+  'ALDER_ENABLE_OPEN_METEO',
+  defaultValue: !kIsWeb,
+);
 
 /// Configures a bundled Genkit provider without making a model request.
 class ModelConnectionForm extends StatefulWidget {
@@ -44,7 +52,7 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
     });
     try {
       final agent = await GenkitAgent.connect(
-        onlineContext: true,
+        onlineContext: _onlineContextEnabled,
         provider: _provider,
         model: _model.text.trim(),
         apiKey: _key.text.trim(),
@@ -141,6 +149,16 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
           const Text(
             'Connecting makes no model request. Starting a journey, chatting, selecting pieces, and retrying use your provider account and may incur charges.',
           ),
+          if (kIsWeb) ...[
+            const SizedBox(height: 12),
+            const Text(
+              'Your provider must allow browser requests (CORS). A successful connection configures the model; the first journey checks the key and model with your provider.',
+            ),
+            if (!_onlineContextEnabled) ...[
+              const SizedBox(height: 12),
+              const Text('Live weather is unavailable in this web demo.'),
+            ],
+          ],
           if (_error != null) ...[const SizedBox(height: 12), Text(_error!)],
           const SizedBox(height: 16),
           FilledButton(

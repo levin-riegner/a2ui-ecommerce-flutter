@@ -274,6 +274,25 @@ void main() {
     expect(find.text('ProductCard'), findsOneWidget);
     expect(find.text('DressingRoom'), findsOneWidget);
     expect(find.text('TextField'), findsOneWidget);
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    expect(find.text('Connect your model'), findsOneWidget);
+  });
+
+  testWidgets('reviewer catalog deep link opens without a model connection', (
+    tester,
+  ) async {
+    tester.binding.platformDispatcher.defaultRouteNameTestValue = '/catalog';
+    addTearDown(
+      tester.binding.platformDispatcher.clearDefaultRouteNameTestValue,
+    );
+    await tester.pumpWidget(const ReferenceApp());
+    await tester.pumpAndSettle();
+    expect(find.text('Catalog components'), findsOneWidget);
+    expect(find.text('ProductCard'), findsOneWidget);
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    expect(find.text('Connect your model'), findsOneWidget);
   });
 
   testWidgets('wide layout anchors the dressing room at the top', (
