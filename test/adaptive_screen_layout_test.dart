@@ -6,6 +6,7 @@ import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
 import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
+import 'package:a2ui_flutter_commerce/src/agent/conversation_entry.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +22,41 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
   }
+
+  testWidgets(
+    'resting conversation has clear gaps below header and above composer',
+    (tester) async {
+      setWindow(tester, const Size(951, 669));
+      final agent = _SpacingAgent();
+      await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+      await tester.pumpWidget(ReferenceApp(agent: agent));
+      await tester.pumpAndSettle();
+      final viewport = find.byKey(const ValueKey('primary-pane-scroll'));
+      final position = tester
+          .state<ScrollableState>(
+            find
+                .descendant(of: viewport, matching: find.byType(Scrollable))
+                .first,
+          )
+          .position;
+      position.jumpTo(0);
+      await tester.pumpAndSettle();
+      final header = tester.getRect(
+        find.byKey(const ValueKey('alder-journey-header')),
+      );
+      expect(
+        tester.getRect(find.text('First dinner in Brooklyn')).top,
+        greaterThanOrEqualTo(header.bottom + 32),
+      );
+      position.jumpTo(position.maxScrollExtent);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.text('Find options')).bottom,
+        lessThan(tester.getRect(find.byType(StylistComposer)).top - 32),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'journey glass header stays fixed and composer clears native bottom inset',
@@ -704,6 +740,15 @@ void main() {
     expect(find.byKey(const ValueKey('draft')).hitTestable(), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+class _SpacingAgent extends StubAgent {
+  @override
+  List<CommerceConversationEntry> get conversationEntries => [
+    const CommerceUserMessage(id: 'spacing', text: 'First dinner in Brooklyn'),
+    if (latestInlineSurfaceId != null)
+      CommerceSurfaceEntry(surfaceId: latestInlineSurfaceId!),
+  ];
 }
 
 class _Harness extends StatelessWidget {

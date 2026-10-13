@@ -1,5 +1,8 @@
 # Native Duo polish — 13 October 2026
 
+The later [resting-padding and pill-glass correction](../duo-padding-2026-10-13/README.md)
+supersedes the outer composer backdrop in these captures.
+
 Follow-up to the [Figma layout comparison](../figma-layout-2026-10-13/README.md),
 using the user's [header blur reference](header-blur-reference.png).
 

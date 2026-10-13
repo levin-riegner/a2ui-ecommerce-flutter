@@ -155,6 +155,7 @@ class _StylistComposerState extends State<StylistComposer>
         liveRegion: active,
         label: active ? 'Dictation active' : null,
         child: FinalizedChatInput(
+          glassBackground: true,
           externalController: widget.controller,
           enabled: widget.enabled,
           fieldKey: widget.fieldKey,
@@ -218,8 +219,8 @@ class StylistGlassBackdrop extends StatelessWidget {
   );
 }
 
-/// A fading glass backdrop for the composer where content scrolls underneath.
-/// Safe-area insets belong to AdaptivePaneLayout; this adds only a small gap.
+/// Reserves space around the composer. Glass belongs to the input pill; this
+/// outer spacing stays clear while conversation content scrolls underneath.
 class StylistComposerDock extends StatelessWidget {
   const StylistComposerDock({
     super.key,
@@ -232,15 +233,10 @@ class StylistComposerDock extends StatelessWidget {
   final EdgeInsets? padding;
 
   @override
-  Widget build(BuildContext context) => Stack(
-    children: [
-      Positioned.fill(child: IgnorePointer(child: StylistGlassBackdrop())),
-      Padding(
-        padding:
-            padding ??
-            EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 8),
-        child: child,
-      ),
-    ],
+  Widget build(BuildContext context) => Padding(
+    padding:
+        padding ??
+        EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 8),
+    child: child,
   );
 }

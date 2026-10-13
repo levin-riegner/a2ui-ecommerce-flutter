@@ -82,7 +82,7 @@ class CommerceChoice extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
             ),
             child: Text(
-              label,
+              displayDetail(label),
               style: TextStyle(
                 color: onPressed == null
                     ? selected

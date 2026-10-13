@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui' show ImageFilter, TileMode;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -149,6 +150,7 @@ class FinalizedChatInput extends StatefulWidget {
     this.microphoneLabel = 'Dictate message',
     this.externalController,
     this.enabled = true,
+    this.glassBackground = false,
     this.fieldKey,
     this.submitLabel = 'Send message',
     this.fieldLabel = 'Tell me about the occasion',
@@ -163,6 +165,7 @@ class FinalizedChatInput extends StatefulWidget {
   final String microphoneLabel;
   final TextEditingController? externalController;
   final bool enabled;
+  final bool glassBackground;
   final Key? fieldKey;
   final String submitLabel, fieldLabel;
   @override
@@ -221,11 +224,27 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
         valueListenable: controller,
         builder: (_, textValue, child) => Container(
           decoration: BoxDecoration(
-            color: _wash,
+            color: widget.glassBackground ? null : _wash,
             borderRadius: BorderRadius.circular(28),
           ),
           child: Stack(
             children: [
+              if (widget.glassBackground)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 12,
+                          sigmaY: 12,
+                          tileMode: TileMode.decal,
+                        ),
+                        child: ColoredBox(color: _wash.withValues(alpha: .82)),
+                      ),
+                    ),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 8, 96, 8),
                 child: Semantics(

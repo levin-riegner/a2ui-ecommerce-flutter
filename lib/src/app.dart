@@ -720,7 +720,7 @@ class _ResponsiveShell extends StatelessWidget {
           overlayFooter: true,
           overlayHeader: true,
           primaryBottomInset: 32,
-          panePadding: EdgeInsets.fromLTRB(gutter, 0, gutter, 24),
+          panePadding: EdgeInsets.fromLTRB(gutter, 32, gutter, 12),
           secondaryPadding: const EdgeInsets.symmetric(vertical: 12),
           compactSecondaryPadding: const EdgeInsets.symmetric(horizontal: 16),
           secondaryScrollable: false,
@@ -736,7 +736,7 @@ class _ResponsiveShell extends StatelessWidget {
           secondary: _DressingPanel(agent: agent),
           header: _MobileHeader(onNewJourney: onNewJourney),
           footer: StylistComposerDock(
-            padding: EdgeInsets.fromLTRB(gutter, 24, gutter, 8),
+            padding: EdgeInsets.fromLTRB(gutter, 0, gutter, 8),
             child: _ChatComposer(agent: agent),
           ),
           rail: _SideRail(onNewJourney: onNewJourney),

@@ -180,7 +180,7 @@ void main() {
     expect(find.text('Find options'), findsOneWidget);
     expect(find.text('Season'), findsNothing);
     expect(harness.sent, isEmpty);
-    await tester.tap(find.text('smart-casual'));
+    await tester.tap(find.text('Smart-casual'));
     await tester.pumpAndSettle();
     expect(
       harness.controller

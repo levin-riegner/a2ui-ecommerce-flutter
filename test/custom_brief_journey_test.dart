@@ -60,8 +60,8 @@ void main() {
       expect(runtime.outfit['budget'], isNull);
       expect(runtime.outfit['items'], isEmpty);
       final callsBefore = calls;
-      await tester.ensureVisible(find.text('smart-casual'));
-      await tester.tap(find.text('smart-casual'));
+      await tester.ensureVisible(find.text('Smart-casual'));
+      await tester.tap(find.text('Smart-casual'));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.byType(Slider));
       await tester.drag(find.byType(Slider), const Offset(45, 0));

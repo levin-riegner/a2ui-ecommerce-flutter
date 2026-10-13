@@ -110,6 +110,28 @@ Future<void> main() async {
       jsonEncode(await capture()),
     );
   });
+  developer.registerExtension('ext.layout.scroll', (_, parameters) async {
+    void visit(Element element) {
+      if (element is StatefulElement && element.state is ScrollableState) {
+        final view = element
+            .findAncestorWidgetOfExactType<SingleChildScrollView>();
+        if (view?.key == const ValueKey('primary-pane-scroll') ||
+            view?.key == const ValueKey('compact-pane-scroll')) {
+          final position = (element.state as ScrollableState).position;
+          position.jumpTo(
+            parameters['edge'] == 'start' ? 0 : position.maxScrollExtent,
+          );
+        }
+      }
+      element.visitChildElements(visit);
+    }
+
+    WidgetsBinding.instance.rootElement?.visitChildElements(visit);
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    return developer.ServiceExtensionResponse.result(
+      jsonEncode(await capture()),
+    );
+  });
   // Renderer-only bound-data growth exercises following without model calls.
   developer.registerExtension('ext.layout.grow', (_, parameters) async {
     final id = agent.latestInlineSurfaceId!;
