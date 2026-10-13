@@ -22,6 +22,35 @@ void main() {
     });
   }
 
+  testWidgets(
+    'journey glass header stays fixed and composer clears native bottom inset',
+    (tester) async {
+      setWindow(tester, const Size(951, 669));
+      tester.view.padding = const FakeViewPadding(bottom: 64);
+      addTearDown(tester.view.resetPadding);
+      final agent = StubAgent();
+      await tester.runAsync(() => agent.startJourney(DemoJourney.berlin));
+      await tester.pumpWidget(ReferenceApp(agent: agent));
+      await tester.pumpAndSettle();
+      final header = find.byKey(const ValueKey('alder-journey-header'));
+      final before = tester.getRect(header);
+      final viewport = find.byKey(const ValueKey('primary-pane-scroll'));
+      expect(tester.getRect(viewport).top, before.top);
+      expect(
+        find.descendant(of: header, matching: find.byType(BackdropFilter)),
+        findsOneWidget,
+      );
+      await tester.drag(viewport, const Offset(0, -260));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(header), before);
+      expect(
+        tester.getRect(find.byType(StylistComposer)).bottom,
+        lessThanOrEqualTo(669 - 64 - 8),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   for (final entry in <Size, bool>{
     const Size(360, 780): false,
     const Size(600, 320): false,

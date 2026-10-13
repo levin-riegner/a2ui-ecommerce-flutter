@@ -24,6 +24,29 @@ Future<void> main() async {
   );
   var revision = 0;
   var agent = GenkitAgent(StylistRuntime(products: products));
+  Future<void> selectFirst() async {
+    final rows = agent.controller
+        .contextFor(agent.latestInlineSurfaceId!)
+        .dataModel
+        .getValue<List<Object?>>(DataPath('/recommendations'));
+    if (rows == null || rows.isEmpty) return;
+    await agent.conversation.sendRequest(
+      ChatMessage.user(
+        '',
+        parts: [
+          UiInteractionPart.create(
+            jsonEncode({
+              'action': {
+                'name': 'select_product',
+                'context': {'productId': (rows.first as Map)['id']},
+              },
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<Map<String, Object?>> capture() async {
     if (agent.hasDressingRoomSurface) {
       final record = await captureDuoState(agent);
@@ -66,27 +89,7 @@ Future<void> main() async {
       await agent.startJourney(DemoJourney.berlin);
       final count = stage == 'complete' ? 4 : 1;
       for (var i = 0; i < count; i++) {
-        final rows = agent.controller
-            .contextFor(agent.latestInlineSurfaceId!)
-            .dataModel
-            .getValue<List<Object?>>(DataPath('/recommendations'));
-        if (rows == null || rows.isEmpty) break;
-        final id = (rows.first as Map)['id'];
-        await agent.conversation.sendRequest(
-          ChatMessage.user(
-            '',
-            parts: [
-              UiInteractionPart.create(
-                jsonEncode({
-                  'action': {
-                    'name': 'select_product',
-                    'context': {'productId': id},
-                  },
-                }),
-              ),
-            ],
-          ),
-        );
+        await selectFirst();
       }
     }
     show();
@@ -100,6 +103,13 @@ Future<void> main() async {
     (_, _) async =>
         developer.ServiceExtensionResponse.result(jsonEncode(await capture())),
   );
+  developer.registerExtension('ext.layout.select', (_, _) async {
+    await selectFirst();
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    return developer.ServiceExtensionResponse.result(
+      jsonEncode(await capture()),
+    );
+  });
   // Renderer-only bound-data growth exercises following without model calls.
   developer.registerExtension('ext.layout.grow', (_, parameters) async {
     final id = agent.latestInlineSurfaceId!;

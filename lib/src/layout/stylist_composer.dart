@@ -178,6 +178,46 @@ class _StylistComposerState extends State<StylistComposer>
   }
 }
 
+/// Fades the fixed header/footer into scrolling content while keeping controls
+/// sharp. srcOver keeps the underlying display intact at the transparent edge.
+class StylistGlassBackdrop extends StatelessWidget {
+  const StylistGlassBackdrop({super.key, this.fadeTowardsBottom = false});
+  final bool fadeTowardsBottom;
+
+  @override
+  Widget build(BuildContext context) => ClipRect(
+    child: BackdropFilter(
+      filter: ImageFilter.blur(
+        sigmaX: 12,
+        sigmaY: 12,
+        tileMode: TileMode.decal,
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            // Keep white RGB at zero alpha so interpolation cannot darken the
+            // transparent edge on the native renderer.
+            colors: fadeTowardsBottom
+                ? [
+                    Colors.white.withValues(alpha: .95),
+                    Colors.white.withValues(alpha: .82),
+                    Colors.white.withValues(alpha: 0),
+                  ]
+                : [
+                    Colors.white.withValues(alpha: 0),
+                    Colors.white.withValues(alpha: .82),
+                    Colors.white.withValues(alpha: .95),
+                  ],
+            stops: fadeTowardsBottom ? [0, .6, 1] : [0, .4, 1],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 /// A fading glass backdrop for the composer where content scrolls underneath.
 /// Safe-area insets belong to AdaptivePaneLayout; this adds only a small gap.
 class StylistComposerDock extends StatelessWidget {
@@ -194,33 +234,11 @@ class StylistComposerDock extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Stack(
     children: [
-      Positioned.fill(
-        child: IgnorePointer(
-          child: ClipRect(
-            child: ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.white, Colors.white],
-                stops: [0, .4, 1],
-              ).createShader(bounds),
-              blendMode: BlendMode.dstIn,
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                blendMode: BlendMode.src,
-                child: ColoredBox(
-                  color: Theme.of(context).scaffoldBackgroundColor
-                      .withValues(alpha: .82),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+      Positioned.fill(child: IgnorePointer(child: StylistGlassBackdrop())),
       Padding(
         padding:
             padding ??
-            EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 4),
+            EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 8),
         child: child,
       ),
     ],

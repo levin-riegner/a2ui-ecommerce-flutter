@@ -394,7 +394,11 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
       pane.left,
       pane.top,
       pane.right,
-      math.max(pane.top, viewport.height - widget.primaryBottomInset!),
+      math.max(
+        pane.top,
+        viewport.height -
+            math.max(media.padding.bottom, widget.primaryBottomInset!),
+      ),
     );
   }
 

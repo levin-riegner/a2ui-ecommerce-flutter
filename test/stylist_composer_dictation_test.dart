@@ -314,7 +314,7 @@ void main() {
       );
       // The visible circle keeps 8px pill padding; its larger touch target
       // extends another 6px within the pill.
-      expect(tester.getRect(find.byType(StylistComposer)).bottom, 844 - 34 - 4);
+      expect(tester.getRect(find.byType(StylistComposer)).bottom, 844 - 34 - 8);
       expect(mic.bottom, lessThanOrEqualTo(844 - 34 - 6));
       expect(
         tester

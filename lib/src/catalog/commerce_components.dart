@@ -38,6 +38,7 @@ class CommerceProductImage extends StatelessWidget {
       fit: BoxFit.contain,
       width: double.infinity,
       filterQuality: FilterQuality.medium,
+      gaplessPlayback: true,
       errorBuilder: (_, error, stackTrace) => fallback,
     );
   }

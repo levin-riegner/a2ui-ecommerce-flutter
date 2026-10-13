@@ -10,7 +10,7 @@ class StylistSurfaceMotion extends StatefulWidget {
     required this.child,
     this.enabled = true,
   });
-  static const duration = Duration(milliseconds: 160);
+  static const duration = Duration(milliseconds: 240);
   final SurfaceContext surfaceContext;
   final Widget child;
   final bool enabled;

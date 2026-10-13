@@ -7,6 +7,7 @@ import 'package:json_schema_builder/json_schema_builder.dart';
 
 import 'commerce_components.dart';
 import '../layout/stylist_layout.dart';
+import '../data/models.dart' show displayDetail;
 
 const _ink = Color(0xff000000);
 const _muted = Color(0xff666666);
@@ -545,7 +546,7 @@ class FinalizedProductCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Text(
-                      tag,
+                      displayDetail(tag),
                       style: const TextStyle(fontSize: 10, height: 1.2),
                     ),
                   ),

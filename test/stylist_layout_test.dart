@@ -1,6 +1,7 @@
 import 'package:a2ui_flutter_commerce/src/catalog/finalized_left_components.dart';
 import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
 import 'package:a2ui_flutter_commerce/src/theme.dart';
+import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
@@ -8,6 +9,26 @@ import 'package:genui/genui.dart';
 import 'protocol_fixture_helpers.dart';
 
 void main() {
+  test('display casing preserves names and raw catalog facts', () {
+    const product = Product(
+      id: 'p',
+      category: ProductCategory.layer,
+      name: 'eBay x Fable',
+      brand: 'i-D Studio',
+      price: 50,
+      meta: 'tan · cotton blend',
+      tag: 'evening',
+      swatch: '#fff',
+      color: 'tan',
+      material: 'cotton blend',
+    );
+    expect(product.brandLine, 'i-D Studio · Tan · Cotton blend');
+    expect(product.name, 'eBay x Fable');
+    expect(product.color, 'tan');
+    expect(product.material, 'cotton blend');
+    expect(displayDetail('evening'), 'Evening');
+    expect(displayDetail(''), '');
+  });
   for (final category in ['dress', 'top', 'bottom', 'layer', 'shoes', 'bag']) {
     testWidgets(
       '$category recommendations keep the same card and image geometry',
@@ -24,7 +45,7 @@ void main() {
                     name: 'Knit',
                     price: '€85',
                     brandLine: 'Wool',
-                    tag: 'Best',
+                    tag: 'evening',
                     category: category,
                     onPressed: () {},
                   ),
@@ -34,6 +55,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        expect(find.text('Evening'), findsOneWidget);
         expect(
           tester.getSize(find.byKey(const ValueKey('finalized-product-image'))),
           const Size(104, 104),

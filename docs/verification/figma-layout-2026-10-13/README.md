@@ -1,6 +1,8 @@
 # Figma layout comparison — 13 October 2026
 
 Source: [Designs section 205:7995](https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg/Ecomm-GenUI-iPhone-Duo?node-id=205-7995&m=dev).
+Later native refinements to blur, casing, safe insets and reveal timing are
+recorded in the [Duo polish comparison](../duo-polish-2026-10-13/README.md).
 Before captures use main `b3263ce`; after captures use this PR's production
 widgets on the iOS 27.1 iPhone Duo simulator. PNGs retain native resolution.
 

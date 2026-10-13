@@ -89,7 +89,30 @@ class FinalizedPieceSlot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (CommerceDressingRoomStyle.maybeOf(context)?.dark == true) {
-      return _FinalizedDarkPieceSlot(slot: this);
+      final identity = ValueKey((state, name, imageAsset, meta));
+      return AnimatedSwitcher(
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 320),
+        switchInCurve: Curves.easeInOutCubic,
+        // Keep the last outfit fully visible underneath the incoming piece.
+        // A bound-data update never fades the whole black room to empty.
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: child.key == identity
+              ? animation
+              : const AlwaysStoppedAnimation(1),
+          child: child,
+        ),
+        layoutBuilder: (current, previous) => Stack(
+          alignment: Alignment.topLeft,
+          children: [
+            for (final child in previous)
+              ExcludeSemantics(child: IgnorePointer(child: child)),
+            ?current,
+          ],
+        ),
+        child: _FinalizedDarkPieceSlot(key: identity, slot: this),
+      );
     }
     final normalized = category.toLowerCase();
     if (!_hangerHeights.containsKey(normalized)) {
@@ -2303,7 +2326,7 @@ class _FinalizedDressingRoom extends StatelessWidget {
 }
 
 class _FinalizedDarkPieceSlot extends StatelessWidget {
-  const _FinalizedDarkPieceSlot({required this.slot});
+  const _FinalizedDarkPieceSlot({super.key, required this.slot});
   // The pane narrows around the active hinge in Book mode. Keep image height
   // independent of that width so the selected section below does not jump.
   static const imageHeight = StylistLayout.pieceImage;

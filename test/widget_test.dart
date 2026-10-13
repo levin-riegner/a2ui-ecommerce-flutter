@@ -230,7 +230,7 @@ void main() {
         .first;
     expect(
       find.descendant(of: firstCard, matching: find.text('Shoes')),
-      findsNothing,
+      findsOneWidget,
     );
 
     // New responses follow the scroll to their end; reveal the selected card

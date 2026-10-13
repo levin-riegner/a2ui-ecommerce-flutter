@@ -718,6 +718,7 @@ class _ResponsiveShell extends StatelessWidget {
             : StylistLayout.gutter;
         return AdaptivePaneLayout(
           overlayFooter: true,
+          overlayHeader: true,
           primaryBottomInset: 32,
           panePadding: EdgeInsets.fromLTRB(gutter, 0, gutter, 24),
           secondaryPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -735,7 +736,7 @@ class _ResponsiveShell extends StatelessWidget {
           secondary: _DressingPanel(agent: agent),
           header: _MobileHeader(onNewJourney: onNewJourney),
           footer: StylistComposerDock(
-            padding: EdgeInsets.fromLTRB(gutter, 24, gutter, 0),
+            padding: EdgeInsets.fromLTRB(gutter, 24, gutter, 8),
             child: _ChatComposer(agent: agent),
           ),
           rail: _SideRail(onNewJourney: onNewJourney),
@@ -1031,32 +1032,41 @@ class _MobileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final split = AdaptivePaneScope.isSplitOf(context);
     final showClose = !split || MediaQuery.sizeOf(context).width < 900;
-    return Padding(
+    return Stack(
       key: const ValueKey('alder-journey-header'),
-      padding: split
-          ? const EdgeInsets.fromLTRB(32, 32, 32, 24)
-          : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Align(
-            alignment: split ? Alignment.centerLeft : Alignment.center,
-            heightFactor: 1,
-            child: const SizedBox(width: 76, child: _BrandLockup()),
+      children: [
+        const Positioned.fill(
+          child: IgnorePointer(
+            child: StylistGlassBackdrop(fadeTowardsBottom: true),
           ),
-          if (showClose)
-            Positioned(
-              right: 0,
-              top: -12,
-              bottom: -12,
-              child: IconButton(
-                onPressed: onNewJourney,
-                icon: const Icon(Icons.close, size: 20),
-                tooltip: 'New journey',
+        ),
+        Padding(
+          padding: split
+              ? const EdgeInsets.fromLTRB(32, 32, 32, 24)
+              : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: split ? Alignment.centerLeft : Alignment.center,
+                heightFactor: 1,
+                child: const SizedBox(width: 76, child: _BrandLockup()),
               ),
-            ),
-        ],
-      ),
+              if (showClose)
+                Positioned(
+                  right: 0,
+                  top: -12,
+                  bottom: -12,
+                  child: IconButton(
+                    onPressed: onNewJourney,
+                    icon: const Icon(Icons.close, size: 20),
+                    tooltip: 'New journey',
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

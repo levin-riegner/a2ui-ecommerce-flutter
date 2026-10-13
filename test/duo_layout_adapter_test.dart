@@ -171,7 +171,9 @@ void main() {
       expect(tester.getRect(find.byType(Divider)).right, 374);
       final composer = find.byType(StylistComposer);
       expect(tester.getRect(composer).right, 374);
-      expect(tester.getRect(composer).bottom, 670);
+      // The native 34-point home-indicator inset wins over the cover's 8-point
+      // preferred clearance, keeping the complete input above the safe edge.
+      expect(tester.getRect(composer).bottom, 678 - 34);
       await tester.enterText(find.byType(TextField), 'Keep this occasion');
       final editable = tester.state<EditableTextState>(
         find.byType(EditableText),
@@ -194,7 +196,7 @@ void main() {
       expect(tester.getRect(card).width, 400);
       expect(tester.getRect(card).left, 32);
       expect(tester.getRect(composer).height, 52);
-      expect(tester.getRect(composer).bottom, 669 - 32);
+      expect(tester.getRect(composer).bottom, 669 - 34);
       expect(
         tester.getSize(find.byKey(const ValueKey('stylist-submit-circle'))),
         const Size(36, 36),
