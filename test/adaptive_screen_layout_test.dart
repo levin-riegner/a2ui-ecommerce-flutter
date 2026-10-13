@@ -121,6 +121,69 @@ void main() {
     );
   }
 
+  testWidgets(
+    'roomy portrait keeps the dressing room above its own chat scroll',
+    (tester) async {
+      setWindow(tester, const Size(669, 951));
+      await tester.pumpWidget(
+        const _Harness(
+          stackSecondaryInPortrait: true,
+          padding: EdgeInsets.fromLTRB(0, 32, 0, 32),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final room = tester.getRect(
+        find.byKey(const ValueKey('portrait-dressing-pane')),
+      );
+      final chat = tester.getRect(
+        find.byKey(const ValueKey('portrait-conversation-pane')),
+      );
+      expect(room.top, 88);
+      expect(room.bottom, 443.5);
+      expect(chat.top, room.bottom);
+      expect(chat.bottom, 919);
+      final scroll = tester
+          .state<ScrollableState>(
+            find
+                .descendant(
+                  of: find.byKey(const ValueKey('primary-pane-scroll')),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
+          )
+          .position;
+      scroll.jumpTo(scroll.maxScrollExtent);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.byKey(const ValueKey('portrait-dressing-pane'))),
+        room,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('interactive extended pane reserves its rail beside the camera', (
+    tester,
+  ) async {
+    setWindow(tester, const Size(951, 669));
+    await tester.pumpWidget(
+      const _Harness(
+        extendSecondaryToEdges: true,
+        reserveRailInExtendedSecondary: true,
+        railWidth: 84,
+        padding: EdgeInsets.fromLTRB(0, 0, 84, 34),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final rail = tester.getRect(find.byKey(const ValueKey('rail')));
+    final pane = tester.getRect(find.byKey(const ValueKey('secondary')));
+    expect(rail.left, 867);
+    expect(rail.right, 951);
+    expect(pane.left, 475.5);
+    expect(pane.right, rail.left);
+    expect(tester.takeException(), isNull);
+  });
+
   for (final obstructed in [false, true]) {
     testWidgets(
       'decorative pane reaches the edges while controls remain safe, hinge=$obstructed',
@@ -623,6 +686,9 @@ class _Harness extends StatelessWidget {
     this.secondaryBackgroundColor,
     this.secondaryBackgroundOnlyInBookMode = false,
     this.extendSecondaryToEdges = false,
+    this.reserveRailInExtendedSecondary = false,
+    this.railWidth = 60,
+    this.stackSecondaryInPortrait = false,
     this.foldData = FoldableData.unsupported,
     this.disableAnimations = false,
   });
@@ -634,6 +700,9 @@ class _Harness extends StatelessWidget {
   final Color? secondaryBackgroundColor;
   final bool secondaryBackgroundOnlyInBookMode;
   final bool extendSecondaryToEdges;
+  final bool reserveRailInExtendedSecondary;
+  final double railWidth;
+  final bool stackSecondaryInPortrait;
   final FoldableData foldData;
   final bool disableAnimations;
 
@@ -654,6 +723,9 @@ class _Harness extends StatelessWidget {
             child: Scaffold(
               body: AdaptivePaneLayout(
                 extendSecondaryToEdges: extendSecondaryToEdges,
+                reserveRailInExtendedSecondary: reserveRailInExtendedSecondary,
+                railWidth: railWidth,
+                stackSecondaryInPortrait: stackSecondaryInPortrait,
                 secondaryScrollable: !extendSecondaryToEdges,
                 secondaryPadding: extendSecondaryToEdges
                     ? EdgeInsets.zero

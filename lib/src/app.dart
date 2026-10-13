@@ -13,6 +13,7 @@ import 'agent/model_connection.dart';
 import 'agent/genkit_agent.dart';
 import 'catalog/commerce_examples.dart';
 import 'catalog/commerce_components.dart';
+import 'catalog/finalized_left_components.dart';
 import 'catalog/finalized_component_gallery.dart';
 import 'catalog/finalized_screen_gallery.dart';
 import 'catalog/finalized_shared_components.dart';
@@ -21,6 +22,8 @@ import 'layout/adaptive_page.dart';
 import 'layout/adaptive_pane_layout.dart';
 import 'layout/duo_layout_adapter.dart';
 import 'layout/stylist_composer.dart';
+import 'layout/stylist_layout.dart';
+import 'layout/stylist_surface_motion.dart';
 import 'theme.dart';
 
 const _basicComponentGalleryNames = <String>[
@@ -707,83 +710,47 @@ class _ResponsiveShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: AdaptivePaneLayout(
-      overlayFooter: true,
-      panePadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-      primary: _ChatSurface(agent: agent),
-      secondaryBackgroundColor: Colors.black,
-      secondaryBackgroundOnlyInBookMode: true,
-      secondary: _DressingPanel(agent: agent),
-      header: _MobileHeader(onNewJourney: onNewJourney),
-      footer: StylistComposerDock(
-        horizontalPadding: 8,
-        child: _ChatComposer(agent: agent),
-      ),
-      rail: _SideRail(onNewJourney: onNewJourney),
+    body: LayoutBuilder(
+      builder: (context, constraints) {
+        final cover = DuoLayoutScope.of(context).status == HingeStatus.closed;
+        final gutter = cover || constraints.maxWidth < 600
+            ? StylistLayout.compactGutter
+            : StylistLayout.gutter;
+        return AdaptivePaneLayout(
+          overlayFooter: true,
+          primaryBottomInset: 32,
+          panePadding: EdgeInsets.fromLTRB(gutter, 0, gutter, 24),
+          secondaryPadding: const EdgeInsets.symmetric(vertical: 12),
+          compactSecondaryPadding: const EdgeInsets.symmetric(horizontal: 16),
+          secondaryScrollable: false,
+          extendSecondaryToEdges: true,
+          compactPaneGap: 32,
+          reserveRailInExtendedSecondary: true,
+          followPrimaryEnd: true,
+          stackSecondaryInPortrait: !cover && agent.hasDressingRoomSurface,
+          railWidth: 84,
+          primary: _ChatSurface(agent: agent),
+          secondaryBackgroundColor: Colors.black,
+          secondaryBackgroundOnlyInBookMode: true,
+          secondary: _DressingPanel(agent: agent),
+          header: _MobileHeader(onNewJourney: onNewJourney),
+          footer: StylistComposerDock(
+            padding: EdgeInsets.fromLTRB(gutter, 24, gutter, 0),
+            child: _ChatComposer(agent: agent),
+          ),
+          rail: _SideRail(onNewJourney: onNewJourney),
+        );
+      },
     ),
   );
 }
 
-class _ChatSurface extends StatefulWidget {
+class _ChatSurface extends StatelessWidget {
   const _ChatSurface({required this.agent});
-
   final CommerceAgent agent;
 
   @override
-  State<_ChatSurface> createState() => _ChatSurfaceState();
-}
-
-class _ChatSurfaceState extends State<_ChatSurface> {
-  bool _followScheduled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.agent.addListener(_followConversation);
-  }
-
-  @override
-  void didUpdateWidget(_ChatSurface oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.agent != widget.agent) {
-      oldWidget.agent.removeListener(_followConversation);
-      widget.agent.addListener(_followConversation);
-    }
-  }
-
-  @override
-  void dispose() {
-    widget.agent.removeListener(_followConversation);
-    super.dispose();
-  }
-
-  void _followConversation() {
-    if (_followScheduled) return;
-    final scroll = Scrollable.maybeOf(context)?.position;
-    if (scroll == null ||
-        !scroll.hasContentDimensions ||
-        scroll.maxScrollExtent - scroll.pixels > 80) {
-      return;
-    }
-    _followScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _followScheduled = false;
-      if (!mounted || Scrollable.maybeOf(context)?.position != scroll) return;
-      if (MediaQuery.disableAnimationsOf(context)) {
-        scroll.jumpTo(scroll.maxScrollExtent);
-      } else {
-        scroll.animateTo(
-          scroll.maxScrollExtent,
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final agent = widget.agent;
     return AnimatedBuilder(
       animation: agent,
       builder: (context, _) {
@@ -800,21 +767,8 @@ class _ChatSurfaceState extends State<_ChatSurface> {
               switch (entry) {
                 CommerceUserMessage(:final id, :final text) => Padding(
                   key: ValueKey('user-message-$id'),
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xfff4f4f5),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(text),
-                    ),
-                  ),
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: FinalizedUserMessage(text: text),
                 ),
                 CommerceSurfaceEntry(surfaceId: final entryId) => Padding(
                   key: ValueKey('conversation-surface-$entryId'),
@@ -834,6 +788,7 @@ class _ChatSurfaceState extends State<_ChatSurface> {
                         agent: agent,
                         surfaceId: entryId,
                         inactive: controlsDisabled || entryId != surfaceId,
+                        reveal: entryId == surfaceId,
                       ),
                     ],
                   ),
@@ -847,6 +802,7 @@ class _ChatSurfaceState extends State<_ChatSurface> {
                   agent: agent,
                   surfaceId: pendingId,
                   inactive: true,
+                  reveal: true,
                 ),
               ),
             if (agent.isBusy)
@@ -892,11 +848,13 @@ class _ConversationSurface extends StatelessWidget {
     required this.agent,
     required this.surfaceId,
     required this.inactive,
+    this.reveal = false,
   });
 
   final CommerceAgent agent;
   final String surfaceId;
   final bool inactive;
+  final bool reveal;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -905,9 +863,15 @@ class _ConversationSurface extends StatelessWidget {
       ignoring: inactive,
       child: ExcludeFocus(
         excluding: inactive,
-        child: Surface(
-          key: ValueKey(surfaceId),
-          surfaceContext: agent.controller.contextFor(surfaceId),
+        child: StylistSurfaceScope(
+          child: StylistSurfaceMotion(
+            surfaceContext: agent.controller.contextFor(surfaceId),
+            enabled: reveal,
+            child: Surface(
+              key: ValueKey(surfaceId),
+              surfaceContext: agent.controller.contextFor(surfaceId),
+            ),
+          ),
         ),
       ),
     ),
@@ -1023,7 +987,7 @@ class _DressingPanel extends StatelessWidget {
                 key: const ValueKey('dressing-room-resize'),
                 duration: MediaQuery.disableAnimationsOf(context)
                     ? Duration.zero
-                    : AdaptivePaneLayout.transitionDuration,
+                    : StylistSurfaceMotion.duration,
                 curve: Curves.easeInOutCubic,
                 alignment: Alignment.topLeft,
                 child: Surface(
@@ -1035,10 +999,25 @@ class _DressingPanel extends StatelessWidget {
         );
       },
     );
-    return CommerceDressingRoomStyle(
-      dark: true,
-      compact: !AdaptivePaneScope.isSplitOf(context),
-      child: surface,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final split = AdaptivePaneScope.isSplitOf(context);
+        final styled = CommerceDressingRoomStyle(
+          dark: true,
+          compact: !split,
+          minHeight: constraints.hasBoundedHeight ? constraints.maxHeight : 0,
+          child: surface,
+        );
+        return constraints.hasBoundedHeight
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: SingleChildScrollView(
+                  key: const ValueKey('dressing-panel-scroll'),
+                  child: styled,
+                ),
+              )
+            : styled;
+      },
     );
   }
 }
@@ -1050,17 +1029,32 @@ class _MobileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final split = AdaptivePaneScope.isSplitOf(context);
+    final showClose = !split || MediaQuery.sizeOf(context).width < 900;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 4, 16, 4),
-      child: Row(
+      key: const ValueKey('alder-journey-header'),
+      padding: split
+          ? const EdgeInsets.fromLTRB(32, 32, 32, 24)
+          : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          IconButton(
-            onPressed: onNewJourney,
-            icon: const Icon(Icons.close, size: 24),
-            tooltip: 'New journey',
+          Align(
+            alignment: split ? Alignment.centerLeft : Alignment.center,
+            heightFactor: 1,
+            child: const SizedBox(width: 76, child: _BrandLockup()),
           ),
-          const SizedBox(width: 4),
-          const Expanded(child: _BrandLockup()),
+          if (showClose)
+            Positioned(
+              right: 0,
+              top: -12,
+              bottom: -12,
+              child: IconButton(
+                onPressed: onNewJourney,
+                icon: const Icon(Icons.close, size: 20),
+                tooltip: 'New journey',
+              ),
+            ),
         ],
       ),
     );
@@ -1081,7 +1075,7 @@ class _SideRail extends StatelessWidget {
       color: background,
       child: Column(
         children: [
-          const SizedBox(height: 12),
+          const SizedBox(height: 122),
           IconButton(
             onPressed: onNewJourney,
             tooltip: 'New journey',
@@ -1100,7 +1094,7 @@ class _SideRail extends StatelessWidget {
             ),
             child: const FinalizedBagIcon(count: 0),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 24),
         ],
       ),
     );

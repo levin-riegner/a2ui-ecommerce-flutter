@@ -57,7 +57,7 @@ List<Map<String, Object?>> renderPendingStylistSurface({
       'components': [
         {
           'id': 'root',
-          'component': 'Column',
+          'component': 'StylistSection',
           'children': ['status', 'preview'],
         },
         {
@@ -212,17 +212,24 @@ List<Map<String, Object?>> renderStylistSurfaces({
   final inlineComponents = <Map<String, Object?>>[
     {
       'id': 'root',
-      'component': 'Column',
-      'align': 'stretch',
+      'component': 'StylistSection',
       'children': [
         'message',
         if (picks.isNotEmpty) 'eyebrow',
-        for (var i = 0; i < picks.length; i++) 'product-$i',
+        if (picks.isNotEmpty) 'recommendations',
       ],
     },
     {'id': 'message', 'component': 'StylistMessage', 'text': _path('/message')},
     if (picks.isNotEmpty)
       {'id': 'eyebrow', 'component': 'Eyebrow', 'text': _path('/eyebrow')},
+    if (picks.isNotEmpty)
+      {
+        'id': 'recommendations',
+        'component': 'StylistSection',
+        'spacing': 8,
+        'compactCarousel': true,
+        'children': [for (var i = 0; i < picks.length; i++) 'product-$i'],
+      },
     for (var i = 0; i < picks.length; i++)
       _productComponent(
         picks[i],

@@ -54,7 +54,7 @@ void main() {
       expect(agent.hasStarted, isTrue);
       expect(agent.activeJourney, isNull);
       expect(find.text('Where are you going?'), findsNothing);
-      expect(find.text('How formal or relaxed?'), findsOneWidget);
+      expect(find.text('HOW FORMAL OR RELAXED?'), findsOneWidget);
       expect(find.text('BUDGET FOR THE WHOLE OUTFIT'), findsOneWidget);
       expect(find.text('Find options'), findsOneWidget);
       expect(runtime.outfit['budget'], isNull);

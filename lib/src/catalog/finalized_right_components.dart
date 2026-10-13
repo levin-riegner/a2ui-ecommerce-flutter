@@ -8,6 +8,7 @@ import 'package:json_schema_builder/json_schema_builder.dart';
 import 'commerce_components.dart';
 import 'commerce_widgets.dart' as legacy;
 import 'finalized_shared_components.dart' show FinalizedQuantityStepper;
+import '../layout/stylist_layout.dart';
 
 const _hangerLabels = {
   'dress': 'A dress',
@@ -2158,17 +2159,24 @@ class _FinalizedDressingRoom extends StatelessWidget {
                 ? (muted ? Colors.white60 : Colors.white)
                 : (muted ? const Color(0xff71717a) : const Color(0xff18181b)),
             letterSpacing: 0,
-            height: 1.25,
+            height: size == 20 || size == 12 ? 1.2 : 1.4,
           ),
         );
     return Container(
       key: const ValueKey('finalized-dressing-room'),
-      padding: EdgeInsets.symmetric(horizontal: dark ? 24 : 20, vertical: 16),
+      constraints: BoxConstraints(
+        minHeight: CommerceDressingRoomStyle.maybeOf(context)?.minHeight ?? 0,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: dark ? StylistLayout.roomGutter : 20,
+        vertical: 16,
+      ),
       decoration: BoxDecoration(
         color: dark ? Colors.black : const Color(0xfff4f4f5),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           roomText(
@@ -2179,15 +2187,19 @@ class _FinalizedDressingRoom extends StatelessWidget {
                   ?.contextImages
                   .isNotEmpty ??
               false) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             _roomContextImages(
               CommerceDressingRoomStyle.maybeOf(context)!.contextImages,
             ),
           ],
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           roomText(values['brief']!, size: 12, muted: true),
-          const SizedBox(height: 14),
-          if (!compact) ...[budget, const SizedBox(height: 14)],
+          const SizedBox(height: 8),
+          if (!compact) ...[
+            budget,
+            const SizedBox(height: 16),
+          ] else
+            const SizedBox(height: 16),
           LayoutBuilder(
             builder: (context, constraints) {
               final large = MediaQuery.textScalerOf(context).scale(14) > 21;
@@ -2236,13 +2248,14 @@ class _FinalizedDressingRoom extends StatelessWidget {
                   : dark
                   ? 120.0
                   : 140.0;
-              final columns = ((constraints.maxWidth + 12) / (minimum + 12))
+              final gap = dark ? StylistLayout.itemGap : 12.0;
+              final columns = ((constraints.maxWidth + gap) / (minimum + gap))
                   .floor()
                   .clamp(1, dark ? 2 : 4);
               final width =
-                  (constraints.maxWidth - (columns - 1) * 12) / columns;
+                  (constraints.maxWidth - (columns - 1) * gap) / columns;
               return Wrap(
-                spacing: 12,
+                spacing: gap,
                 runSpacing: 16,
                 children: [
                   for (final slot in slots)
@@ -2265,7 +2278,7 @@ class _FinalizedDressingRoom extends StatelessWidget {
               );
             },
           ),
-          if (compact) ...[const SizedBox(height: 14), budget],
+          if (compact) ...[const SizedBox(height: 24), budget],
         ],
       ),
     );
@@ -2293,7 +2306,7 @@ class _FinalizedDarkPieceSlot extends StatelessWidget {
   const _FinalizedDarkPieceSlot({required this.slot});
   // The pane narrows around the active hinge in Book mode. Keep image height
   // independent of that width so the selected section below does not jump.
-  static const imageHeight = 144.0;
+  static const imageHeight = StylistLayout.pieceImage;
   final FinalizedPieceSlot slot;
   @override
   Widget build(BuildContext context) {

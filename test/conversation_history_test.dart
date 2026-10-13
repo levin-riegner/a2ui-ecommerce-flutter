@@ -214,6 +214,97 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  for (final compact in [false, true]) {
+    for (final reducedMotion in [false, true]) {
+      testWidgets(
+        'renderer-only growth follows the end without model calls, compact=$compact reduceMotion=$reducedMotion',
+        (tester) async {
+          _setViewport(
+            tester,
+            compact ? const Size(466, 678) : const Size(951, 669),
+          );
+          tester.platformDispatcher.accessibilityFeaturesTestValue =
+              FakeAccessibilityFeatures(disableAnimations: reducedMotion);
+          addTearDown(
+            tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+          );
+          final agent = _HistoryAgent();
+          await tester.runAsync(agent.prepare);
+          agent.history.insertAll(2, [
+            for (var i = 0; i < 12; i++)
+              CommerceUserMessage(
+                id: 'older-$i',
+                text: 'Earlier request $i\nDetails\nPreferences',
+              ),
+          ]);
+          agent.setState(pending: 'pending');
+          await tester.pumpWidget(ReferenceApp(agent: agent));
+          await tester.pumpAndSettle();
+          final viewport = find.byKey(
+            ValueKey(compact ? 'compact-pane-scroll' : 'primary-pane-scroll'),
+          );
+          final scroll = tester
+              .state<ScrollableState>(
+                find
+                    .descendant(of: viewport, matching: find.byType(Scrollable))
+                    .first,
+              )
+              .position;
+          scroll.jumpTo(scroll.maxScrollExtent);
+          await tester.pumpAndSettle();
+          final before = scroll.pixels;
+
+          // GenUI binds this data update directly; the agent never notifies.
+          await tester.runAsync(() => agent.growPendingData(18));
+          await tester.pump();
+          expect(scroll.maxScrollExtent, greaterThan(before));
+          if (reducedMotion) {
+            expect(scroll.pixels, closeTo(scroll.maxScrollExtent, 1));
+          } else {
+            await tester.pump(const Duration(milliseconds: 16));
+            await tester.pump(const Duration(milliseconds: 60));
+            expect(scroll.pixels, greaterThan(before));
+            expect(scroll.pixels, lessThan(scroll.maxScrollExtent));
+          }
+          // A second renderer update arrives while the first scroll is active.
+          await tester.runAsync(() => agent.growPendingData(35));
+          await tester.pumpAndSettle();
+          expect(scroll.pixels, closeTo(scroll.maxScrollExtent, 1));
+
+          await tester.drag(viewport, const Offset(0, 220));
+          await tester.pumpAndSettle();
+          final reading = scroll.pixels;
+          expect(scroll.extentAfter, greaterThan(48));
+          await tester.runAsync(() => agent.growPendingData(45));
+          await tester.pumpAndSettle();
+          expect(scroll.pixels, closeTo(reading, 1));
+
+          final surfaceState = tester.state(find.byType(Surface).last);
+          await tester.runAsync(
+            () => agent.growPending(50, notifyAgent: false),
+          );
+          await tester.pump();
+          expect(tester.state(find.byType(Surface).last), same(surfaceState));
+          final opacity = tester
+              .widget<Opacity>(
+                find
+                    .ancestor(
+                      of: find.byType(Surface).last,
+                      matching: find.byType(Opacity),
+                    )
+                    .first,
+              )
+              .opacity;
+          expect(opacity, reducedMotion ? 1 : lessThan(1));
+          await tester.pumpAndSettle();
+          expect(scroll.pixels, closeTo(reading, 1));
+          expect(agent.requests, 0);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
 }
 
 Finder _button(String label) =>
@@ -266,7 +357,7 @@ class _HistoryAgent extends CommerceAgent {
     CommerceSurfaceEntry(surfaceId: 'current'),
   ];
 
-  Future<void> growPending(int lines) async {
+  Future<void> growPending(int lines, {bool notifyAgent = true}) async {
     transport.addMessage(
       core.UpdateComponentsMessage(
         surfaceId: 'pending',
@@ -280,7 +371,23 @@ class _HistoryAgent extends CommerceAgent {
         ],
       ),
     );
-    notifyListeners();
+    if (notifyAgent) notifyListeners();
+    await Future<void>.delayed(Duration.zero);
+  }
+
+  Future<void> growPendingData(int lines) async {
+    transport.addMessage(
+      core.A2uiMessage.fromJson({
+        'version': 'v0.9',
+        'updateDataModel': {
+          'surfaceId': 'pending',
+          'value': {
+            'live':
+                'Pending recommendation\n${List.filled(lines, 'Validated product details').join('\n')}',
+          },
+        },
+      }),
+    );
     await Future<void>.delayed(Duration.zero);
   }
 
@@ -305,7 +412,9 @@ class _HistoryAgent extends CommerceAgent {
             {
               'id': 'text',
               'component': 'Text',
-              'text': '$label recommendation',
+              'text': id == 'pending'
+                  ? {'path': '/live'}
+                  : '$label recommendation',
             },
             {
               'id': 'action',
@@ -318,6 +427,17 @@ class _HistoryAgent extends CommerceAgent {
           ],
         ),
       );
+      if (id == 'pending') {
+        transport.addMessage(
+          core.A2uiMessage.fromJson({
+            'version': 'v0.9',
+            'updateDataModel': {
+              'surfaceId': id,
+              'value': {'live': '$label recommendation'},
+            },
+          }),
+        );
+      }
     }
     await Future<void>.delayed(Duration.zero);
   }

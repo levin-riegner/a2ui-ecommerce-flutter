@@ -138,6 +138,14 @@ model only; it must not expose connected credentials through reflection.
 
 ## Upstream references
 
+The UI listens to GenUI's public `SurfaceContext.definition` for quick surface
+reveals and preserves the existing `Surface` and bound controls. Bound data can
+change layout without an agent notification, so bottom-following observes actual
+rendered geometry. It follows only while the user is up to date and respects
+Reduce Motion. This does not add or change Genkit requests. See the
+[renderer capture and comparison](verification/figma-layout-2026-10-13/README.md)
+and [GenUI SurfaceContext API](https://pub.dev/documentation/genui/latest/genui/SurfaceContext-class.html).
+
 - [Genkit version history](https://pub.dev/packages/genkit/versions)
 - [Genkit 1.0 changes](https://pub.dev/packages/genkit/versions/1.0.0/changelog)
 - [Genkit public API](https://pub.dev/documentation/genkit/1.0.0/genkit/)

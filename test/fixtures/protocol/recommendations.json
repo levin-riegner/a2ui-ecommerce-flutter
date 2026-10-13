@@ -108,13 +108,11 @@
       "components": [
         {
           "id": "root",
-          "component": "Column",
-          "align": "stretch",
+          "component": "StylistSection",
           "children": [
             "message",
             "eyebrow",
-            "product-0",
-            "product-1"
+            "recommendations"
           ]
         },
         {
@@ -130,6 +128,16 @@
           "text": {
             "path": "/eyebrow"
           }
+        },
+        {
+          "id": "recommendations",
+          "component": "StylistSection",
+          "spacing": 8,
+          "compactCarousel": true,
+          "children": [
+            "product-0",
+            "product-1"
+          ]
         },
         {
           "id": "product-0",

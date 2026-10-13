@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
+import '../layout/stylist_layout.dart';
+
 import 'package:genui/genui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
@@ -146,17 +149,23 @@ class FinalizedEyebrow extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Text(
-    text,
-    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-      fontFamily: 'Inter',
-      fontSize: 12,
-      height: 1.2,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0,
-      color: const Color(0xff71717a),
-    ),
-  );
+  Widget build(BuildContext context) => StylistSurfaceScope.isJourneyOf(context)
+      ? Text(
+          text.toUpperCase(),
+          style: Theme.of(context).textTheme.labelSmall
+              ?.copyWith(color: const Color(0x99000000)),
+        )
+      : Text(
+          text,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            fontFamily: 'Inter',
+            fontSize: 12,
+            height: 1.2,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0,
+            color: const Color(0xff71717a),
+          ),
+        );
 }
 
 const _assetRoot = 'assets/icons/finalized_shared/';

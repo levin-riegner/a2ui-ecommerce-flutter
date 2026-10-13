@@ -1108,19 +1108,22 @@ void main() {
           );
           expect(tester.takeException(), isNull);
         }
-        // A taller brief animates the room's height without moving its origin.
+        // Content exceeding the pane minimum animates and remains scrollable.
         agent.controller
             .contextFor('dressing-room')
             .dataModel
             .update(
               DataPath('/brief'),
-              'Berlin first day with a much longer description of the occasion, '
-              'layering preferences, weather and the planned evening activities.',
+              List.filled(
+                8,
+                'Berlin first day with a much longer description of the occasion, '
+                'layering preferences, weather and the planned evening activities.',
+              ).join(' '),
             );
         await tester.pump();
         await tester.pump();
         expect(tester.getTopLeft(room).dy, closeTo(top, .01));
-        await tester.pump(const Duration(milliseconds: 160));
+        await tester.pump(const Duration(milliseconds: 80));
         final intermediateHeight = tester.getSize(resize).height;
         expect(intermediateHeight, greaterThan(height));
         await tester.pumpAndSettle();
