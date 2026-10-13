@@ -29,6 +29,11 @@ const _available = FoldableCapabilities(
   strategy: 'test',
 );
 
+class _BriefComposerAgent extends StubAgent {
+  @override
+  bool get canStartBrief => true;
+}
+
 FoldableData _data(
   HingeStatus status, {
   List<ReservedRegion> regions = const [],
@@ -135,6 +140,100 @@ void _window(WidgetTester tester, Size size) {
 }
 
 void main() {
+  for (final scenario in [
+    (
+      name: 'open landscape',
+      size: const Size(951, 669),
+      status: HingeStatus.fullyOpen,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 8.0,
+    ),
+    (
+      name: 'book landscape',
+      size: const Size(951, 669),
+      status: HingeStatus.partiallyOpen,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
+      name: 'open portrait',
+      size: const Size(669, 951),
+      status: HingeStatus.fullyOpen,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
+      name: 'closed cover',
+      size: const Size(466, 678),
+      status: HingeStatus.closed,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
+      name: 'open keyboard',
+      size: const Size(951, 669),
+      status: HingeStatus.fullyOpen,
+      keyboard: 220.0,
+      cutout: false,
+      gap: 228.0,
+    ),
+    (
+      name: 'bottom cutout',
+      size: const Size(951, 669),
+      status: HingeStatus.fullyOpen,
+      keyboard: 0.0,
+      cutout: true,
+      gap: 39.0,
+    ),
+  ]) {
+    testWidgets('composer maximizes inner display space: ${scenario.name}', (
+      tester,
+    ) async {
+      _window(tester, scenario.size);
+      tester.view.padding = const FakeViewPadding(bottom: 34);
+      tester.view.viewInsets = FakeViewPadding(bottom: scenario.keyboard);
+      addTearDown(tester.view.resetPadding);
+      addTearDown(tester.view.resetViewInsets);
+      final fake = _FakeFoldable(
+        _data(
+          scenario.status,
+          regions: [
+            if (scenario.cutout) _camera(const Rect.fromLTWH(200, 630, 60, 39)),
+          ],
+        ),
+      );
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() {
+        FoldablePlatform.instance = previous;
+        debugDefaultTargetPlatformOverride = null;
+      });
+      addTearDown(fake.dispose);
+      try {
+        final agent = _BriefComposerAgent();
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final opening = tester.getRect(find.byType(StylistComposer));
+        expect(opening.bottom, scenario.size.height - scenario.gap);
+        expect(opening.left, 16);
+        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        await tester.pumpAndSettle();
+        final conversation = tester.getRect(find.byType(StylistComposer));
+        expect(conversation.bottom, opening.bottom);
+        expect(conversation.left, 16);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  }
+
   testWidgets(
     'cover keeps one content column and preserves draft across poses',
     (tester) async {
@@ -196,7 +295,7 @@ void main() {
       expect(tester.getRect(card).width, 400);
       expect(tester.getRect(card).left, 32);
       expect(tester.getRect(composer).height, 52);
-      expect(tester.getRect(composer).bottom, 669 - 34);
+      expect(tester.getRect(composer).bottom, 669 - 8);
       expect(
         tester.getSize(find.byKey(const ValueKey('stylist-submit-circle'))),
         const Size(36, 36),

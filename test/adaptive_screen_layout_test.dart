@@ -36,7 +36,8 @@ void main() {
         final openingBottom = tester
             .getRect(find.byType(StylistComposer))
             .bottom;
-        expect(openingBottom, 669 - (safeBottom > 16 ? safeBottom : 16));
+        expect(openingBottom, 669 - (safeBottom > 8 ? safeBottom : 8));
+        expect(tester.getRect(find.byType(StylistComposer)).left, 16);
         await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
         await tester.pumpAndSettle();
         expect(
@@ -77,7 +78,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester.getRect(find.text('Find options')).bottom,
-        lessThan(tester.getRect(find.byType(StylistComposer)).top - 32),
+        lessThanOrEqualTo(
+          tester.getRect(find.byType(StylistComposer)).top - 16,
+        ),
       );
       expect(tester.takeException(), isNull);
     },

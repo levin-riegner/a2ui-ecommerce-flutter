@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 abstract final class StylistLayout {
   static const gutter = 32.0;
   static const compactGutter = 16.0;
-  static const composerBottomClearance = 16.0;
+  static const composerBottomClearance = 8.0;
   static const sectionGap = 16.0;
   static const itemGap = 8.0;
   static const roomGutter = 24.0;

@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show DisplayFeatureType;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,6 +40,7 @@ class AdaptivePaneLayout extends StatefulWidget {
     this.compactSecondaryFirst = true,
     this.showSecondaryInCompact = true,
     this.primaryBottomInset,
+    this.extendPrimaryIntoBottomPadding = false,
     this.overlayHeader = false,
     this.overlayFooter = false,
     this.followPrimaryEnd = false,
@@ -83,6 +85,10 @@ class AdaptivePaneLayout extends StatefulWidget {
   /// Optional bottom clearance for primary content. Its horizontal bounds
   /// still respect reserved regions; keyboard and horizontal-fold insets win.
   final double? primaryBottomInset;
+
+  /// Allows an inner-display pane to use ambient bottom padding. Keyboard,
+  /// cutout and horizontal-fold bounds still constrain the pane.
+  final bool extendPrimaryIntoBottomPadding;
 
   /// Lets scrolling content pass underneath a translucent fixed header.
   final bool overlayHeader;
@@ -390,15 +396,25 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
         pane.bottom != viewport.height - media.padding.bottom) {
       return pane;
     }
+    final bottomPadding = Rect.fromLTRB(
+      pane.left,
+      pane.bottom,
+      pane.right,
+      viewport.height,
+    );
+    final bottomCutout = media.displayFeatures.any(
+      (feature) =>
+          feature.type == DisplayFeatureType.cutout &&
+          feature.bounds.overlaps(bottomPadding),
+    );
+    final clearance = widget.extendPrimaryIntoBottomPadding && !bottomCutout
+        ? widget.primaryBottomInset!
+        : math.max(media.padding.bottom, widget.primaryBottomInset!);
     return Rect.fromLTRB(
       pane.left,
       pane.top,
       pane.right,
-      math.max(
-        pane.top,
-        viewport.height -
-            math.max(media.padding.bottom, widget.primaryBottomInset!),
-      ),
+      math.max(pane.top, viewport.height - clearance),
     );
   }
 

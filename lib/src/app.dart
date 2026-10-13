@@ -198,17 +198,21 @@ class _StartScreen extends StatelessWidget {
       builder: (context, constraints) {
         final fold = DuoLayoutScope.of(context);
         final closed = fold.status == HingeStatus.closed;
+        final innerLandscape =
+            fold.status == HingeStatus.fullyOpen &&
+            constraints.maxWidth > constraints.maxHeight;
         final threadMinHeight = math.max(
           0.0,
           constraints.maxHeight -
               (closed ? 72 : 80) -
               StylistLayout.composerBottomClearance -
-              76,
+              68,
         );
         return AdaptivePaneLayout(
           compactSecondaryFirst: false,
           showSecondaryInCompact: !closed,
           primaryBottomInset: StylistLayout.composerBottomClearance,
+          extendPrimaryIntoBottomPadding: innerLandscape,
           overlayHeader: true,
           overlayFooter: onStartBrief != null,
           secondaryScrollable: false,
@@ -217,7 +221,7 @@ class _StartScreen extends StatelessWidget {
           secondaryPadding: EdgeInsets.zero,
           panePadding: closed
               ? const EdgeInsets.fromLTRB(16, 8, 8, 8)
-              : const EdgeInsets.fromLTRB(32, 0, 32, 24),
+              : const EdgeInsets.fromLTRB(32, 0, 32, 8),
           header: ClipRect(
             key: const ValueKey('alder-header'),
             child: BackdropFilter(
@@ -316,8 +320,8 @@ class _StartScreen extends StatelessWidget {
               ? StylistComposerDock(
                   horizontalPadding: 32,
                   padding: closed
-                      ? const EdgeInsets.fromLTRB(16, 24, 8, 0)
-                      : const EdgeInsets.fromLTRB(32, 24, 32, 0),
+                      ? const EdgeInsets.fromLTRB(16, 8, 8, 0)
+                      : const EdgeInsets.fromLTRB(16, 8, 16, 0),
                   child: _CustomBriefEntry(
                     onStart: onStartBrief!,
                     isBusy: isBusy,
@@ -715,7 +719,11 @@ class _ResponsiveShell extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     body: LayoutBuilder(
       builder: (context, constraints) {
-        final cover = DuoLayoutScope.of(context).status == HingeStatus.closed;
+        final fold = DuoLayoutScope.of(context);
+        final cover = fold.status == HingeStatus.closed;
+        final innerLandscape =
+            fold.status == HingeStatus.fullyOpen &&
+            constraints.maxWidth > constraints.maxHeight;
         final gutter = cover || constraints.maxWidth < 600
             ? StylistLayout.compactGutter
             : StylistLayout.gutter;
@@ -723,7 +731,8 @@ class _ResponsiveShell extends StatelessWidget {
           overlayFooter: true,
           overlayHeader: true,
           primaryBottomInset: StylistLayout.composerBottomClearance,
-          panePadding: EdgeInsets.fromLTRB(gutter, 32, gutter, 12),
+          extendPrimaryIntoBottomPadding: innerLandscape,
+          panePadding: EdgeInsets.fromLTRB(gutter, 32, gutter, 8),
           secondaryPadding: const EdgeInsets.symmetric(vertical: 12),
           compactSecondaryPadding: const EdgeInsets.symmetric(horizontal: 16),
           secondaryScrollable: false,
@@ -739,7 +748,7 @@ class _ResponsiveShell extends StatelessWidget {
           secondary: _DressingPanel(agent: agent),
           header: _MobileHeader(onNewJourney: onNewJourney),
           footer: StylistComposerDock(
-            padding: EdgeInsets.fromLTRB(gutter, 0, gutter, 0),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _ChatComposer(agent: agent),
           ),
           rail: _SideRail(onNewJourney: onNewJourney),
@@ -776,7 +785,14 @@ class _ChatSurface extends StatelessWidget {
                 ),
                 CommerceSurfaceEntry(surfaceId: final entryId) => Padding(
                   key: ValueKey('conversation-surface-$entryId'),
-                  padding: const EdgeInsets.only(bottom: 20),
+                  padding: EdgeInsets.only(
+                    bottom:
+                        entry == entries.last &&
+                            pendingId == null &&
+                            !agent.isBusy
+                        ? 8
+                        : 20,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
