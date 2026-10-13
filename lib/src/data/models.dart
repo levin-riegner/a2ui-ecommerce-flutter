@@ -58,6 +58,12 @@ enum DemoJourney {
 
 enum ProductCategory { dress, top, bottom, layer, shoes, bag, accessory }
 
+/// Presentation casing only; catalog facts retain their original values.
+String displayDetail(String value) {
+  final text = value.trim();
+  return text.isEmpty ? text : '${text[0].toUpperCase()}${text.substring(1)}';
+}
+
 class Product {
   const Product({
     required this.id,
@@ -99,7 +105,8 @@ class Product {
 
   String get priceLabel => '€${price.toStringAsFixed(0)}';
 
-  String get brandLine => '$brand · $meta';
+  String get brandLine =>
+      '$brand · ${meta.split('·').map(displayDetail).join(' · ')}';
 }
 
 class DressingPiece {

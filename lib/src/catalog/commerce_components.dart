@@ -38,6 +38,7 @@ class CommerceProductImage extends StatelessWidget {
       fit: BoxFit.contain,
       width: double.infinity,
       filterQuality: FilterQuality.medium,
+      gaplessPlayback: true,
       errorBuilder: (_, error, stackTrace) => fallback,
     );
   }
@@ -63,29 +64,38 @@ class CommerceChoice extends StatelessWidget {
     child: InkWell(
       borderRadius: BorderRadius.circular(24),
       onTap: onPressed,
-      child: Container(
+      child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 48),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xff18181b) : Colors.white,
-          border: Border.all(
-            color: selected ? const Color(0xff18181b) : const Color(0xffe4e4e7),
-          ),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: onPressed == null
-                ? selected
-                      ? Colors.white70
-                      : const Color(0xff71717a)
-                : selected
-                ? Colors.white
-                : const Color(0xff18181b),
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            height: 1.4,
+        child: Center(
+          widthFactor: 1,
+          heightFactor: 1,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 38),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+            decoration: BoxDecoration(
+              color: selected ? const Color(0xff18181b) : Colors.white,
+              border: Border.all(
+                color: selected
+                    ? const Color(0xff18181b)
+                    : const Color(0xffe4e4e7),
+              ),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Text(
+              displayDetail(label),
+              style: TextStyle(
+                color: onPressed == null
+                    ? selected
+                          ? Colors.white70
+                          : const Color(0xff71717a)
+                    : selected
+                    ? Colors.white
+                    : const Color(0xff18181b),
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                height: 1.4,
+              ),
+            ),
           ),
         ),
       ),
@@ -405,17 +415,20 @@ class CommerceDressingRoomStyle extends InheritedWidget {
     required this.dark,
     this.compact = false,
     this.contextImages = const [],
+    this.minHeight = 0,
     required super.child,
   });
   final bool dark;
   final bool compact;
   final List<String> contextImages;
+  final double minHeight;
   static CommerceDressingRoomStyle? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<CommerceDressingRoomStyle>();
   @override
   bool updateShouldNotify(CommerceDressingRoomStyle oldWidget) =>
       dark != oldWidget.dark ||
       compact != oldWidget.compact ||
+      minHeight != oldWidget.minHeight ||
       contextImages != oldWidget.contextImages;
 }
 

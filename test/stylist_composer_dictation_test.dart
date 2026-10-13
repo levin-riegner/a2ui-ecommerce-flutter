@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:a2ui_flutter_commerce/src/catalog/finalized_left_components.dart';
+
 import 'package:a2ui_flutter_commerce/src/input/speech_dictation.dart';
 import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
 import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
@@ -270,7 +272,7 @@ void main() {
   );
 
   testWidgets(
-    'glass footer reserves multiline height and final content stays reachable',
+    'glass stays inside the input pill and final content stays reachable',
     (tester) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(390, 844);
@@ -309,12 +311,16 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byType(BackdropFilter), findsOneWidget);
+      expect(
+        tester.getRect(find.byType(BackdropFilter)),
+        tester.getRect(find.byType(FinalizedChatInput)),
+      );
       final mic = tester.getRect(
         find.byKey(const ValueKey('stylist-microphone')),
       );
       // The visible circle keeps 8px pill padding; its larger touch target
       // extends another 6px within the pill.
-      expect(tester.getRect(find.byType(StylistComposer)).bottom, 844 - 34 - 4);
+      expect(tester.getRect(find.byType(StylistComposer)).bottom, 844 - 34 - 8);
       expect(mic.bottom, lessThanOrEqualTo(844 - 34 - 6));
       expect(
         tester

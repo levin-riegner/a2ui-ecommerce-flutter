@@ -1,7 +1,9 @@
 import 'dart:math' as math;
+import 'dart:ui' show DisplayFeatureType;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 
 import 'duo_layout_adapter.dart';
 
@@ -28,15 +30,23 @@ class AdaptivePaneLayout extends StatefulWidget {
     this.railMinWidth = 900,
     this.panePadding = const EdgeInsets.all(16),
     this.secondaryPadding,
+    this.compactSecondaryPadding,
     this.secondaryBackgroundColor,
     this.secondaryBackgroundOnlyInBookMode = false,
     this.secondaryScrollable = true,
     this.extendSecondaryToEdges = false,
+    this.reserveRailInExtendedSecondary = false,
+    this.compactPaneGap = 24,
     this.compactSecondaryFirst = true,
     this.showSecondaryInCompact = true,
     this.primaryBottomInset,
+    this.extendPrimaryIntoBottomPadding = false,
     this.overlayHeader = false,
     this.overlayFooter = false,
+    this.followPrimaryEnd = false,
+    this.holdInitialPrimaryBeginning = false,
+    this.stackSecondaryInPortrait = false,
+    this.portraitHeaderHeight = 56,
   });
 
   /// Pane contents should not introduce their own vertical scroll view.
@@ -52,6 +62,7 @@ class AdaptivePaneLayout extends StatefulWidget {
   final double railMinWidth;
   final EdgeInsets panePadding;
   final EdgeInsets? secondaryPadding;
+  final EdgeInsets? compactSecondaryPadding;
 
   /// Paints the split pane through safe-area margins without moving controls
   /// into hardware-reserved regions. Compact layouts keep the page background.
@@ -64,6 +75,11 @@ class AdaptivePaneLayout extends StatefulWidget {
   /// Lets decorative artwork fill the top, bottom, and trailing safe margins
   /// in split layouts. Keep interactive content within the default bounds.
   final bool extendSecondaryToEdges;
+
+  /// Interactive edge-to-edge panes reserve the rail inside their full bounds.
+  /// Decorative panes retain their existing safe-area rail policy.
+  final bool reserveRailInExtendedSecondary;
+  final double compactPaneGap;
   final bool compactSecondaryFirst;
   final bool showSecondaryInCompact;
 
@@ -71,12 +87,25 @@ class AdaptivePaneLayout extends StatefulWidget {
   /// still respect reserved regions; keyboard and horizontal-fold insets win.
   final double? primaryBottomInset;
 
+  /// Allows an inner-display pane to use ambient bottom padding. Keyboard,
+  /// cutout and horizontal-fold bounds still constrain the pane.
+  final bool extendPrimaryIntoBottomPadding;
+
   /// Lets scrolling content pass underneath a translucent fixed header.
   final bool overlayHeader;
 
   /// Scrolls content behind a translucent footer, reserving its measured height
   /// at the end of the scroll so the final controls remain reachable.
   final bool overlayFooter;
+
+  /// Follows renderer growth only while the person is keeping up with the chat.
+  final bool followPrimaryEnd;
+
+  /// Keeps the opening reply at its beginning until the person scrolls or a
+  /// later reply arrives. Subsequent reading-position rules remain unchanged.
+  final bool holdInitialPrimaryBeginning;
+  final bool stackSecondaryInPortrait;
+  final double portraitHeaderHeight;
 
   @override
   State<AdaptivePaneLayout> createState() => _AdaptivePaneLayoutState();
@@ -95,6 +124,114 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
   double _headerHeight = 71;
   bool _headerMeasurementPending = false;
   bool _footerMeasurementPending = false;
+  bool _followingPrimary = true;
+  bool _holdingInitialBeginning = false;
+  bool _userScrolling = false;
+  bool _followScheduled = false;
+  bool _autoScrolling = false;
+  int _followRevision = 0;
+  double? _followTarget;
+
+  @override
+  void initState() {
+    super.initState();
+    _holdingInitialBeginning = widget.holdInitialPrimaryBeginning;
+    _followingPrimary = !_holdingInitialBeginning;
+  }
+
+  @override
+  void didUpdateWidget(AdaptivePaneLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_holdingInitialBeginning && !widget.holdInitialPrimaryBeginning) {
+      _holdingInitialBeginning = false;
+      _followingPrimary = true;
+      _followEnd(_primaryScroll.hasClients ? _primaryScroll : _compactScroll);
+    }
+  }
+
+  bool _atEnd(ScrollMetrics metrics) => metrics.extentAfter <= 48;
+
+  bool _trackScroll(ScrollNotification notification) {
+    if (!widget.followPrimaryEnd ||
+        notification.depth != 0 ||
+        notification.metrics.axis != Axis.vertical) {
+      return false;
+    }
+    if (notification is UserScrollNotification) {
+      _userScrolling = notification.direction != ScrollDirection.idle;
+      if (_userScrolling) {
+        _holdingInitialBeginning = false;
+        _autoScrolling = false;
+        _followRevision++;
+      }
+      if (notification.direction == ScrollDirection.forward) {
+        _followingPrimary = false;
+      } else if (notification.direction == ScrollDirection.idle) {
+        _followingPrimary = _atEnd(notification.metrics);
+      }
+    } else if (notification is ScrollUpdateNotification &&
+        (_userScrolling ||
+            notification.dragDetails != null ||
+            !_autoScrolling)) {
+      _followingPrimary = _atEnd(notification.metrics);
+    }
+    return false;
+  }
+
+  Widget _followable(ScrollController controller, Widget child) =>
+      NotificationListener<ScrollNotification>(
+        onNotification: _trackScroll,
+        child: NotificationListener<ScrollMetricsNotification>(
+          onNotification: (notification) {
+            if (notification.depth == 0) _followEnd(controller);
+            return false;
+          },
+          child: NotificationListener<SizeChangedLayoutNotification>(
+            onNotification: (_) {
+              _followEnd(controller);
+              return false;
+            },
+            child: child,
+          ),
+        ),
+      );
+
+  void _followEnd(ScrollController controller) {
+    if (!widget.followPrimaryEnd ||
+        _holdingInitialBeginning ||
+        !_followingPrimary ||
+        _followScheduled) {
+      return;
+    }
+    _followScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _followScheduled = false;
+      if (!mounted || !_followingPrimary || !controller.hasClients) return;
+      final position = controller.position;
+      if (!position.hasContentDimensions || position.extentAfter <= .5) return;
+      if (_autoScrolling && _followTarget == position.maxScrollExtent) return;
+      _followTarget = position.maxScrollExtent;
+      if (MediaQuery.disableAnimationsOf(context)) {
+        _autoScrolling = true;
+        position.jumpTo(position.maxScrollExtent);
+        _autoScrolling = false;
+      } else {
+        _autoScrolling = true;
+        final revision = ++_followRevision;
+        position
+            .animateTo(
+              position.maxScrollExtent,
+              duration: const Duration(milliseconds: 120),
+              curve: Curves.easeOutCubic,
+            )
+            .whenComplete(() {
+              if (mounted && revision == _followRevision) {
+                _autoScrolling = false;
+              }
+            });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -104,7 +241,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
     super.dispose();
   }
 
-  Widget _primary() => KeyedSubtree(key: _primaryKey, child: widget.primary);
+  Widget _primary() => KeyedSubtree(
+    key: _primaryKey,
+    child: SizeChangedLayoutNotifier(child: widget.primary),
+  );
   Widget _secondary() =>
       KeyedSubtree(key: _secondaryKey, child: widget.secondary);
   Widget _header() {
@@ -203,12 +343,15 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
     );
   }
 
-  Widget _pane(Widget Function(EdgeInsets padding) scroll) => Column(
+  Widget _pane(
+    Widget Function(EdgeInsets padding) scroll, {
+    bool showHeader = true,
+  }) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      if (!widget.overlayHeader) _header(),
+      if (showHeader && !widget.overlayHeader) _header(),
       Expanded(
-        child: widget.overlayFooter || widget.overlayHeader
+        child: widget.overlayFooter || (showHeader && widget.overlayHeader)
             ? Stack(
                 fit: StackFit.expand,
                 children: [
@@ -216,13 +359,15 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                     widget.panePadding.copyWith(
                       top:
                           widget.panePadding.top +
-                          (widget.overlayHeader ? _headerHeight : 0),
+                          (showHeader && widget.overlayHeader
+                              ? _headerHeight
+                              : 0),
                       bottom:
                           widget.panePadding.bottom +
                           (widget.overlayFooter ? _footerHeight : 0),
                     ),
                   ),
-                  if (widget.overlayHeader)
+                  if (showHeader && widget.overlayHeader)
                     Align(alignment: Alignment.topCenter, child: _header()),
                   if (widget.overlayFooter)
                     Align(alignment: Alignment.bottomCenter, child: _footer()),
@@ -234,13 +379,17 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
     ],
   );
 
-  Widget _primaryPane() => _pane(
-    (padding) => SingleChildScrollView(
-      key: const ValueKey('primary-pane-scroll'),
-      controller: _primaryScroll,
-      padding: padding,
-      child: _primary(),
+  Widget _primaryPane({bool showHeader = true}) => _pane(
+    (padding) => _followable(
+      _primaryScroll,
+      SingleChildScrollView(
+        key: const ValueKey('primary-pane-scroll'),
+        controller: _primaryScroll,
+        padding: padding,
+        child: _primary(),
+      ),
     ),
+    showHeader: showHeader,
   );
 
   Widget _secondaryPane({required bool showRail}) => Row(
@@ -274,28 +423,72 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
         pane.bottom != viewport.height - media.padding.bottom) {
       return pane;
     }
+    final bottomPadding = Rect.fromLTRB(
+      pane.left,
+      pane.bottom,
+      pane.right,
+      viewport.height,
+    );
+    final bottomCutout = media.displayFeatures.any(
+      (feature) =>
+          feature.type == DisplayFeatureType.cutout &&
+          feature.bounds.overlaps(bottomPadding),
+    );
+    final clearance = widget.extendPrimaryIntoBottomPadding && !bottomCutout
+        ? widget.primaryBottomInset!
+        : math.max(media.padding.bottom, widget.primaryBottomInset!);
     return Rect.fromLTRB(
       pane.left,
       pane.top,
       pane.right,
-      math.max(pane.top, viewport.height - widget.primaryBottomInset!),
+      math.max(pane.top, viewport.height - clearance),
     );
   }
 
   Widget _compact() => _pane(
-    (padding) => SingleChildScrollView(
-      key: const ValueKey('compact-pane-scroll'),
-      controller: _compactScroll,
-      padding: padding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: !widget.showSecondaryInCompact
-            ? [_primary()]
-            : widget.compactSecondaryFirst
-            ? [_secondary(), const SizedBox(height: 24), _primary()]
-            : [_primary(), const SizedBox(height: 24), _secondary()],
+    (padding) => _followable(
+      _compactScroll,
+      SingleChildScrollView(
+        key: const ValueKey('compact-pane-scroll'),
+        controller: _compactScroll,
+        padding: padding.copyWith(left: 0, right: 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: !widget.showSecondaryInCompact
+              ? [_compactPrimary(padding)]
+              : widget.compactSecondaryFirst
+              ? [
+                  _compactSecondary(padding),
+                  SizedBox(height: widget.compactPaneGap),
+                  _compactPrimary(padding),
+                ]
+              : [
+                  _compactPrimary(padding),
+                  SizedBox(height: widget.compactPaneGap),
+                  _compactSecondary(padding),
+                ],
+        ),
       ),
     ),
+  );
+
+  Widget _compactPrimary(EdgeInsets padding) => Padding(
+    padding: EdgeInsets.only(left: padding.left, right: padding.right),
+    child: _primary(),
+  );
+
+  Widget _compactSecondary(EdgeInsets padding) => Padding(
+    padding: EdgeInsets.only(
+      left:
+          widget.compactSecondaryPadding?.left ??
+          widget.secondaryPadding?.left ??
+          padding.left,
+      right:
+          widget.compactSecondaryPadding?.right ??
+          widget.secondaryPadding?.right ??
+          padding.right,
+    ),
+    child: _secondary(),
   );
 
   @override
@@ -357,7 +550,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                       showRail:
                           widget.rail != null &&
                           size.width >= widget.railMinWidth &&
-                          regions[1].width - widget.railWidth >=
+                          (widget.reserveRailInExtendedSecondary
+                                      ? _secondaryBounds(regions[1], size).width
+                                      : regions[1].width) -
+                                  widget.railWidth >=
                               minSecondaryWidth,
                     ),
                   ),
@@ -386,11 +582,98 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
             (!widget.extendSecondaryToEdges ||
                 (midpoint - centered.left >= minPrimaryWidth &&
                     centered.right - midpoint >= minSecondaryWidth));
+        final duoPortrait =
+            DuoLayoutScope.of(context).capabilities.isFoldable &&
+            size.height > size.width;
+        final horizontalRegions = List<Rect>.of(regions)
+          ..sort((a, b) => a.top.compareTo(b.top));
+        final horizontalSplit =
+            horizontalRegions.length == 2 &&
+            horizontalRegions[0].left == horizontalRegions[1].left &&
+            horizontalRegions[0].right == horizontalRegions[1].right &&
+            horizontalRegions[0].bottom <= horizontalRegions[1].top;
+        final portraitBounds = _primaryBounds(
+          horizontalSplit ? safeBounds : centered,
+          size,
+          media,
+        );
+        final portraitDivision = horizontalSplit
+            ? horizontalRegions[0].bottom
+            : duoPortrait
+            ? size.height / 2
+            : (size.height - 64) / 2;
+        final conversationTop = horizontalSplit
+            ? horizontalRegions[1].top
+            : portraitDivision;
+        final portraitRoomTop =
+            portraitBounds.top + widget.portraitHeaderHeight;
+        if (!split &&
+            portraitDivision - portraitRoomTop >= (duoPortrait ? 160 : 240) &&
+            portraitBounds.bottom - conversationTop >=
+                (duoPortrait ? 96 : 240) &&
+            widget.stackSecondaryInPortrait &&
+            (regions.length == 1 || horizontalSplit) &&
+            portraitBounds.width >= (duoPortrait ? 320 : 600) &&
+            (duoPortrait || size.height >= 800) &&
+            size.height > size.width &&
+            (duoPortrait || textScale <= 1.5)) {
+          final bounds = portraitBounds;
+          final division = portraitDivision;
+          final roomTop = portraitRoomTop;
+          return AdaptivePaneScope(
+            isSplit: false,
+            child: KeyedSubtree(
+              key: const ValueKey('compact-pane-layout'),
+              child: _canvas(
+                split: false,
+                children: [
+                  Positioned.fromRect(
+                    rect: Rect.fromLTWH(
+                      bounds.left,
+                      bounds.top,
+                      bounds.width,
+                      widget.portraitHeaderHeight,
+                    ),
+                    child: _header(),
+                  ),
+                  Positioned.fromRect(
+                    key: const ValueKey('portrait-dressing-pane'),
+                    rect: Rect.fromLTRB(
+                      bounds.left,
+                      roomTop,
+                      bounds.right,
+                      division,
+                    ),
+                    child: _compactSecondary(widget.panePadding),
+                  ),
+                  Positioned.fromRect(
+                    key: const ValueKey('portrait-conversation-pane'),
+                    rect: Rect.fromLTRB(
+                      bounds.left,
+                      conversationTop,
+                      bounds.right,
+                      bounds.bottom,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: widget.overlayHeader ? 0 : widget.compactPaneGap,
+                      ),
+                      child: _primaryPane(showHeader: false),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
         final showRail =
             split &&
             widget.rail != null &&
-            width >= widget.railMinWidth &&
-            width - widget.railWidth >= minPrimaryWidth + minSecondaryWidth;
+            (widget.reserveRailInExtendedSecondary ? size.width : width) >=
+                widget.railMinWidth &&
+            (widget.reserveRailInExtendedSecondary ? size.width : width) -
+                    widget.railWidth >=
+                minPrimaryWidth + minSecondaryWidth;
         final primaryWidth =
             minPrimaryWidth +
             math.max(

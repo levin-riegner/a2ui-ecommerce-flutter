@@ -6,6 +6,7 @@ import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
 import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
+import 'package:a2ui_flutter_commerce/src/agent/conversation_entry.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +22,98 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
   }
+
+  for (final safeBottom in [0.0, 34.0]) {
+    testWidgets(
+      'opening and conversation composer share bottom clearance, safe=$safeBottom',
+      (tester) async {
+        setWindow(tester, const Size(951, 669));
+        tester.view.padding = FakeViewPadding(bottom: safeBottom);
+        addTearDown(tester.view.resetPadding);
+        final agent = _SpacingAgent();
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final openingBottom = tester
+            .getRect(find.byType(StylistComposer))
+            .bottom;
+        expect(openingBottom, 669 - (safeBottom > 8 ? safeBottom : 8));
+        expect(tester.getRect(find.byType(StylistComposer)).left, 16);
+        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        await tester.pumpAndSettle();
+        expect(
+          tester.getRect(find.byType(StylistComposer)).bottom,
+          openingBottom,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets(
+    'resting conversation has clear gaps below header and above composer',
+    (tester) async {
+      setWindow(tester, const Size(951, 669));
+      final agent = _SpacingAgent();
+      await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+      await tester.pumpWidget(ReferenceApp(agent: agent));
+      await tester.pumpAndSettle();
+      final viewport = find.byKey(const ValueKey('primary-pane-scroll'));
+      final position = tester
+          .state<ScrollableState>(
+            find
+                .descendant(of: viewport, matching: find.byType(Scrollable))
+                .first,
+          )
+          .position;
+      position.jumpTo(0);
+      await tester.pumpAndSettle();
+      final header = tester.getRect(
+        find.byKey(const ValueKey('alder-journey-header')),
+      );
+      expect(
+        tester.getRect(find.text('First dinner in Brooklyn')).top,
+        greaterThanOrEqualTo(header.bottom + 32),
+      );
+      position.jumpTo(position.maxScrollExtent);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.text('Find options')).bottom,
+        lessThanOrEqualTo(
+          tester.getRect(find.byType(StylistComposer)).top - 16,
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'journey glass header stays fixed and composer clears native bottom inset',
+    (tester) async {
+      setWindow(tester, const Size(951, 669));
+      tester.view.padding = const FakeViewPadding(bottom: 64);
+      addTearDown(tester.view.resetPadding);
+      final agent = StubAgent();
+      await tester.runAsync(() => agent.startJourney(DemoJourney.berlin));
+      await tester.pumpWidget(ReferenceApp(agent: agent));
+      await tester.pumpAndSettle();
+      final header = find.byKey(const ValueKey('alder-journey-header'));
+      final before = tester.getRect(header);
+      final viewport = find.byKey(const ValueKey('primary-pane-scroll'));
+      expect(tester.getRect(viewport).top, before.top);
+      expect(
+        find.descendant(of: header, matching: find.byType(BackdropFilter)),
+        findsOneWidget,
+      );
+      await tester.drag(viewport, const Offset(0, -260));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(header), before);
+      expect(
+        tester.getRect(find.byType(StylistComposer)).bottom,
+        lessThanOrEqualTo(669 - 64),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   for (final entry in <Size, bool>{
     const Size(360, 780): false,
@@ -120,6 +213,69 @@ void main() {
       },
     );
   }
+
+  testWidgets(
+    'roomy portrait keeps the dressing room above its own chat scroll',
+    (tester) async {
+      setWindow(tester, const Size(669, 951));
+      await tester.pumpWidget(
+        const _Harness(
+          stackSecondaryInPortrait: true,
+          padding: EdgeInsets.fromLTRB(0, 32, 0, 32),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final room = tester.getRect(
+        find.byKey(const ValueKey('portrait-dressing-pane')),
+      );
+      final chat = tester.getRect(
+        find.byKey(const ValueKey('portrait-conversation-pane')),
+      );
+      expect(room.top, 88);
+      expect(room.bottom, 443.5);
+      expect(chat.top, room.bottom);
+      expect(chat.bottom, 919);
+      final scroll = tester
+          .state<ScrollableState>(
+            find
+                .descendant(
+                  of: find.byKey(const ValueKey('primary-pane-scroll')),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
+          )
+          .position;
+      scroll.jumpTo(scroll.maxScrollExtent);
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.byKey(const ValueKey('portrait-dressing-pane'))),
+        room,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('interactive extended pane reserves its rail beside the camera', (
+    tester,
+  ) async {
+    setWindow(tester, const Size(951, 669));
+    await tester.pumpWidget(
+      const _Harness(
+        extendSecondaryToEdges: true,
+        reserveRailInExtendedSecondary: true,
+        railWidth: 84,
+        padding: EdgeInsets.fromLTRB(0, 0, 84, 34),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final rail = tester.getRect(find.byKey(const ValueKey('rail')));
+    final pane = tester.getRect(find.byKey(const ValueKey('secondary')));
+    expect(rail.left, 867);
+    expect(rail.right, 951);
+    expect(pane.left, 475.5);
+    expect(pane.right, rail.left);
+    expect(tester.takeException(), isNull);
+  });
 
   for (final obstructed in [false, true]) {
     testWidgets(
@@ -614,6 +770,17 @@ void main() {
   });
 }
 
+class _SpacingAgent extends StubAgent {
+  @override
+  bool get canStartBrief => true;
+  @override
+  List<CommerceConversationEntry> get conversationEntries => [
+    const CommerceUserMessage(id: 'spacing', text: 'First dinner in Brooklyn'),
+    if (latestInlineSurfaceId != null)
+      CommerceSurfaceEntry(surfaceId: latestInlineSurfaceId!),
+  ];
+}
+
 class _Harness extends StatelessWidget {
   const _Harness({
     this.features = const [],
@@ -623,6 +790,9 @@ class _Harness extends StatelessWidget {
     this.secondaryBackgroundColor,
     this.secondaryBackgroundOnlyInBookMode = false,
     this.extendSecondaryToEdges = false,
+    this.reserveRailInExtendedSecondary = false,
+    this.railWidth = 60,
+    this.stackSecondaryInPortrait = false,
     this.foldData = FoldableData.unsupported,
     this.disableAnimations = false,
   });
@@ -634,6 +804,9 @@ class _Harness extends StatelessWidget {
   final Color? secondaryBackgroundColor;
   final bool secondaryBackgroundOnlyInBookMode;
   final bool extendSecondaryToEdges;
+  final bool reserveRailInExtendedSecondary;
+  final double railWidth;
+  final bool stackSecondaryInPortrait;
   final FoldableData foldData;
   final bool disableAnimations;
 
@@ -654,6 +827,9 @@ class _Harness extends StatelessWidget {
             child: Scaffold(
               body: AdaptivePaneLayout(
                 extendSecondaryToEdges: extendSecondaryToEdges,
+                reserveRailInExtendedSecondary: reserveRailInExtendedSecondary,
+                railWidth: railWidth,
+                stackSecondaryInPortrait: stackSecondaryInPortrait,
                 secondaryScrollable: !extendSecondaryToEdges,
                 secondaryPadding: extendSecondaryToEdges
                     ? EdgeInsets.zero

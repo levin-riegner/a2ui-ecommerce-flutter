@@ -4,22 +4,24 @@ import 'package:a2ui_core/a2ui_core.dart' as core;
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_surfaces.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/src/catalog/commerce_components.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 
-Product piece(ProductCategory category, {double price = 50}) => Product(
-  id: 'test-${category.name}',
-  category: category,
-  name: 'Selected ${category.name}',
-  brand: 'Demo',
-  price: price,
-  meta: 'Cotton',
-  tag: 'A good fit',
-  swatch: '#123456',
-  imageAsset: 'assets/images/products/demo-0001.jpg',
-);
+Product piece(ProductCategory category, {double price = 50, String? name}) =>
+    Product(
+      id: 'test-${category.name}',
+      category: category,
+      name: name ?? 'Selected ${category.name}',
+      brand: 'Demo',
+      price: price,
+      meta: 'Cotton',
+      tag: 'A good fit',
+      swatch: '#123456',
+      imageAsset: 'assets/images/products/demo-0001.jpg',
+    );
 
 Map<String, Object?> dressingData(List<Map<String, Object?>> messages) =>
     Map<String, Object?>.from(
@@ -74,6 +76,75 @@ class _SurfaceHarness {
 }
 
 void main() {
+  for (final reducedMotion in [false, true]) {
+    testWidgets(
+      'updated outfit stays visible through reveal, reduced=$reducedMotion',
+      (tester) async {
+        final harness = _SurfaceHarness();
+        addTearDown(harness.dispose);
+        await harness.publish(surfaces({'top': piece(ProductCategory.top)}));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MediaQuery(
+              data: MediaQueryData(disableAnimations: reducedMotion),
+              child: Scaffold(
+                body: SingleChildScrollView(
+                  child: CommerceDressingRoomStyle(
+                    dark: true,
+                    child: Surface(
+                      surfaceContext: harness.controller.contextFor(
+                        'dressing-room',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final surfaceState = tester.state(find.byType(Surface));
+        await harness.publish(
+          surfaces({
+            'top': piece(ProductCategory.top, name: 'Replacement top'),
+          }, turn: 2),
+        );
+        await tester.pump();
+        expect(tester.state(find.byType(Surface)), same(surfaceState));
+        expect(find.text('Replacement top'), findsOneWidget);
+        expect(
+          find.text('Selected top'),
+          reducedMotion ? findsNothing : findsOneWidget,
+        );
+        if (!reducedMotion) {
+          await tester.pump(const Duration(milliseconds: 160));
+          final incoming = tester.widget<FadeTransition>(
+            find
+                .ancestor(
+                  of: find.text('Replacement top'),
+                  matching: find.byType(FadeTransition),
+                )
+                .first,
+          );
+          final outgoing = tester.widget<FadeTransition>(
+            find
+                .ancestor(
+                  of: find.text('Selected top'),
+                  matching: find.byType(FadeTransition),
+                )
+                .first,
+          );
+          expect(incoming.opacity.value, greaterThan(0));
+          expect(incoming.opacity.value, lessThan(1));
+          expect(outgoing.opacity.value, 1);
+        }
+        await tester.pumpAndSettle();
+        expect(find.text('Selected top'), findsNothing);
+        expect(find.text('Replacement top'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
   testWidgets('brief choices stay local until one submit sends all values', (
     tester,
   ) async {
@@ -109,7 +180,7 @@ void main() {
     expect(find.text('Find options'), findsOneWidget);
     expect(find.text('Season'), findsNothing);
     expect(harness.sent, isEmpty);
-    await tester.tap(find.text('smart-casual'));
+    await tester.tap(find.text('Smart-casual'));
     await tester.pumpAndSettle();
     expect(
       harness.controller

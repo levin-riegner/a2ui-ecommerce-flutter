@@ -57,7 +57,7 @@ List<Map<String, Object?>> renderPendingStylistSurface({
       'components': [
         {
           'id': 'root',
-          'component': 'Column',
+          'component': 'StylistSection',
           'children': ['status', 'preview'],
         },
         {
@@ -212,17 +212,24 @@ List<Map<String, Object?>> renderStylistSurfaces({
   final inlineComponents = <Map<String, Object?>>[
     {
       'id': 'root',
-      'component': 'Column',
-      'align': 'stretch',
+      'component': 'StylistSection',
       'children': [
         'message',
         if (picks.isNotEmpty) 'eyebrow',
-        for (var i = 0; i < picks.length; i++) 'product-$i',
+        if (picks.isNotEmpty) 'recommendations',
       ],
     },
     {'id': 'message', 'component': 'StylistMessage', 'text': _path('/message')},
     if (picks.isNotEmpty)
       {'id': 'eyebrow', 'component': 'Eyebrow', 'text': _path('/eyebrow')},
+    if (picks.isNotEmpty)
+      {
+        'id': 'recommendations',
+        'component': 'StylistSection',
+        'spacing': 8,
+        'compactCarousel': true,
+        'children': [for (var i = 0; i < picks.length; i++) 'product-$i'],
+      },
     for (var i = 0; i < picks.length; i++)
       _productComponent(
         picks[i],
@@ -252,12 +259,17 @@ List<Map<String, Object?>> renderStylistSurfaces({
       inlineComponents.first['children'] as List,
     );
     inlineComponents.first['children'] = rootChildren;
-    rootChildren.insertAll(1, [
-      'city-location',
-      cityContext != null ? 'city-weather' : 'city-context-notice',
-      'refresh-context',
-    ]);
+    rootChildren.insert(1, 'city-context');
     inlineComponents.addAll([
+      {
+        'id': 'city-context',
+        'component': 'StylistSection',
+        'spacing': 8,
+        'children': [
+          'city-location',
+          cityContext != null ? 'city-weather' : 'city-context-notice',
+        ],
+      },
       {
         'id': 'city-location',
         'component': 'Eyebrow',
@@ -276,17 +288,6 @@ List<Map<String, Object?>> renderStylistSurfaces({
           'component': 'StylistMessage',
           'text': _path('/contextNotice'),
         },
-      {
-        'id': 'refresh-context',
-        'component': 'PrimaryButton',
-        'label': 'Refresh forecast',
-        'action': {
-          'event': {
-            'name': 'refresh_city_context',
-            'context': <String, Object?>{},
-          },
-        },
-      },
     ]);
   }
   Map<String, Object?> create(String id) => {

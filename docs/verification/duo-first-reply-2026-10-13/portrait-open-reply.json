@@ -1,0 +1,79 @@
+{
+  "status": "fullyOpen",
+  "angle": 180.0,
+  "support": "available",
+  "strategy": "updateHandler",
+  "size": "Size(669.0, 951.0)",
+  "keyboard": 0.0,
+  "sizeClass": "regular",
+  "regions": [
+    {
+      "kind": "division",
+      "active": false,
+      "bounds": "Rect.fromLTRB(0.0, 455.5, 669.0, 495.5)"
+    },
+    {
+      "kind": "occlusion",
+      "active": true,
+      "bounds": "Rect.fromLTRB(535.0, 0.0, 669.0, 82.0)"
+    }
+  ],
+  "fields": [
+    {
+      "draft": "",
+      "focus": false,
+      "textScale": 1.0,
+      "bounds": "Rect.fromLTRB(40.0, 881.0, 557.0, 901.0)",
+      "state": 476225597
+    }
+  ],
+  "layouts": [
+    "[<'compact-pane-layout'>]"
+  ],
+  "backgrounds": [],
+  "panels": {
+    "dressing-room-resize": {
+      "top": 138.0,
+      "height": 337.5
+    },
+    "finalized-dressing-room": {
+      "top": 138.0,
+      "height": 337.5,
+      "color": "ff000000"
+    },
+    "dressing-room-rack": {
+      "top": 224.0,
+      "height": 96.0
+    }
+  },
+  "surface": "inline-1",
+  "journey": "berlin",
+  "agent": 711143695,
+  "spent": "\u20ac0 spent \u2014\u00a00 of 4",
+  "selected": [],
+  "scrolls": [
+    {
+      "pixels": 0.0,
+      "max": 0.0
+    },
+    {
+      "pixels": 0.0,
+      "max": 120.5
+    },
+    {
+      "pixels": 0.0,
+      "max": 0.0
+    }
+  ],
+  "nativeBottomInset": 34.0,
+  "composers": [
+    {
+      "bounds": "Rect.fromLTRB(16.0, 865.0, 653.0, 917.0)",
+      "bottomGap": 34.0
+    }
+  ],
+  "panes": {
+    "portrait-dressing-pane": "Rect.fromLTRB(0.0, 138.0, 669.0, 475.5)",
+    "portrait-conversation-pane": "Rect.fromLTRB(0.0, 475.5, 669.0, 917.0)"
+  }
+}

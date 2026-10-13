@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui' show ImageFilter, TileMode;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +7,8 @@ import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
 import 'commerce_components.dart';
+import '../layout/stylist_layout.dart';
+import '../data/models.dart' show displayDetail;
 
 const _ink = Color(0xff000000);
 const _muted = Color(0xff666666);
@@ -97,6 +100,7 @@ class FinalizedStylistMessage extends StatelessWidget {
   Widget build(BuildContext context) => Text(
     text,
     style: _body.copyWith(
+      height: 1.5,
       color: CommerceDressingRoomStyle.maybeOf(context)?.dark == true
           ? Colors.white
           : _ink,
@@ -146,6 +150,7 @@ class FinalizedChatInput extends StatefulWidget {
     this.microphoneLabel = 'Dictate message',
     this.externalController,
     this.enabled = true,
+    this.glassBackground = false,
     this.fieldKey,
     this.submitLabel = 'Send message',
     this.fieldLabel = 'Tell me about the occasion',
@@ -160,6 +165,7 @@ class FinalizedChatInput extends StatefulWidget {
   final String microphoneLabel;
   final TextEditingController? externalController;
   final bool enabled;
+  final bool glassBackground;
   final Key? fieldKey;
   final String submitLabel, fieldLabel;
   @override
@@ -218,11 +224,27 @@ class _FinalizedChatInputState extends State<FinalizedChatInput> {
         valueListenable: controller,
         builder: (_, textValue, child) => Container(
           decoration: BoxDecoration(
-            color: _wash,
+            color: widget.glassBackground ? null : _wash,
             borderRadius: BorderRadius.circular(28),
           ),
           child: Stack(
             children: [
+              if (widget.glassBackground)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 12,
+                          sigmaY: 12,
+                          tileMode: TileMode.decal,
+                        ),
+                        child: ColoredBox(color: _wash.withValues(alpha: .82)),
+                      ),
+                    ),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 8, 96, 8),
                 child: Semantics(
@@ -401,7 +423,7 @@ class FinalizedBudgetSlider extends StatelessWidget {
                 padding: EdgeInsets.zero,
               ),
               child: SizedBox(
-                height: 48,
+                height: 20,
                 child: Slider(
                   value: current,
                   min: low,
@@ -423,14 +445,6 @@ class FinalizedBudgetSlider extends StatelessWidget {
   }
 }
 
-const _cardGeometry = <String, Size>{
-  'dress': Size(84, 118),
-  'top': Size(96, 96),
-  'bottom': Size(80, 112),
-  'layer': Size(90, 110),
-  'shoes': Size(120, 76),
-  'bag': Size(96, 92),
-};
 const _silhouettes = <String, String>{
   'dress': 'c22cb.svg',
   'top': '28493.svg',
@@ -516,8 +530,6 @@ class FinalizedProductCard extends StatelessWidget {
   final VoidCallback? onPressed;
   @override
   Widget build(BuildContext context) {
-    final geometry =
-        _cardGeometry[category.toLowerCase()] ?? _cardGeometry['dress']!;
     return Semantics(
       selected: selected,
       button: true,
@@ -525,17 +537,17 @@ class FinalizedProductCard extends StatelessWidget {
       child: Material(
         color: selected ? _wash : Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           side: BorderSide(
             color: selected ? _ink : _line,
             width: selected ? 1.5 : 1,
           ),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 12, 10),
+            padding: const EdgeInsets.all(9),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final largeText =
@@ -553,17 +565,17 @@ class FinalizedProductCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Text(
-                      tag,
+                      displayDetail(tag),
                       style: const TextStyle(fontSize: 10, height: 1.2),
                     ),
                   ),
                 );
                 final image = SizedBox(
                   key: const ValueKey('finalized-product-image'),
-                  width: geometry.width,
-                  height: geometry.height,
+                  width: StylistLayout.productImage,
+                  height: StylistLayout.productImage,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -578,50 +590,92 @@ class FinalizedProductCard extends StatelessWidget {
                     ),
                   ),
                 );
-                final body = _stack([
-                  Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    spacing: 8,
-                    runSpacing: 4,
-                    children: [
-                      Text(name, style: _body),
-                      Text(price, style: _body),
-                    ],
-                  ),
-                  Text(brandLine, style: _small),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    spacing: 8,
-                    runSpacing: 4,
-                    children: [
-                      Text(
-                        category.isEmpty
-                            ? ''
-                            : '${category[0].toUpperCase()}${category.substring(1)}',
-                        style: _small.copyWith(color: const Color(0xff999999)),
-                      ),
-                      Text(
-                        removal
-                            ? 'Remove'
-                            : selected
-                            ? 'In your dressing room'
-                            : 'Add to dressing room',
-                        style: const TextStyle(fontSize: 14, height: 1.4),
-                      ),
-                    ],
-                  ),
-                ], gap: 4);
-                if (constraints.maxWidth < 320 || largeText) {
-                  return _stack([if (largeText) badge, image, body]);
-                }
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                final body = Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    image,
-                    const SizedBox(width: 14),
-                    Expanded(child: body),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: Text(name, style: _body)),
+                        const SizedBox(width: 8),
+                        Text(price, style: _body),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(brandLine, style: _small),
+                    const SizedBox(height: 4),
+                    const Spacer(),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            category.isEmpty
+                                ? ''
+                                : '${category[0].toUpperCase()}${category.substring(1)}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              height: 1.4,
+                              color: Color(0xff999999),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          flex: 3,
+                          child: Text(
+                            removal
+                                ? 'Remove'
+                                : selected
+                                ? 'In your dressing room'
+                                : 'Add to dressing room',
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(fontSize: 14, height: 1.4),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
+                );
+                if (constraints.maxWidth < 280 || largeText) {
+                  return _stack([
+                    if (largeText) badge, image,
+                    // Large text grows naturally rather than using a flex spacer.
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(name, style: _body),
+                        Text(price, style: _body),
+                        const SizedBox(height: 4),
+                        Text(brandLine, style: _small),
+                        const SizedBox(height: 8),
+                        Text(
+                          category,
+                          style: _small.copyWith(
+                            color: const Color(0xff999999),
+                          ),
+                        ),
+                        Text(
+                          removal
+                              ? 'Remove'
+                              : selected
+                              ? 'In your dressing room'
+                              : 'Add to dressing room',
+                          style: _body,
+                        ),
+                      ],
+                    ),
+                  ]);
+                }
+                return IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      image,
+                      const SizedBox(width: 14),
+                      Expanded(child: body),
+                    ],
+                  ),
                 );
               },
             ),

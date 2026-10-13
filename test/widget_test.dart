@@ -230,7 +230,7 @@ void main() {
         .first;
     expect(
       find.descendant(of: firstCard, matching: find.text('Shoes')),
-      findsNothing,
+      findsOneWidget,
     );
 
     // New responses follow the scroll to their end; reveal the selected card
@@ -326,8 +326,8 @@ void main() {
     final dressingRoomTitle = find.text('Dressing room');
     expect(dressingRoomTitle, findsOneWidget);
     expect(tester.getTopLeft(dressingRoomTitle).dy, lessThan(140));
-    expect(find.text('How formal?'), findsOneWidget);
-    expect(find.text('Season'), findsOneWidget);
+    expect(find.text('HOW FORMAL?'), findsOneWidget);
+    expect(find.text('SEASON'), findsOneWidget);
     expect(find.text('Find options'), findsOneWidget);
   });
   testWidgets('mobile header can start another journey', (tester) async {
