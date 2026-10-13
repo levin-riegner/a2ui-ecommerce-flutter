@@ -14,6 +14,7 @@ import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
 
 import 'duo_simulator_probe.dart' show captureDuoState;
 
@@ -24,6 +25,31 @@ Future<void> main() async {
   );
   var revision = 0;
   var agent = GenkitAgent(StylistRuntime(products: products));
+  Map<String, Object?> composerGeometry() {
+    final view = WidgetsBinding.instance.platformDispatcher.views.first;
+    final height = view.physicalSize.height / view.devicePixelRatio;
+    final composers = <Map<String, Object?>>[];
+    void visit(Element element) {
+      if (element.widget is StylistComposer) {
+        final render = element.findRenderObject();
+        if (render is RenderBox && render.hasSize) {
+          final bounds = render.localToGlobal(Offset.zero) & render.size;
+          composers.add({
+            'bounds': '$bounds',
+            'bottomGap': height - bounds.bottom,
+          });
+        }
+      }
+      element.visitChildElements(visit);
+    }
+
+    WidgetsBinding.instance.rootElement?.visitChildElements(visit);
+    return {
+      'nativeBottomInset': view.padding.bottom / view.devicePixelRatio,
+      'composers': composers,
+    };
+  }
+
   Future<void> selectFirst() async {
     final rows = agent.controller
         .contextFor(agent.latestInlineSurfaceId!)
@@ -65,7 +91,7 @@ Future<void> main() async {
       }
 
       WidgetsBinding.instance.rootElement?.visitChildElements(visit);
-      return {...record, 'scrolls': scrolls};
+      return {...record, 'scrolls': scrolls, ...composerGeometry()};
     }
     final view = WidgetsBinding.instance.platformDispatcher.views.first;
     final snapshot = await FoldablePlatform.instance.getSnapshot();
@@ -75,6 +101,7 @@ Future<void> main() async {
       'size': '${view.physicalSize / view.devicePixelRatio}',
       'surface': null,
       'agent': identityHashCode(agent),
+      ...composerGeometry(),
     };
   }
 

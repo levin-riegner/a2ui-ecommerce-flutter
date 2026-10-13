@@ -200,12 +200,15 @@ class _StartScreen extends StatelessWidget {
         final closed = fold.status == HingeStatus.closed;
         final threadMinHeight = math.max(
           0.0,
-          constraints.maxHeight - (closed ? 72 : 80) - (closed ? 8 : 32) - 76,
+          constraints.maxHeight -
+              (closed ? 72 : 80) -
+              StylistLayout.composerBottomClearance -
+              76,
         );
         return AdaptivePaneLayout(
           compactSecondaryFirst: false,
           showSecondaryInCompact: !closed,
-          primaryBottomInset: closed ? 8 : 32,
+          primaryBottomInset: StylistLayout.composerBottomClearance,
           overlayHeader: true,
           overlayFooter: onStartBrief != null,
           secondaryScrollable: false,
@@ -719,7 +722,7 @@ class _ResponsiveShell extends StatelessWidget {
         return AdaptivePaneLayout(
           overlayFooter: true,
           overlayHeader: true,
-          primaryBottomInset: 32,
+          primaryBottomInset: StylistLayout.composerBottomClearance,
           panePadding: EdgeInsets.fromLTRB(gutter, 32, gutter, 12),
           secondaryPadding: const EdgeInsets.symmetric(vertical: 12),
           compactSecondaryPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -736,7 +739,7 @@ class _ResponsiveShell extends StatelessWidget {
           secondary: _DressingPanel(agent: agent),
           header: _MobileHeader(onNewJourney: onNewJourney),
           footer: StylistComposerDock(
-            padding: EdgeInsets.fromLTRB(gutter, 0, gutter, 8),
+            padding: EdgeInsets.fromLTRB(gutter, 0, gutter, 0),
             child: _ChatComposer(agent: agent),
           ),
           rail: _SideRail(onNewJourney: onNewJourney),

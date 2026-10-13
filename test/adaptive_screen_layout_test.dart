@@ -23,6 +23,31 @@ void main() {
     });
   }
 
+  for (final safeBottom in [0.0, 34.0]) {
+    testWidgets(
+      'opening and conversation composer share bottom clearance, safe=$safeBottom',
+      (tester) async {
+        setWindow(tester, const Size(951, 669));
+        tester.view.padding = FakeViewPadding(bottom: safeBottom);
+        addTearDown(tester.view.resetPadding);
+        final agent = _SpacingAgent();
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final openingBottom = tester
+            .getRect(find.byType(StylistComposer))
+            .bottom;
+        expect(openingBottom, 669 - (safeBottom > 16 ? safeBottom : 16));
+        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        await tester.pumpAndSettle();
+        expect(
+          tester.getRect(find.byType(StylistComposer)).bottom,
+          openingBottom,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   testWidgets(
     'resting conversation has clear gaps below header and above composer',
     (tester) async {
@@ -81,7 +106,7 @@ void main() {
       expect(tester.getRect(header), before);
       expect(
         tester.getRect(find.byType(StylistComposer)).bottom,
-        lessThanOrEqualTo(669 - 64 - 8),
+        lessThanOrEqualTo(669 - 64),
       );
       expect(tester.takeException(), isNull);
     },
@@ -743,6 +768,8 @@ void main() {
 }
 
 class _SpacingAgent extends StubAgent {
+  @override
+  bool get canStartBrief => true;
   @override
   List<CommerceConversationEntry> get conversationEntries => [
     const CommerceUserMessage(id: 'spacing', text: 'First dinner in Brooklyn'),
