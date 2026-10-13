@@ -161,7 +161,7 @@ void main() {
     await tester.pumpWidget(harness.view(['inline-1']));
     await tester.pumpAndSettle();
     expect(find.text('Season'), findsNothing);
-    await tester.tap(find.text('smart-casual'));
+    await tester.tap(find.text('Smart-casual'));
     await tester.pumpAndSettle();
     await tester.drag(find.byType(Slider), const Offset(70, 0));
     await tester.pumpAndSettle();

@@ -782,6 +782,34 @@
         ],
         "additionalProperties": true
       },
+      "StylistSection": {
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "spacing": {
+            "type": "number"
+          },
+          "compactCarousel": {
+            "type": "boolean"
+          },
+          "component": {
+            "type": "string",
+            "enum": [
+              "StylistSection"
+            ]
+          }
+        },
+        "required": [
+          "component",
+          "children"
+        ],
+        "additionalProperties": true
+      },
       "ChoiceChip": {
         "type": "object",
         "description": "A compact single-choice control for a structured prompt.",
@@ -983,6 +1011,75 @@
           "tag",
           "swatch",
           "action"
+        ],
+        "additionalProperties": true
+      },
+      "RecommendationSkeleton": {
+        "type": "object",
+        "properties": {
+          "component": {
+            "type": "string",
+            "enum": [
+              "RecommendationSkeleton"
+            ]
+          }
+        },
+        "required": [
+          "component"
+        ],
+        "additionalProperties": true
+      },
+      "RecommendationPreview": {
+        "type": "object",
+        "properties": {
+          "products": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "object",
+                "description": "A path to a list.",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "A relative or absolute path in the data model."
+                  }
+                },
+                "required": [
+                  "path"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "call": {
+                    "type": "string",
+                    "description": "The name of the function to call."
+                  },
+                  "args": {
+                    "type": "object",
+                    "description": "Arguments to pass to the function.",
+                    "additionalProperties": true
+                  }
+                },
+                "required": [
+                  "call"
+                ]
+              }
+            ]
+          },
+          "component": {
+            "type": "string",
+            "enum": [
+              "RecommendationPreview"
+            ]
+          }
+        },
+        "required": [
+          "component",
+          "products"
         ],
         "additionalProperties": true
       },

@@ -6,6 +6,7 @@ import 'finalized_left_components.dart';
 import 'finalized_right_components.dart';
 import 'finalized_shared_components.dart';
 import 'finalized_screen_examples.dart';
+import 'stylist_section.dart';
 
 const commerceCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
 
@@ -22,6 +23,7 @@ Catalog buildCommerceCatalog() {
   return base.copyWith(
     catalogId: commerceCatalogId,
     newItems: [
+      stylistSectionCatalogItem,
       chipCatalogItem,
       choiceGroupCatalogItem,
       primaryButtonCatalogItem,

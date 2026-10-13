@@ -1,0 +1,56 @@
+{
+  "status": "fullyOpen",
+  "angle": 180.0,
+  "support": "available",
+  "strategy": "updateHandler",
+  "size": "Size(669.0, 951.0)",
+  "keyboard": 0.0,
+  "sizeClass": "regular",
+  "regions": [
+    {
+      "kind": "division",
+      "active": false,
+      "bounds": "Rect.fromLTRB(0.0, 455.5, 669.0, 495.5)"
+    },
+    {
+      "kind": "occlusion",
+      "active": true,
+      "bounds": "Rect.fromLTRB(535.0, 0.0, 669.0, 82.0)"
+    }
+  ],
+  "fields": [
+    {
+      "draft": "",
+      "focus": false,
+      "textScale": 1.0,
+      "bounds": "Rect.fromLTRB(32.0, 877.0, 565.0, 897.0)",
+      "state": 421685713
+    }
+  ],
+  "layouts": [
+    "[<'compact-pane-layout'>]"
+  ],
+  "backgrounds": [],
+  "panels": {
+    "dressing-room-resize": {
+      "top": 154.0,
+      "height": 240.0
+    },
+    "finalized-dressing-room": {
+      "top": 154.0,
+      "height": 240.0,
+      "color": "ff000000"
+    },
+    "dressing-room-rack": {
+      "top": 234.0,
+      "height": 96.0
+    }
+  },
+  "surface": "inline-2",
+  "journey": "berlin",
+  "agent": 737948810,
+  "spent": "\u20ac35 spent \u2014\u00a01 of 4",
+  "selected": [
+    "Morrow Draped Top"
+  ]
+}

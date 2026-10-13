@@ -40,6 +40,12 @@ original image bytes with Figma image-hash verification; the original Start
 collage already matches the bundled photos. Jost and Inter are bundled locally.
 Product images in real journeys remain the approved catalog assets.
 
+The Designs page's journey layout uses shared gutters and `StylistSection` for
+explicit section spacing and compact recommendation carousels. Journey captions
+use the screen typography; standalone component captions retain their own style.
+Roomy portrait keeps the dressing room above an independent conversation scroll.
+See the [native before/after comparison](../verification/figma-layout-2026-10-13/README.md).
+
 ## Behavior boundaries
 
 On Duo, Book mode paints the whole right pane black. Fully open keeps its

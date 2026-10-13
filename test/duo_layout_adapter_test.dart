@@ -29,6 +29,11 @@ const _available = FoldableCapabilities(
   strategy: 'test',
 );
 
+class _BriefComposerAgent extends StubAgent {
+  @override
+  bool get canStartBrief => true;
+}
+
 FoldableData _data(
   HingeStatus status, {
   List<ReservedRegion> regions = const [],
@@ -135,6 +140,183 @@ void _window(WidgetTester tester, Size size) {
 }
 
 void main() {
+  for (final status in [HingeStatus.fullyOpen, HingeStatus.partiallyOpen]) {
+    testWidgets('Duo portrait uses both display regions at $status', (
+      tester,
+    ) async {
+      _window(tester, const Size(669, 951));
+      tester.view.padding = const FakeViewPadding(bottom: 34);
+      addTearDown(tester.view.resetPadding);
+      final fake = _FakeFoldable(
+        _data(
+          status,
+          regions: [
+            _camera(const Rect.fromLTWH(549, 0, 120, 84)),
+            if (status == HingeStatus.partiallyOpen)
+              _division(const Rect.fromLTWH(0, 455.5, 669, 40)),
+          ],
+        ),
+      );
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(fake.dispose);
+      try {
+        final agent = _BriefComposerAgent();
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        void verifyRegions() {
+          final upper = tester.getRect(
+            find.byKey(const ValueKey('portrait-dressing-pane')),
+          );
+          final lower = tester.getRect(
+            find.byKey(const ValueKey('portrait-conversation-pane')),
+          );
+          expect(
+            upper.bottom,
+            status == HingeStatus.partiallyOpen ? 455.5 : 475.5,
+          );
+          expect(
+            lower.top,
+            status == HingeStatus.partiallyOpen ? 495.5 : 475.5,
+          );
+          expect(lower.bottom, 917);
+          expect(
+            tester.getRect(find.byType(StylistComposer)).top,
+            greaterThan(lower.top),
+          );
+        }
+
+        verifyRegions();
+        expect(
+          tester.getRect(find.text('Where are you going?')).top,
+          tester
+                  .getRect(
+                    find.byKey(const ValueKey('portrait-conversation-pane')),
+                  )
+                  .top +
+              16,
+        );
+        expect(
+          tester.getRect(find.byKey(const ValueKey('alder-header'))).top,
+          84,
+        );
+        expect(find.byKey(const ValueKey('occasion-mosaic')), findsOneWidget);
+        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        await tester.pumpAndSettle();
+        verifyRegions();
+        final room = tester.getRect(
+          find.byKey(const ValueKey('finalized-dressing-room')),
+        );
+        expect(
+          room.bottom,
+          lessThanOrEqualTo(
+            status == HingeStatus.partiallyOpen ? 455.5 : 475.5,
+          ),
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        FoldablePlatform.instance = previous;
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  }
+
+  for (final scenario in [
+    (
+      name: 'open landscape',
+      size: const Size(951, 669),
+      status: HingeStatus.fullyOpen,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 8.0,
+    ),
+    (
+      name: 'book landscape',
+      size: const Size(951, 669),
+      status: HingeStatus.partiallyOpen,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
+      name: 'open portrait',
+      size: const Size(669, 951),
+      status: HingeStatus.fullyOpen,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
+      name: 'closed cover',
+      size: const Size(466, 678),
+      status: HingeStatus.closed,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
+      name: 'open keyboard',
+      size: const Size(951, 669),
+      status: HingeStatus.fullyOpen,
+      keyboard: 220.0,
+      cutout: false,
+      gap: 228.0,
+    ),
+    (
+      name: 'bottom cutout',
+      size: const Size(951, 669),
+      status: HingeStatus.fullyOpen,
+      keyboard: 0.0,
+      cutout: true,
+      gap: 39.0,
+    ),
+  ]) {
+    testWidgets('composer maximizes inner display space: ${scenario.name}', (
+      tester,
+    ) async {
+      _window(tester, scenario.size);
+      tester.view.padding = const FakeViewPadding(bottom: 34);
+      tester.view.viewInsets = FakeViewPadding(bottom: scenario.keyboard);
+      addTearDown(tester.view.resetPadding);
+      addTearDown(tester.view.resetViewInsets);
+      final fake = _FakeFoldable(
+        _data(
+          scenario.status,
+          regions: [
+            if (scenario.cutout) _camera(const Rect.fromLTWH(200, 630, 60, 39)),
+          ],
+        ),
+      );
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() {
+        FoldablePlatform.instance = previous;
+        debugDefaultTargetPlatformOverride = null;
+      });
+      addTearDown(fake.dispose);
+      try {
+        final agent = _BriefComposerAgent();
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        final opening = tester.getRect(find.byType(StylistComposer));
+        expect(opening.bottom, scenario.size.height - scenario.gap);
+        expect(opening.left, 16);
+        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        await tester.pumpAndSettle();
+        final conversation = tester.getRect(find.byType(StylistComposer));
+        expect(conversation.bottom, opening.bottom);
+        expect(conversation.left, 16);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  }
+
   testWidgets(
     'cover keeps one content column and preserves draft across poses',
     (tester) async {
@@ -171,7 +353,9 @@ void main() {
       expect(tester.getRect(find.byType(Divider)).right, 374);
       final composer = find.byType(StylistComposer);
       expect(tester.getRect(composer).right, 374);
-      expect(tester.getRect(composer).bottom, 670);
+      // The native 34-point home-indicator inset wins over the cover's 8-point
+      // preferred clearance, keeping the complete input above the safe edge.
+      expect(tester.getRect(composer).bottom, 678 - 34);
       await tester.enterText(find.byType(TextField), 'Keep this occasion');
       final editable = tester.state<EditableTextState>(
         find.byType(EditableText),
@@ -194,7 +378,7 @@ void main() {
       expect(tester.getRect(card).width, 400);
       expect(tester.getRect(card).left, 32);
       expect(tester.getRect(composer).height, 52);
-      expect(tester.getRect(composer).bottom, 669 - 32);
+      expect(tester.getRect(composer).bottom, 669 - 8);
       expect(
         tester.getSize(find.byKey(const ValueKey('stylist-submit-circle'))),
         const Size(36, 36),
@@ -1108,19 +1292,22 @@ void main() {
           );
           expect(tester.takeException(), isNull);
         }
-        // A taller brief animates the room's height without moving its origin.
+        // Content exceeding the pane minimum animates and remains scrollable.
         agent.controller
             .contextFor('dressing-room')
             .dataModel
             .update(
               DataPath('/brief'),
-              'Berlin first day with a much longer description of the occasion, '
-              'layering preferences, weather and the planned evening activities.',
+              List.filled(
+                8,
+                'Berlin first day with a much longer description of the occasion, '
+                'layering preferences, weather and the planned evening activities.',
+              ).join(' '),
             );
         await tester.pump();
         await tester.pump();
         expect(tester.getTopLeft(room).dy, closeTo(top, .01));
-        await tester.pump(const Duration(milliseconds: 160));
+        await tester.pump(const Duration(milliseconds: 80));
         final intermediateHeight = tester.getSize(resize).height;
         expect(intermediateHeight, greaterThan(height));
         await tester.pumpAndSettle();

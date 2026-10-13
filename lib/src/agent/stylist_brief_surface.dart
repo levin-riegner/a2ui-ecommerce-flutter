@@ -48,16 +48,34 @@ StylistBriefSurface renderStylistBriefSurface({
   final components = <Map<String, Object?>>[
     {
       'id': 'root',
-      'component': 'Column',
-      'align': 'stretch',
+      'component': 'StylistSection',
+      'spacing': 24,
+      'children': ['message', 'brief-controls'],
+    },
+    {
+      'id': 'brief-controls',
+      'component': 'StylistSection',
       'children': [
-        'message',
-        if (missing.contains('dressCode')) ...['style-label', 'style-options'],
-        if (missing.contains('season')) ...['season-label', 'season-options'],
+        if (missing.contains('dressCode')) 'style-group',
+        if (missing.contains('season')) 'season-group',
         if (missing.contains('budget')) 'brief-budget',
         'find-options',
       ],
     },
+    if (missing.contains('dressCode'))
+      {
+        'id': 'style-group',
+        'component': 'StylistSection',
+        'spacing': 8,
+        'children': ['style-label', 'style-options'],
+      },
+    if (missing.contains('season'))
+      {
+        'id': 'season-group',
+        'component': 'StylistSection',
+        'spacing': 8,
+        'children': ['season-label', 'season-options'],
+      },
     {
       'id': 'message',
       'component': 'StylistMessage',

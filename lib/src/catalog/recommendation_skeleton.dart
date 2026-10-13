@@ -24,20 +24,18 @@ final recommendationPreviewCatalogItem = CatalogItem(
     value: (context.data as Map)['products'],
     builder: (context, products) => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
       children: [
         for (final raw in products ?? const [])
           if (raw is Map)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: FinalizedProductCard(
-                name: '${raw['name'] ?? ''}',
-                price: '${raw['price'] ?? ''}',
-                brandLine: '${raw['brandLine'] ?? ''}',
-                tag: '${raw['tag'] ?? ''}',
-                category: '${raw['category'] ?? 'dress'}',
-                imageAsset: raw['imageAsset'] as String?,
-                swatch: raw['swatch'] as String?,
-              ),
+            FinalizedProductCard(
+              name: '${raw['name'] ?? ''}',
+              price: '${raw['price'] ?? ''}',
+              brandLine: '${raw['brandLine'] ?? ''}',
+              tag: '${raw['tag'] ?? ''}',
+              category: '${raw['category'] ?? 'dress'}',
+              imageAsset: raw['imageAsset'] as String?,
+              swatch: raw['swatch'] as String?,
             ),
       ],
     ),
