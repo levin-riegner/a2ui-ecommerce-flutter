@@ -215,6 +215,8 @@ class _StartScreen extends StatelessWidget {
           extendPrimaryIntoBottomPadding: innerLandscape,
           overlayHeader: true,
           overlayFooter: onStartBrief != null,
+          stackSecondaryInPortrait: fold.capabilities.isFoldable && !closed,
+          portraitHeaderHeight: 80,
           secondaryScrollable: false,
           extendSecondaryToEdges: true,
           secondaryBackgroundColor: Colors.black,
@@ -489,7 +491,7 @@ class _BrandLockup extends StatelessWidget {
 }
 
 class _MosaicPreview extends StatelessWidget {
-  const _MosaicPreview();
+  const _MosaicPreview({super.key});
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -733,25 +735,34 @@ class _ResponsiveShell extends StatelessWidget {
           primaryBottomInset: StylistLayout.composerBottomClearance,
           extendPrimaryIntoBottomPadding: innerLandscape,
           panePadding: EdgeInsets.fromLTRB(gutter, 32, gutter, 8),
-          secondaryPadding: const EdgeInsets.symmetric(vertical: 12),
+          secondaryPadding: EdgeInsets.zero,
           compactSecondaryPadding: const EdgeInsets.symmetric(horizontal: 16),
           secondaryScrollable: false,
           extendSecondaryToEdges: true,
+          showSecondaryInCompact: !cover || agent.hasDressingRoomSurface,
           compactPaneGap: 32,
-          reserveRailInExtendedSecondary: true,
           followPrimaryEnd: true,
-          stackSecondaryInPortrait: !cover && agent.hasDressingRoomSurface,
-          railWidth: 84,
+          holdInitialPrimaryBeginning:
+              agent.conversationEntries
+                      .whereType<CommerceUserMessage>()
+                      .length <=
+                  1 &&
+              agent.conversationEntries
+                      .whereType<CommerceSurfaceEntry>()
+                      .length <=
+                  1,
+          stackSecondaryInPortrait:
+              !cover &&
+              (agent.hasDressingRoomSurface || fold.capabilities.isFoldable),
           primary: _ChatSurface(agent: agent),
           secondaryBackgroundColor: Colors.black,
           secondaryBackgroundOnlyInBookMode: true,
-          secondary: _DressingPanel(agent: agent),
+          secondary: _DressingPanel(agent: agent, onNewJourney: onNewJourney),
           header: _MobileHeader(onNewJourney: onNewJourney),
           footer: StylistComposerDock(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _ChatComposer(agent: agent),
           ),
-          rail: _SideRail(onNewJourney: onNewJourney),
         );
       },
     ),
@@ -983,7 +994,94 @@ class _ChatComposerState extends State<_ChatComposer> {
 }
 
 class _DressingPanel extends StatelessWidget {
-  const _DressingPanel({required this.agent});
+  const _DressingPanel({required this.agent, required this.onNewJourney});
+
+  final CommerceAgent agent;
+  final VoidCallback onNewJourney;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: agent,
+    builder: (context, _) => LayoutBuilder(
+      builder: (context, constraints) {
+        final ready =
+            agent.hasDressingRoomSurface &&
+            agent.controller
+                    .contextFor('dressing-room')
+                    .definition
+                    .value
+                    ?.components
+                    .containsKey('root') ==
+                true;
+        final split = AdaptivePaneScope.isSplitOf(context);
+        final showRail =
+            ready &&
+            split &&
+            constraints.hasBoundedHeight &&
+            MediaQuery.sizeOf(context).width >= 900 &&
+            constraints.maxWidth - 84 >=
+                320 *
+                    math.max(
+                      1,
+                      MediaQuery.textScalerOf(context).scale(14) / 14,
+                    );
+        final identity = ValueKey(
+          ready ? 'dressing-room-ready' : 'dressing-room-mosaic',
+        );
+        final room = Padding(
+          padding: split
+              ? const EdgeInsets.symmetric(vertical: 12)
+              : EdgeInsets.zero,
+          child: _DressingRoomSurface(agent: agent),
+        );
+        return AnimatedSwitcher(
+          duration: MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : const Duration(milliseconds: 320),
+          switchInCurve: Curves.easeInOutCubic,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: child.key == identity
+                ? animation
+                : const AlwaysStoppedAnimation(1),
+            child: child,
+          ),
+          layoutBuilder: (current, previous) => Stack(
+            fit: constraints.hasBoundedHeight
+                ? StackFit.expand
+                : StackFit.loose,
+            alignment: Alignment.topLeft,
+            children: [
+              for (final child in previous)
+                ExcludeSemantics(child: IgnorePointer(child: child)),
+              ?current,
+            ],
+          ),
+          child: ready
+              ? SizedBox(
+                  key: identity,
+                  width: constraints.maxWidth,
+                  child: showRail
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(child: room),
+                            SizedBox(
+                              width: 84,
+                              child: _SideRail(onNewJourney: onNewJourney),
+                            ),
+                          ],
+                        )
+                      : room,
+                )
+              : _MosaicPreview(key: identity),
+        );
+      },
+    ),
+  );
+}
+
+class _DressingRoomSurface extends StatelessWidget {
+  const _DressingRoomSurface({required this.agent});
 
   final CommerceAgent agent;
 

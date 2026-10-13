@@ -1,5 +1,6 @@
 // Repeatable production-layout captures. No provider key or network requests.
 // Run: fvm flutter run -d <duo-udid> -t tool/figma_layout_probe.dart
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
@@ -11,6 +12,7 @@ import 'package:genui/genui.dart';
 import 'package:foldable/foldable.dart';
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/src/agent/city_context.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
@@ -24,12 +26,27 @@ Future<void> main() async {
     await rootBundle.loadString('assets/data/catalog/products.csv'),
   );
   var revision = 0;
+  Completer<void>? firstReplyGate;
+  Future<void>? firstTurn;
   var agent = GenkitAgent(StylistRuntime(products: products));
   Map<String, Object?> composerGeometry() {
     final view = WidgetsBinding.instance.platformDispatcher.views.first;
     final height = view.physicalSize.height / view.devicePixelRatio;
     final composers = <Map<String, Object?>>[];
+    final panes = <String, String>{};
     void visit(Element element) {
+      for (final name in [
+        'occasion-mosaic',
+        'portrait-dressing-pane',
+        'portrait-conversation-pane',
+      ]) {
+        if (element.widget.key == ValueKey(name)) {
+          final render = element.findRenderObject();
+          if (render is RenderBox && render.hasSize) {
+            panes[name] = '${render.localToGlobal(Offset.zero) & render.size}';
+          }
+        }
+      }
       if (element.widget is StylistComposer) {
         final render = element.findRenderObject();
         if (render is RenderBox && render.hasSize) {
@@ -47,6 +64,7 @@ Future<void> main() async {
     return {
       'nativeBottomInset': view.padding.bottom / view.devicePixelRatio,
       'composers': composers,
+      'panes': panes,
     };
   }
 
@@ -107,6 +125,33 @@ Future<void> main() async {
 
   void show() => runApp(ReferenceApp(key: ValueKey(revision++), agent: agent));
   show();
+  developer.registerExtension('ext.layout.beginFirst', (_, _) async {
+    firstReplyGate = Completer<void>();
+    agent = GenkitAgent(
+      StylistRuntime(
+        products: products,
+        cityContextSource: _LayoutCityContextSource(),
+        model: (request) async {
+          await firstReplyGate!.future;
+          return offlineStylistModel(request);
+        },
+      ),
+    );
+    show();
+    firstTurn = agent.startJourney(DemoJourney.berlin);
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    return developer.ServiceExtensionResponse.result(
+      jsonEncode(await capture()),
+    );
+  });
+  developer.registerExtension('ext.layout.finishFirst', (_, _) async {
+    firstReplyGate!.complete();
+    await firstTurn;
+    await Future<void>.delayed(const Duration(milliseconds: 900));
+    return developer.ServiceExtensionResponse.result(
+      jsonEncode(await capture()),
+    );
+  });
   developer.registerExtension('ext.layout.stage', (_, parameters) async {
     agent = GenkitAgent(StylistRuntime(products: products));
     final stage = parameters['stage'] ?? 'start';
@@ -181,4 +226,45 @@ Future<void> main() async {
       jsonEncode(await capture()),
     );
   });
+}
+
+class _LayoutCityContextSource implements CityContextSource {
+  @override
+  Future<CityContext> fetch(String city, {bool refresh = false}) async =>
+      _LayoutCityContext();
+  @override
+  void dispose() {}
+}
+
+class _LayoutCityContext extends CityContext {
+  _LayoutCityContext()
+    : super(
+        city: 'Berlin',
+        country: 'Germany',
+        latitude: 52.52,
+        longitude: 13.41,
+        timezone: 'Europe/Berlin',
+        fetchedAt: DateTime.utc(2026, 10, 13),
+        days: [
+          for (var i = 0; i < 5; i++)
+            {
+              'date': '2026-10-${13 + i}',
+              'label': ['Tue', 'Wed', 'Thu', 'Fri', 'Sat'][i],
+              'value': '12° / 8°',
+              'detail': '20% rain',
+              'icon': 'day',
+              'highlight': i == 0,
+            },
+        ],
+      );
+  @override
+  Map<String, Object?> get weatherCard => {
+    ...super.weatherCard,
+    'disclaimer': 'Offline layout fixture — not a live forecast.',
+  };
+  @override
+  Map<String, Object?> get facts => {
+    ...super.facts,
+    'source': 'Offline layout fixture',
+  };
 }

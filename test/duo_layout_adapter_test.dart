@@ -140,6 +140,80 @@ void _window(WidgetTester tester, Size size) {
 }
 
 void main() {
+  for (final status in [HingeStatus.fullyOpen, HingeStatus.partiallyOpen]) {
+    testWidgets('Duo portrait uses both display regions at $status', (
+      tester,
+    ) async {
+      _window(tester, const Size(669, 951));
+      tester.view.padding = const FakeViewPadding(bottom: 34);
+      addTearDown(tester.view.resetPadding);
+      final fake = _FakeFoldable(
+        _data(
+          status,
+          regions: [
+            _camera(const Rect.fromLTWH(549, 0, 120, 84)),
+            if (status == HingeStatus.partiallyOpen)
+              _division(const Rect.fromLTWH(0, 455.5, 669, 40)),
+          ],
+        ),
+      );
+      final previous = FoldablePlatform.instance;
+      FoldablePlatform.instance = fake;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(fake.dispose);
+      try {
+        final agent = _BriefComposerAgent();
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        void verifyRegions() {
+          final upper = tester.getRect(
+            find.byKey(const ValueKey('portrait-dressing-pane')),
+          );
+          final lower = tester.getRect(
+            find.byKey(const ValueKey('portrait-conversation-pane')),
+          );
+          expect(
+            upper.bottom,
+            status == HingeStatus.partiallyOpen ? 455.5 : 475.5,
+          );
+          expect(
+            lower.top,
+            status == HingeStatus.partiallyOpen ? 495.5 : 475.5,
+          );
+          expect(lower.bottom, 917);
+          expect(
+            tester.getRect(find.byType(StylistComposer)).top,
+            greaterThan(lower.top),
+          );
+        }
+
+        verifyRegions();
+        expect(
+          tester.getRect(find.byKey(const ValueKey('alder-header'))).top,
+          84,
+        );
+        expect(find.byKey(const ValueKey('occasion-mosaic')), findsOneWidget);
+        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        await tester.pumpAndSettle();
+        verifyRegions();
+        final room = tester.getRect(
+          find.byKey(const ValueKey('finalized-dressing-room')),
+        );
+        expect(
+          room.bottom,
+          lessThanOrEqualTo(
+            status == HingeStatus.partiallyOpen ? 455.5 : 475.5,
+          ),
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        FoldablePlatform.instance = previous;
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  }
+
   for (final scenario in [
     (
       name: 'open landscape',

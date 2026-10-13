@@ -44,6 +44,7 @@ class AdaptivePaneLayout extends StatefulWidget {
     this.overlayHeader = false,
     this.overlayFooter = false,
     this.followPrimaryEnd = false,
+    this.holdInitialPrimaryBeginning = false,
     this.stackSecondaryInPortrait = false,
     this.portraitHeaderHeight = 56,
   });
@@ -99,6 +100,10 @@ class AdaptivePaneLayout extends StatefulWidget {
 
   /// Follows renderer growth only while the person is keeping up with the chat.
   final bool followPrimaryEnd;
+
+  /// Keeps the opening reply at its beginning until the person scrolls or a
+  /// later reply arrives. Subsequent reading-position rules remain unchanged.
+  final bool holdInitialPrimaryBeginning;
   final bool stackSecondaryInPortrait;
   final double portraitHeaderHeight;
 
@@ -120,11 +125,29 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
   bool _headerMeasurementPending = false;
   bool _footerMeasurementPending = false;
   bool _followingPrimary = true;
+  bool _holdingInitialBeginning = false;
   bool _userScrolling = false;
   bool _followScheduled = false;
   bool _autoScrolling = false;
   int _followRevision = 0;
   double? _followTarget;
+
+  @override
+  void initState() {
+    super.initState();
+    _holdingInitialBeginning = widget.holdInitialPrimaryBeginning;
+    _followingPrimary = !_holdingInitialBeginning;
+  }
+
+  @override
+  void didUpdateWidget(AdaptivePaneLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_holdingInitialBeginning && !widget.holdInitialPrimaryBeginning) {
+      _holdingInitialBeginning = false;
+      _followingPrimary = true;
+      _followEnd(_primaryScroll.hasClients ? _primaryScroll : _compactScroll);
+    }
+  }
 
   bool _atEnd(ScrollMetrics metrics) => metrics.extentAfter <= 48;
 
@@ -137,6 +160,7 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
     if (notification is UserScrollNotification) {
       _userScrolling = notification.direction != ScrollDirection.idle;
       if (_userScrolling) {
+        _holdingInitialBeginning = false;
         _autoScrolling = false;
         _followRevision++;
       }
@@ -173,7 +197,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
       );
 
   void _followEnd(ScrollController controller) {
-    if (!widget.followPrimaryEnd || !_followingPrimary || _followScheduled) {
+    if (!widget.followPrimaryEnd ||
+        _holdingInitialBeginning ||
+        !_followingPrimary ||
+        _followScheduled) {
       return;
     }
     _followScheduled = true;
@@ -555,19 +582,41 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
             (!widget.extendSecondaryToEdges ||
                 (midpoint - centered.left >= minPrimaryWidth &&
                     centered.right - midpoint >= minSecondaryWidth));
-        final portraitBounds = _primaryBounds(centered, size, media);
-        final portraitDivision = (size.height - 64) / 2;
+        final duoPortrait =
+            DuoLayoutScope.of(context).capabilities.isFoldable &&
+            size.height > size.width;
+        final horizontalRegions = List<Rect>.of(regions)
+          ..sort((a, b) => a.top.compareTo(b.top));
+        final horizontalSplit =
+            horizontalRegions.length == 2 &&
+            horizontalRegions[0].left == horizontalRegions[1].left &&
+            horizontalRegions[0].right == horizontalRegions[1].right &&
+            horizontalRegions[0].bottom <= horizontalRegions[1].top;
+        final portraitBounds = _primaryBounds(
+          horizontalSplit ? safeBounds : centered,
+          size,
+          media,
+        );
+        final portraitDivision = horizontalSplit
+            ? horizontalRegions[0].bottom
+            : duoPortrait
+            ? size.height / 2
+            : (size.height - 64) / 2;
+        final conversationTop = horizontalSplit
+            ? horizontalRegions[1].top
+            : portraitDivision;
         final portraitRoomTop =
             portraitBounds.top + widget.portraitHeaderHeight;
         if (!split &&
-            portraitDivision - portraitRoomTop >= 240 &&
-            portraitBounds.bottom - portraitDivision >= 240 &&
+            portraitDivision - portraitRoomTop >= (duoPortrait ? 160 : 240) &&
+            portraitBounds.bottom - conversationTop >=
+                (duoPortrait ? 96 : 240) &&
             widget.stackSecondaryInPortrait &&
-            regions.length == 1 &&
-            centered.width >= 600 &&
-            size.height >= 800 &&
+            (regions.length == 1 || horizontalSplit) &&
+            portraitBounds.width >= (duoPortrait ? 320 : 600) &&
+            (duoPortrait || size.height >= 800) &&
             size.height > size.width &&
-            textScale <= 1.5) {
+            (duoPortrait || textScale <= 1.5)) {
           final bounds = portraitBounds;
           final division = portraitDivision;
           final roomTop = portraitRoomTop;
@@ -601,12 +650,14 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                     key: const ValueKey('portrait-conversation-pane'),
                     rect: Rect.fromLTRB(
                       bounds.left,
-                      division,
+                      conversationTop,
                       bounds.right,
                       bounds.bottom,
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(top: widget.compactPaneGap),
+                      padding: EdgeInsets.only(
+                        top: widget.overlayHeader ? 0 : widget.compactPaneGap,
+                      ),
                       child: _primaryPane(showHeader: false),
                     ),
                   ),

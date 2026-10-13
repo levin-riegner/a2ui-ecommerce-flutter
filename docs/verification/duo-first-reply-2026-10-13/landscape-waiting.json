@@ -1,0 +1,17 @@
+{
+  "status": "fullyOpen",
+  "angle": 180.0,
+  "size": "Size(951.0, 669.0)",
+  "surface": null,
+  "agent": 994469369,
+  "nativeBottomInset": 34.0,
+  "composers": [
+    {
+      "bounds": "Rect.fromLTRB(16.0, 609.0, 459.5, 661.0)",
+      "bottomGap": 8.0
+    }
+  ],
+  "panes": {
+    "occasion-mosaic": "Rect.fromLTRB(475.5, 0.0, 951.0, 669.0)"
+  }
+}
