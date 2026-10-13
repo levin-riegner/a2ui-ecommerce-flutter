@@ -10,6 +10,7 @@ one scrolling page. Camera, keyboard and bottom insets remain respected.
 - [Before portrait](before-portrait.png).
 - Book portrait: [opening](portrait-book-start.png), [awaiting the model](portrait-book-waiting.png), [first reply](portrait-book-reply.png).
 - Open portrait: [opening](portrait-open-start.png), [first reply](portrait-open-reply.png).
+- [Final API-configured portrait deployment](portrait-final-deployment.png): adds a 16-point resting inset below the fold and sizes opening content to its own display region, avoiding the earlier full-viewport minimum height.
 - Landscape: [awaiting the model](landscape-waiting.png), [first reply](landscape-reply.png), [native reveal recording](first-room-reveal.mp4).
 
 Each screenshot has a corresponding JSON geometry record. In Book portrait,

@@ -201,13 +201,19 @@ class _StartScreen extends StatelessWidget {
         final innerLandscape =
             fold.status == HingeStatus.fullyOpen &&
             constraints.maxWidth > constraints.maxHeight;
-        final threadMinHeight = math.max(
-          0.0,
-          constraints.maxHeight -
-              (closed ? 72 : 80) -
-              StylistLayout.composerBottomClearance -
-              68,
-        );
+        final innerPortrait =
+            fold.capabilities.isFoldable &&
+            !closed &&
+            constraints.maxHeight > constraints.maxWidth;
+        final threadMinHeight = innerPortrait
+            ? 0.0
+            : math.max(
+                0.0,
+                constraints.maxHeight -
+                    (closed ? 72 : 80) -
+                    StylistLayout.composerBottomClearance -
+                    68,
+              );
         return AdaptivePaneLayout(
           compactSecondaryFirst: false,
           showSecondaryInCompact: !closed,
@@ -223,7 +229,7 @@ class _StartScreen extends StatelessWidget {
           secondaryPadding: EdgeInsets.zero,
           panePadding: closed
               ? const EdgeInsets.fromLTRB(16, 8, 8, 8)
-              : const EdgeInsets.fromLTRB(32, 0, 32, 8),
+              : EdgeInsets.fromLTRB(32, innerPortrait ? 16 : 0, 32, 8),
           header: ClipRect(
             key: const ValueKey('alder-header'),
             child: BackdropFilter(

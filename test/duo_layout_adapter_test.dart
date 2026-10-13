@@ -189,6 +189,15 @@ void main() {
 
         verifyRegions();
         expect(
+          tester.getRect(find.text('Where are you going?')).top,
+          tester
+                  .getRect(
+                    find.byKey(const ValueKey('portrait-conversation-pane')),
+                  )
+                  .top +
+              16,
+        );
+        expect(
           tester.getRect(find.byKey(const ValueKey('alder-header'))).top,
           84,
         );
