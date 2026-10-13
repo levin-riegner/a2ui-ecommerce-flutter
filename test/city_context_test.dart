@@ -336,21 +336,13 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Berlin — forecast'), findsOneWidget);
         expect(find.text('12° / 8°'), findsOneWidget);
-        expect(find.text('Refresh forecast'), findsOneWidget);
+        expect(find.text('Refresh forecast'), findsNothing);
         expect(find.text('Dressing room'), findsOneWidget);
         expect(find.textContaining('Selected pieces'), findsNothing);
-        await tester.ensureVisible(find.text('Refresh forecast'));
-        await tester.tap(find.text('Refresh forecast'));
-        await tester.pumpAndSettle(
-          const Duration(milliseconds: 100),
-          EnginePhase.sendSemanticsUpdate,
-          const Duration(seconds: 3),
-        );
-        expect(sent, hasLength(1));
-        expect(
-          sent.single.parts.uiInteractionParts.single.interaction,
-          contains('refresh_city_context'),
-        );
+        expect(sent, isEmpty);
+        final location = tester.getRect(find.text(context.label));
+        final weather = tester.getRect(find.text('Berlin — forecast'));
+        expect(weather.top - location.bottom, lessThanOrEqualTo(20));
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox.shrink());
       },

@@ -259,12 +259,17 @@ List<Map<String, Object?>> renderStylistSurfaces({
       inlineComponents.first['children'] as List,
     );
     inlineComponents.first['children'] = rootChildren;
-    rootChildren.insertAll(1, [
-      'city-location',
-      cityContext != null ? 'city-weather' : 'city-context-notice',
-      'refresh-context',
-    ]);
+    rootChildren.insert(1, 'city-context');
     inlineComponents.addAll([
+      {
+        'id': 'city-context',
+        'component': 'StylistSection',
+        'spacing': 8,
+        'children': [
+          'city-location',
+          cityContext != null ? 'city-weather' : 'city-context-notice',
+        ],
+      },
       {
         'id': 'city-location',
         'component': 'Eyebrow',
@@ -283,17 +288,6 @@ List<Map<String, Object?>> renderStylistSurfaces({
           'component': 'StylistMessage',
           'text': _path('/contextNotice'),
         },
-      {
-        'id': 'refresh-context',
-        'component': 'PrimaryButton',
-        'label': 'Refresh forecast',
-        'action': {
-          'event': {
-            'name': 'refresh_city_context',
-            'context': <String, Object?>{},
-          },
-        },
-      },
     ]);
   }
   Map<String, Object?> create(String id) => {

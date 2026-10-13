@@ -552,6 +552,7 @@ class FinalizedRightComponent extends StatelessWidget {
         );
       case 'TypicalWeather':
         return _RightCard(
+          padding: 10,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -576,7 +577,7 @@ class FinalizedRightComponent extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               LayoutBuilder(
                 builder: (context, constraints) {
                   final large =
@@ -592,7 +593,7 @@ class FinalizedRightComponent extends StatelessWidget {
                         SizedBox(
                           width: width,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
                             decoration: BoxDecoration(
                               color: day['highlight'] == true
                                   ? const Color(0xfff4f4f5)
@@ -639,7 +640,7 @@ class FinalizedRightComponent extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               _rightText(
                 context,
                 text('disclaimer'),

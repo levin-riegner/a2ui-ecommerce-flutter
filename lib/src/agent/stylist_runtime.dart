@@ -929,7 +929,7 @@ class StylistRuntime {
     } catch (_) {
       cancel.throwIfCancelled();
       state.cityContextNotice =
-          'Could not load the forecast for ${state.city}. Try refreshing it.';
+          'Could not load the forecast for ${state.city}. Your stylist can continue without it.';
     }
   }
 
