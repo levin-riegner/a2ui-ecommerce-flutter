@@ -38,8 +38,10 @@ remaining families. No Figma nodes were edited.
 Static SVGs retain their exported geometry. The original ten Start collage and
 four gallery photos supplied through Figma are retained at Kelvin's request;
 no new imagery is part of the requested demo. Source nodes and image hashes
-record their Figma provenance. Kelvin has stated that prior authorization exists;
-the hosted-display/public-redistribution scope is being recorded separately.
+record their Figma provenance. On October 13, 2026, Kelvin confirmed existing
+permission for hosted demo display and public source redistribution, including
+Git/LFS history. The [photo permission record](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/7dbcb27400903a8c79e1aa41b2fe8311dfe68e17/docs/asset-rights.md)
+records that scope; the photos are not relicensed under the project's Apache-2.0 license.
 These illustrative gallery photos do not establish venue or forecast facts.
 Jost and Inter retain their font licenses; product photos follow the existing
 permission in [NOTICE](../../NOTICE). Use the original photo assets and accurate

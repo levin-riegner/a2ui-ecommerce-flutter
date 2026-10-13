@@ -146,14 +146,15 @@ are QA evidence, not the final submission screenshot package.
 
 Use the ten original Start collage photos and four original gallery photos
 provided through Figma, as Kelvin requested. The replacement-image approach and
-its clearance evidence are superseded. Kelvin has stated that prior authorization
-exists; the repository currently records provenance but not that authorization's
-scope for hosted display or public repository redistribution.
+its clearance evidence are superseded. On October 13, 2026, Kelvin confirmed that
+existing permission covers hosted demo display and public source redistribution,
+including Git/LFS history. The [photo permission record](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/7dbcb27400903a8c79e1aa41b2fe8311dfe68e17/docs/asset-rights.md)
+records that confirmation for all fourteen originals.
 
-Record that scope, including existing Git/LFS photo bytes, with accurate credits
-and notices before asserting public redistribution readiness. Figma source/hash
-verification establishes origin rather than an image license. The existing
-product-photo permission is retained; Jost and Inter keep their OFL licenses.
+This records the owner's confirmation of existing permission; it does not
+relicense the photos under Apache-2.0. Figma source/hash verification documents
+provenance separately. Preserve accurate notices in the final package. The
+existing product-photo permission is retained; Jost and Inter keep their OFL licenses.
 Hosting code/tests remain separate from the image restoration. Rebuild and verify
 the final package with the original files after restoration is reflected.
 

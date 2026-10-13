@@ -1,7 +1,8 @@
 # Google submission handoff — October 16, 2026
 
 Use this checklist to assemble the requested reviewer package. Status is based on
-main `b3263ce` (PR12), pending PR14 evidence, the original-asset decision and verification in the
+main `b3263ce` (PR12), pending PR14 evidence, the owner-confirmed photo permission
+record in PR15 and verification in the
 [walkthrough](alder-online-demo.md#verification-evidence). Recheck each item on the
 final merged/deployed revision; pending work is not a submission-ready claim.
 
@@ -9,7 +10,7 @@ final merged/deployed revision; pending work is not a submission-ready claim.
 | --- | --- | --- |
 | Hosted/staging demo | The walkthrough and [pending PR14 web integration](alder-online-demo.md#pending-web-demo-integration) record an audited local BYOK/weather-off build and synthetic Chrome QA. No verified hosted URL is recorded. | Supply an approved reachable URL, deployed commit/date, fresh-browser evidence and provider/model used. Verify BYOK, recommendations, selection, typed removal, next category and recovery on that exact build. If no live browser run is possible, record the CORS/access blocker and agree the reviewer path. |
 | Component catalog | **Explore component catalog** opens without a key. Pending PR14's direct `/#/catalog` open/refresh passed local Chrome QA. **Finalized Figma components** and **Finalized Figma screens** expose local states/examples; [schemas and replayable A2UI examples](design/README.md) are tracked. | Integrate PR14 and verify reviewer access in the final hosted build. Label gallery fixtures and services requiring host integration. |
-| Public Apache-2 repository | [Repository](https://github.com/levin-riegner/a2ui-ecommerce-flutter), [LICENSE](../LICENSE), [NOTICE](../NOTICE), pinned dependencies and verification workflow exist. Original Figma imagery is retained per Kelvin's direction; the scope of his stated prior authorization is being recorded. GitHub currently reports **private**. | Record hosted-display/public-redistribution scope, including Git/LFS photo bytes, retain the product-photo permission evidence and obtain the owner's visibility decision. Use accurate notices, fetch LFS assets and scan the final distributable. The code license does not establish every image permission. |
+| Public Apache-2 repository | [Repository](https://github.com/levin-riegner/a2ui-ecommerce-flutter), [LICENSE](../LICENSE), [NOTICE](../NOTICE), pinned dependencies and verification workflow exist. Original Figma imagery is retained per Kelvin's direction; [PR15's permission record](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/7dbcb27400903a8c79e1aa41b2fe8311dfe68e17/docs/asset-rights.md) confirms hosted demo display and public source redistribution, including Git/LFS history. GitHub currently reports **private**. | Retain the confirmed permission record and product-photo permission evidence, and obtain the owner's visibility decision. Use accurate notices, fetch LFS assets and scan the final distributable. The code license does not establish every image permission. |
 | Figma catalog | The [catalog guide](design/README.md) links the existing source design and maps components, node IDs, states and exports. | Confirm Google reviewers can open the design and inspect the Components page. Repository exports and in-app fixtures do not prove Figma sharing access. |
 | Logo | The app uses [alder-wordmark.svg](../assets/images/occasions/alder-wordmark.svg). | Confirm approved branding/rights and supply the file in Google's requested format; an in-app SVG does not confirm a separately delivered logo. |
 | Overview | README explains the local Genkit stylist, validated A2UI surfaces, fictional catalog, BYOK and responsive layout. | Include the short overview below with the final links and explicit live-service limitations. |
@@ -32,10 +33,11 @@ services. Weather availability must be declared for the final build.
 - **Hosting:** approve a hosting project/route and verify the
   resulting URL. Local launch/build success does not establish public access.
 - **Original imagery:** retain the ten original Figma collage and four gallery
-  photos, with no new assets, as Kelvin requested. Figma provenance is recorded;
-  the hosted-display/public-repository scope of his stated prior authorization is
-  being clarified. Include existing Git/LFS bytes in that record. The existing
-  product-photo permission remains separate. Replacement-image evidence and the
+  photos, with no new assets, as Kelvin requested. Kelvin confirmed on October 13
+  that existing permission covers hosted demo display and public source
+  redistribution, including Git/LFS history; [PR15 records the confirmation](https://github.com/levin-riegner/a2ui-ecommerce-flutter/blob/7dbcb27400903a8c79e1aa41b2fe8311dfe68e17/docs/asset-rights.md).
+  This does not relicense the photos under Apache-2.0. Figma provenance and the
+  existing product-photo permission remain separate records. Replacement-image evidence and the
   `b33cf8c` build/export are superseded, not release candidates. Rebuild and verify
   only after the original files and accurate notices are restored.
 - **Weather:** decide whether the showcase disables weather or uses an approved
