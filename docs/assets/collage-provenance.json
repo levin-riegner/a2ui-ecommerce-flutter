@@ -1,9 +1,9 @@
 {
   "schemaVersion": 2,
-  "reviewedAt": "2026-10-12",
+  "reviewedAt": "2026-10-13",
   "baselineCommit": "b3263ce205315599523118e956839207b4a04a90",
-  "scope": "Fourteen original provided Figma photographs retained at Kelvin\u2019s instruction; no replacement assets.",
-  "permissionEvidence": "Kelvin states prior authorization in the current task; granting party, license/credit requirements and hosted-display/public-source redistribution scope are not yet recorded. This ledger verifies provenance and restoration, not a new grant.",
+  "scope": "Fourteen original provided Figma photographs retained at Kelvin’s instruction; no replacement assets.",
+  "permissionEvidence": "Kelvin's 2026-10-13 reply to the permission-scope question in this task confirms existing permission for hosted demo display and public source redistribution, including Git/LFS history. Granting party, photographer credits and named per-photo license or credit conditions have not been supplied. This records the project owner's confirmation; it is not a new license grant.",
   "assets": [
     {
       "path": "assets/images/occasions/start-01.png",
@@ -23,7 +23,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -44,7 +44,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -65,7 +65,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -86,7 +86,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -107,7 +107,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -128,7 +128,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -149,7 +149,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -170,7 +170,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -191,7 +191,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -212,7 +212,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -241,7 +241,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -265,7 +265,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -294,7 +294,7 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     },
     {
@@ -318,8 +318,23 @@
       "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
       "creator": null,
       "recordedLicense": null,
-      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "permissionStatus": "Owner confirmed 2026-10-13 that existing permission covers hosted demo display and public source redistribution, including Git/LFS history.",
       "modifications": "None: restored original PNG bytes."
     }
-  ]
+  ],
+  "restorationVerifiedAt": "2026-10-12",
+  "permissionConfirmation": {
+    "confirmedBy": "Kelvin Harron",
+    "confirmedOn": "2026-10-13",
+    "evidenceKind": "Project-owner statement in task conversation",
+    "evidenceText": "Hosted demo display and public source redistribution, including Git/LFS history",
+    "coveredUses": [
+      "Hosted demo display",
+      "Public source redistribution",
+      "Git/LFS history"
+    ],
+    "grantingParty": null,
+    "creditRequirements": null,
+    "namedPhotoLicense": null
+  }
 }

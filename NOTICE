@@ -23,7 +23,14 @@ Copyright 2020 The Inter Project Authors (https://github.com/rsms/inter).
 Licensed under the SIL Open Font License, Version 1.1, bundled as
 assets/fonts/inter/OFL.txt. Distributed unmodified from Google Fonts.
 
-Start-screen collage photographs in assets/images/occasions/ were supplied in
-the project design reference. Their source credits and redistribution terms
-have not yet been recorded. They are separate from the approved catalog-photo
-grant above; this project does not assert an Apache license for those assets.
+Provided Figma photographs:
+The ten Start-screen photographs in assets/images/occasions/start-*.png and
+four screen photographs in assets/images/finalized_left/ were supplied in the
+project design reference. On 2026-10-13 Kelvin Harron confirmed that their
+existing permission covers hosted demo display and public source redistribution,
+including Git/LFS history. The project owner's confirmation and exact original
+image hashes are recorded in docs/asset-rights.md and
+docs/assets/collage-provenance.json. Photographer credits, the granting party
+and any named per-photo license or credit conditions have not been supplied.
+These assets are separate from the approved catalog-photo grant above; this
+project does not assert an Apache-2.0 or CC0 license for these fourteen photos.
