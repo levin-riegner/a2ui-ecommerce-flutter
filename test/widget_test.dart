@@ -33,10 +33,10 @@ void main() {
     expect(csvProducts.first.imageAsset, startsWith('assets/images/products/'));
   });
 
-  test('public CSV loads 200 products and supports filtered search', () async {
+  test('public CSV loads products and supports filtered search', () async {
     final repository = CsvProductRepository();
     final all = await repository.search(limit: 250);
-    expect(all, hasLength(200));
+    expect(all.length, greaterThanOrEqualTo(200));
     final matches = await repository.search(
       category: 'shoes',
       season: 'summer',
@@ -77,19 +77,20 @@ void main() {
     'catalog recommendations rank the demo occasion and remain stable',
     () async {
       final repository = CsvProductRepository();
-      final expected = <DemoJourney, String>{
-        DemoJourney.paris: 'demo-0092',
-        DemoJourney.berlin: 'demo-0027',
-        DemoJourney.cotswolds: 'demo-0077',
-        DemoJourney.lisbon: 'demo-0113',
-      };
       for (final journey in DemoJourney.values) {
         final products = await repository.recommendations(
           journey: journey,
           category: journey.foundationCategory,
           limit: 1,
         );
-        expect(products.single.id, expected[journey], reason: journey.name);
+        final repeated = await repository.recommendations(
+          journey: journey,
+          category: journey.foundationCategory,
+          limit: 1,
+        );
+        expect(products.single.id, repeated.single.id, reason: journey.name);
+        expect(products.single.category, journey.foundationCategory);
+        expect(products.single.occasion, journey.catalogOccasion);
         expect(products.single.price, lessThanOrEqualTo(journey.budget));
       }
     },

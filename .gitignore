@@ -55,3 +55,5 @@ app.*.map.json
 !.env.example
 node_modules/
 .genkit/
+# Local imported catalogs, model handoffs and review decisions
+.catalog-work/

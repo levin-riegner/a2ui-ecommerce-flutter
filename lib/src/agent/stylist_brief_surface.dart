@@ -44,6 +44,7 @@ StylistBriefSurface renderStylistBriefSurface({
     'season': season,
     // The suggested slider value only becomes a host fact on Find options.
     'budget': displayBudget,
+    'budgetIsSuggested': budget == null,
   };
   final components = <Map<String, Object?>>[
     {
@@ -58,7 +59,7 @@ StylistBriefSurface renderStylistBriefSurface({
       'children': [
         if (missing.contains('dressCode')) 'style-group',
         if (missing.contains('season')) 'season-group',
-        if (missing.contains('budget')) 'brief-budget',
+        if (missing.contains('budget')) 'budget-group',
         'find-options',
       ],
     },
@@ -105,7 +106,20 @@ StylistBriefSurface renderStylistBriefSurface({
         'selectionPath': '/season',
       },
     ],
-    if (missing.contains('budget'))
+    if (missing.contains('budget')) ...[
+      {
+        'id': 'budget-group',
+        'component': 'StylistSection',
+        'spacing': 8,
+        'children': ['budget-label', 'brief-budget'],
+      },
+      {
+        'id': 'budget-label',
+        'component': 'Eyebrow',
+        'text': budget == null
+            ? 'Suggested whole-outfit budget. Adjust to suit you.'
+            : 'Your whole-outfit budget',
+      },
       {
         'id': 'brief-budget',
         'component': 'BudgetSlider',
@@ -113,6 +127,7 @@ StylistBriefSurface renderStylistBriefSurface({
         'min': displayBudget < 50 ? displayBudget : 50,
         'max': displayBudget > 2500 ? displayBudget : 2500,
       },
+    ],
     {
       'id': 'find-options',
       'component': 'PrimaryButton',

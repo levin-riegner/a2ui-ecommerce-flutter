@@ -213,28 +213,28 @@
     "updateDataModel": {
       "surfaceId": "inline-1",
       "value": {
-        "message": "Start with a comfortable shirt for your spring city visit.",
+        "message": "Start with a comfortable knit top for your spring city visit.",
         "eyebrow": "Catalog options",
         "recommendations": [
           {
             "id": "demo-0001",
-            "name": "Solstice Button Shirt",
+            "name": "Solstice Brown Knit Top",
             "price": "€85.00",
-            "brandLine": "Quiet Meridian · Brown · Unspecified",
-            "tag": "travel",
+            "brandLine": "Quiet Meridian · Deep brown · Unspecified",
+            "tag": "weekend",
             "swatch": "#e4e4e7",
             "imageAsset": "assets/images/products/demo-0001.jpg",
             "category": "top"
           },
           {
             "id": "demo-0002",
-            "name": "Arc Ribbed Knit",
+            "name": "Arc Forest Ribbed Cardigan",
             "price": "€125.00",
-            "brandLine": "Soft Current · Green · Cashmere",
+            "brandLine": "Soft Current · Forest green · Unspecified",
             "tag": "weekend",
             "swatch": "#e4e4e7",
             "imageAsset": "assets/images/products/demo-0002.jpg",
-            "category": "top"
+            "category": "layer"
           }
         ]
       }

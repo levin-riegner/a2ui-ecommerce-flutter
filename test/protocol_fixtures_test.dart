@@ -50,7 +50,7 @@ void main() {
     expect(
       renderStylistSurfaces(
         turn: 1,
-        reply: 'Start with a comfortable shirt for your spring city visit.',
+        reply: 'Start with a comfortable knit top for your spring city visit.',
         picks: [
           for (final id in ['demo-0001', 'demo-0002'])
             products.singleWhere((product) => product.id == id),
@@ -72,16 +72,16 @@ void main() {
     await tester.pumpWidget(harness.view(['inline-1']));
     await tester.pumpAndSettle();
 
-    expect(find.text('Solstice Button Shirt'), findsOneWidget);
-    expect(find.text('Arc Ribbed Knit'), findsOneWidget);
+    expect(find.text('Solstice Brown Knit Top'), findsOneWidget);
+    expect(find.text('Arc Forest Ribbed Cardigan'), findsOneWidget);
     expect(find.text('€85.00'), findsOneWidget);
     expect(find.text('€125.00'), findsOneWidget);
     final completedCards = tester.widgetList<FinalizedProductCard>(
       find.byType(FinalizedProductCard),
     );
     expect(completedCards, hasLength(2));
-    expect(completedCards.map((card) => card.category), everyElement('top'));
-    expect(completedCards.map((card) => card.tag), ['travel', 'weekend']);
+    expect(completedCards.map((card) => card.category), ['top', 'layer']);
+    expect(completedCards.map((card) => card.tag), ['weekend', 'weekend']);
     expect(
       tester
           .widgetList<Image>(find.byType(Image))
@@ -117,7 +117,7 @@ void main() {
       find.byKey(const ValueKey('dressing-room')),
     );
     expect(find.text('€900 left'), findsOneWidget);
-    expect(find.text('Solstice Button Shirt'), findsOneWidget);
+    expect(find.text('Solstice Brown Knit Top'), findsOneWidget);
 
     for (final name in ['advice_data_update', 'dressing_room_data_update']) {
       expect(
@@ -137,12 +137,14 @@ void main() {
       same(originalDressing),
     );
     expect(
-      find.text('Choose the cotton shirt for a light starting point.'),
+      find.text(
+        'Choose the contrast-collar knit top for a relaxed starting point.',
+      ),
       findsOneWidget,
     );
     expect(find.text('€815 left'), findsOneWidget);
     expect(find.text('€85 spent —\u00a01 of 4'), findsOneWidget);
-    expect(find.text('Solstice Button Shirt'), findsNWidgets(2));
+    expect(find.text('Solstice Brown Knit Top'), findsNWidgets(2));
     final nextSlot = find.byKey(const ValueKey('dressing-slot-bottom'));
     expect(
       find.descendant(of: nextSlot, matching: find.text('Choosing now')),
@@ -220,15 +222,15 @@ void main() {
       );
       expect(find.text('Preparing your recommendations…'), findsNothing);
       expect(find.text('Adding styling advice…'), findsOneWidget);
-      expect(find.text('Solstice Button Shirt'), findsOneWidget);
-      expect(find.text('Arc Ribbed Knit'), findsOneWidget);
+      expect(find.text('Solstice Brown Knit Top'), findsOneWidget);
+      expect(find.text('Arc Forest Ribbed Cardigan'), findsOneWidget);
       expect(find.text('€85.00'), findsOneWidget);
       final previewCards = tester.widgetList<FinalizedProductCard>(
         find.byType(FinalizedProductCard),
       );
       expect(previewCards, hasLength(2));
-      expect(previewCards.map((card) => card.category), everyElement('top'));
-      expect(previewCards.map((card) => card.tag), ['travel', 'weekend']);
+      expect(previewCards.map((card) => card.category), ['top', 'layer']);
+      expect(previewCards.map((card) => card.tag), ['weekend', 'weekend']);
       expect(
         tester
             .widgetList<InkWell>(find.byType(InkWell))
@@ -241,7 +243,7 @@ void main() {
         isTrue,
       );
       expect(find.byType(Slider), findsNothing);
-      await tester.tap(find.text('Solstice Button Shirt'));
+      await tester.tap(find.text('Solstice Brown Knit Top'));
       await tester.pump();
       expect(harness.sent, isEmpty);
 

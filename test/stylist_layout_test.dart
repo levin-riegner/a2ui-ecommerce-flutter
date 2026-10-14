@@ -121,8 +121,8 @@ void main() {
         find.byKey(const ValueKey('recommendation-carousel')),
         findsNothing,
       );
-      expect(find.text('Solstice Button Shirt'), findsOneWidget);
-      expect(find.text('Arc Ribbed Knit'), findsOneWidget);
+      expect(find.text('Solstice Brown Knit Top'), findsOneWidget);
+      expect(find.text('Arc Forest Ribbed Cardigan'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

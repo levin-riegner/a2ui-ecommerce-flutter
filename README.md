@@ -33,6 +33,8 @@ Without a model connection, journeys are disabled and the component gallery rema
 
 Once connected, choose a preset journey or enter your own occasion with **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. Choosing a piece immediately offers the next part of the look. You can also choose or remove pieces in words, refine the brief, and revisit a completed outfit. The dressing room follows the current outfit plan, including tops and bottoms.
 
+Explicit input such as “I have 500 to spend on a casual outfit” is acknowledged and retained as the whole-outfit EUR budget. Item prices do not replace an explicit outfit total, and a model suggestion cannot overwrite an accepted user amount. Foreign-currency budgets receive a correction prompt rather than an implicit conversion. Unknown slider amounts are labeled suggestions. Hard color, material, brand and category restrictions remain enforced through search fallback; already-owned pieces and excluded categories affect the purchase plan. Recommendations favor choices that leave enough budget to finish the required look, and explain the tradeoff when no complete look fits. Correctable input errors preserve the conversation and leave editing enabled.
+
 Destination forecasts use Open-Meteo geocoding and weather endpoints. Only the named destination is looked up; the app does not request GPS. Verified dates, temperature, and rain probability reach both the weather card and stylist. Unavailable forecasts show a notice; changing the destination clears the previous city's weather. **Refresh forecast** updates only the current response, makes no model request, and preserves the outfit, choices, and history. Forecasts are cached for 15 minutes; previous responses remain read-only. See [the online demo guide](docs/alder-online-demo.md) for the bounded local bridge and offline simulator mode.
 
 Tap the microphone in the occasion or chat composer to dictate, and tap it again to stop. Speech recognition fills the editable draft; sending uses the same GenUI/Genkit text path as typing. Microphone and speech permissions are requested on the first tap. Recognition availability and any remote speech processing depend on the device or browser. Rebuild the native app after installing the speech plugin; hot reload cannot register a new native plugin.
@@ -86,7 +88,11 @@ The CSV parser handles quoted commas, escaped quotes, and multiline fields. Run 
 
 The CSV uses fictional names, brands, descriptions, prices, and IDs. The approved product photographs are reused as local assets, resized and saved without image metadata. Visible marks on products and reverse image search can still identify a photographed item; the image bundle does not provide image-level unlinkability. For future catalog expansion, `tools/catalog/import_images.py` accepts a private, ordered URL file and an explicit `--allowed-host`, then writes renamed JPEGs. Keep that URL file outside the repository; the importer requires Pillow.
 
-The bundled catalog photographs are used with permission for this public demo. They are existing photographs, not presented as AI-generated images. The ten Start collage photographs supplied in the design reference still need recorded source credits and redistribution terms. See [NOTICE](NOTICE) for image and project credits.
+The bundled catalog contains 977 products: the original 200 plus 777 curated from mock.shop. All 1,028 records imported from Everbloom and UrbanVantage were processed with Luna; unrelated goods, children's clothing, unsupported sets and duplicate images were skipped. The original photographs are used with permission for this public demo. The additional images are generated mock content, with photo-led styling guesses and fictional EUR prices. Conflicting source variants are omitted; this is an outfit demo, not live stock. The ten Start collage photographs supplied in the design reference still need recorded source credits and redistribution terms. See [NOTICE](NOTICE) for image and project credits.
+
+Catalog expansion uses [best-effort demo curation](docs/catalog-import.md): use the pictured item, infer useful style tags, omit unsupported claims and skip broken records. Raw sources and enrichment history remain local for traceability; no manual review interface is required.
+
+All 977 products have photo-based descriptions and styling tags, including a separate Luna pass over the original 200. Original IDs, prices and photographs are preserved; unsupported original material labels are replaced with `unspecified`. Search passes matching product descriptions and styling keywords to the LLM as structured text facts. Images are inspected during enrichment and displayed in the cards; local retrieval uses word matching and filters without a vector database.
 
 ## Verification
 
@@ -102,4 +108,4 @@ fvm flutter build web
 
 ## License
 
-Apache-2.0 for the project and approved bundled catalog photographs. Jost retains its SIL Open Font License in `assets/fonts/jost/OFL.txt`. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
+Apache-2.0 for the project and original approved catalog photographs. Additional mock.shop imagery remains subject to its source terms. Jost retains its SIL Open Font License in `assets/fonts/jost/OFL.txt`. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.

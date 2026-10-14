@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/src/agent/stylist_input_error.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart';
@@ -115,7 +116,7 @@ void main() {
               'context': {'category': 'dress', 'adjustment': adjustment},
             },
           }),
-          throwsFormatException,
+          throwsA(isA<StylistInputError>()),
         );
         expect(modelRequests, beforeRequests);
         expect(jsonEncode(runtime.outfit), before);
@@ -299,10 +300,16 @@ void main() {
     final before = jsonEncode(runtime.outfit);
     final count = requests;
     for (final invalid in [null, 5, '', 'unknown', 'dress/shoes']) {
-      await expectLater(runtime.turn(_adjust(invalid)), throwsFormatException);
+      await expectLater(
+        runtime.turn(_adjust(invalid)),
+        throwsA(isA<StylistInputError>()),
+      );
       expect(jsonEncode(runtime.outfit), before);
     }
-    await expectLater(runtime.turn(_adjust('top')), throwsStateError);
+    await expectLater(
+      runtime.turn(_adjust('top')),
+      throwsA(isA<StylistInputError>()),
+    );
     expect(requests, count);
     expect(jsonEncode(runtime.outfit), before);
   });

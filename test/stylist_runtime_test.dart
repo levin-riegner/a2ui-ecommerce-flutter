@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/src/agent/stylist_input_error.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart';
@@ -17,6 +18,8 @@ const products = [
     swatch: '#123456',
     color: 'blue',
     material: 'linen',
+    description: 'A blue sleeveless dress with a square neckline.',
+    keywords: 'sleeveless square neckline relaxed',
     occasion: 'travel',
     season: 'summer',
     imageAsset: 'assets/images/products/demo-1.jpg',
@@ -130,6 +133,34 @@ Map<String, dynamic> action(String name, String id) => {
 
 void main() {
   test(
+    'search exposes descriptions and styling keywords to the model',
+    () async {
+      var sawSearchFacts = false;
+      final runtime = StylistRuntime(
+        products: products,
+        model: (request) async {
+          for (final part in request.messages.last.content) {
+            final response = part.toolResponse;
+            if (response?.name != 'search_products') continue;
+            final output = response!.output as Map;
+            final facts = (output['products'] as List).single as Map;
+            expect(facts['id'], 'dress-1');
+            expect(facts['description'], products.first.description);
+            expect(facts['keywords'], products.first.keywords);
+            expect(facts['material'], 'linen');
+            expect(facts['price_eur'], 80);
+            sawSearchFacts = true;
+          }
+          return offlineStylistModel(request);
+        },
+      );
+      addTearDown(runtime.dispose);
+      await runtime.turn({'message': 'A summer dress under €100'});
+      expect(sawSearchFacts, isTrue);
+    },
+  );
+
+  test(
     'Genkit tools produce authoritative cards and persistent outfit surfaces',
     () async {
       final runtime = StylistRuntime(products: products);
@@ -227,16 +258,16 @@ void main() {
         },
       );
       addTearDown(runtime.dispose);
-      await runtime.turn({'message': 'A dress under €200'});
+      await runtime.turn({'message': 'A dress under €300'});
       await runtime.turn({'message': 'Change budget to €100'});
       final before = calls;
       await expectLater(
         runtime.turn(action('select_product', 'invented')),
-        throwsStateError,
+        throwsA(isA<StylistInputError>()),
       );
       await expectLater(
         runtime.turn(action('select_product', 'dress-2')),
-        throwsStateError,
+        throwsA(isA<StylistInputError>()),
       );
       expect(calls, before);
       expect(runtime.outfit['items'], isEmpty);
@@ -362,12 +393,13 @@ void main() {
         },
       );
       addTearDown(runtime.dispose);
-      final result = await runtime.turn({'message': 'Summer dress under €200'});
+      final result = await runtime.turn({'message': 'Summer dress under €300'});
       expect((result['products'] as List).map((p) => p['id']), [
         'dress-1',
         'dress-2',
       ]);
-      expect(result['reply'], 'A linen dress with leather sandals.');
+      expect(result['reply'], endsWith('A linen dress with leather sandals.'));
+      expect(result['reply'], contains('€300.00 for the whole outfit'));
       expect(calls, 4);
     },
   );
@@ -384,7 +416,10 @@ void main() {
             expect(r.tools, isEmpty);
             expect(r.toolChoice, ToolChoice.none);
           }
-          return toolResponse('search_products', {'query': 'not-in-catalog'});
+          return toolResponse('search_products', {
+            'query': 'not-in-catalog',
+            'priceMax': 0,
+          });
         },
       );
       addTearDown(runtime.dispose);
@@ -647,7 +682,7 @@ void main() {
     () async {
       final runtime = StylistRuntime(products: products);
       addTearDown(runtime.dispose);
-      await runtime.turn({'message': 'A casual top under €180'});
+      await runtime.turn({'message': 'A casual top under €250'});
       await runtime.turn(action('select_product', 'top-1'));
       await runtime.turn(action('select_product', 'bottom-1'));
       final dresses = await runtime.turn({'message': 'Show a dress instead'});
@@ -815,7 +850,7 @@ void main() {
     final before = calls;
     await expectLater(
       runtime.turn(action('select_product', 'dress-1')),
-      throwsStateError,
+      throwsA(isA<StylistInputError>()),
     );
     expect(calls, before);
     expect(runtime.outfit['items'], isEmpty);

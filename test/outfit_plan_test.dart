@@ -1,4 +1,5 @@
 import 'package:a2ui_flutter_commerce/src/agent/outfit_plan.dart';
+import 'package:a2ui_flutter_commerce/src/agent/stylist_constraints.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -208,5 +209,193 @@ void main() {
     final released = removeConflictingFoundation(outfit, ProductCategory.shoes);
     expect(released, isEmpty);
     expect(outfit.keys, ['dress']);
+  });
+
+  test('explicit casual style overrides a wedding occasion', () {
+    final plan = OutfitPlan.from(
+      brief: 'Wedding in summer',
+      dressCode: 'casual',
+      outfit: {},
+    );
+    expect(plan.nextCategory, ProductCategory.top);
+    expect(plan.slots, isNot(contains(ProductCategory.dress)));
+    expect(
+      OutfitPlan.from(brief: 'A casual wedding', outfit: {}).nextCategory,
+      ProductCategory.top,
+    );
+  });
+
+  test('excluded and owned pieces are not mandatory purchases', () {
+    final constraints = const StylistConstraints().recordMessage(
+      'No dresses, no bag, I already own shoes',
+    );
+    final plan = OutfitPlan.from(
+      brief: 'Formal summer wedding',
+      outfit: {},
+      constraints: constraints,
+    );
+    expect(plan.slots, [ProductCategory.top, ProductCategory.bottom]);
+    final complete = OutfitPlan.from(
+      brief: 'Formal summer wedding',
+      constraints: constraints,
+      outfit: outfitOf([ProductCategory.top, ProductCategory.bottom]),
+    );
+    expect(complete.complete, isTrue);
+    expect(complete.filledCount, 2);
+  });
+
+  test('owned foundation determines the remaining outfit route', () {
+    final constraints = const StylistConstraints().recordMessage(
+      'I already own a dress',
+    );
+    final plan = OutfitPlan.from(
+      brief: 'Casual summer lunch',
+      outfit: {},
+      constraints: constraints,
+    );
+    expect(plan.slots, [ProductCategory.shoes, ProductCategory.bag]);
+  });
+
+  test(
+    'full look cost distinguishes affordable and impossible dress choices',
+    () {
+      final catalog = [
+        piece(ProductCategory.dress, price: 300),
+        piece(ProductCategory.shoes, price: 100),
+        piece(ProductCategory.bag, price: 50),
+      ];
+      final expensive = assessOutfitSelection(
+        candidate: piece(ProductCategory.dress, price: 450),
+        outfit: {},
+        catalog: catalog,
+        brief: 'Summer wedding',
+        budget: 500,
+      );
+      expect(expensive.minimumTotal, 600);
+      expect(expensive.feasible, isFalse);
+      expect(expensive.explanation, contains('600.00'));
+      final affordable = assessOutfitSelection(
+        candidate: catalog.first,
+        outfit: {},
+        catalog: catalog,
+        brief: 'Summer wedding',
+        budget: 500,
+      );
+      expect(affordable.minimumTotal, 450);
+      expect(affordable.feasible, isTrue);
+    },
+  );
+
+  test(
+    'minimum completion reserves only missing pieces and releases replacements',
+    () {
+      final selected = {
+        'first': piece(ProductCategory.top, price: 95),
+        'second': piece(ProductCategory.bottom, price: 110),
+        'third': piece(ProductCategory.shoes, price: 80),
+      };
+      final result = assessOutfitSelection(
+        candidate: piece(ProductCategory.dress, price: 200),
+        outfit: selected,
+        catalog: [piece(ProductCategory.bag, price: 50)],
+        brief: 'Summer wedding',
+        budget: 350,
+      );
+      expect(result.minimumTotal, 330);
+      expect(result.feasible, isTrue);
+      expect(selected.keys, ['first', 'second', 'third']);
+    },
+  );
+
+  test('owned and excluded categories do not reserve purchase budget', () {
+    final result = assessOutfitSelection(
+      candidate: piece(ProductCategory.dress, price: 450),
+      outfit: {},
+      catalog: [],
+      brief: 'Summer wedding',
+      budget: 500,
+      constraints: const StylistConstraints().recordMessage(
+        'I already own shoes, no bag',
+      ),
+    );
+    expect(result.minimumTotal, 450);
+    expect(result.feasible, isTrue);
+  });
+
+  test('unavailable constrained categories differ from exceeding budget', () {
+    final result = assessOutfitSelection(
+      candidate: piece(ProductCategory.dress, price: 50),
+      outfit: {},
+      catalog: [piece(ProductCategory.bag)],
+      brief: 'Summer wedding',
+      budget: 500,
+    );
+    expect(result.withinBudget, isTrue);
+    expect(result.feasible, isFalse);
+    expect(result.unavailableCategories, [ProductCategory.shoes]);
+    expect(result.explanation, contains('No catalog option'));
+  });
+
+  test('new restrictions reopen incompatible required pieces without removing them', () {
+    final outfit = outfitOf([
+      ProductCategory.top,
+      ProductCategory.bottom,
+      ProductCategory.shoes,
+      ProductCategory.bag,
+    ]);
+    // Only the selected top has a prohibited material; keep the other fixtures
+    // verifiably compliant so this test proves count and next-slot behavior.
+    final knownMaterials = {
+      for (final entry in outfit.entries)
+        entry.key: Product(
+          id: entry.value.id,
+          category: entry.value.category,
+          name: entry.value.name,
+          brand: 'Sample',
+          price: 50,
+          meta: '',
+          tag: '',
+          swatch: '#000000',
+          material: entry.value.category == ProductCategory.top
+              ? 'wool'
+              : 'cotton',
+        ),
+    };
+    final plan = OutfitPlan.from(
+      brief: 'Casual summer lunch',
+      outfit: knownMaterials,
+      constraints: const StylistConstraints().recordMessage('No wool'),
+    );
+    expect(plan.complete, isFalse);
+    expect(plan.nextCategory, ProductCategory.top);
+    expect(plan.filledCount, 3);
+    expect(plan.conflictingCategories, {ProductCategory.top});
+    expect(plan.displaySlots, contains(ProductCategory.top));
+    expect(knownMaterials, hasLength(4));
+  });
+
+  test('excluded selected extras prevent completion even without an open required slot', () {
+    final outfit = outfitOf([
+      ProductCategory.top,
+      ProductCategory.bottom,
+      ProductCategory.shoes,
+      ProductCategory.bag,
+    ]);
+    final plan = OutfitPlan.from(
+      brief: 'Casual summer lunch',
+      outfit: outfit,
+      constraints: const StylistConstraints().recordMessage('No bag'),
+    );
+    expect(plan.slots, [
+      ProductCategory.top,
+      ProductCategory.bottom,
+      ProductCategory.shoes,
+    ]);
+    expect(plan.filledCount, 3);
+    expect(plan.nextCategory, isNull);
+    expect(plan.complete, isFalse);
+    expect(plan.conflictingCategories, {ProductCategory.bag});
+    expect(plan.displaySlots, contains(ProductCategory.bag));
+    expect(outfit, hasLength(4));
   });
 }

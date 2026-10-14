@@ -868,6 +868,11 @@ class _ChatSurface extends StatelessWidget {
                 message: agent.connectionError!,
                 onRetry: agent.canRetry ? agent.retryLastTurn : null,
               ),
+            if (agent.inputError != null)
+              _ConnectionNotice(
+                title: 'Update your outfit',
+                message: agent.inputError!,
+              ),
             if (agent.connectionNotice != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -916,8 +921,13 @@ class _ConversationSurface extends StatelessWidget {
 }
 
 class _ConnectionNotice extends StatelessWidget {
-  const _ConnectionNotice({required this.message, this.onRetry});
+  const _ConnectionNotice({
+    required this.message,
+    this.title = 'Stylist unavailable',
+    this.onRetry,
+  });
   final String message;
+  final String title;
   final Future<void> Function()? onRetry;
 
   @override
@@ -933,10 +943,7 @@ class _ConnectionNotice extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Stylist unavailable',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
+          Text(title, style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           Text(message),
           if (onRetry != null) ...[
@@ -989,7 +996,7 @@ class _ChatComposerState extends State<_ChatComposer> {
         !widget.agent.isBusy &&
         widget.agent.pendingInlineSurfaceId == null &&
         widget.agent.connectionError == null &&
-        widget.agent.latestInlineSurfaceId != null;
+        widget.agent.hasStarted;
     return StylistComposer(
       controller: textController,
       enabled: canSend,

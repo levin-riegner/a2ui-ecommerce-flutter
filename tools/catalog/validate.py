@@ -64,6 +64,8 @@ def validate(catalog: Path, asset_root: Path, source_files: list[Path], min_prod
             errors.append(f'row {number}: invalid synthetic ID')
         if row['category'] not in CATEGORIES:
             errors.append(f'row {number}: invalid category')
+        if re.search(r'\b(?:coveralls?|jumpsuits?|rompers?|boilersuits?|overalls)\b', row['subcategory'], re.I) and row['category'] != 'dress':
+            errors.append(f'row {number}: one-piece garment must use the dress foundation category')
         if not IMAGE_PATH.fullmatch(row['image_asset']) or row['image_asset'] != f'assets/images/products/{row["id"]}.jpg':
             errors.append(f'row {number}: invalid image asset path')
         elif not (asset_root / row['image_asset']).is_file():
