@@ -84,7 +84,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(calls, 4);
     expect(
-      find.text('Offline preview: here are some catalog options.'),
+      find.textContaining('Offline preview: here are some catalog options.'),
       findsOneWidget,
     );
     expect(tester.widget<TextField>(find.byType(TextField)).enabled, isTrue);

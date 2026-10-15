@@ -16,6 +16,7 @@ import 'genkit_providers.dart';
 import 'stylist_runtime.dart';
 import 'stylist_surfaces.dart';
 import 'city_context.dart';
+import 'stylist_input_error.dart';
 
 /// Runs Genkit inside Flutter and publishes catalog-backed A2UI surfaces.
 class GenkitAgent extends CommerceAgent {
@@ -77,6 +78,7 @@ class GenkitAgent extends CommerceAgent {
     _clearSurfaces();
     _failedTurn = null;
     _connectionError = null;
+    _inputError = null;
     if (!_disposed) notifyListeners();
     _revoked = true;
     final runtime = _runtime;
@@ -96,6 +98,7 @@ class GenkitAgent extends CommerceAgent {
   int _queuedTurns = 0;
   bool _disposed = false;
   String? _connectionError;
+  String? _inputError;
   String? _connectionNotice;
   _AgentTurn? _failedTurn;
   Future<void> _pendingTurn = Future<void>.value();
@@ -118,6 +121,8 @@ class GenkitAgent extends CommerceAgent {
   bool get isBusy => _queuedTurns > 0;
   @override
   String? get connectionError => _connectionError;
+  @override
+  String? get inputError => _inputError;
   @override
   String? get connectionNotice => _connectionNotice;
   @override
@@ -221,6 +226,7 @@ class GenkitAgent extends CommerceAgent {
       try {
         if (_disposed || _revoked || epoch != _epoch) return;
         _connectionError = null;
+        _inputError = null;
         _connectionNotice = null;
         _failedTurn = null;
         notifyListeners();
@@ -337,6 +343,14 @@ class GenkitAgent extends CommerceAgent {
       }
       await Future<void>.delayed(Duration.zero);
       return !_disposed;
+    } on StylistInputError catch (error) {
+      if (!_disposed && !_revoked && epoch == _epoch) {
+        // The runtime only commits a validated successful turn. Keep the
+        // existing surfaces interactive so the person can resolve the conflict.
+        _inputError = error.message;
+        _failedTurn = null;
+      }
+      return false;
     } on FormatException {
       if (!_disposed && !_revoked && epoch == _epoch) {
         _recordFailure(

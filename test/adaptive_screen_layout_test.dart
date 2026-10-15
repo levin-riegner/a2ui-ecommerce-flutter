@@ -37,13 +37,17 @@ void main() {
             .getRect(find.byType(StylistComposer))
             .bottom;
         expect(openingBottom, 669 - (safeBottom > 8 ? safeBottom : 8));
-        expect(tester.getRect(find.byType(StylistComposer)).left, 16);
+        final opening = tester.getRect(find.byType(StylistComposer));
+        final card = tester.getRect(find.byType(InkWell).first);
+        expect(opening.left, card.left);
+        expect(opening.right, card.right);
         await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
         await tester.pumpAndSettle();
         expect(
           tester.getRect(find.byType(StylistComposer)).bottom,
           openingBottom,
         );
+        expect(tester.getRect(find.byType(StylistComposer)).left, opening.left);
         expect(tester.takeException(), isNull);
       },
     );

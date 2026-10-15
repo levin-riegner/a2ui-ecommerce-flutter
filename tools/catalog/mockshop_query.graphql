@@ -1,0 +1,21 @@
+query CatalogSnapshot($first: Int!, $after: String) {
+  products(first: $first, after: $after) {
+    nodes {
+      id title handle description descriptionHtml vendor productType tags
+      category { id name }
+      options { name values }
+      featuredImage { url altText width height }
+      images(first: 3) { nodes { url altText width height } }
+      variants(first: 100) {
+        nodes {
+          id title sku availableForSale
+          selectedOptions { name value }
+          price { amount currencyCode }
+        }
+        pageInfo { hasNextPage }
+      }
+      collections(first: 12) { nodes { title handle description } }
+    }
+    pageInfo { hasNextPage endCursor }
+  }
+}

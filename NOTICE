@@ -2,11 +2,19 @@ A2UI Flutter Commerce Reference
 
 Project and catalog curation credit: contributors to this repository.
 
-The bundled product photographs in assets/images/products/ are included with
+The original product photographs demo-0001.jpg through demo-0200.jpg in
+assets/images/products/ are included with
 permission for public use and redistribution in this demo under the repository's
 Apache-2.0 license. The underlying photographs remain attributable to their
 respective rights holders; inclusion does not transfer their authorship to the
 project contributors.
+
+Images demo-0201.jpg through demo-0977.jpg are generated fictional product
+imagery obtained from Shopify's mock.shop reference catalogs. They are used as
+mock content for this demonstration, not as depictions of merchandise for sale.
+Their source terms apply separately from the original catalog-photo grant:
+https://demostore.hydrogen.mock.shop/policies/terms-of-service
+The project does not assert an Apache-2.0 license for those additional images.
 
 Product names, brands, descriptions, prices, and identifiers in the demo catalog
 are fictional. Recognizable marks in photographs do not imply affiliation with

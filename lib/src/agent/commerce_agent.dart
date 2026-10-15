@@ -18,6 +18,9 @@ abstract class CommerceAgent extends ChangeNotifier {
   bool get hasDressingRoomSurface => hasStarted;
   bool get isBusy => false;
   String? get connectionError => null;
+
+  /// A rejected instruction that can be corrected through ordinary input.
+  String? get inputError => null;
   String? get connectionNotice => null;
   bool get canRetry => false;
   bool get canStartBrief => false;

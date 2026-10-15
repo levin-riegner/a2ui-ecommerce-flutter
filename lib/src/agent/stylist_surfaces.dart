@@ -20,6 +20,7 @@ Map<String, Object?> productFacts(Product product) => {
   'material': product.material,
   'season': product.season,
   'occasion': product.occasion,
+  'keywords': product.keywords,
   'price_eur': product.price,
   'image_asset': product.imageAsset,
 };

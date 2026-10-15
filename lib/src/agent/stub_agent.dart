@@ -195,6 +195,7 @@ class StubAgent extends CommerceAgent {
             'tag': product.tag,
             'swatch': product.swatch,
             'imageAsset': product.imageAsset,
+            'category': product.category.name,
           },
       ],
     };
@@ -431,6 +432,7 @@ class StubAgent extends CommerceAgent {
         'tag': {'path': '/recommendations/$index/tag'},
         'swatch': {'path': '/recommendations/$index/swatch'},
         'imageAsset': {'path': '/recommendations/$index/imageAsset'},
+        'category': {'path': '/recommendations/$index/category'},
         'action': {
           'event': {
             'name': 'select_product',
