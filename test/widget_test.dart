@@ -267,10 +267,7 @@ void main() {
       (image) => !cardImages.contains(image),
     );
     expect(dressingImages, isNotEmpty);
-    expect(
-      dressingImages.every((image) => image.fit == BoxFit.contain),
-      isTrue,
-    );
+    expect(dressingImages.every((image) => image.fit == BoxFit.cover), isTrue);
     expect(
       productImages.where(
         (image) =>

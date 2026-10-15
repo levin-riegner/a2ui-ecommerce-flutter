@@ -368,7 +368,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text('Your bag — 5 items'), findsOneWidget);
-      expect(find.text('€3168'), findsOneWidget);
+      expect(find.text('€3,168'), findsOneWidget);
       var event = UserActionEvent.fromMap(events.last.toMap());
       expect(event.name, 'set_bag_quantity');
       expect(event.context, {'productId': 'design-dress', 'quantity': 2});

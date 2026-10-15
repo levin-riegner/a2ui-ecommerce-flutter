@@ -180,7 +180,7 @@ void main() {
             lower.top,
             status == HingeStatus.partiallyOpen ? 495.5 : 475.5,
           );
-          expect(lower.bottom, 917);
+          expect(lower.bottom, 919);
           expect(
             tester.getRect(find.byType(StylistComposer)).top,
             greaterThan(lower.top),
@@ -230,7 +230,7 @@ void main() {
       status: HingeStatus.fullyOpen,
       keyboard: 0.0,
       cutout: false,
-      gap: 8.0,
+      gap: 32.0,
     ),
     (
       name: 'book landscape',
@@ -238,7 +238,7 @@ void main() {
       status: HingeStatus.partiallyOpen,
       keyboard: 0.0,
       cutout: false,
-      gap: 34.0,
+      gap: 32.0,
     ),
     (
       name: 'open portrait',
@@ -246,7 +246,7 @@ void main() {
       status: HingeStatus.fullyOpen,
       keyboard: 0.0,
       cutout: false,
-      gap: 34.0,
+      gap: 32.0,
     ),
     (
       name: 'closed cover',
@@ -262,7 +262,7 @@ void main() {
       status: HingeStatus.partiallyOpen,
       keyboard: 0.0,
       cutout: false,
-      gap: 34.0,
+      gap: 32.0,
     ),
     (
       name: 'closed landscape',
@@ -278,7 +278,7 @@ void main() {
       status: HingeStatus.fullyOpen,
       keyboard: 220.0,
       cutout: false,
-      gap: 228.0,
+      gap: 252.0,
     ),
     (
       name: 'bottom cutout',
@@ -289,7 +289,7 @@ void main() {
       gap: 39.0,
     ),
   ]) {
-    testWidgets('composer maximizes inner display space: ${scenario.name}', (
+    testWidgets('composer matches Figma dock: ${scenario.name}', (
       tester,
     ) async {
       _window(tester, scenario.size);
@@ -322,7 +322,7 @@ void main() {
         expect(opening.left, scenario.status == HingeStatus.closed ? 16 : 32);
         final card = tester.getRect(find.byType(InkWell).first);
         expect(opening.left, card.left);
-        expect(opening.right, card.right);
+        expect(opening.width, greaterThanOrEqualTo(card.width));
         await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
         await tester.pumpAndSettle();
         final conversation = tester.getRect(find.byType(StylistComposer));
@@ -375,7 +375,7 @@ void main() {
       expect(tester.getRect(find.byType(Divider)).right, 374);
       final composer = find.byType(StylistComposer);
       expect(tester.getRect(composer).right, 374);
-      // The native 34-point home-indicator inset wins over the cover's 8-point
+      // The native 34-point home-indicator inset wins over the 32-point
       // preferred clearance, keeping the complete input above the safe edge.
       expect(tester.getRect(composer).bottom, 678 - 34);
       await tester.enterText(find.byType(TextField), 'Keep this occasion');
@@ -400,7 +400,7 @@ void main() {
       expect(tester.getRect(card).width, 400);
       expect(tester.getRect(card).left, 32);
       expect(tester.getRect(composer).height, 52);
-      expect(tester.getRect(composer).bottom, 669 - 8);
+      expect(tester.getRect(composer).bottom, 669 - 32);
       expect(
         tester.getSize(find.byKey(const ValueKey('stylist-submit-circle'))),
         const Size(36, 36),
@@ -1240,6 +1240,103 @@ void main() {
       }
     });
   }
+  for (final scenario in [
+    (journey: false, reduced: false),
+    (journey: true, reduced: false),
+    (journey: false, reduced: true),
+  ]) {
+    final journey = scenario.journey;
+    testWidgets(
+      'hinge resize preserves ${journey ? 'chat' : 'opening'} state, reduced=${scenario.reduced}',
+      (tester) async {
+        _window(tester, const Size(951, 669));
+        final fake = _FakeFoldable(_data(HingeStatus.fullyOpen));
+        final previous = FoldablePlatform.instance;
+        FoldablePlatform.instance = fake;
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        addTearDown(() async {
+          FoldablePlatform.instance = previous;
+          debugDefaultTargetPlatformOverride = null;
+          await fake.dispose();
+        });
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            FakeAccessibilityFeatures(disableAnimations: scenario.reduced);
+        addTearDown(
+          tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+        );
+        final agent = _BriefComposerAgent();
+        if (journey) {
+          await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        }
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'Keep my draft');
+        final field = tester.state<EditableTextState>(
+          find.byType(EditableText),
+        );
+        final scroll = tester
+            .state<ScrollableState>(
+              find
+                  .descendant(
+                    of: find.byKey(const ValueKey('primary-pane-scroll')),
+                    matching: find.byType(Scrollable),
+                  )
+                  .first,
+            )
+            .position;
+        scroll.jumpTo(40);
+        await tester.pumpAndSettle();
+        final offset = scroll.pixels;
+        final composer = find.byType(StylistComposer);
+        final before = tester.getRect(composer);
+        void book() => fake.emit(
+          _data(
+            HingeStatus.partiallyOpen,
+            regions: [_division(const Rect.fromLTWH(455.5, 0, 40, 669))],
+          ),
+        );
+        book();
+        await tester.pump();
+        if (scenario.reduced) {
+          await tester.pump();
+          expect(tester.getRect(composer).width, before.width - 20);
+          expect(field.widget.controller.text, 'Keep my draft');
+          expect(scroll.pixels, offset);
+          expect(tester.takeException(), isNull);
+          await tester.pumpWidget(const SizedBox.shrink());
+          debugDefaultTargetPlatformOverride = null;
+          return;
+        }
+        expect(tester.getRect(composer), before);
+        await tester.pump(const Duration(milliseconds: 160));
+        final halfway = tester.getRect(composer);
+        expect(halfway.width, lessThan(before.width));
+        expect(halfway.width, greaterThan(before.width - 20));
+        expect(halfway.bottom, before.bottom);
+        expect(scroll.pixels, offset);
+        expect(
+          tester.state<EditableTextState>(find.byType(EditableText)),
+          same(field),
+        );
+        // A new hinge event retargets the running tween from its current bounds.
+        fake.emit(_data(HingeStatus.fullyOpen));
+        await tester.pump();
+        expect(tester.getRect(composer).width, closeTo(halfway.width, .01));
+        await tester.pumpAndSettle();
+        expect(tester.getRect(composer), before);
+        book();
+        await tester.pumpAndSettle();
+        expect(tester.getRect(composer).width, before.width - 20);
+        expect(field.widget.controller.text, 'Keep my draft');
+        expect(field.widget.focusNode.hasFocus, isTrue);
+        expect(scroll.pixels, offset);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox.shrink());
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
+  }
+
   testWidgets(
     'only the black dressing room remains stable between Open and Book',
     (tester) async {
@@ -1301,6 +1398,13 @@ void main() {
           expect(tester.getTopLeft(room).dy, closeTo(top, .01));
           await tester.pumpAndSettle();
           expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+          expect(tester.getRect(find.byType(StylistComposer)).bottom, 637);
+          expect(
+            tester
+                .getRect(find.byKey(const ValueKey('primary-pane-scroll')))
+                .bottom,
+            637,
+          );
           expect(tester.getSize(resize).height, closeTo(height, .01));
           expect(agent.conversation, same(session));
           expect(

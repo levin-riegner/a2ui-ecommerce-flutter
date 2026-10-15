@@ -27,71 +27,117 @@ ChatMessage action(
 );
 
 void main() {
-  test('shows skeleton then validated facts before final prose', () async {
-    final searched = Completer<void>();
-    final begin = Completer<void>();
-    final finalReply = Completer<g.ModelResponse>();
-    final searchReply = Completer<g.ModelResponse>();
-    late g.ModelRequest firstRequest;
-    var calls = 0;
+  test('streams final prose before exposing product cards', () async {
+    final started = Completer<void>();
+    final finish = Completer<void>();
+    late void Function(String) emit;
+    var prose = '';
     final runtime = StylistRuntime(
       products: products,
-      model: (request) async {
-        calls++;
-        if (calls == 1) {
-          firstRequest = request;
-          begin.complete();
-          return searchReply.future;
-        }
-        if (request.tools?.isEmpty == true) {
-          searched.complete();
-          return finalReply.future;
-        }
-        return offlineStylistModel(request);
-      },
+      providerModel: g.Model(
+        name: 'test/stream',
+        fn: (request, context) async {
+          if (request.tools?.isEmpty == true) {
+            expect(context.streamingRequested, isTrue);
+            emit = (text) {
+              prose += text;
+              context.sendChunk(
+                g.ModelResponseChunk(content: [g.TextPart(text: text)]),
+              );
+            };
+            started.complete();
+            await finish.future;
+            return textResponse(prose);
+          }
+          expect(context.streamingRequested, isFalse);
+          return offlineStylistModel(request);
+        },
+      ),
     );
     final agent = GenkitAgent(runtime);
     addTearDown(agent.dispose);
     final pending = agent.startJourney(DemoJourney.lisbon);
-    await begin.future;
+    await started.future;
     await Future<void>.delayed(Duration.zero);
     final pendingId = agent.pendingInlineSurfaceId!;
-    var definition = agent.controller.contextFor(pendingId).definition.value!;
-    expect(
-      definition.components['preview']!.toJson()['component'],
-      'RecommendationSkeleton',
-    );
+    final surface = agent.controller.contextFor(pendingId);
+    expect(surface.definition.value!.components.keys, ['root', 'message']);
     expect(agent.latestInlineSurfaceId, isNull);
-    searchReply.complete(await offlineStylistModel(firstRequest));
-    await searched.future;
+    emit('A soft ');
+    emit('silhouette. ');
     await Future<void>.delayed(Duration.zero);
-    definition = agent.controller.contextFor(pendingId).definition.value!;
     expect(
-      definition.components['preview']!.toJson()['component'],
-      'RecommendationPreview',
+      surface.dataModel.getValue<String>(DataPath('/reply')),
+      contains('A soft silhouette.'),
     );
-    final preview = agent.controller
-        .contextFor(pendingId)
-        .dataModel
-        .getValue<List<Object?>>(DataPath('/recommendations'))!;
-    expect((preview.first as Map)['name'], 'Cotton shirt');
-    expect((preview.first as Map)['price'], '€60');
+    emit('It costs €');
+    emit('20. ');
+    emit('Choose a light layer. ');
+    await Future<void>.delayed(Duration.zero);
+    final visible = surface.dataModel.getValue<String>(DataPath('/reply'))!;
+    expect(visible, contains('Choose a light layer.'));
+    expect(visible, isNot(contains('It costs')));
+    expect(visible, isNot(contains('€20')));
     expect(runtime.outfit['items'], isEmpty);
     expect(agent.latestInlineSurfaceId, isNull);
     expect(
       agent.conversationEntries.whereType<CommerceSurfaceEntry>(),
       isEmpty,
     );
-    finalReply.complete(textResponse('A versatile foundation.'));
+    finish.complete();
     await pending;
     expect(agent.pendingInlineSurfaceId, isNull);
     expect(agent.latestInlineSurfaceId, 'inline-1');
     expect(agent.connectionError, isNull);
-    expect(agent.conversationEntries.map((entry) => entry.runtimeType), [
-      CommerceUserMessage,
-      CommerceSurfaceEntry,
-    ]);
+    final finalSurface = agent.controller.contextFor('inline-1');
+    expect(
+      finalSurface.dataModel.getValue<String>(DataPath('/message')),
+      startsWith(visible),
+    );
+    expect(
+      agent.conversationEntries
+          .whereType<CommerceSurfaceEntry>()
+          .single
+          .textAlreadyVisible,
+      isTrue,
+    );
     expect(agent.controller.contextFor(pendingId).definition.value, isNull);
+  });
+
+  test('failed streamed reply removes provisional text and keeps the committed look', () async {
+    var fail = false;
+    final runtime = StylistRuntime(
+      products: products,
+      providerModel: g.Model(
+        name: 'test/failing-stream',
+        fn: (request, context) async {
+          if (fail && request.tools?.isEmpty == true) {
+            context.sendChunk(
+              g.ModelResponseChunk(
+                content: [g.TextPart(text: 'A new layer. ')],
+              ),
+            );
+            throw StateError('Connection interrupted');
+          }
+          return offlineStylistModel(request);
+        },
+      ),
+    );
+    final agent = GenkitAgent(runtime);
+    addTearDown(agent.dispose);
+    await agent.startJourney(DemoJourney.lisbon);
+    fail = true;
+    await agent.conversation.sendRequest(
+      action('select_product', {'productId': 'top-1'}),
+    );
+    expect(agent.latestInlineSurfaceId, 'inline-1');
+    expect(agent.pendingInlineSurfaceId, isNull);
+    expect(agent.connectionError, isNotNull);
+    expect(runtime.outfit['items'], isEmpty);
+    expect(
+      agent.conversationEntries.whereType<CommerceSurfaceEntry>(),
+      hasLength(1),
+    );
   });
 
   test('failed final prose removes preview and rolls back outfit; retry keeps one user row', () async {

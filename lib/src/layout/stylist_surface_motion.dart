@@ -53,14 +53,27 @@ class _StylistSurfaceMotionState extends State<StylistSurfaceMotion>
     }
     final first = _lastDefinition == null;
     _lastDefinition = definition;
-    if (widget.enabled && !MediaQuery.disableAnimationsOf(context)) {
-      _reveal.forward(from: first ? 0 : .4);
+    if (first) {
+      if (widget.enabled && !MediaQuery.disableAnimationsOf(context)) {
+        _reveal.forward(from: 0);
+      } else {
+        _reveal.value = 1;
+      }
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!widget.enabled || MediaQuery.disableAnimationsOf(context)) {
+      _reveal.value = 1;
     }
   }
 
   @override
   void didUpdateWidget(StylistSurfaceMotion oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!widget.enabled) _reveal.value = 1;
     if (oldWidget.surfaceContext != widget.surfaceContext) {
       oldWidget.surfaceContext.definition.removeListener(_definitionChanged);
       widget.surfaceContext.definition.addListener(_definitionChanged);

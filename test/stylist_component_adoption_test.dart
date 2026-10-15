@@ -285,6 +285,8 @@ void main() {
       await tester.runAsync(() => agent.startBrief(openingDress));
       await tester.pumpAndSettle();
       expect(agent.connectionError, isNull);
+      await tester.tap(find.byTooltip('Styling options'));
+      await tester.pumpAndSettle();
       final compare = find.text('Compare these two').last;
       await tester.ensureVisible(compare);
       await tester.runAsync(() async {
@@ -404,6 +406,8 @@ void main() {
       final agent = GenkitAgent(runtime);
       await tester.pumpWidget(ReferenceApp(agent: agent));
       await tester.runAsync(() => agent.startBrief(openingDress));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Styling options'));
       await tester.pumpAndSettle();
       final open = find.text('Colors, brands & owned pieces').last;
       await tester.ensureVisible(open);

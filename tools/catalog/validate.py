@@ -7,7 +7,7 @@ import re
 import sys
 from pathlib import Path
 
-COLUMNS = ['id', 'name', 'brand', 'description', 'category', 'subcategory', 'gender', 'color', 'material', 'season', 'occasion', 'price_eur', 'image_asset', 'keywords']
+COLUMNS = ['id', 'name', 'brand', 'description', 'category', 'subcategory', 'gender', 'color', 'material', 'season', 'occasion', 'price_eur', 'image_asset', 'keywords', 'size_options']
 CATEGORIES = {'dress', 'top', 'layer', 'bottom', 'shoes', 'bag', 'accessory'}
 FORBIDDEN = re.compile(r'(?:https?://|www\.|cdn\.|gid://)', re.I)
 IMAGE_PATH = re.compile(r'^assets/images/products/demo-[0-9]{4}\.jpg$')
@@ -17,7 +17,7 @@ def validate(catalog: Path, asset_root: Path, source_files: list[Path], min_prod
     errors = []
     with catalog.open(encoding='utf-8-sig', newline='') as stream:
         reader = csv.DictReader(stream)
-        if reader.fieldnames != COLUMNS:
+        if reader.fieldnames not in (COLUMNS, COLUMNS + ['variant_group']):
             errors.append(f'CSV schema mismatch: expected {COLUMNS}')
             return errors
         rows = list(reader)
@@ -50,7 +50,7 @@ def validate(catalog: Path, asset_root: Path, source_files: list[Path], min_prod
                             source_identifiers.add(value)
     for number, row in enumerate(rows, start=2):
         for field, value in row.items():
-            if not value.strip():
+            if not value.strip() and field != 'variant_group':
                 errors.append(f'row {number}: empty {field}')
             if FORBIDDEN.search(value):
                 errors.append(f'row {number}: source URL or store marker in {field}')

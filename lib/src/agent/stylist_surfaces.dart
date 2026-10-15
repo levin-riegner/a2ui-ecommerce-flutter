@@ -6,8 +6,10 @@ import 'city_context.dart';
 import 'stylist_brief_surface.dart';
 
 const stylistCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
-String euro(num value) => formatEuros(value);
-String _budgetEuro(num value) => formatEuros(value, omitZeroCents: true);
+String euro(num value) => '€${value.toStringAsFixed(2)}';
+String _budgetEuro(num value) => value == value.roundToDouble()
+    ? '€${value.toStringAsFixed(0)}'
+    : euro(value);
 
 Map<String, Object?> _card(Product p, String tag) => {
   'id': p.id,
@@ -47,7 +49,7 @@ Map<String, Object?> productChoice(Product product) => {
 /// and carries no action or model-authored product facts.
 List<Map<String, Object?>> renderPendingStylistSurface({
   required String surfaceId,
-  List<Product>? picks,
+  String? text,
 }) => [
   {
     'version': 'v0.9',
@@ -65,19 +67,12 @@ List<Map<String, Object?>> renderPendingStylistSurface({
         {
           'id': 'root',
           'component': 'StylistSection',
-          'children': ['status', 'preview'],
+          'children': ['message'],
         },
         {
-          'id': 'status',
+          'id': 'message',
           'component': 'StylistMessage',
-          'text': _path('/status'),
-        },
-        {
-          'id': 'preview',
-          'component': picks == null
-              ? 'RecommendationSkeleton'
-              : 'RecommendationPreview',
-          if (picks != null) 'products': _path('/recommendations'),
+          'text': _path('/reply'),
         },
       ],
     },
@@ -86,20 +81,7 @@ List<Map<String, Object?>> renderPendingStylistSurface({
     'version': 'v0.9',
     'updateDataModel': {
       'surfaceId': surfaceId,
-      'value': {
-        'status': picks == null
-            ? 'Preparing your recommendations…'
-            : 'Adding styling advice…',
-        'recommendations': [
-          for (final product in picks ?? const <Product>[])
-            _card(
-              product,
-              product.occasion.isEmpty
-                  ? product.category.name
-                  : product.occasion,
-            ),
-        ],
-      },
+      'value': {'reply': text ?? 'Preparing your stylist’s reply…'},
     },
   },
 ];
@@ -153,7 +135,11 @@ List<Map<String, Object?>> renderStylistSurfaces({
   bool canEditPreferences = false,
   Set<ProductCategory> ownedCategories = const {},
   bool showCompletion = true,
+  bool changeDirection = false,
   Map<String, Object?>? library,
+  bool inspectProducts = false,
+  Map<String, Object?>? productDetails,
+  Map<String, Object?>? selectionOptions,
 }) {
   final spent = sumEuros(outfit.values.map((p) => p.price));
   final outfitPlan = plan ?? OutfitPlan.from(brief: occasion, outfit: outfit);
@@ -211,6 +197,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
     {
       'id': 'root',
       'component': 'DressingRoom',
+      'changeAction': _eventAction('adjust_piece'),
       for (final property in [
         'title',
         'brief',
@@ -225,6 +212,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
   ];
   final inlineData = <String, Object?>{
     'message': reply,
+    'selectionOptions': ?selectionOptions,
     'eyebrow': picks.isEmpty ? 'Your stylist' : 'Catalog options',
     'recommendations': picks
         .map((p) => _card(p, p.occasion.isEmpty ? p.category.name : p.occasion))
@@ -279,9 +267,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
       });
     } else if (presentation == 'alternative') {
       final product = picks.single;
-      final saving = adjusting == null
-          ? 0.0
-          : subtractEuros(adjusting.price, product.price);
+      final saving = adjusting == null ? 0.0 : adjusting.price - product.price;
       inlineComponents.add({
         'id': 'recommendations',
         'component': 'AlternativePiece',
@@ -528,6 +514,166 @@ List<Map<String, Object?>> renderStylistSurfaces({
       },
     });
   }
+  if (changeDirection) {
+    final ids = <String>[];
+    for (final entry in outfit.entries) {
+      final id = 'change-${entry.key}';
+      ids.add(id);
+      inlineComponents.add({
+        'id': id,
+        'component': 'ChoiceChip',
+        'label': 'Change ${entry.value.name}',
+        'action': _eventAction('adjust_piece', {'category': entry.key}),
+      });
+    }
+    ids.add('restart-chat');
+    inlineComponents.add({
+      'id': 'restart-chat',
+      'component': 'ChoiceChip',
+      'label': 'Start a new look',
+      'action': _eventAction('reset_look'),
+    });
+    (inlineComponents.first['children'] as List).addAll(ids);
+  }
+  if (inspectProducts &&
+      clarification == null &&
+      productDetails == null &&
+      selectionOptions == null &&
+      !changeDirection) {
+    for (final p in {
+      for (final p in [...outfit.values, ...picks]) p.id: p,
+    }.values) {
+      final id = 'details-${p.id}';
+      (inlineComponents.first['children'] as List).add(id);
+      inlineComponents.add({
+        'id': id,
+        'component': 'PrimaryButton',
+        'label': 'Details & sizes · ${p.name}',
+        'action': _eventAction('open_product_details', {'productId': p.id}),
+      });
+    }
+  }
+  if (selectionOptions != null) {
+    final choices = (selectionOptions['choices'] as List).cast<Map>();
+    final selected = choices.first;
+    final sizes = List<String>.from(selected['sizes'] as List);
+    final preferred = selected['size'] as String;
+    inlineData['selectionOptions'] = {
+      ...selectionOptions,
+      'size': sizes.contains(preferred)
+          ? preferred
+          : sizes.length == 1
+          ? sizes.single
+          : '',
+      'selectedColours': [displayDetail(selected['colour'] as String)],
+      'sizes': sizes,
+      'canSave':
+          sizes.contains(preferred) &&
+          ((selectionOptions['fits'] as List).isEmpty ||
+              (selectionOptions['fits'] as List).contains(
+                selectionOptions['fit'],
+              )),
+    };
+    // Reuse the catalog's selectors in the conversation, before the next set
+    // of recommendations. Colour changes request the linked row's own sizes.
+    (inlineComponents.first['children'] as List).insert(1, 'selection-options');
+    inlineComponents.addAll([
+      {
+        'id': 'selection-options',
+        'component': 'StylistSection',
+        'children': [
+          'selection-heading',
+          if (choices.length > 1) 'selection-colour',
+          'selection-fit',
+          'selection-save',
+        ],
+      },
+      {
+        'id': 'selection-heading',
+        'component': 'Eyebrow',
+        'text': selected['name'],
+      },
+      if (choices.length > 1)
+        {
+          'id': 'selection-colour',
+          'component': 'ColourPicker',
+          'question': 'Choose your colour.',
+          'singleSelect': true,
+          'options': [
+            for (final choice in choices)
+              {
+                'name': displayDetail(choice['colour'] as String),
+                'hex': choice['swatch'],
+              },
+          ],
+          'selected': _path('/selectionOptions/selectedColours'),
+          'selectedPath': '/selectionOptions/selectedColours',
+          'action': _eventAction('choose_product_colour', {
+            'productId': selectionOptions['productId'],
+          }),
+        },
+      {
+        'id': 'selection-fit',
+        'component': 'FitSize',
+        'sizes': _path('/selectionOptions/sizes'),
+        'fits': _path('/selectionOptions/fits'),
+        'size': _path('/selectionOptions/size'),
+        'fit': _path('/selectionOptions/fit'),
+        'sizePath': '/selectionOptions/size',
+        'fitPath': '/selectionOptions/fit',
+        'canSavePath': '/selectionOptions/canSave',
+        'sizeLabel': 'SIZE',
+        'question': _path('/selectionOptions/question'),
+      },
+      {
+        'id': 'selection-save',
+        'component': 'PrimaryButton',
+        'enabled': _path('/selectionOptions/canSave'),
+        'label': _path('/selectionOptions/saveLabel'),
+        'action': _eventAction('set_product_options', {
+          'productId': selectionOptions['productId'],
+          'colourProductId': selected['id'],
+          'size': _path('/selectionOptions/size'),
+          'fit': _path('/selectionOptions/fit'),
+        }),
+      },
+    ]);
+  }
+  if (productDetails != null) {
+    inlineData['productDetails'] = productDetails;
+    (inlineComponents.first['children'] as List).add('product-details');
+    inlineComponents.add({
+      'id': 'product-details',
+      'component': 'StylistSection',
+      'children': ['detail-fit', 'apply-demo-size'],
+    });
+    inlineComponents.addAll([
+      {
+        'id': 'detail-fit',
+        'component': 'FitSize',
+        'sizes': _path('/productDetails/sizes'),
+        'fits': _path('/productDetails/fits'),
+        'size': _path('/productDetails/size'),
+        'fit': _path('/productDetails/fit'),
+        'sizePath': '/productDetails/size',
+        'fitPath': '/productDetails/fit',
+        'canSavePath': '/productDetails/canSave',
+        'sizeLabel': 'SIZE',
+        'question': _path('/productDetails/question'),
+      },
+      {
+        'id': 'apply-demo-size',
+        'component': 'PrimaryButton',
+        'enabled': _path('/productDetails/canSave'),
+        'label': _path('/productDetails/saveLabel'),
+        'action': _eventAction('set_fit_size', {
+          'productId': productDetails['id'],
+          'size': _path('/productDetails/size'),
+          'fit': _path('/productDetails/fit'),
+        }),
+      },
+    ]);
+  }
   if (clarification != null) {
     final briefSurface = renderStylistBriefSurface(
       reply: reply,
@@ -655,6 +801,119 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'removeAction': _eventAction('remove_bag_item'),
         'restoreAction': _eventAction('restore_bag_item'),
         'quantityAction': _eventAction('change_bag_quantity'),
+        'sizeAction': _eventAction('open_product_details'),
+        'checkoutAction': _eventAction('preview_demo_checkout'),
+      });
+      for (final item in library['bagItems'] as List) {
+        final id = 'bag-size-${item['id']}';
+        (inlineComponents.first['children'] as List).add(id);
+        inlineComponents.add({
+          'id': id,
+          'component': 'PrimaryButton',
+          'label':
+              '${item['size'] == '' ? 'Choose' : 'Change'} size · ${item['name']}',
+          'action': _eventAction('open_product_details', {
+            'productId': item['id'],
+          }),
+        });
+      }
+      if (library['delivery'] case final Map delivery) {
+        (inlineComponents.first['children'] as List).addAll(<String>[
+          'demo-delivery',
+          'preview-demo-checkout',
+        ]);
+        inlineComponents.addAll([
+          {
+            'id': 'demo-delivery',
+            'component': 'DeliveryEstimate',
+            'headline':
+                'Demo delivery: ${delivery['earliestDate']}–${delivery['latestDate']}',
+            'detail':
+                '${delivery['origin']} → ${delivery['destination']} · ${delivery['service']}. ${delivery['disclaimer']}',
+          },
+          {
+            'id': 'preview-demo-checkout',
+            'component': 'PrimaryButton',
+            'label': 'Preview demo checkout',
+            'action': _eventAction('preview_demo_checkout'),
+          },
+        ]);
+      }
+    }
+    if (productDetails == null &&
+        selectionOptions == null &&
+        outfitPlan.complete &&
+        picks.isEmpty &&
+        !changeDirection &&
+        outfit.isNotEmpty &&
+        library['showBag'] != true &&
+        library['checkout'] == null &&
+        library['receipt'] == null) {
+      inlineData['fitPieces'] = library['fitPieces'];
+      (inlineComponents.first['children'] as List).add('fit-notes');
+      inlineComponents.add({
+        'id': 'fit-notes',
+        'component': 'FitNotes',
+        'title': 'Your selected sizes',
+        'pieces': _path('/fitPieces'),
+        'action': _eventAction('open_product_details'),
+      });
+    }
+    if (library['checkout'] case final Map quote) {
+      (inlineComponents.first['children'] as List).addAll(<String>[
+        'checkout-summary',
+        'checkout-delivery',
+        'confirm-demo-checkout',
+        'checkout-back',
+      ]);
+      final lines = quote['lines'] as List;
+      inlineComponents.addAll([
+        {
+          'id': 'checkout-summary',
+          'component': 'StylistMessage',
+          'text':
+              'LOCAL DEMO CHECKOUT\n${lines.map((line) => '${line['name']} · ${line['size']} × ${line['quantity']}').join('\n')}\nSubtotal: ${euro((quote['subtotalCents'] as int) / 100)}\nDemo shipping: ${euro((quote['shippingCents'] as int) / 100)}\nDemo tax: €0.00 (fictional)\nDemo total: ${euro((quote['totalCents'] as int) / 100)}\nNo payment details, real order or shipment.',
+        },
+        {
+          'id': 'checkout-delivery',
+          'component': 'DeliveryEstimate',
+          'headline':
+              'Fictional arrival ${quote['delivery']['earliestDate']}–${quote['delivery']['latestDate']}',
+          'detail': quote['delivery']['disclaimer'],
+        },
+        {
+          'id': 'confirm-demo-checkout',
+          'component': 'PrimaryButton',
+          'label': 'Complete demo checkout — no payment',
+          'action': _eventAction('confirm_demo_checkout', {
+            'quoteKey': quote['key'],
+          }),
+        },
+        {
+          'id': 'checkout-back',
+          'component': 'PrimaryButton',
+          'label': 'Back to demo bag',
+          'action': _eventAction('open_bag'),
+        },
+      ]);
+    }
+    if (library['receipt'] case final Map receipt) {
+      (inlineComponents.first['children'] as List).add('demo-receipt');
+      inlineData['demoReceipt'] = receipt;
+      inlineComponents.add({
+        'id': 'demo-receipt',
+        'component': 'StylistMessage',
+        'text':
+            'SIMULATED RECEIPT · ${receipt['id']}\n${(receipt['lines'] as List).map((line) => '${line['name']} · ${line['size']} × ${line['quantity']}').join('\n')}\nDemo total: ${euro((receipt['totalCents'] as int) / 100)}\nNo payment taken, real order placed or shipment booked.',
+      });
+    }
+    if (library['hasReceipt'] == true) {
+      (inlineComponents.first['children'] as List).add('view-demo-receipt');
+      inlineComponents.add({
+        'id': 'view-demo-receipt',
+        'component': 'PrimaryButton',
+        'label': 'View last demo receipt',
+        'action': _eventAction('open_demo_receipt'),
       });
     }
     if (library['toast'] case final Map toast) {

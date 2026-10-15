@@ -125,6 +125,7 @@ class FinalizedPieceSlot extends StatelessWidget {
                         CommerceProductImage(
                           imageAsset: imageAsset,
                           swatch: swatch,
+                          fit: BoxFit.cover,
                         )
                       else
                         Center(
@@ -750,17 +751,19 @@ class FinalizedRightComponent extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      TextButton(
-                        onPressed: action('action', {
-                          'productId': piece['id'],
-                          'size': piece['size'],
-                        }),
-                        style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xfff4f4f5),
-                          shape: const StadiumBorder(),
-                          minimumSize: const Size(48, 48),
+                      Flexible(
+                        child: TextButton(
+                          onPressed: action('action', {
+                            'productId': piece['id'],
+                            'size': piece['size'],
+                          }),
+                          style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xfff4f4f5),
+                            shape: const StadiumBorder(),
+                            minimumSize: const Size(48, 48),
+                          ),
+                          child: Text(piece['size']?.toString() ?? ''),
                         ),
-                        child: Text(piece['size']?.toString() ?? ''),
                       ),
                     ],
                   ),
@@ -980,16 +983,15 @@ Widget _rightLink(
 );
 
 class _RightCard extends StatelessWidget {
-  const _RightCard({required this.child, this.padding = 14, this.radius = 12});
+  const _RightCard({required this.child, this.padding = 14});
   final Widget child;
   final double padding;
-  final double radius;
   @override
   Widget build(BuildContext context) => Container(
     padding: EdgeInsets.all(padding),
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(radius),
+      borderRadius: BorderRadius.circular(12),
       border: Border.all(color: const Color(0xffe4e4e7)),
     ),
     child: child,
@@ -1002,6 +1004,7 @@ Widget _rightThumb(
   double height = 56,
   double glyphSize = 28,
   double radius = 8,
+  BoxFit fit = BoxFit.contain,
 }) {
   final category = item['category']?.toString().toLowerCase() ?? '';
   final image = item['imageAsset']?.toString();
@@ -1023,6 +1026,7 @@ Widget _rightThumb(
             ? CommerceProductImage(
                 imageAsset: image,
                 swatch: item['swatch']?.toString(),
+                fit: fit,
               )
             : _hangerHeights.containsKey(category)
             ? Center(
@@ -1176,7 +1180,17 @@ class FinalizedBagPreview extends StatefulWidget {
 class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
   late List<Map<String, Object?>> items;
   bool get hostOwned => widget.data['mode'] == 'demo-host';
-  String money(double value) => formatEuros(value, omitZeroCents: !hostOwned);
+  String money(double value) {
+    final parts = value
+        .toStringAsFixed(value == value.roundToDouble() ? 0 : 2)
+        .split('.');
+    final whole = parts.first.replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (_) => ',',
+    );
+    return '€$whole${parts.length == 1 ? '' : '.${parts.last}'}';
+  }
+
   void load() {
     items = [
       for (final row in widget.data['items'] as List? ?? [])
@@ -1244,6 +1258,123 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
     };
   }
 
+  Widget bagRow(
+    BuildContext context,
+    Map<String, Object?> item,
+  ) => LayoutBuilder(
+    builder: (context, constraints) {
+      final compact =
+          constraints.maxWidth >= 350 &&
+          MediaQuery.textScalerOf(context).scale(14) <= 18;
+      final name = item['name']?.toString() ?? '';
+      final sizeAction = callback('sizeAction', {
+        'productId': item['id'],
+      }, null);
+      final info = Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 2,
+          children: [
+            Text(
+              name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: const Color(0xff18181b)),
+            ),
+            Tooltip(
+              message:
+                  '${item['size'] == '' ? 'Choose' : 'Change'} size · $name',
+              child: InkWell(
+                onTap: sizeAction,
+                child: Text(
+                  (item['meta']?.toString() ?? '')
+                      .replaceFirst(' · fictional inventory', '')
+                      .replaceFirst('Choose demo size', 'Choose size'),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: const Color(0xff71717a)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+      final stepper = FinalizedQuantityStepper(
+        key: ValueKey('bag-quantity-${item['id']}'),
+        value: quantity(item),
+        compact: compact,
+        updateLocally: !hostOwned,
+        onChanged: callback('quantityAction', {}, null) == null
+            ? null
+            : (next) {
+                callback('quantityAction', {
+                  'productId': item['id'],
+                  'quantity': next,
+                }, () => item['quantity'] = next)!();
+              },
+        onRemove: remove(context, item),
+      );
+      final price = _rightText(
+        context,
+        money(((item['unitPrice'] as num?)?.toDouble() ?? 0) * quantity(item)),
+        size: 14,
+      );
+      final removeButton = IconButton(
+        tooltip: 'Remove $name',
+        onPressed: remove(context, item),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints.tightFor(width: 20, height: 20),
+        style: IconButton.styleFrom(
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        icon: _rightIcon('remove'),
+      );
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: Color(0xffe4e4e7))),
+        ),
+        child: Column(
+          spacing: 8,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                _rightThumb(item, width: 56, height: 56, fit: BoxFit.cover),
+                const SizedBox(width: 12),
+                info,
+                if (compact) ...[
+                  const SizedBox(width: 12),
+                  stepper,
+                  const SizedBox(width: 12),
+                  price,
+                ],
+                const SizedBox(width: 12),
+                removeButton,
+              ],
+            ),
+            if (!compact)
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: stepper,
+                  ),
+                  price,
+                ],
+              ),
+          ],
+        ),
+      );
+    },
+  );
+
   @override
   Widget build(BuildContext context) {
     final total = eurosFromCents(
@@ -1254,10 +1385,21 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
       ),
     );
     final count = items.fold<int>(0, (n, item) => n + quantity(item));
-    return _RightCard(
-      padding: 18,
-      radius: 16,
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .18),
+            blurRadius: 20,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
@@ -1265,94 +1407,27 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
               Expanded(
                 child: _rightText(
                   context,
-                  '${hostOwned ? 'Demo bag' : 'Your bag'} — $count items',
+                  'Your bag — $count ${count == 1 ? 'item' : 'items'}',
                   size: 16,
                 ),
               ),
               IconButton(
                 tooltip: 'Close bag',
                 onPressed: callback('closeAction', {}, null),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints.tightFor(
+                  width: 24,
+                  height: 24,
+                ),
+                style: IconButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
                 icon: _rightIcon('close'),
               ),
             ],
           ),
-          for (final item in items)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _rightThumb(item, width: 56, height: 56),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _rightText(
-                              context,
-                              item['name']?.toString() ?? '',
-                              size: 14,
-                            ),
-                            _rightText(
-                              context,
-                              item['meta']?.toString() ?? '',
-                              size: 12,
-                              muted: true,
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Remove ${item['name']}',
-                        onPressed: remove(context, item),
-                        icon: _rightIcon('remove'),
-                      ),
-                    ],
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 8,
-                    runSpacing: 4,
-                    children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: FinalizedQuantityStepper(
-                          key: ValueKey('bag-quantity-${item['id']}'),
-                          value: quantity(item),
-                          max: 99,
-                          updateLocally: !hostOwned,
-                          onChanged:
-                              callback('quantityAction', {}, null) == null
-                              ? null
-                              : (next) {
-                                  callback('quantityAction', {
-                                    'productId': item['id'],
-                                    'quantity': next,
-                                  }, () => item['quantity'] = next)!();
-                                },
-                          onRemove: remove(context, item),
-                        ),
-                      ),
-                      _rightText(
-                        context,
-                        money(
-                          eurosFromCents(
-                            euroCents(item['unitPrice'] as num? ?? 0) *
-                                quantity(item),
-                          ),
-                        ),
-                        size: 14,
-                      ),
-                    ],
-                  ),
-                  const Divider(color: Color(0xffe4e4e7), height: 1),
-                ],
-              ),
-            ),
+          const SizedBox(height: 14),
+          for (final item in items) bagRow(context, item),
           if (items.isEmpty)
             _rightText(context, 'Your bag is empty', size: 14, muted: true),
           const SizedBox(height: 14),
@@ -1364,19 +1439,28 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
             ],
           ),
           const SizedBox(height: 14),
-          if (!hostOwned)
+          if (!hostOwned || widget.data['checkoutAction'] != null)
             CommercePrimaryButton(
               label: 'Check out',
+              style: FilledButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.bodyLarge,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+              ),
               onPressed: items.isEmpty
                   ? null
                   : callback('checkoutAction', {}, null),
             ),
           const SizedBox(height: 14),
-          _rightLink(
-            context,
-            'Keep styling',
-            callback('closeAction', {}, null),
-            muted: true,
+          TextButton(
+            onPressed: callback('closeAction', {}, null),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: const Size(48, 22),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              foregroundColor: const Color(0xff71717a),
+              textStyle: Theme.of(context).textTheme.bodyLarge,
+            ),
+            child: const Text('Keep styling'),
           ),
         ],
       ),
@@ -1713,6 +1797,7 @@ class _FinalizedDarkPieceSlot extends StatelessWidget {
                       ? CommerceProductImage(
                           imageAsset: image,
                           swatch: slot.swatch,
+                          fit: BoxFit.cover,
                         )
                       : _rightThumb(
                           {'category': slot.category, 'swatch': slot.swatch},
@@ -1813,6 +1898,7 @@ class _FinalizedDarkPieceSlot extends StatelessWidget {
                             ? CommerceProductImage(
                                 imageAsset: image,
                                 swatch: slot.swatch,
+                                fit: BoxFit.cover,
                               )
                             : _rightThumb(
                                 {

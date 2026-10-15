@@ -21,6 +21,8 @@ abstract class CommerceSession extends ChangeNotifier {
   int get bagCount => 0;
   bool get hasLocalLibrary => false;
   Future<void> openBag() async {}
+  Future<void> openSavedLooks() async {}
+  Future<bool> restartChat() async => true;
   Future<void> retryLastTurn() async {}
   Future<void> startBrief(String message) async {}
   Future<void> startJourney(DemoJourney journey);

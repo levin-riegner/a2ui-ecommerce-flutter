@@ -296,7 +296,8 @@ void main() {
                     .first,
               )
               .opacity;
-          expect(opacity, reducedMotion ? 1 : lessThan(1));
+          // Renderer updates must not replay an already visible reply.
+          expect(opacity, 1);
           await tester.pumpAndSettle();
           expect(scroll.pixels, closeTo(reading, 1));
           expect(agent.requests, 0);

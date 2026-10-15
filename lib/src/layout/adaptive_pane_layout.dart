@@ -131,6 +131,8 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
   bool _autoScrolling = false;
   int _followRevision = 0;
   double? _followTarget;
+  Size? _lastViewport;
+  double? _lastKeyboardInset;
 
   @override
   void initState() {
@@ -312,7 +314,9 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
 
   Widget _canvas({required bool split, required List<Widget> children}) {
     final canvas = Stack(children: children);
-    if (widget.secondaryBackgroundColor == null) return canvas;
+    if (widget.secondaryBackgroundColor == null) {
+      return KeyedSubtree(key: _canvasKey, child: canvas);
+    }
     final useSecondaryColor =
         split &&
         (!widget.secondaryBackgroundOnlyInBookMode ||
@@ -502,6 +506,18 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
           context,
           viewportSize: size,
         );
+        // Keep pane identity across flat/Book layouts so their geometry can
+        // interpolate. A different display, rotation or keyboard resizes
+        // immediately rather than animating from an obsolete viewport.
+        final motionDuration =
+            DuoLayoutScope.of(context).capabilities.isFoldable &&
+                !media.disableAnimations &&
+                _lastViewport == size &&
+                _lastKeyboardInset == media.viewInsets.bottom
+            ? AdaptivePaneLayout.transitionDuration
+            : Duration.zero;
+        _lastViewport = size;
+        _lastKeyboardInset = media.viewInsets.bottom;
         final textScale = math.max(1.0, media.textScaler.scale(14) / 14);
         final minPrimaryWidth = widget.minPrimaryWidth * textScale;
         final minSecondaryWidth = widget.minSecondaryWidth * textScale;
@@ -540,11 +556,17 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                           ? size.width / 2
                           : regions[1].left,
                     ),
-                  Positioned.fromRect(
+                  AnimatedPositioned.fromRect(
+                    key: const ValueKey('primary-pane-motion'),
+                    duration: motionDuration,
+                    curve: Curves.easeInOutCubic,
                     rect: _primaryBounds(regions[0], size, media),
                     child: _primaryPane(),
                   ),
-                  Positioned.fromRect(
+                  AnimatedPositioned.fromRect(
+                    key: const ValueKey('secondary-pane-motion'),
+                    duration: motionDuration,
+                    curve: Curves.easeInOutCubic,
                     rect: _secondaryBounds(regions[1], size),
                     child: _secondaryPane(
                       showRail:
@@ -627,7 +649,9 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
               child: _canvas(
                 split: false,
                 children: [
-                  Positioned.fromRect(
+                  AnimatedPositioned.fromRect(
+                    duration: motionDuration,
+                    curve: Curves.easeInOutCubic,
                     rect: Rect.fromLTWH(
                       bounds.left,
                       bounds.top,
@@ -636,8 +660,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                     ),
                     child: _header(),
                   ),
-                  Positioned.fromRect(
+                  AnimatedPositioned.fromRect(
                     key: const ValueKey('portrait-dressing-pane'),
+                    duration: motionDuration,
+                    curve: Curves.easeInOutCubic,
                     rect: Rect.fromLTRB(
                       bounds.left,
                       roomTop,
@@ -646,8 +672,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                     ),
                     child: _compactSecondary(widget.panePadding),
                   ),
-                  Positioned.fromRect(
+                  AnimatedPositioned.fromRect(
                     key: const ValueKey('portrait-conversation-pane'),
+                    duration: motionDuration,
+                    curve: Curves.easeInOutCubic,
                     rect: Rect.fromLTRB(
                       bounds.left,
                       conversationTop,
@@ -697,7 +725,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                 children: [
                   if (widget.secondaryBackgroundColor != null)
                     _background(secondaryLeft),
-                  Positioned.fromRect(
+                  AnimatedPositioned.fromRect(
+                    key: const ValueKey('primary-pane-motion'),
+                    duration: motionDuration,
+                    curve: Curves.easeInOutCubic,
                     rect: _primaryBounds(
                       Rect.fromLTWH(
                         centered.left,
@@ -710,7 +741,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
                     ),
                     child: _primaryPane(),
                   ),
-                  Positioned.fromRect(
+                  AnimatedPositioned.fromRect(
+                    key: const ValueKey('secondary-pane-motion'),
+                    duration: motionDuration,
+                    curve: Curves.easeInOutCubic,
                     rect: _secondaryBounds(
                       Rect.fromLTRB(
                         secondaryLeft,
@@ -734,7 +768,10 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
             children: [
               if (split && widget.secondaryBackgroundColor != null)
                 _background(centered.left + primaryWidth),
-              Positioned.fromRect(
+              AnimatedPositioned.fromRect(
+                key: const ValueKey('primary-pane-motion'),
+                duration: motionDuration,
+                curve: Curves.easeInOutCubic,
                 rect: !split ? _primaryBounds(centered, size, media) : centered,
                 child: split
                     ? Row(
