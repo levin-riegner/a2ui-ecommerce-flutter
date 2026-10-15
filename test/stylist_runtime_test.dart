@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:async';
 
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
@@ -170,7 +172,7 @@ void main() {
       });
       expect((result['products'] as List).single['id'], 'dress-1');
       expect(result['outfit']['budget'], 100);
-      final messages = result['messages'] as List;
+      final messages = presentedStylistTurn(result)['messages'] as List;
       final cards = messages.firstWhere(
         (m) => m['updateDataModel']?['surfaceId'] == 'inline-1',
       )['updateDataModel']['value']['recommendations'];
@@ -296,7 +298,7 @@ void main() {
     final result = await runtime.turn(action('select_product', 'dress-1'));
     expect(runtime.outfit['items'], {'dress': 'dress-1'});
     expect(
-      (result['messages'] as List).any(
+      (presentedStylistTurn(result)['messages'] as List).any(
         (m) => m['createSurface']?['surfaceId'] == 'inline-2',
       ),
       isTrue,
@@ -669,9 +671,10 @@ void main() {
       expect(updated['brief']['notes'], 'avoid heels');
       expect(updated['brief']['occasion'], 'work');
       expect(updated['brief']['budget'], 300);
-      final data = (updated['messages'] as List).firstWhere(
-        (m) => m['updateDataModel']?['surfaceId'] == 'dressing-room',
-      )['updateDataModel']['value'];
+      final data = (presentedStylistTurn(updated)['messages'] as List)
+          .firstWhere(
+            (m) => m['updateDataModel']?['surfaceId'] == 'dressing-room',
+          )['updateDataModel']['value'];
       expect(data['brief'], contains('summer'));
       expect(data['brief'], isNot(contains('winter')));
     },

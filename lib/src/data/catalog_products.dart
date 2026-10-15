@@ -45,6 +45,7 @@ List<Product> parseCatalogProducts(String source) {
         swatch: row['swatch'] ?? '#e4e4e7',
         description: row['description'] ?? '',
         subcategory: row['subcategory'] ?? '',
+        gender: row['gender'] ?? 'male, female',
         color: color,
         material: material,
         season: row['season'] ?? '',

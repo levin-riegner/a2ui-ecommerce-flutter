@@ -1,3 +1,6 @@
+import 'package:a2ui_flutter_commerce/src/agent/stylist_result.dart';
+import 'package:a2ui_flutter_commerce/src/agent/stylist_presenter.dart';
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -77,8 +80,8 @@ void main() {
         'productCount': (result['products'] as List).length,
       }),
     );
-    bool hasIntakeControls(Map<String, dynamic> result) =>
-        (result['messages'] as List)
+    bool hasIntakeControls(StylistTurnResult result) =>
+        (presentStylistResult(result)['messages'] as List)
             .where(
               (m) =>
                   m['updateComponents']?['surfaceId'].toString().startsWith(

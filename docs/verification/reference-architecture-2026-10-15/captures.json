@@ -1,0 +1,30 @@
+[
+  {
+    "file": "start-466x800.png",
+    "logicalSize": {
+      "width": 466.0,
+      "height": 800.0
+    },
+    "pixelRatio": 1,
+    "fonts": [
+      "Inter",
+      "Jost"
+    ],
+    "state": "disconnected start; no provider configured or called",
+    "artworkTiles": 10
+  },
+  {
+    "file": "start-951x669.png",
+    "logicalSize": {
+      "width": 951.0,
+      "height": 669.0
+    },
+    "pixelRatio": 1,
+    "fonts": [
+      "Inter",
+      "Jost"
+    ],
+    "state": "disconnected start; no provider configured or called",
+    "artworkTiles": 10
+  }
+]

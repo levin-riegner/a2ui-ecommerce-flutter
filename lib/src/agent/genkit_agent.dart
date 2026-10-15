@@ -3,19 +3,16 @@ import 'dart:convert';
 
 import 'package:a2ui_core/a2ui_core.dart' as core;
 import 'package:genui/genui.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 
 import '../catalog/commerce_catalog.dart';
 import '../data/models.dart';
 import 'commerce_agent.dart';
 import 'conversation_entry.dart';
-import '../data/catalog_products.dart';
-import 'model_settings.dart';
 import 'genkit_providers.dart';
 import 'stylist_runtime.dart';
 import 'stylist_surfaces.dart';
-import 'city_context.dart';
+import 'stylist_presenter.dart';
+import 'a2ui_batch_validator.dart';
 import 'stylist_input_error.dart';
 
 /// Runs Genkit inside Flutter and publishes catalog-backed A2UI surfaces.
@@ -30,47 +27,43 @@ class GenkitAgent extends CommerceAgent {
     conversation = Conversation(controller: controller, transport: transport);
   }
 
-  static Future<GenkitAgent> connect({
-    required String provider,
-    required String model,
-    required String apiKey,
-    String? baseUrl,
-    http.Client? client,
-    bool onlineContext = false,
-  }) async {
-    final settings = ModelSettings(
-      provider: provider,
-      model: model,
-      apiKey: apiKey,
-      baseUrl: baseUrl,
-    );
-    final connection = GenkitProvider(settings, client: client);
-    try {
-      final products = parseCatalogProducts(
-        await rootBundle.loadString('assets/data/catalog/products.csv'),
-      );
-      if (products.isEmpty) throw const FormatException('Catalog unavailable');
-      return GenkitAgent(
-        StylistRuntime(
-          products: products,
-          cityContextSource: onlineContext
-              ? OpenMeteoCityContextSource()
-              : null,
-          providerModel: connection.model,
-          onBeginTurn: connection.beginTurn,
-          onCancelTurn: connection.cancelTurn,
-        ),
-        provider: connection,
-      );
-    } catch (_) {
-      connection.dispose();
-      rethrow;
-    }
-  }
+  final _batchValidator = A2uiBatchValidator(buildCommerceCatalog());
 
   StylistRuntime? _runtime;
   final GenkitProvider? _provider;
   bool _revoked = false;
+
+  Future<void> resumeLocalState() async {
+    final runtime = _runtime;
+    if (runtime == null) return;
+    final resumed = await runtime.loadLocalState();
+    if (resumed ||
+        runtime.hasLocalLibrary ||
+        runtime.localStorageNotice != null) {
+      _hasStarted = true;
+      await _enqueue(
+        () => _performTurn(
+          _AgentTurn(
+            action: {
+              'name': resumed ? 'resume_session' : 'open_saved_looks',
+              'context': <String, Object?>{},
+            },
+          ),
+        ).then<void>((_) {}),
+      );
+    }
+  }
+
+  @override
+  int get bagCount => _runtime?.bagCount ?? 0;
+  @override
+  bool get hasLocalLibrary => true;
+  @override
+  Future<void> openBag() => _enqueue(
+    () => _performTurn(
+      _AgentTurn(action: {'name': 'open_bag', 'context': <String, Object?>{}}),
+    ).then<void>((_) {}),
+  );
 
   Future<void> disconnect() async {
     if (_revoked) return;
@@ -308,7 +301,7 @@ class GenkitAgent extends CommerceAgent {
       final runtime = _runtime;
       if (runtime == null) throw StateError('Model disconnected');
       publishProgress(null);
-      final payload = await runtime.turn(
+      final result = await runtime.turn(
         {
           if (turn.message.isNotEmpty) 'message': turn.message,
           if (turn.action != null) 'action': turn.action,
@@ -318,12 +311,12 @@ class GenkitAgent extends CommerceAgent {
           if (_disposed || _revoked || epoch != _epoch) {
             throw StateError('Turn superseded');
           }
-          _validateSurfaces(_parseEvents(payload));
+          _validateSurfaces(_parseEvents(presentStylistResult(payload)));
         },
       );
       if (_disposed || _revoked || epoch != _epoch) return false;
       // Parse the whole batch before publishing any part of it to the renderer.
-      final events = _parseEvents(payload);
+      final events = _parseEvents(presentStylistResult(result));
       _validateSurfaces(events);
       _clearPending();
       for (final event in events) {
@@ -394,45 +387,11 @@ class GenkitAgent extends CommerceAgent {
         };
       }
     }
-    final supported = buildCommerceCatalog().items
-        .map((item) => item.name)
-        .toSet();
-    String? inlineId = latestInlineSurfaceId;
-    for (final event in events) {
-      if (event is core.CreateSurfaceMessage) {
-        if (event.catalogId != commerceCatalogId ||
-            event.surfaceId.isEmpty ||
-            components.containsKey(event.surfaceId)) {
-          throw const FormatException('Invalid surface creation');
-        }
-        components[event.surfaceId] = {};
-        if (event.surfaceId.startsWith('inline-')) inlineId = event.surfaceId;
-      } else if (event is core.DeleteSurfaceMessage) {
-        components.remove(event.surfaceId);
-        if (event.surfaceId == inlineId) inlineId = null;
-      } else if (event is core.UpdateComponentsMessage) {
-        final surface = components[event.surfaceId];
-        if (surface == null) throw const FormatException('Unknown surface');
-        for (final component in event.components) {
-          final id = component['id'];
-          if (id is! String ||
-              id.isEmpty ||
-              !supported.contains(component['component'])) {
-            throw const FormatException('Invalid component');
-          }
-          surface[id] = component;
-        }
-      } else if (event is core.UpdateDataModelMessage &&
-          !components.containsKey(event.surfaceId)) {
-        throw const FormatException('Unknown data surface');
-      }
-    }
-    if (inlineId == null ||
-        !components.containsKey('dressing-room') ||
-        !components.containsKey(inlineId) ||
-        components.values.any((surface) => !surface.containsKey('root'))) {
-      throw const FormatException('Missing surface root');
-    }
+    _batchValidator.validate(
+      events,
+      current: components,
+      latestInlineSurfaceId: latestInlineSurfaceId,
+    );
   }
 
   void _recordFailure(_AgentTurn turn, String message) {
@@ -442,7 +401,9 @@ class GenkitAgent extends CommerceAgent {
 
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
+    _batchValidator.dispose();
     conversation.dispose();
     controller.dispose();
     transport.dispose();

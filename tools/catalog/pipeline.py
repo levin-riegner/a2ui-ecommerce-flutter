@@ -18,7 +18,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 VERSION = 1
-FIELDS = {'category', 'subcategory', 'color', 'material', 'seasons', 'occasions', 'keywords', 'details'}
+FIELDS = {'category', 'subcategory', 'gender', 'color', 'material', 'seasons', 'occasions', 'keywords', 'details'}
 LIST_FIELDS = {'seasons', 'occasions', 'keywords', 'details'}
 CATEGORIES = {'dress', 'top', 'bottom', 'layer', 'shoes', 'bag', 'accessory'}
 CONFIDENCE = {'high', 'medium', 'low'}
@@ -253,6 +253,8 @@ def make_job(record):
                 'do not change source IDs, variants, prices or currencies. '
                 'Do not invent composition percentages, sizing or weather performance. '
                 'A collection material theme is not product composition. '
+                'Classify garment audience as male, female, or male, female from consistent product evidence and styling. '
+                'This is the product audience, never the gender identity of a person in the photograph. '
                 'Search text must contain positive supported features only: keep contradictions, '
                 'missing features, uncertain materials and unavailable colors in flags/unknowns, '
                 'not search keywords. Re-enrichment does not resolve source contradictions. '
@@ -294,6 +296,9 @@ def validate_result(result, record):
     category = result['attributes']['category']['value']
     if category and category not in CATEGORIES:
         raise ValueError('Unsupported Alder category')
+    gender = result['attributes']['gender']['value']
+    if gender not in {'male', 'female', 'male, female'}:
+        raise ValueError('Unsupported gender audience')
     if not isinstance(result['search_document'], str) or not result['search_document'].strip():
         raise ValueError('Missing searchable summary')
     searchable.append(result['search_document'])

@@ -1,4 +1,5 @@
 import '../data/models.dart';
+import '../data/money.dart';
 import 'stylist_constraints.dart';
 
 enum BriefFactSource { user, model, suggestion, inferred }
@@ -9,12 +10,15 @@ enum BriefFactSource { user, model, suggestion, inferred }
 /// dressing and a whole-outfit budget. Free-form dress codes remain valid.
 class StylistBrief {
   const StylistBrief({
+    this.gender = '',
     this.occasion = '',
     this.dressCode = '',
     this.season = '',
     this.budget,
     this.palette = '',
     this.notes = '',
+    this.tripStart = '',
+    this.tripEnd = '',
     this.sources = const {},
     this.constraints = const StylistConstraints(),
   });
@@ -30,22 +34,83 @@ class StylistBrief {
     budget: journey.budget,
   );
 
+  /// Requested garment audience, never an inferred identity of the wearer.
+  final String gender;
+  String get genderLabel => genderStylingLabel(gender);
+  StylistConstraints get productConstraints =>
+      constraints.withGender(gender, dressCode: dressCode);
+
   final String occasion;
   final String dressCode;
   final String season;
   final double? budget;
+  int? get budgetCents => budget == null ? null : euroCents(budget!);
   final String palette;
   final String notes;
+  final String tripStart;
+  final String tripEnd;
   final Map<String, BriefFactSource> sources;
   final StylistConstraints constraints;
 
+  StylistBrief withConstraints(
+    StylistConstraints value, {
+    Map<String, BriefFactSource>? factSources,
+  }) => StylistBrief(
+    gender: gender,
+    occasion: occasion,
+    dressCode: dressCode,
+    season: season,
+    budget: budget,
+    palette: palette,
+    notes: notes,
+    tripStart: tripStart,
+    tripEnd: tripEnd,
+    sources: factSources ?? sources,
+    constraints: value,
+  );
+
+  Map<String, Object?> toSnapshot() => {
+    'facts': toMap(),
+    'sources': {for (final e in sources.entries) e.key: e.value.name},
+    'constraints': constraints.toMap(),
+  };
+
+  factory StylistBrief.fromSnapshot(Map<String, Object?> snapshot) {
+    final facts = snapshot['facts'],
+        sources = snapshot['sources'],
+        constraints = snapshot['constraints'];
+    if (facts is! Map ||
+        sources is! Map ||
+        constraints is! Map ||
+        sources.keys.any((key) => !fields.contains(key)) ||
+        sources.values.any(
+          (v) => !BriefFactSource.values.any((s) => s.name == v),
+        )) {
+      throw const FormatException('Saved outfit facts are invalid.');
+    }
+    return const StylistBrief()
+        .merge(Map<String, Object?>.from(facts))
+        .withConstraints(
+          StylistConstraints.fromMap(Map<String, Object?>.from(constraints)),
+          factSources: Map.unmodifiable({
+            for (final e in sources.entries)
+              e.key as String: BriefFactSource.values.firstWhere(
+                (s) => s.name == e.value,
+              ),
+          }),
+        );
+  }
+
   static const fields = {
+    'gender',
     'occasion',
     'dressCode',
     'season',
     'budget',
     'palette',
     'notes',
+    'tripStart',
+    'tripEnd',
   };
   static const seasons = {'spring', 'summer', 'autumn', 'winter'};
 
@@ -59,6 +124,7 @@ class StylistBrief {
 
   /// Current facts only: replacing winter with summer does not retain winter.
   String get planningText => [
+    if (gender.isNotEmpty) '$gender catalog audience',
     occasion,
     dressCode.replaceAll('-', ' '),
     season,
@@ -69,19 +135,26 @@ class StylistBrief {
   String get planningBrief => planningText;
 
   String get summary => [
+    if (gender.isNotEmpty) genderLabel,
     occasion,
     dressCode.replaceAll('-', ' '),
     season,
     if (budget != null) 'under ${_money(budget!)}',
+    if (tripStart.isNotEmpty)
+      '$tripStart${tripEnd.isEmpty || tripEnd == tripStart ? '' : '–$tripEnd'}',
+    if (tripStart.isEmpty && tripEnd.isNotEmpty) 'ends $tripEnd',
   ].where((value) => value.isNotEmpty).join(' · ');
 
   Map<String, Object?> toMap() => {
+    if (gender.isNotEmpty) 'gender': gender,
     if (occasion.isNotEmpty) 'occasion': occasion,
     if (dressCode.isNotEmpty) 'dressCode': dressCode,
     if (season.isNotEmpty) 'season': season,
     if (budget != null) 'budget': budget,
     if (palette.isNotEmpty) 'palette': palette,
     if (notes.isNotEmpty) 'notes': notes,
+    if (tripStart.isNotEmpty) 'tripStart': tripStart,
+    if (tripEnd.isNotEmpty) 'tripEnd': tripEnd,
   };
 
   /// Applies one validated save or editor submission without mutating this brief.
@@ -136,7 +209,21 @@ class StylistBrief {
         throw FormatException('${entry.key} must be text');
       }
       var text = value.trim();
-      if (entry.key == 'dressCode') {
+      if (entry.key == 'tripStart' || entry.key == 'tripEnd') {
+        final date = DateTime.tryParse(text);
+        if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(text) ||
+            date == null ||
+            date.toIso8601String().substring(0, 10) != text) {
+          throw const FormatException('Enter a valid trip date as YYYY-MM-DD.');
+        }
+      } else if (entry.key == 'gender') {
+        text = text.toLowerCase();
+        if (!const {'male', 'female', 'male, female'}.contains(text)) {
+          throw const FormatException(
+            'Gender must be male, female or male, female',
+          );
+        }
+      } else if (entry.key == 'dressCode') {
         text = text.toLowerCase().replaceAll(RegExp(r'\s+'), '-');
       } else if (entry.key == 'season') {
         text = text.toLowerCase();
@@ -152,13 +239,24 @@ class StylistBrief {
           ? text.substring(0, maximum)
           : text;
     }
+    if (next['tripStart'] is String &&
+        next['tripEnd'] is String &&
+        (next['tripEnd'] as String).compareTo(next['tripStart'] as String) <
+            0) {
+      throw const FormatException(
+        'The trip end date must be on or after its start date.',
+      );
+    }
     return StylistBrief(
+      gender: next['gender'] as String? ?? '',
       occasion: next['occasion'] as String? ?? '',
       dressCode: next['dressCode'] as String? ?? '',
       season: next['season'] as String? ?? '',
       budget: next['budget'] as double?,
       palette: next['palette'] as String? ?? '',
       notes: next['notes'] as String? ?? '',
+      tripStart: next['tripStart'] as String? ?? '',
+      tripEnd: next['tripEnd'] as String? ?? '',
       sources: Map.unmodifiable(nextSources),
       constraints: constraints,
     );
@@ -174,16 +272,50 @@ class StylistBrief {
     final text = message.trim();
     final patch = <String, Object?>{
       'budget': ?(budget ?? parseBriefBudget(text)),
+      'gender': ?parseBriefGender(text),
     };
     final clear = <String>{};
+    if (RegExp(
+      r'\b(?:clear|forget|reset|remove) (?:my |the )?trip dates\b',
+      caseSensitive: false,
+    ).hasMatch(text)) {
+      clear.addAll({'tripStart', 'tripEnd'});
+    } else {
+      final dates = RegExp(r'\b\d{4}-\d{2}-\d{2}\b').allMatches(text).toList();
+      if (dates.length == 2 &&
+          RegExp(r'\b(?:to|through|until)\b')
+              .hasMatch(text.substring(dates.first.end, dates.last.start))) {
+        patch['tripStart'] = dates.first.group(0);
+        patch['tripEnd'] = dates.last.group(0);
+      } else if (dates.length == 1 &&
+          RegExp(
+            r'\b(?:trip|travel|from|on|visit|visiting)\b',
+            caseSensitive: false,
+          ).hasMatch(text)) {
+        if (RegExp(
+          r'\b(?:ends?|until|return(?:ing)?|back)\b',
+          caseSensitive: false,
+        ).hasMatch(text.substring(0, dates.single.start))) {
+          patch['tripEnd'] = dates.single.group(0);
+        } else {
+          patch['tripStart'] = dates.single.group(0);
+          clear.add('tripEnd');
+        }
+      }
+    }
     for (final name in [
+      'gender',
       'notes',
       'palette',
       'season',
       'occasion',
       'dressCode',
     ]) {
-      final label = name == 'dressCode' ? r'(?:dress code|style)' : name;
+      final label = name == 'dressCode'
+          ? r'(?:dress code|style)'
+          : name == 'gender'
+          ? r'(?:gender|audience)'
+          : name;
       if (RegExp(
         '\\b(?:clear|forget|reset|remove) (?:my |the )?$label\\b',
         caseSensitive: false,
@@ -239,12 +371,15 @@ class StylistBrief {
       }, source: BriefFactSource.inferred);
     }
     return StylistBrief(
+      gender: updated.gender,
       occasion: updated.occasion,
       dressCode: updated.dressCode,
       season: updated.season,
       budget: updated.budget,
       palette: updated.palette,
       notes: updated.notes,
+      tripStart: updated.tripStart,
+      tripEnd: updated.tripEnd,
       sources: updated.sources,
       constraints: constraints.recordMessage(text, knownBrands: knownBrands),
     );
@@ -277,8 +412,7 @@ class StylistBrief {
   }
 }
 
-String _money(double amount) =>
-    '€${amount.toStringAsFixed(amount == amount.roundToDouble() ? 0 : 2)}';
+String _money(double amount) => formatEuros(amount, omitZeroCents: true);
 
 double _budget(Object? value) {
   double? amount;
@@ -300,7 +434,7 @@ double _budget(Object? value) {
   if (amount == null || !amount.isFinite || amount <= 0) {
     throw const FormatException('Budget must be a positive amount in EUR');
   }
-  return (amount * 100).roundToDouble() / 100;
+  return eurosFromCents(euroCents(amount));
 }
 
 String _occasionFromMessage(String message) => message
@@ -332,7 +466,8 @@ String? _explicitStyle(String message, {required bool inferCategory}) {
     'business': r'\b(?:business|professional)\b',
     'formal': r'\bformal\b',
     'casual': r'\b(?:casual|relaxed)\b',
-    if (inferCategory) 'dress': r'\bdress(?:es)?\b',
+    if (inferCategory)
+      'dress': r'\b(?:dress(?:es)?|one[ -]pieces?|coveralls?|jumpsuits?)\b',
     if (inferCategory) 'separates': r'\b(?:tops?|shirts?|knits?|blouses?|trousers?|pants?|shorts?|skirts?)\b',
     if (inferCategory) 'layered': r'\b(?:layers?|jackets?|coats?|outerwear)\b',
   }.entries) {
@@ -485,4 +620,36 @@ double? parseBriefBudget(String message) {
       .map((candidate) => candidate.amount)
       .toSet();
   return best.length == 1 ? best.single : null;
+}
+
+/// Explicit clothing-audience words. Negated mentions are not confirmations.
+String? parseBriefGender(String message) {
+  final mentions = <({int position, String value})>[];
+  for (final entry in genderAudiencePatterns.entries) {
+    for (final match in RegExp(
+      entry.value,
+      caseSensitive: false,
+    ).allMatches(message)) {
+      if (!_negatedBefore(message, match.start)) {
+        mentions.add((position: match.start, value: entry.key));
+      }
+    }
+  }
+  if (mentions.isEmpty) return null;
+  // A combined label spans its two individual labels; consume that phrase.
+  final combined = RegExp(pairedGenderAudiencePattern, caseSensitive: false);
+  mentions.removeWhere(
+    (mention) =>
+        mention.value != 'male, female' &&
+        combined
+            .allMatches(message)
+            .any(
+              (match) =>
+                  mention.position >= match.start &&
+                  mention.position < match.end,
+            ),
+  );
+  if (mentions.isEmpty) return null;
+  mentions.sort((a, b) => a.position.compareTo(b.position));
+  return mentions.last.value;
 }

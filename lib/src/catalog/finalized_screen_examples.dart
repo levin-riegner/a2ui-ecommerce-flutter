@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:genui/genui.dart';
-import 'package:json_schema_builder/json_schema_builder.dart';
+
+export 'occasion_collage.dart' show FinalizedOccasionCollage;
 
 /// Executable compositions from the 14 finalized Designs frames. Source copy
 /// inconsistencies are retained in sourceIssues, never treated as live data.
@@ -70,86 +70,6 @@ class FinalizedScreenExample {
 final finalizedScreenExamples = <FinalizedScreenExample>[
   for (final source in jsonDecode(_screenFixturesJson) as List)
     FinalizedScreenExample._(Map<String, Object?>.from(source as Map)),
-];
-
-/// Reuses the exact ten existing PNG originals verified against Figma hashes.
-/// It preserves the three-column four-pixel-gap centered stagger, including
-/// source photo 6's top-aligned crop. A collage is decoration, not a screenshot.
-class FinalizedOccasionCollage extends StatelessWidget {
-  const FinalizedOccasionCollage({super.key});
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (_, constraints) {
-      final width = constraints.hasBoundedWidth ? constraints.maxWidth : 392.0;
-      final height = constraints.hasBoundedHeight
-          ? constraints.maxHeight
-          : width * 669 / 392;
-      final columnWidth = (width - 8) / 2.4;
-      const columns = [
-        [1, 2, 3],
-        [4, 5, 6, 7],
-        [8, 9, 10],
-      ];
-      return SizedBox(
-        width: width,
-        height: height,
-        child: ClipRect(
-          child: Stack(
-            children: [
-              for (var column = 0; column < columns.length; column++)
-                Positioned(
-                  left: column * (columnWidth + 4),
-                  top: 0,
-                  bottom: 0,
-                  width: columnWidth,
-                  child: OverflowBox(
-                    maxHeight: double.infinity,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (
-                          var row = 0;
-                          row < columns[column].length;
-                          row++
-                        ) ...[
-                          if (row > 0) const SizedBox(height: 4),
-                          Image.asset(
-                            'assets/images/occasions/start-${columns[column][row].toString().padLeft(2, '0')}.png',
-                            width: columnWidth,
-                            height: columnWidth * 4 / 3,
-                            fit: BoxFit.cover,
-                            alignment: columns[column][row] == 6
-                                ? Alignment.topCenter
-                                : Alignment.center,
-                            excludeFromSemantics: true,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-
-final finalizedScreenItems = <CatalogItem>[
-  CatalogItem(
-    name: 'OccasionCollage',
-    dataSchema: S.object(
-      description: 'Decorative occasion collage from exact bundled Figma image originals.',
-      properties: {},
-    ),
-    exampleData: [
-      () => jsonEncode([
-        {'id': 'root', 'component': 'OccasionCollage'},
-      ]),
-    ],
-    widgetBuilder: (_) => const FinalizedOccasionCollage(),
-  ),
 ];
 
 const _screenFixturesJson = r'''

@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -138,7 +140,9 @@ void main() {
       final updated = await runtime.turn(refresh);
       expect(inlineData(updated), data);
       expect(
-        (updated['messages'] as List).every((m) => m['createSurface'] == null),
+        (presentedStylistTurn(updated)['messages'] as List).every(
+          (m) => m['createSurface'] == null,
+        ),
         isTrue,
       );
       final next = await runtime.turn({
@@ -148,7 +152,7 @@ void main() {
         },
       });
       expect(
-        (next['messages'] as List)
+        (presentedStylistTurn(next)['messages'] as List)
             .where((m) => m['createSurface'] != null)
             .single['createSurface']['surfaceId'],
         'inline-2',

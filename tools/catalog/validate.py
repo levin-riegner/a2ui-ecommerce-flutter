@@ -7,7 +7,7 @@ import re
 import sys
 from pathlib import Path
 
-COLUMNS = ['id', 'name', 'brand', 'description', 'category', 'subcategory', 'color', 'material', 'season', 'occasion', 'price_eur', 'image_asset', 'keywords']
+COLUMNS = ['id', 'name', 'brand', 'description', 'category', 'subcategory', 'gender', 'color', 'material', 'season', 'occasion', 'price_eur', 'image_asset', 'keywords']
 CATEGORIES = {'dress', 'top', 'layer', 'bottom', 'shoes', 'bag', 'accessory'}
 FORBIDDEN = re.compile(r'(?:https?://|www\.|cdn\.|gid://)', re.I)
 IMAGE_PATH = re.compile(r'^assets/images/products/demo-[0-9]{4}\.jpg$')
@@ -64,6 +64,8 @@ def validate(catalog: Path, asset_root: Path, source_files: list[Path], min_prod
             errors.append(f'row {number}: invalid synthetic ID')
         if row['category'] not in CATEGORIES:
             errors.append(f'row {number}: invalid category')
+        if row['gender'] not in {'male', 'female', 'male, female'}:
+            errors.append(f'row {number}: invalid gender audience')
         if re.search(r'\b(?:coveralls?|jumpsuits?|rompers?|boilersuits?|overalls)\b', row['subcategory'], re.I) and row['category'] != 'dress':
             errors.append(f'row {number}: one-piece garment must use the dress foundation category')
         if not IMAGE_PATH.fullmatch(row['image_asset']) or row['image_asset'] != f'assets/images/products/{row["id"]}.jpg':

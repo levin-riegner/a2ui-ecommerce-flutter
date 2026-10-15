@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:convert';
 
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
@@ -244,7 +246,7 @@ void main() {
       ]);
       expect(result['reply'], isNot(contains('Removed')));
       expect(result['reply'], isNot(contains('Selected replacement-dress')));
-      final messages = result['messages'] as List;
+      final messages = presentedStylistTurn(result)['messages'] as List;
       final dressing =
           (messages.firstWhere(
                     (m) =>

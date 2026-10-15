@@ -1,0 +1,111 @@
+[
+  {
+    "gate": "analyze",
+    "command": [
+      "fvm",
+      "flutter",
+      "analyze",
+      "--no-pub"
+    ],
+    "exitCode": 0,
+    "seconds": 7.1,
+    "log": "logs/analyze.log"
+  },
+  {
+    "gate": "flutter-tests",
+    "command": [
+      "fvm",
+      "flutter",
+      "test",
+      "--no-pub",
+      "--reporter",
+      "expanded"
+    ],
+    "exitCode": 0,
+    "seconds": 46.8,
+    "log": "logs/flutter-tests.log"
+  },
+  {
+    "gate": "catalog-export",
+    "command": [
+      "fvm",
+      "flutter",
+      "test",
+      "--no-pub",
+      "tool/export_commerce_catalog.dart",
+      "--reporter",
+      "expanded"
+    ],
+    "exitCode": 0,
+    "seconds": 2.3,
+    "log": "logs/catalog-export.log"
+  },
+  {
+    "gate": "web-build",
+    "command": [
+      "fvm",
+      "flutter",
+      "build",
+      "web",
+      "--no-pub"
+    ],
+    "exitCode": 0,
+    "seconds": 41.4,
+    "log": "logs/web-build.log"
+  },
+  {
+    "gate": "android-build",
+    "command": [
+      "fvm",
+      "flutter",
+      "build",
+      "apk",
+      "--debug",
+      "--no-pub"
+    ],
+    "exitCode": 0,
+    "seconds": 11.0,
+    "log": "logs/android-build.log"
+  },
+  {
+    "gate": "ios-build",
+    "command": [
+      "bash",
+      "tool/verify_ios.sh"
+    ],
+    "exitCode": 0,
+    "seconds": 14.7,
+    "log": "logs/ios-build.log"
+  },
+  {
+    "gate": "python-tests",
+    "exitCode": 0,
+    "log": "logs/python-tests.log",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tool",
+      "-p",
+      "test_*.py"
+    ]
+  },
+  {
+    "gate": "format",
+    "exitCode": 0,
+    "log": "logs/format.log",
+    "command": [
+      "fvm",
+      "dart",
+      "format",
+      "--output=none",
+      "--set-exit-if-changed",
+      "lib",
+      "test",
+      "tools/genkit",
+      "tool"
+    ]
+  }
+]

@@ -1,18 +1,18 @@
-/// Reusable commerce presentation widgets, previews, and adaptive page layouts.
+/// Commerce presentation widgets and adaptive layouts with explicit inputs.
 ///
-/// These widgets take explicit values and callbacks; they do not connect a model
-/// or make provider requests. A2UI adapters use the same presentation widgets.
+/// This entry point has no GenUI, A2UI or Genkit dependency. Import
+/// `commerce_a2ui.dart` for renderer registrations or `commerce_gallery.dart`
+/// for examples and inspection screens.
 library;
 
 export 'src/catalog/commerce_components.dart';
-export 'src/catalog/commerce_examples.dart';
 export 'src/catalog/finalized_left_components.dart';
 export 'src/catalog/finalized_right_components.dart';
 export 'src/catalog/finalized_shared_components.dart';
-export 'src/catalog/catalog_export.dart';
-export 'src/catalog/finalized_screen_examples.dart';
 export 'src/data/models.dart' show ProductCategory;
 export 'src/layout/adaptive_page.dart';
 export 'src/layout/adaptive_pane_layout.dart';
 export 'src/layout/duo_layout_adapter.dart' show DuoLayoutAdapter;
 export 'src/layout/stylist_composer.dart';
+export 'src/catalog/occasion_artwork.dart';
+export 'src/catalog/occasion_collage.dart';

@@ -1,3 +1,5 @@
+import 'package:a2ui_flutter_commerce/src/app_dependencies.dart';
+
 // Explicit development entry point; no provider credentials in the app binary.
 import 'dart:convert';
 import 'dart:developer' as developer;
@@ -40,7 +42,7 @@ Future<void> main() async {
             onModelRequest: (_) => modelRequests++,
           ),
         )
-      : await GenkitAgent.connect(
+      : await connectStylist(
           provider: 'openai-compatible',
           model: model,
           apiKey: token,

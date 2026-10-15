@@ -6,28 +6,34 @@ The personal stylist runs inside Flutter with Genkit Dart. It searches the bundl
 
 ## Run
 
-Use the SDK pinned in [.fvmrc](.fvmrc):
+Install Git LFS and FVM, then use the SDK pinned in [.fvmrc](.fvmrc):
 
 ```sh
+git lfs install
+git lfs pull
 fvm install
 fvm flutter pub get
 fvm flutter run
 ```
+
+For a free first run, choose **Explore component catalog**. It needs no API key and its controls make no provider requests. See [CONTRIBUTING.md](CONTRIBUTING.md) for the short development path and [the extension walkthrough](docs/extending.md) for adding a source, command or component.
 
 Choose an iOS or Android device, or use `fvm flutter run -d chrome` for web. Choose **Connect your model**, select Google Gemini, OpenAI, Anthropic, or OpenAI-compatible, then enter a model ID that supports function tools and your API key. Compatible providers also require their API base URL, including its version path (for example `https://your-provider.example/v1`). HTTPS is required for remote providers; loopback HTTP is accepted for local compatible providers. Native operating systems may require additional configuration to permit local HTTP.
 
 iOS builds require the **iOS 27.1 SDK or newer** to use the full Duo display area and reserved regions. Runner enforces this at compilation for simulator and device builds in Debug, Profile, and Release. Select Xcode 27.1 or newer, or select it per command without changing the global Xcode setting:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode-27.1.0-Beta.app/Contents/Developer \
+DEVELOPER_DIR=/Applications/Xcode-27.1.0-Release.Candidate.app/Contents/Developer \
   fvm flutter run -d <ios-device-id>
 ```
 
-Use the path to your installed Xcode. The deployment target remains iOS 15.0; the build SDK requirement does not raise the minimum supported OS version.
+Use the path to your installed Xcode. The deployment target remains iOS 15.0; the build SDK requirement does not raise the minimum supported OS version. Run [the iOS release gate](docs/ios-release-gate.md) on a compatible Mac; Ubuntu CI and saved simulator checkpoints do not compile iOS.
 
 Connecting loads the bundled catalog and configures Genkit without calling a model or checking the key. Starting a journey, chatting, selecting/removing pieces, and Retry can make paid requests, with at most four model requests per interaction. The app sends requests directly to the chosen provider. Browser use additionally requires that provider to support browser requests (CORS); a native build does not have this browser restriction.
 
 The key stays in memory on the device and is added only to the provider's outgoing HTTP headers. It is not saved to files or browser storage and is never a Genkit flow input or generation option. **New journey → Disconnect model** clears the key and session. Reloading or closing the app requires configuring it again. Never embed keys in source, assets, or `--dart-define` values.
+
+Accepted styling preferences, the current look, saved looks and demo bag quantities are stored locally under `alder.stylist.v1`, separately from the model connection. Reconnecting restores catalog IDs and accepted facts against current prices and restrictions. Start over clears the working look while retaining saved looks and the demo bag. The bag supports quantities, removal and undo; it has no checkout or stock reservation. See [component-adoption-progress.md](docs/component-adoption-progress.md) for implemented components and verification.
 
 Without a model connection, journeys are disabled and the component gallery remains available. The conversation keeps submitted messages and previous recommendations in order; only the latest completed recommendation accepts input. During a turn, the app displays a loading surface, then previews catalog-validated cards as they become available, with chat/product actions disabled until the full turn succeeds. The final stylist explanation appears after validation. Failed turns remove the preview, show Retry, and retain the previous outfit and completed surfaces. Retrying keeps the original user message without adding a duplicate. No scripted fallback runs in the app.
 
@@ -84,7 +90,7 @@ Product JPEGs are tracked with Git LFS. Install Git LFS before cloning or run `g
 
 See [architecture.md](docs/architecture.md) for the layer boundaries, surface lifecycle, message shape, and event flow. Open the **Explore component catalog** action on the landing screen to see the complete 24-component vocabulary in a compact visual index.
 
-Reusable presentation widgets and layouts are exported through `package:a2ui_flutter_commerce/commerce_ui.dart`. The A2UI catalog adapters and interactive component gallery use those same widgets. The gallery includes choice, disabled action, choose/remove, slot, completion, and light/dark dressing-room examples; its controls make no provider requests.
+Reusable presentation widgets and layouts are exported through `package:a2ui_flutter_commerce/commerce_ui.dart`, with no transitive GenUI/Genkit dependency. Import `commerce_a2ui.dart` for A2UI registrations and `commerce_gallery.dart` for optional examples and inspection screens. The adapters and galleries use those same widgets. The gallery includes choice, disabled action, choose/remove, slot, completion, and light/dark dressing-room examples; its controls make no provider requests.
 
 `AdaptivePaneLayout` keeps the composer reachable, stacks the dressing room above the conversation on compact windows, and gives wider panes independent scrolling. Layout decisions use available space and text size; the 669-wide portrait reference stacks, while the 951-wide landscape reference splits and shows the utility rail. `DuoLayoutAdapter` reads native iOS Duo posture and reserved geometry through pinned `foldable` 1.0.5, keeping controls clear of active divisions and camera regions without resetting drafts or outfit state. See the [native simulator verification](docs/duo-simulator-verification.md) for reproduction steps, evidence, and remaining limits.
 
@@ -96,15 +102,19 @@ The CSV parser handles quoted commas, escaped quotes, and multiline fields. Run 
 
 The CSV uses fictional names, brands, descriptions, prices, and IDs. The approved product photographs are reused as local assets, resized and saved without image metadata. Visible marks on products and reverse image search can still identify a photographed item; the image bundle does not provide image-level unlinkability. For future catalog expansion, `tools/catalog/import_images.py` accepts a private, ordered URL file and an explicit `--allowed-host`, then writes renamed JPEGs. Keep that URL file outside the repository; the importer requires Pillow.
 
-The bundled catalog contains 977 products: the original 200 plus 777 curated from mock.shop. All 1,028 records imported from Everbloom and UrbanVantage were processed with Luna; unrelated goods, children's clothing, unsupported sets and duplicate images were skipped. The original photographs are used with permission for this public demo. The additional images are generated mock content, with photo-led styling guesses and fictional EUR prices. Conflicting source variants are omitted; this is an outfit demo, not live stock. The ten Start collage photographs supplied in the design reference still need recorded source credits and redistribution terms. See [NOTICE](NOTICE) for image and project credits.
+The bundled catalog contains 977 products: the original 200 plus 777 curated from mock.shop. All 1,028 records imported from Everbloom and UrbanVantage were processed with Luna; unrelated goods, children's clothing, unsupported sets and duplicate images were skipped. The original photographs are used with permission for this public demo. The additional images are generated mock content, with photo-led styling guesses and fictional EUR prices. Conflicting source variants are omitted; this is an outfit demo, not live stock. The Start collage uses original code-native geometric artwork. Removed source photographs, historical verification media and the remaining design context photos have separate [public-release gates](docs/open-source-release.md). See [NOTICE](NOTICE) and [asset provenance](docs/asset-provenance.json) for credits and evidence limits.
 
 Catalog expansion uses [best-effort demo curation](docs/catalog-import.md): use the pictured item, infer useful style tags, omit unsupported claims and skip broken records. Raw sources and enrichment history remain local for traceability; no manual review interface is required.
 
 All 977 products have photo-based descriptions and styling tags, including a separate Luna pass over the original 200. Original IDs, prices and photographs are preserved; unsupported original material labels are replaced with `unspecified`. Search passes matching product descriptions and styling keywords to the LLM as structured text facts. Images are inspected during enrichment and displayed in the cards; local retrieval uses word matching and filters without a vector database.
 
+Every product also has a styling audience: `male`, `female`, or `male, female`. Explicit menswear, womenswear, and unisex requests are retained. Selecting a piece with one audience establishes the outfit's audience when none was specified, so a female dress leads to female-compatible jackets and accessories, including neutral pieces. Explicit unisex requests return only products supporting both audiences. Search fallback, presentation, and budget completion enforce this preference. These labels describe product styling, not the wearer's identity or size/fit.
+
 ## Verification
 
 ```sh
+python3 tool/check_architecture.py
+python3 tool/check_release_assets.py
 fvm dart format lib test tools/genkit tool
 python3 -m unittest discover -s tool -p 'test_*.py'
 python3 tool/verify_duo_checkpoints.py docs/verification/duo-simulator-2026-10-04.json
@@ -116,4 +126,4 @@ fvm flutter build web
 
 ## License
 
-Apache-2.0 for the project and original approved catalog photographs. Additional mock.shop imagery remains subject to its source terms. Jost retains its SIL Open Font License in `assets/fonts/jost/OFL.txt`. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
+Apache-2.0 for the project, original code-native artwork and original approved catalog photographs. Additional mock.shop imagery remains subject to its source terms. Jost retains its SIL Open Font License in `assets/fonts/jost/OFL.txt`. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for attribution.
