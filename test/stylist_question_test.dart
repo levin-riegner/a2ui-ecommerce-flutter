@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_brief.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
@@ -14,7 +16,7 @@ const answer =
     'I can help build an outfit from the catalog, compare pieces, or refine a look. What are you dressing for?';
 
 List<Map> inlineComponents(Map<String, dynamic> result) =>
-    (result['messages'] as List)
+    (presentedStylistTurn(result)['messages'] as List)
         .where(
           (m) =>
               m['updateComponents']?['surfaceId'].toString().startsWith(

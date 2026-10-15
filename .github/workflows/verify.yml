@@ -27,6 +27,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Enforce architecture and current asset boundaries
+        run: |
+          python3 tool/check_architecture.py
+          python3 tool/check_release_assets.py
+
+      # iOS needs an installed 27.1+ SDK. Run tool/verify_ios.sh on a compatible
+      # Mac before release; do not represent Ubuntu/checkpoint passes as iOS builds.
       - name: Validate catalog assets
         run: python3 tools/catalog/validate.py assets/data/catalog/products.csv
 

@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:async';
 
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
@@ -129,7 +131,7 @@ void main() {
     expect(callbackOrder, hasLength(4));
     expect(runtime.outfit['items'], {'top': 'top-1'});
     expect(
-      (retry['messages'] as List)
+      (presentedStylistTurn(retry)['messages'] as List)
           .where((message) => (message as Map).containsKey('createSurface'))
           .map((message) => message['createSurface']['surfaceId']),
       ['inline-2'],

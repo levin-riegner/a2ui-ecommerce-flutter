@@ -1,4 +1,5 @@
 import '../data/models.dart';
+import '../data/money.dart';
 import 'stylist_constraints.dart';
 
 enum BriefFactSource { user, model, suggestion, inferred }
@@ -43,6 +44,7 @@ class StylistBrief {
   final String dressCode;
   final String season;
   final double? budget;
+  int? get budgetCents => budget == null ? null : euroCents(budget!);
   final String palette;
   final String notes;
   final String tripStart;
@@ -410,8 +412,7 @@ class StylistBrief {
   }
 }
 
-String _money(double amount) =>
-    '€${amount.toStringAsFixed(amount == amount.roundToDouble() ? 0 : 2)}';
+String _money(double amount) => formatEuros(amount, omitZeroCents: true);
 
 double _budget(Object? value) {
   double? amount;
@@ -433,7 +434,7 @@ double _budget(Object? value) {
   if (amount == null || !amount.isFinite || amount <= 0) {
     throw const FormatException('Budget must be a positive amount in EUR');
   }
-  return (amount * 100).roundToDouble() / 100;
+  return eurosFromCents(euroCents(amount));
 }
 
 String _occasionFromMessage(String message) => message

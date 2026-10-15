@@ -2,10 +2,10 @@ import 'package:genui/genui.dart';
 
 import 'commerce_widgets.dart';
 import 'recommendation_skeleton.dart';
-import 'finalized_left_components.dart';
-import 'finalized_right_components.dart';
-import 'finalized_shared_components.dart';
-import 'finalized_screen_examples.dart';
+import 'finalized_left_a2ui.dart';
+import 'finalized_right_a2ui.dart';
+import 'finalized_shared_a2ui.dart';
+import 'occasion_collage_a2ui.dart';
 import 'stylist_section.dart';
 
 const commerceCatalogId = 'com.example.a2ui_flutter_commerce/catalog';

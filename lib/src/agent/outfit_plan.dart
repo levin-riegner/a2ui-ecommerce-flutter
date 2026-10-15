@@ -1,4 +1,5 @@
 import '../data/models.dart';
+import '../data/money.dart';
 import 'stylist_constraints.dart';
 
 /// The ordered pieces a look needs, shared by the stylist and dressing room.
@@ -159,7 +160,8 @@ class OutfitSelectionAssessment {
   final List<ProductCategory> unavailableCategories;
   final List<String> violations;
 
-  bool get withinBudget => budget == null || minimumTotal <= budget! + 0.001;
+  bool get withinBudget =>
+      budget == null || !euroAmountExceeds(minimumTotal, budget!);
   bool get feasible =>
       violations.isEmpty && unavailableCategories.isEmpty && withinBudget;
 
@@ -172,7 +174,7 @@ class OutfitSelectionAssessment {
     }
     if (!withinBudget) {
       return 'Completing the outfit with this choice needs at least '
-          '€${minimumTotal.toStringAsFixed(2)}. Choose a cheaper piece, '
+          '${formatEuros(minimumTotal)}. Choose a cheaper piece, '
           'use something you own, or change the outfit budget.';
     }
     return '';
@@ -200,9 +202,9 @@ OutfitSelectionAssessment assessOutfitSelection({
     constraints: constraints,
     outfit: proposed,
   );
-  var minimumTotal = proposed.values.fold<double>(
+  var minimumCents = proposed.values.fold<int>(
     0,
-    (sum, product) => sum + product.price,
+    (sum, product) => sum + product.priceCents,
   );
   final unavailable = <ProductCategory>[];
   final violations = proposed.values.expand(constraints.violations).toList();
@@ -213,15 +215,15 @@ OutfitSelectionAssessment assessOutfitSelection({
   )) {
     final prices = available
         .where((product) => product.category == category)
-        .map((product) => product.price);
+        .map((product) => product.priceCents);
     if (prices.isEmpty) {
       unavailable.add(category);
     } else {
-      minimumTotal += prices.reduce((a, b) => a < b ? a : b);
+      minimumCents += prices.reduce((a, b) => a < b ? a : b);
     }
   }
   return OutfitSelectionAssessment(
-    minimumTotal: (minimumTotal * 100).roundToDouble() / 100,
+    minimumTotal: eurosFromCents(minimumCents),
     budget: budget,
     unavailableCategories: unavailable,
     violations: violations,

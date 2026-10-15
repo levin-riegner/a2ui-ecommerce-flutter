@@ -1,7 +1,9 @@
 import 'package:flutter/services.dart';
 
 import 'models.dart';
-import 'catalog_products.dart';
+import 'catalog_snapshot.dart';
+import 'catalog_search.dart';
+import 'money.dart';
 
 abstract interface class ProductRepository {
   Future<List<Product>> search({
@@ -208,17 +210,20 @@ class CsvProductRepository implements ProductRepository {
   CsvProductRepository({
     this.assetPath = 'assets/data/catalog/products.csv',
     AssetBundle? bundle,
-  }) : _bundle = bundle ?? rootBundle;
+    CatalogSource? source,
+  }) : _source =
+           source ??
+           CsvCatalogSource(
+             readText: () => (bundle ?? rootBundle).loadString(assetPath),
+           );
 
   final String assetPath;
-  final AssetBundle _bundle;
-  Future<List<Product>>? _products;
+  final CatalogSource _source;
+  Future<CatalogSnapshot>? _snapshot;
 
-  Future<List<Product>> _load() => _products ??= _readProducts();
+  Future<CatalogSnapshot> loadSnapshot() => _snapshot ??= _source.load();
 
-  Future<List<Product>> _readProducts() async {
-    return parseCatalogProducts(await _bundle.loadString(assetPath));
-  }
+  Future<List<Product>> _load() async => (await loadSnapshot()).products;
 
   @override
   Future<List<Product>> search({
@@ -264,7 +269,7 @@ class CsvProductRepository implements ProductRepository {
         .where(
           (p) =>
               p.category == category &&
-              p.price <= journey.budget &&
+              !euroAmountExceeds(p.price, journey.budget) &&
               p.supportsGender(gender ?? ''),
         )
         .toList();
@@ -294,51 +299,18 @@ List<Product> _filterProducts(
   required double? maxPrice,
   required int limit,
 }) {
-  if (limit <= 0) return const [];
-  final categoryFilter = category?.trim().toLowerCase();
-  final words = query
-      .toLowerCase()
-      .trim()
-      .split(RegExp(r'\s+'))
-      .where((w) => w.isNotEmpty);
-  return products
-      .where((p) {
-        if (!p.supportsGender(gender ?? '')) return false;
-        if (categoryFilter != null &&
-            categoryFilter.isNotEmpty &&
-            p.category.name != categoryFilter) {
-          return false;
-        }
-        if (color != null && color.isNotEmpty && !_matchesTag(p.color, color)) {
-          return false;
-        }
-        if (occasion != null &&
-            occasion.isNotEmpty &&
-            !_matchesTag(p.occasion, occasion)) {
-          return false;
-        }
-        if (season != null &&
-            season.isNotEmpty &&
-            !_matchesTag(p.season, season) &&
-            !_matchesTag(p.season, 'all-season')) {
-          return false;
-        }
-        if (maxPrice != null && p.price > maxPrice) return false;
-        final haystack = [
-          p.name,
-          p.brand,
-          p.description,
-          p.subcategory,
-          p.color,
-          p.material,
-          p.season,
-          p.occasion,
-          p.keywords,
-        ].join(' ').toLowerCase();
-        return words.every(haystack.contains);
-      })
-      .take(limit)
-      .toList(growable: false);
+  return searchCatalogProducts(
+    products,
+    query: query,
+    category: category,
+    gender: gender,
+    color: color,
+    occasion: occasion,
+    season: season,
+    maxPrice: maxPrice,
+    limit: limit,
+    queryMode: CatalogQueryMode.allWords,
+  );
 }
 
 bool _matchesTag(String value, String wanted) =>

@@ -1,3 +1,5 @@
+import 'money.dart';
+
 enum DemoJourney {
   paris(
     title: 'Anniversary dinner in Paris',
@@ -92,6 +94,7 @@ class Product {
   final String name;
   final String brand;
   final double price;
+  int get priceCents => euroCents(price);
   final String meta;
   final String tag;
   final String swatch;
@@ -120,7 +123,7 @@ class Product {
     return available.containsAll(wanted);
   }
 
-  String get priceLabel => '€${price.toStringAsFixed(0)}';
+  String get priceLabel => formatEuros(price, omitZeroCents: true);
 
   String get brandLine =>
       '$brand · ${meta.split('·').map(displayDetail).join(' · ')}';

@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -36,7 +38,9 @@ Map<String, dynamic> event(
   'action': {'name': name, 'context': context},
 };
 Map data(Map result) =>
-    (result['messages'] as List).last['updateDataModel']['value'] as Map;
+    (presentedStylistTurn(result)['messages'] as List)
+            .last['updateDataModel']['value']
+        as Map;
 Future<StylistRuntime> completed({StylistStore? store}) async {
   final runtime = StylistRuntime(products: libraryCatalog, store: store);
   await runtime.turn({

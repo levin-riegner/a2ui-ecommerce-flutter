@@ -1,3 +1,5 @@
+import 'package:a2ui_flutter_commerce/src/app_dependencies.dart';
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -94,7 +96,7 @@ void main() {
       );
       connected = GenkitAgent(runtime, provider: connection);
     } else {
-      connected = await GenkitAgent.connect(
+      connected = await connectStylist(
         provider: 'openai',
         model: model,
         apiKey: key,

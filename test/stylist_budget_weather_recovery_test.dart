@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -117,13 +119,15 @@ class WeekendForecast implements CityContextSource {
   void dispose() {}
 }
 
-List<Map> components(Map<String, dynamic> turn) => (turn['messages'] as List)
-    .where(
-      (m) => m['updateComponents']?['surfaceId'].startsWith('inline-') == true,
-    )
-    .expand((m) => m['updateComponents']['components'] as List)
-    .cast<Map>()
-    .toList();
+List<Map> components(Map<String, dynamic> turn) =>
+    (presentedStylistTurn(turn)['messages'] as List)
+        .where(
+          (m) =>
+              m['updateComponents']?['surfaceId'].startsWith('inline-') == true,
+        )
+        .expand((m) => m['updateComponents']['components'] as List)
+        .cast<Map>()
+        .toList();
 
 void main() {
   test('destination lookup supports Belfast and multiword cities without treating clothes as locations', () {

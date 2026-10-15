@@ -2,17 +2,41 @@
 
 ## Architecture
 
-The sample keeps four concerns separate:
+The reference uses a small custom Flutter architecture aligned with the official [UI/data separation, repository and view-model recommendations](https://docs.flutter.dev/app-architecture/recommendations) and [Compass reference](https://docs.flutter.dev/app-architecture/case-study). It keeps ChangeNotifier and constructor injection. The standard Flutter platform scaffold is retained; moving to another application template would not replace the contracts below.
 
-- `lib/src/data/` defines domain products, fixture repositories, and a pure Dart CSV parser shared by the app and developer tools.
-- `lib/src/catalog/` defines the A2UI component vocabulary and commerce widgets.
-- `lib/commerce_ui.dart` exports the reusable presentation widgets, local gallery examples, and adaptive layouts independently of any model connection.
-- `lib/src/layout/` owns available-space and display-obstruction decisions; screen children retain their state as panes rearrange.
-  `DuoLayoutAdapter` reads Apple's native posture, reserved regions and size classes through pinned `foldable` 1.0.5. It refreshes on viewport changes and resume, guards late snapshots and falls back safely on unavailable channels. Fold/camera geometry is consumed only by the adaptive layouts, without changing global Material dialog sizing. Camera islands reserve their nearest edge strip; closed and flat devices discard stale division geometry.
-- `lib/src/agent/` contains the bundled Genkit runtime, provider adapters, and renderer transport. Scripted agents are available for tests and previews.
-- `lib/src/app.dart` owns the responsive shell, model setup, text input, and native layout around the A2UI surfaces.
+```mermaid
+flowchart LR
+  Shell[Native shell and input] --> Session[CommerceSession commands]
+  Session --> Runtime[StylistRuntime draft and validation]
+  Catalog[CatalogSnapshot and shared queries] --> Runtime
+  Store[StylistStore snapshot port] --> Runtime
+  Model[Genkit provider adapter] --> Runtime
+  Runtime --> Result[StylistTurnResult / StylistViewState]
+  Result --> Presenter[A2UI presenter and batch validator]
+  Presenter --> Renderer[GenUI surface and catalog adapters]
+  Renderer --> Widgets[Explicit-value Flutter widgets]
+  Widgets --> Session
+```
 
-The setup dialog collects a provider, model ID, API key, and an optional compatible API base URL. `GenkitAgent.connect` loads the bundled catalog and creates an isolated `StylistRuntime` and official provider plugin. Setup makes no network request. There is no service URL, server session token, or Node backend in the app.
+| Responsibility | Source | Contract |
+| --- | --- | --- |
+| Dependency construction and owned connection setup | `app_dependencies.dart` | `StylistDependencies` injects catalog, provider, weather and storage; native defaults live here. |
+| UI session state and commands | `agent/commerce_session.dart` | `CommerceSession` has no GenUI/controller/wire types. `CommerceAgent` adds the GenUI renderer contract. |
+| Catalog identity and query facts | `data/catalog_snapshot.dart`, `data/catalog_products.dart`, `data/models.dart` | Complete immutable snapshot, unique IDs, EUR, source revision and honest stock/size/checkout capabilities. |
+| Accepted preferences and restrictions | `agent/stylist_brief.dart`, `agent/stylist_constraints.dart` | User facts and their provenance remain authoritative over model suggestions. |
+| Forecast facts and source | `agent/city_context.dart` | Typed `ForecastDay` and `ForecastSource`, explicit units/coverage/expiry/missingness; adapter-supplied attribution. |
+| Monetary calculations | `data/money.dart` | Public numeric EUR values are converted to integer cents before arithmetic. |
+| Input and tool contracts | `agent/stylist_command.dart`, `agent/stylist_schemas.dart` | Closed commands and validated payloads; shared schemas govern tool and host decoding. |
+| Host orchestration | `agent/stylist_runtime.dart` | Serial, bounded model/tool loop operating on a draft; no widget or A2UI rendering. |
+| Result contract and presentation intent | `agent/stylist_result.dart` | Typed immutable `StylistTurnResult`/`StylistViewState`; no wire messages. |
+| Model-facing product facts | `agent/product_facts.dart` | Authoritative catalog fields plus explicitly labelled host-derived styling heuristics. |
+| Render adaptation and validation | `agent/stylist_presenter.dart`, `agent/a2ui_batch_validator.dart`, `catalog/*_a2ui.dart` | Domain results become schema-checked A2UI batches before publication/commit. |
+| Pure presentation and layout | `commerce_ui.dart`, `catalog/*_components.dart`, `layout/` | Explicit values/callbacks; no transitive GenUI/Genkit/runtime or galleries in the public presentation entry point. |
+| Optional gallery tooling | `commerce_gallery.dart` | Same widgets/bindings and replayable examples, without a provider connection. |
+
+The setup dialog collects provider settings and calls its injected `StylistConnectionFactory`. The default factory is assembled at the app root through `StylistDependencies`, loads the injected `CatalogSource` and creates an isolated runtime/provider/session. `connectStylist` is a developer convenience in the composition module. Setup makes no model request. Dismissing the setup while a connection is pending disposes its late result; the app owns each accepted session's disposal. There is no Node backend in the app.
+
+`commerce_a2ui.dart` exports catalog registrations and schema/example serialization separately from presentation; `commerce_gallery.dart` opts into fixtures and inspection screens. [The extension walkthrough](extending.md) covers adding commands, sources and widgets. `python3 tool/check_architecture.py` enforces transitive presentation/domain import boundaries and keeps renderer/platform adapters outside the runtime. Native posture/dictation adapters remain UI concerns.
 
 `StylistRuntime` defines the `stylistTurn` Genkit flow and catalog search, presentation, brief-saving, and outfit-editing tools. Genkit manages native conversation history and the tool loop. Search ranks local products and caps prices at the available outfit budget, accounting for pieces released by a replacement. Presentation accepts only one to five unique IDs already returned by search, and rechecks the budget, hard restrictions, and completion feasibility. The host constructs commerce A2UI surfaces from authoritative catalog facts rather than accepting model-generated card facts or arbitrary markup.
 
@@ -46,13 +70,13 @@ Direct weather questions fetch the retained destination and return dated forecas
 
 Each interaction works on a draft of the conversation, seen products, outfit, budget, and turn number. Only a successful complete generation commits it. Generation is serialized per connection, limited to four provider requests and a 60-second turn deadline; the fourth generation requests prose only. Failed or cancelled turns preserve prior state and remain retryable. Starting a new journey clears the previous outfit and surfaces.
 
-The catalog remains local. `ProductRepository` has fixture and CSV implementations, while `GenkitAgent.connect` currently loads the bundled CSV directly into the runtime. A future remote source needs a shared snapshot-loading boundary, explicit currency handling and source capability metadata. Gallery contracts for variants, fit, stock and checkout do not establish those services. Conversation/model history remains in memory for the current connection.
+The default catalog remains local. `CatalogSource` loads a validated `CatalogSnapshot` through the composition boundary; fixture/CSV repositories and the connected runtime share catalog query policy. The snapshot records a source revision, explicit EUR currency and stock/size/checkout capability flags. Revision is a source label, not a cryptographic fingerprint. Additional remote sources must implement this same boundary and may not invent unavailable capabilities. Gallery contracts for variants, fit, stock and checkout do not establish those services. Conversation/model history remains in memory for the current connection.
 
 `StylistStore` is a small snapshot boundary, implemented by `LocalStylistStore` with `SharedPreferencesAsync`. The versioned `alder.stylist.v1` value contains only current brief facts and their sources, constraints, catalog IDs, destination, up to 50 saved looks, and demo bag quantities. No provider key, conversation, forecast or image data is stored. A new connection restores state without a model request; saved products are revalidated against current catalog IDs, prices, audience, restrictions and budget before replacing the working look. Failed restoration leaves that look unchanged. Starting over clears the working look while retaining the local archive and bag.
 
 Completed looks render actual selected pieces, optional accessories, owned-piece labels and catalog totals through Look/LookSummary. Save, restore, delete, reset, and demo bag actions are host commands and bypass the model. BagPreview and the native bag icon share authoritative quantities (1–99), cent-accurate totals, removal and guarded undo. Adding a look preserves existing quantities. The bag is explicitly a local demo: no stock reservation, payment, fulfillment or checkout is implied. Local storage writes participate in turn rollback; failed or cancelled writes cannot publish a partial draft. The storage adapter is a demo convenience, not a transactional order database.
 
-`GenkitAgent` parses the complete A2UI batch, checks surface existence, catalog IDs, known component names and roots, and feeds it through `A2uiTransportAdapter` into `SurfaceController`. Fixture tests also validate component property schemas; the production flow does not ingest arbitrary model-authored layouts. `stylist_surfaces.dart` creates the persistent dressing-room surface and a new inline recommendation surface per successful turn. Submitted messages and committed inline surfaces form an ordered conversation history. Previous recommendations remain readable, with pointer, keyboard and assistive actions disabled. The transport also rejects actions from obsolete inline surfaces.
+`StylistRuntime` returns a typed domain result. `presentStylistResult` constructs the host-authored A2UI batch; the shared batch validator checks component property/common schemas and surface/component/root/reference integrity before `GenkitAgent` feeds it through `A2uiTransportAdapter` into `SurfaceController`. The production flow does not ingest arbitrary model-authored layouts. The pinned GenUI common schema is vendored in `catalog/a2ui_common_schema.dart` with its upstream BSD license in `licenses/genui-BSD-3-Clause.txt`; review it against the pinned SDK during upgrades. `stylist_surfaces.dart` creates the persistent dressing-room surface and a new inline recommendation surface per successful turn. Submitted messages and committed inline surfaces form an ordered conversation history. Previous recommendations remain readable, with pointer, keyboard and assistive actions disabled. The transport also rejects actions from obsolete inline surfaces.
 
 Progressive rendering uses a separate, temporary inline surface. It starts with an explicit loading state and previews product cards only after the host has validated the presentation tool's catalog IDs, category and budget. The preview is read-only and does not update the committed dressing room or outfit. The runtime reports progress through a per-turn callback outside serialized flow inputs; provider prose remains buffered until final validation. Success replaces the preview with the committed response; failure, cancellation or disconnect removes it. Retries reuse the original conversation entry.
 

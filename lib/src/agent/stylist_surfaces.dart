@@ -1,33 +1,13 @@
 import '../data/models.dart';
+import '../data/money.dart';
 import '../data/catalog_semantics.dart';
 import 'outfit_plan.dart';
 import 'city_context.dart';
 import 'stylist_brief_surface.dart';
 
 const stylistCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
-String euro(num value) => '€${value.toStringAsFixed(2)}';
-String _budgetEuro(num value) => value == value.roundToDouble()
-    ? '€${value.toStringAsFixed(0)}'
-    : euro(value);
-
-Map<String, Object?> productFacts(Product product) => {
-  'id': product.id,
-  'name': product.name,
-  'brand': product.brand,
-  'description': product.description,
-  'category': product.category.name,
-  'gender': product.gender,
-  'subcategory': product.subcategory,
-  'color': product.color,
-  'material': product.material,
-  'season': product.season,
-  'occasion': product.occasion,
-  'keywords': product.keywords,
-  'garment_type': catalogGarmentType(product),
-  'color_families': productColorFamilies(product).toList(),
-  'price_eur': product.price,
-  'image_asset': product.imageAsset,
-};
+String euro(num value) => formatEuros(value);
+String _budgetEuro(num value) => formatEuros(value, omitZeroCents: true);
 
 Map<String, Object?> _card(Product p, String tag) => {
   'id': p.id,
@@ -175,7 +155,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
   bool showCompletion = true,
   Map<String, Object?>? library,
 }) {
-  final spent = outfit.values.fold<double>(0, (sum, p) => sum + p.price);
+  final spent = sumEuros(outfit.values.map((p) => p.price));
   final outfitPlan = plan ?? OutfitPlan.from(brief: occasion, outfit: outfit);
   final slots = outfitPlan.displaySlots;
   final next = nextCategory ?? outfitPlan.nextCategory;
@@ -202,7 +182,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
         '${outfitPlan.filledCount} of ${outfitPlan.slots.length}',
     'left': budget == null
         ? 'Set a budget'
-        : '${_budgetEuro((budget - spent).clamp(0, double.infinity))} left',
+        : '${_budgetEuro(subtractEuros(budget, spent).clamp(0, double.infinity))} left',
     'progress': budget == null || budget == 0
         ? 0.0
         : (spent / budget).clamp(0, 1),
@@ -299,7 +279,9 @@ List<Map<String, Object?>> renderStylistSurfaces({
       });
     } else if (presentation == 'alternative') {
       final product = picks.single;
-      final saving = adjusting == null ? 0.0 : adjusting.price - product.price;
+      final saving = adjusting == null
+          ? 0.0
+          : subtractEuros(adjusting.price, product.price);
       inlineComponents.add({
         'id': 'recommendations',
         'component': 'AlternativePiece',

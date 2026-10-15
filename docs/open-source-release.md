@@ -1,0 +1,12 @@
+# Open-source release gates
+
+The reference can be reviewed and run offline. Publishing the repository, release bundle or existing history still requires the following checks.
+
+- **Current assets:** consult [asset provenance](asset-provenance.json) and `NOTICE`. The ten undocumented `assets/images/occasions/start-01.png` through `start-10.png` are removed from the current tree. The app and gallery now draw original geometric `OccasionArtwork`, preserving the staggered collage layout. No source-photo grant is invented.
+- **Design context photos:** `assets/images/finalized_left/{berlin-landmark,creative-studio,paris-autumn,restaurant}.png` remain design-reference media. Their extraction evidence in `docs/design/` establishes source identity, not an independent redistribution grant. Confirm grants or replace/exclude this group before a public distribution that includes them. The provenance manifest records this unresolved evidence explicitly.
+- **Historical media and Git history:** `docs/verification/**/*.png`, `docs/verification/**/*.mp4`, and old blobs for removed occasion PNGs may contain the former collage/design media. They remain historical evidence in this worktree. A maintainer must review/clear or omit affected artifacts from a public export and explicitly choose the public-history policy. This change does not rewrite history or assert that deletion clears old blobs. Use a new reviewed source export when publishing without old history; do not push private history automatically.
+- **Other image terms:** `demo-0001.jpg`–`demo-0200.jpg` follow the recorded project-photo grant in `NOTICE`; `demo-0201.jpg`–`demo-0977.jpg` follow their separate mock.shop source terms. Preserve those distinctions and the bundled font licenses.
+- **Behavior:** pass offline CI and run the [current iOS gate](ios-release-gate.md) on a compatible Mac. Paid-provider and physical-device claims require separate evidence. Default tests do not establish either.
+- **Secrets:** review the exact intended public diff/export, including ignored local config, generated outputs and historical commits. Never publish `.env.local`, private source exports, credentials or raw enrichment work directories. `SECURITY.md` describes the credential boundaries.
+
+`python3 tool/check_release_assets.py` checks the current-tree manifest and blocks reintroduction/references to the ten removed PNGs. It does not verify legal permission, clear archives/history or certify a public release. These manual evidence gates remain until a maintainer records their resolution.

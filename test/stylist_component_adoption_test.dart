@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:io';
 
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
@@ -73,11 +75,12 @@ StylistRuntime runtimeFor(
 );
 List<Map> resultProducts(Map result) =>
     (result['products'] as List).cast<Map>();
-List<Map> components(Map result) => (result['messages'] as List)
-    .where((m) => m['updateComponents'] != null)
-    .expand((m) => m['updateComponents']['components'] as List)
-    .cast<Map>()
-    .toList();
+List<Map> components(Map result) =>
+    (presentedStylistTurn(result)['messages'] as List)
+        .where((m) => m['updateComponents'] != null)
+        .expand((m) => m['updateComponents']['components'] as List)
+        .cast<Map>()
+        .toList();
 const openingDress =
     "Women's initial wrap dress for a winter celebration under €500";
 
@@ -327,7 +330,9 @@ void main() {
         containsAll(['ColourPicker', 'BrandPreferences', 'ChoiceChip']),
       );
       final data =
-          (panel['messages'] as List).last['updateDataModel']['value'] as Map;
+          (presentedStylistTurn(panel)['messages'] as List)
+                  .last['updateDataModel']['value']
+              as Map;
       expect(data['catalogBrands'], hasLength(9));
       expect(data['catalogBrands'], contains('Alder Studio'));
       expect(data['catalogBrands'], isNot(contains('Gucci')));
@@ -533,7 +538,9 @@ void main() {
       containsAll(['Look', 'LookSummary']),
     );
     final data =
-        (completed['messages'] as List).last['updateDataModel']['value'] as Map;
+        (presentedStylistTurn(completed)['messages'] as List)
+                .last['updateDataModel']['value']
+            as Map;
     expect((data['look']['pieces'] as List).map((p) => p['category']), [
       'dress',
       'accessory',

@@ -3,12 +3,18 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:genkit/genkit.dart';
-import 'package:schemantic/schemantic.dart';
 
 import '../data/models.dart';
+import '../data/money.dart';
 import '../data/catalog_semantics.dart';
 import '../data/stylist_store.dart';
-import 'stylist_surfaces.dart';
+import '../data/catalog_snapshot.dart';
+import '../data/catalog_search.dart';
+import 'product_facts.dart';
+import 'stylist_command.dart';
+import 'stylist_result.dart';
+import 'stylist_schemas.dart';
+import 'stylist_tool_error.dart';
 import 'city_context.dart';
 import 'outfit_plan.dart';
 import 'stylist_brief.dart';
@@ -17,7 +23,9 @@ import 'stylist_input_error.dart';
 
 typedef StylistModel = Future<ModelResponse> Function(ModelRequest request);
 typedef StylistProgress = void Function(List<Product> products);
-typedef StylistResultValidator = void Function(Map<String, dynamic> result);
+typedef StylistResultValidator = FutureOr<void> Function(
+  StylistTurnResult result,
+);
 
 const _instructions =
     'You are a personal stylist in a fictional demo catalog. '
@@ -59,146 +67,10 @@ const _instructions =
     'never assume missing dressCode or budget. After an edit, use the updated tool result '
     'to search and present the next category in the same turn. '
     'Save an explicitly mentioned destination city using save_outfit city. '
+    'Explicit trip dates use tripStart/tripEnd as YYYY-MM-DD; never invent a date. '
     'Use host city/forecast facts for practical temperature and rain advice. '
     'Never invent weather or claim a forecast covers dates outside its listed dates. '
     'If city context is unavailable, say so; do not replace it with made-up weather.';
-
-SchemanticType<Map<String, dynamic>> _object(Map<String, Object?> schema) =>
-    SchemanticType.from(
-      jsonSchema: schema,
-      parse: (json) => Map<String, dynamic>.from(json as Map),
-    );
-
-final _turnSchema = _object({
-  'type': 'object',
-  'properties': {
-    'message': {'type': 'string'},
-    'action': {
-      'type': 'object',
-      'properties': {
-        'name': {'type': 'string'},
-        'context': {'type': 'object'},
-      },
-      'required': ['name', 'context'],
-      'additionalProperties': false,
-    },
-  },
-  'additionalProperties': false,
-});
-final _searchSchema = _object({
-  'type': 'object',
-  'properties': {
-    for (final name in ['query', 'category', 'color', 'occasion', 'season'])
-      name: {'type': 'string'},
-    'gender': {
-      'type': 'string',
-      'enum': ['male', 'female', 'male, female'],
-    },
-    'priceMax': {'type': 'number', 'minimum': 0},
-    'limit': {'type': 'integer', 'minimum': 1, 'maximum': 12},
-  },
-  'required': ['query'],
-  'additionalProperties': false,
-});
-final _presentSchema = _object({
-  'type': 'object',
-  'properties': {
-    'productIds': {
-      'type': 'array',
-      'items': {'type': 'string'},
-    },
-  },
-  'required': ['productIds'],
-  'additionalProperties': false,
-});
-
-final _productIdSchema = _object({
-  'type': 'object',
-  'properties': {
-    'productId': {'type': 'string'},
-  },
-  'required': ['productId'],
-  'additionalProperties': false,
-});
-final _briefSchema = _object({
-  'type': 'object',
-  'properties': {
-    for (final name in [
-      'occasion',
-      'occasionEvidence',
-      'dressCode',
-      'season',
-      'palette',
-      'notes',
-      'city',
-    ])
-      name: {'type': 'string'},
-    'gender': {
-      'type': 'string',
-      'enum': ['male', 'female', 'male, female'],
-    },
-    'budget': {'type': 'number', 'minimum': 0},
-  },
-  'additionalProperties': false,
-});
-
-final _changesSchema = _object({
-  'type': 'object',
-  'properties': {
-    'brief': {
-      'type': 'object',
-      'properties': {
-        for (final name in [
-          'occasion',
-          'occasionEvidence',
-          'dressCode',
-          'season',
-          'palette',
-          'notes',
-          'city',
-        ])
-          name: {'type': 'string'},
-        'gender': {
-          'type': 'string',
-          'enum': ['male', 'female', 'male, female'],
-        },
-        'budget': {'type': 'number', 'exclusiveMinimum': 0},
-      },
-      'additionalProperties': false,
-    },
-    'clearFields': {
-      'type': 'array',
-      'items': {'type': 'string', 'enum': StylistBrief.fields.toList()},
-      'uniqueItems': true,
-    },
-    for (final name in ['removeProductIds', 'addProductIds'])
-      name: {
-        'type': 'array',
-        'items': {'type': 'string'},
-        'uniqueItems': true,
-        'maxItems': 7,
-      },
-  },
-  'additionalProperties': false,
-});
-
-final _questionSchema = _object({
-  'type': 'object',
-  'properties': {
-    'intent': {
-      'type': 'string',
-      'enum': ['capabilities', 'styling_advice'],
-    },
-    'facts': {
-      'type': 'array',
-      'items': {'type': 'string', 'minLength': 1},
-      'maxItems': 7,
-      'description': 'Exact quotes of explicit new outfit facts, excluding the question itself. Empty for a pure question.',
-    },
-  },
-  'required': ['intent', 'facts'],
-  'additionalProperties': false,
-});
 
 double? parseStylistBudget(String message) => parseBriefBudget(message);
 
@@ -206,7 +78,8 @@ double? parseStylistBudget(String message) => parseBriefBudget(message);
 /// Mutable draft state stays in a Dart Zone, outside serialized flow inputs.
 class StylistRuntime {
   StylistRuntime({
-    required this.products,
+    required List<Product> products,
+    CatalogSnapshot? catalog,
     Model? providerModel,
     StylistModel? model,
     bool developerTools = false,
@@ -215,7 +88,14 @@ class StylistRuntime {
     this.onModelRequest,
     this.onCancelTurn,
     this.store,
-  }) : ai = Genkit(isDevEnv: developerTools, promptDir: null) {
+  }) : products = List.unmodifiable(products),
+       catalog = catalog,
+       ai = Genkit(isDevEnv: developerTools, promptDir: null) {
+    if (catalog != null &&
+        (catalog.products.length != products.length ||
+            products.any((p) => !identical(catalog.byId[p.id], p)))) {
+      throw ArgumentError('Runtime products must match the catalog snapshot.');
+    }
     ai.defineModel(
       name: 'stylist/model',
       fn: (request, context) async {
@@ -234,7 +114,7 @@ class StylistRuntime {
             needsPicks && scope.searchFoundProducts && scope.requests == 3;
         final budgetConflict =
             scope.state.budget != null &&
-            scope.state.spent > scope.state.budget!;
+            euroAmountExceeds(scope.state.spent, scope.state.budget!);
         if (budgetConflict && scope.requests < 4) {
           request.tools = request.tools!
               .where(
@@ -342,24 +222,29 @@ class StylistRuntime {
     ai.defineTool(
       name: 'respond_to_question',
       description: 'Answer a capability question, greeting or general styling question without searching or advancing the outfit. Call first. Include only exact quotes of explicitly stated outfit facts alongside the question; facts is empty for pure questions. Returns the response mode; write your answer after this tool.',
-      inputSchema: _questionSchema,
+      inputSchema: stylistQuestionSchema,
+      outputSchema: stylistToolOutputSchema('respond_to_question'),
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
         if (!scope.allowEdits ||
             scope.searches > 0 ||
             scope.confirmations.isNotEmpty) {
-          return ToolResult.response({
-            'error': 'Answer questions before editing or searching.',
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'Answer questions before editing or searching.',
+            }).toJson(),
+          );
         }
         final quotes = List<String>.from(input['facts'] as List);
         if (quotes.any(
           (quote) => quote.trim().isEmpty || !scope.userMessage.contains(quote),
         )) {
-          return ToolResult.response({
-            'error': 'Facts must quote the current user message exactly.',
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'Facts must quote the current user message exactly.',
+            }).toJson(),
+          );
         }
         try {
           var brief = scope.previousBrief;
@@ -397,7 +282,9 @@ class StylistRuntime {
             'instruction': 'Answer the question naturally. Ask at most one relevant follow-up. No outfit intake controls or product search this turn.',
           });
         } on FormatException catch (error) {
-          return ToolResult.response({'error': error.message});
+          return ToolResult.response(
+            StylistToolError.fromMap({'error': error.message}).toJson(),
+          );
         }
       },
     );
@@ -411,32 +298,41 @@ class StylistRuntime {
           'season (${products.map((product) => product.season).where((value) => value.isNotEmpty).toSet().join(', ')}), '
           'occasion (${products.map((product) => product.occasion).where((value) => value.isNotEmpty).toSet().join(', ')}). '
           'Omit a facet when unsure; query accepts free text.',
-      inputSchema: _searchSchema,
+      inputSchema: stylistSearchSchema,
+      outputSchema: stylistToolOutputSchema('search_products'),
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
         final state = scope.state;
         if (!state.briefState.canSearch) {
-          return ToolResult.response({
-            'error': 'First save the missing brief fields',
-            'missingFields': state.briefState.missingFields,
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'First save the missing brief fields',
+              'missingFields': state.briefState.missingFields,
+            }).toJson(),
+          );
         }
         if (state
             .briefState
             .productConstraints
             .clarificationRequests
             .isNotEmpty) {
-          return ToolResult.response({
-            'error': 'Clarify the scope of your restrictions before searching.',
-            'clarificationRequests':
-                state.briefState.productConstraints.clarificationRequests,
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error':
+                  'Clarify the scope of your restrictions before searching.',
+              'clarificationRequests':
+                  state.briefState.productConstraints.clarificationRequests,
+            }).toJson(),
+          );
         }
-        if (state.budget != null && state.spent > state.budget!) {
-          return ToolResult.response({
-            'error': 'Apply the requested outfit removals before searching.',
-          });
+        if (state.budget != null &&
+            euroAmountExceeds(state.spent, state.budget!)) {
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'Apply the requested outfit removals before searching.',
+            }).toJson(),
+          );
         }
         scope.searches++;
         final available = scope.availableBudget;
@@ -487,6 +383,7 @@ class StylistRuntime {
         }
         return ToolResult.response({
           'products': found.map(productFacts).toList(),
+          'catalog': catalogMetadata,
           'nextCategory': scope.target?.name,
           if (scope.notices.isNotEmpty) 'notices': scope.notices.toList(),
         });
@@ -495,7 +392,8 @@ class StylistRuntime {
     ai.defineTool(
       name: 'present_products',
       description: 'Choose 1 to 5 unique IDs returned by search_products for the next A2UI cards. The host validates IDs and fills facts from the catalog.',
-      inputSchema: _presentSchema,
+      inputSchema: stylistPresentSchema,
+      outputSchema: stylistToolOutputSchema('present_products'),
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
@@ -505,35 +403,48 @@ class StylistRuntime {
             ids.length > 5 ||
             ids.toSet().length != ids.length ||
             ids.any((id) => id is! String || !state.seen.containsKey(id))) {
-          return ToolResult.response({
-            'error':
-                'Choose 1 to 5 unique IDs from this session search results',
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error':
+                  'Choose 1 to 5 unique IDs from this session search results',
+            }).toJson(),
+          );
         }
         if (scope.target != null &&
             ids.any((id) => state.seen[id]!.category != scope.target)) {
-          return ToolResult.response({
-            'error':
-                'Present choices for the next category: ${scope.target!.name}',
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error':
+                  'Present choices for the next category: ${scope.target!.name}',
+            }).toJson(),
+          );
         }
         if (ids.contains(scope.adjustingProductId)) {
-          return ToolResult.response({
-            'error': 'Present alternatives to the currently selected piece.',
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'Present alternatives to the currently selected piece.',
+            }).toJson(),
+          );
         }
-        if (ids.any((id) => state.seen[id]!.price > scope.availableBudget)) {
-          return ToolResult.response({
-            'error': 'Presentation exceeds the remaining budget; search for cheaper options',
-          });
+        if (ids.any(
+          (id) =>
+              euroAmountExceeds(state.seen[id]!.price, scope.availableBudget),
+        )) {
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'Presentation exceeds the remaining budget; search for cheaper options',
+            }).toJson(),
+          );
         }
         final allowedIds = _recommendableProducts(scope)
             .map((p) => p.id)
             .toSet();
         if (ids.any((id) => !allowedIds.contains(id))) {
-          return ToolResult.response({
-            'error': 'These choices violate your constraints or leave insufficient budget when affordable complete-outfit alternatives exist.',
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'These choices violate your constraints or leave insufficient budget when affordable complete-outfit alternatives exist.',
+            }).toJson(),
+          );
         }
         scope.picks = ids.map((id) => state.seen[id]!).toList();
         scope.onProgress?.call(List<Product>.unmodifiable(scope.picks));
@@ -543,7 +454,8 @@ class StylistRuntime {
     ai.defineTool(
       name: 'save_outfit',
       description: 'Save explicit garment gender audience, destination city, occasion, dressCode, season, budget, palette or notes from the person. Never invent missing fields. Returns the authoritative next step.',
-      inputSchema: _briefSchema,
+      inputSchema: stylistBriefSchema,
+      outputSchema: stylistToolOutputSchema('save_outfit'),
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
@@ -557,10 +469,13 @@ class StylistRuntime {
             throw const FormatException('Enter a city name');
           }
           final next = _mergeModelBrief(scope, scope.state.briefState, patch);
-          if (next.budget != null && next.budget! < scope.state.spent) {
-            return ToolResult.response({
-              'error': 'Budget is below selected outfit total',
-            });
+          if (next.budget != null &&
+              euroAmountExceeds(scope.state.spent, next.budget!)) {
+            return ToolResult.response(
+              StylistToolError.fromMap({
+                'error': 'Budget is below selected outfit total',
+              }).toJson(),
+            );
           }
           scope.state.briefState = next;
           if (city is String) {
@@ -572,22 +487,27 @@ class StylistRuntime {
           _refreshProgress(scope, requested: scope.requested);
           return ToolResult.response(_progressFacts(scope));
         } on FormatException catch (error) {
-          return ToolResult.response({'error': error.message});
+          return ToolResult.response(
+            StylistToolError.fromMap({'error': error.message}).toJson(),
+          );
         }
       },
     );
     ai.defineTool(
       name: 'add_to_outfit',
       description: 'Record a verbal selection using a productId from the last presented choices, including ordinal choices such as the second one. Never select an unpresented ID. Then continue with the returned next category.',
-      inputSchema: _productIdSchema,
+      inputSchema: stylistProductIdSchema,
+      outputSchema: stylistToolOutputSchema('add_to_outfit'),
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
         final id = input['productId'];
         if (!scope.state.lastPresented.contains(id)) {
-          return ToolResult.response({
-            'error': 'Choose an ID from the last presented choices',
-          });
+          return ToolResult.response(
+            StylistToolError.fromMap({
+              'error': 'Choose an ID from the last presented choices',
+            }).toJson(),
+          );
         }
         try {
           final product = _recordSelection(scope.state, id);
@@ -597,14 +517,17 @@ class StylistRuntime {
           _refreshProgress(scope);
           return ToolResult.response(_progressFacts(scope));
         } on StylistInputError catch (error) {
-          return ToolResult.response({'error': error.message});
+          return ToolResult.response(
+            StylistToolError.fromMap({'error': error.message}).toJson(),
+          );
         }
       },
     );
     ai.defineTool(
       name: 'remove_from_outfit',
       description: 'Record a verbal removal using the productId of an item currently in the host outfit. Reopen the removed category immediately.',
-      inputSchema: _productIdSchema,
+      inputSchema: stylistProductIdSchema,
+      outputSchema: stylistToolOutputSchema('remove_from_outfit'),
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
@@ -616,14 +539,17 @@ class StylistRuntime {
           _refreshProgress(scope, requested: removed.category);
           return ToolResult.response(_progressFacts(scope));
         } on StylistInputError catch (error) {
-          return ToolResult.response({'error': error.message});
+          return ToolResult.response(
+            StylistToolError.fromMap({'error': error.message}).toJson(),
+          );
         }
       },
     );
     ai.defineTool(
       name: 'apply_outfit_changes',
       description: 'Apply all requested brief changes, field clears, product removals and verbal additions together before search. Validate the resulting outfit and budget atomically. Add only IDs from last presented choices.',
-      inputSchema: _changesSchema,
+      inputSchema: stylistChangesSchema,
+      outputSchema: stylistToolOutputSchema('apply_outfit_changes'),
       fn: (input, context) async {
         final scope = _scope;
         scope.cancel.token.throwIfCancelled();
@@ -703,20 +629,24 @@ class StylistRuntime {
           return ToolResult.response(_progressFacts(scope));
         } on StylistInputError catch (error) {
           scope.atomicFailure = error;
-          return ToolResult.response({'error': error.message});
+          return ToolResult.response(
+            StylistToolError.fromMap({'error': error.message}).toJson(),
+          );
         } on FormatException catch (error) {
           scope.atomicFailure = StylistInputError(
             code: StylistInputErrorCode.invalidBrief,
             message: error.message,
           );
-          return ToolResult.response({'error': error.message});
+          return ToolResult.response(
+            StylistToolError.fromMap({'error': error.message}).toJson(),
+          );
         }
       },
     );
     flow = ai.defineFlow(
       name: 'stylistTurn',
-      inputSchema: _turnSchema,
-      outputSchema: _object({'type': 'object'}),
+      inputSchema: stylistTurnSchema,
+      outputSchema: stylistResultSchema,
       fn: (input, context) => _enqueue(
         input,
         cancel: context.cancel,
@@ -728,6 +658,15 @@ class StylistRuntime {
 
   final Genkit ai;
   final List<Product> products;
+  final CatalogSnapshot? catalog;
+  Map<String, Object?> get catalogMetadata =>
+      catalog?.metadata ??
+      {
+        'revision': 'fixture-local',
+        'currency': 'EUR',
+        'completeSnapshot': true,
+        'capabilities': const CatalogCapabilities().toJson(),
+      };
   final CityContextSource? cityContextSource;
   final void Function()? onBeginTurn;
   final void Function(ModelRequest request)? onModelRequest;
@@ -741,6 +680,10 @@ class StylistRuntime {
   bool _loadedStore = false;
   bool _resetBeforeLoad = false;
   Map<String, Object?>? _persisted;
+  bool _storeWritable = true;
+  String? _localStorageNotice;
+  String? get localStorageNotice => _localStorageNotice;
+  bool get _canPersist => store != null && _storeWritable;
   int get bagCount => _state.bag.values.fold(0, (a, b) => a + b);
   bool get hasLocalLibrary =>
       _state.savedLooks.isNotEmpty || _state.bag.isNotEmpty;
@@ -802,10 +745,10 @@ class StylistRuntime {
         (outfit.containsKey('top') || outfit.containsKey('bottom'))) {
       throw const FormatException('Saved look has conflicting foundations.');
     }
-    final total = outfit.values.fold<double>(0, (n, p) => n + p.price);
-    if (brief.budget != null && total > brief.budget!) {
+    final total = sumEuros(outfit.values.map((p) => p.price));
+    if (brief.budget != null && euroAmountExceeds(total, brief.budget!)) {
       throw FormatException(
-        'Current catalog prices total ${euro(total)}, above this saved look’s ${euro(brief.budget!)} budget.',
+        'Current catalog prices total ${formatEuros(total)}, above this saved look’s ${formatEuros(brief.budget!)} budget.',
       );
     }
     state
@@ -831,9 +774,23 @@ class StylistRuntime {
   }
 
   Future<bool> loadLocalState() async {
-    if (_loadedStore || store == null) {
+    if (_loadedStore || store == null) return hasCurrentLook;
+    try {
+      return await _restoreLocalState();
+    } catch (_) {
+      // Preserve the original value, including malformed JSON and newer schema
+      // versions. This connection stays session-only; a new connection retries
+      // the read instead of silently replacing a library it could not inspect.
+      _storeWritable = false;
+      _loadedStore = true;
+      _localStorageNotice =
+          'Your saved styling library could not be opened and has been left unchanged. '
+          'You can keep styling in this session; new looks will not be saved on this device.';
       return hasCurrentLook;
     }
+  }
+
+  Future<bool> _restoreLocalState() async {
     final value = await store!.read();
     if (value == null) {
       _loadedStore = true;
@@ -926,13 +883,13 @@ class StylistRuntime {
       };
   }
 
-  Future<Map<String, dynamic>> turn(
+  Future<StylistTurnResult> turn(
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,
     StylistResultValidator? validateResult,
   }) => runZoned(
-    () => flow(input, cancel: cancel),
+    () async => await flow(input, cancel: cancel) as StylistTurnResult,
     zoneValues: {_progressKey: onProgress, _validationKey: validateResult},
   );
 
@@ -943,7 +900,7 @@ class StylistRuntime {
     }
   }
 
-  Future<Map<String, dynamic>> _enqueue(
+  Future<StylistTurnResult> _enqueue(
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,
@@ -963,16 +920,14 @@ class StylistRuntime {
     return result;
   }
 
-  Future<Map<String, dynamic>> _execute(
+  Future<StylistTurnResult> _execute(
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,
     StylistResultValidator? validateResult,
   }) async {
     if (_disposed) throw StateError('Model connection closed');
-    if ((await _turnSchema.validate(input)).isNotEmpty) {
-      throw const FormatException('Invalid stylist turn');
-    }
+    input = (await StylistTurnInput.decode(input)).toJson();
     final cancellation = CancellationController();
     final unlink = cancel?.link(cancellation);
     _active.add(cancellation);
@@ -995,15 +950,22 @@ class StylistRuntime {
       );
       cancellation.token.throwIfCancelled();
       if (_disposed) throw StateError('Model connection closed');
-      validateResult?.call(result);
-      if (store != null) {
+      if ((await stylistResultSchema.validate(result.toJson())).isNotEmpty) {
+        throw const FormatException('Invalid stylist result');
+      }
+      await validateResult?.call(result);
+      cancellation.token.throwIfCancelled();
+      if (_disposed) throw StateError('Model connection closed');
+      if (_canPersist) {
         final previous = _persisted ?? _storeSnapshot(_state);
         final next = _storeSnapshot(state);
         try {
           await store!.write(next);
           cancellation.token.throwIfCancelled();
           if (_disposed) throw StateError('Model connection closed');
-          validateResult?.call(result);
+          await validateResult?.call(result);
+          cancellation.token.throwIfCancelled();
+          if (_disposed) throw StateError('Model connection closed');
           _persisted = next;
         } catch (_) {
           try {
@@ -1029,7 +991,7 @@ class StylistRuntime {
     }
   }
 
-  Future<Map<String, dynamic>> _generateTurn(
+  Future<StylistTurnResult> _generateTurn(
     Map<String, dynamic> input,
     _TurnScope scope,
   ) async {
@@ -1067,47 +1029,41 @@ class StylistRuntime {
           state.city.isNotEmpty) {
         await _loadCityContext(state, refresh: true);
         scope.cancel.token.throwIfCancelled();
-        return {
-          'messages':
-              renderStylistSurfaces(
-                turn: state.turn,
-                reply: state.lastReply,
-                picks: state.lastPresented
-                    .map((id) => state.seen[id]!)
-                    .toList(),
-                outfit: state.outfit,
-                budget: state.budget,
-                occasion: state.briefState.summary,
-                clarification:
-                    state.lastQuestionIntent != null ||
-                        state.briefState.canSearch
-                    ? null
-                    : {
-                        'missingFields': state.briefState.missingFields,
-                        ...state.briefState.toMap(),
-                      },
-                plan: OutfitPlan.from(
-                  catalog: products,
-                  brief: state.briefState.planningText,
-                  outfit: state.outfit,
-                  constraints: state.briefState.productConstraints,
-                  dressCode: state.briefState.dressCode,
-                ),
-                nextCategory: state.lastNextCategory,
-                budgetAdjustment: _budgetAdjustment(
-                  state,
-                  target: state.lastNextCategory,
-                ),
-                cityContext: state.cityContext,
-                cityContextNotice: state.cityContextNotice,
-                city: state.city,
-              ).where((message) {
-                final update =
-                    message['updateComponents'] ?? message['updateDataModel'];
-                return update is Map &&
-                    update['surfaceId'] == 'inline-${state.turn}';
-              }).toList(),
-        };
+        return StylistTurnResult(
+          reply: state.lastReply,
+          intent: 'weather',
+          products: const [],
+          brief: state.briefState,
+          outfit: state.outfit,
+          catalog: catalogMetadata,
+          view: StylistViewState(
+            updateCurrentInlineOnly: true,
+            turn: state.turn,
+            picks: state.lastPresented.map((id) => state.seen[id]!).toList(),
+            clarification:
+                state.lastQuestionIntent != null || state.briefState.canSearch
+                ? null
+                : {
+                    'missingFields': state.briefState.missingFields,
+                    ...state.briefState.toMap(),
+                  },
+            plan: OutfitPlan.from(
+              catalog: products,
+              outfit: state.outfit,
+              brief: state.briefState.planningText,
+              constraints: state.briefState.productConstraints,
+              dressCode: state.briefState.dressCode,
+            ),
+            nextCategory: state.lastNextCategory,
+            budgetAdjustment: _budgetAdjustment(
+              state,
+              target: state.lastNextCategory,
+            ),
+            cityContext: state.cityContext,
+            cityContextNotice: state.cityContextNotice,
+            city: state.city,
+          ),
+        );
       } else if (const {
         'resume_session',
         'open_saved_looks',
@@ -1510,7 +1466,7 @@ class StylistRuntime {
     final plan = scope.plan!;
     final hostFacts = scope.confirmations.isEmpty
         ? ''
-        : '${scope.confirmations.join(' ')}${state.budget == null ? '' : ' ${euro(state.remaining)} left in your budget.'}';
+        : '${scope.confirmations.join(' ')}${state.budget == null ? '' : ' ${formatEuros(state.remaining)} left in your budget.'}';
     final acknowledgment = scope.questionIntent == 'weather'
         ? ''
         : _acknowledgment(scope);
@@ -1539,6 +1495,7 @@ class StylistRuntime {
       acknowledgment,
       if (scope.questionIntent == null && scope.feasibilityNotice.isNotEmpty)
         scope.feasibilityNotice,
+      ?_localStorageNotice,
       ...scope.notices,
       guidance,
       if (scope.questionIntent == null &&
@@ -1588,7 +1545,7 @@ class StylistRuntime {
               .where(
                 (p) =>
                     p.category == adjusting.category &&
-                    p.price <= scope.availableBudget,
+                    !euroAmountExceeds(p.price, scope.availableBudget),
               )
               .toList();
     // Side answers do not create new recommendations, but their latest surface
@@ -1609,26 +1566,16 @@ class StylistRuntime {
                 state.seen[id]!,
           ]
         : scope.picks;
-    return {
-      'reply': reply,
-      if (scope.questionIntent != null) 'intent': scope.questionIntent,
-      'products': scope.picks.map(productFacts).toList(),
-      'brief': state.briefState.toMap(),
-      'missingFields': state.briefState.missingFields,
-      'constraints': state.briefState.productConstraints.toMap(),
-      'outfit': {
-        'budget': state.budget,
-        'items': {
-          for (final entry in state.outfit.entries) entry.key: entry.value.id,
-        },
-      },
-      'messages': renderStylistSurfaces(
+    return StylistTurnResult(
+      reply: reply,
+      intent: scope.questionIntent,
+      products: scope.picks,
+      brief: state.briefState,
+      outfit: state.outfit,
+      catalog: catalogMetadata,
+      view: StylistViewState(
         turn: state.turn,
-        reply: reply,
         picks: visiblePicks,
-        outfit: state.outfit,
-        budget: state.budget,
-        occasion: state.briefState.summary,
         clarification:
             (scope.questionIntent != null &&
                     scope.questionIntent != 'resume') ||
@@ -1661,7 +1608,7 @@ class StylistRuntime {
             : 'Something similar',
         adjustmentOptions: [
           if (adjusting != null &&
-              alternatives.any((p) => p.price < adjusting.price))
+              alternatives.any((p) => p.priceCents < adjusting.priceCents))
             'Cheaper',
           if (adjusting != null &&
               alternatives.any((p) => differentCatalogColor(p, adjusting)))
@@ -1690,7 +1637,7 @@ class StylistRuntime {
             ? null
             : _libraryData(scope),
       ),
-    };
+    );
   }
 
   void _libraryAction(_TurnScope scope, String name, Map context) {
@@ -1749,9 +1696,9 @@ class StylistRuntime {
           }
           state.selectedLookId = look['id'] as String;
           scope.showSavedLooks = true;
-          scope.hostReply = store == null
-              ? 'Look kept for this session.'
-              : 'Look saved on this device.';
+          scope.hostReply = _canPersist
+              ? 'Look saved on this device.'
+              : 'Look kept for this session.';
           scope.toastMessage = scope.hostReply;
           scope.toastAction = 'open_saved_looks';
           scope.toastLabel = 'View looks';
@@ -1923,7 +1870,7 @@ class StylistRuntime {
       });
     }
     return {
-      'persistent': store != null,
+      'persistent': _canPersist,
       'showLooks': scope.showSavedLooks,
       'looks': looks,
       'selectedId': state.selectedLookId ?? '',
@@ -1941,7 +1888,7 @@ class StylistRuntime {
               'category': p.category.name,
               'imageAsset': p.imageAsset,
               'swatch': p.swatch,
-              'unitPrice': p.price,
+              'unitPrice': eurosFromCents(p.priceCents),
               'quantity': e.value,
               'meta': p.brand,
             },
@@ -1979,7 +1926,7 @@ class StylistRuntime {
         )
         .toList();
     if (state.outfit.isEmpty &&
-        candidates.any((p) => p.price <= state.budget!)) {
+        candidates.any((p) => !euroAmountExceeds(p.price, state.budget!))) {
       return null;
     }
     final assessments = candidates
@@ -2002,13 +1949,15 @@ class StylistRuntime {
     final category = state.lastNextCategory;
     final cap = category == null
         ? state.budget ?? double.infinity
-        : state.remaining + (state.outfit[category.name]?.price ?? 0);
+        : state.remaining == double.infinity
+        ? double.infinity
+        : sumEuros([state.remaining, state.outfit[category.name]?.price ?? 0]);
     final eligible = products
         .where(
           (p) =>
               constraints.matches(p) &&
               (category == null || p.category == category) &&
-              p.price <= cap,
+              !euroAmountExceeds(p.price, cap),
         )
         .toList();
     final selectedColors = <String>{
@@ -2160,12 +2109,18 @@ class StylistRuntime {
       requestedDays = weekendDays;
     }
     final days = requestedDays.isNotEmpty ? requestedDays : weather.days;
-    final lines = days.map(
-      (day) =>
-          '${day['label']}, ${day['date']}: ${(day['lowC'] as num).toStringAsFixed(0)}–'
-          '${(day['highC'] as num).toStringAsFixed(0)}°C, '
-          '${(day['rainProbabilityPercent'] as num).toStringAsFixed(0)}% chance of rain.',
-    );
+    final lines = days.map((day) {
+      final low = day['lowC'] as num?;
+      final high = day['highC'] as num?;
+      final rain = day['rainProbabilityPercent'] as num?;
+      final temperature = low == null || high == null
+          ? 'Temperature unavailable'
+          : '${low.toStringAsFixed(0)}–${high.toStringAsFixed(0)}°C';
+      final rainText = rain == null
+          ? 'Rain forecast unavailable'
+          : '${rain.toStringAsFixed(0)}% chance of rain';
+      return '${day['label']}, ${day['date']}: $temperature, $rainText.';
+    });
     final partialTrip =
         tripRange &&
         requestedDays.isNotEmpty &&
@@ -2212,15 +2167,14 @@ class StylistRuntime {
     final candidate = Map<String, Product>.of(state.outfit);
     removeConflictingFoundation(candidate, product.category);
     candidate[product.category.name] = product;
-    final total = candidate.values.fold<double>(
-      0,
-      (sum, item) => sum + item.price,
-    );
-    if (validateFinal && state.budget != null && total > state.budget!) {
+    final total = sumEuros(candidate.values.map((item) => item.price));
+    if (validateFinal &&
+        state.budget != null &&
+        euroAmountExceeds(total, state.budget!)) {
       throw StylistInputError(
         code: StylistInputErrorCode.budgetConflict,
         message:
-            'Selecting ${product.name} would cost ${euro(total)} for the outfit, above your ${euro(state.budget!)} budget. Choose a cheaper piece or replace an existing one.',
+            'Selecting ${product.name} would cost ${formatEuros(total)} for the outfit, above your ${formatEuros(state.budget!)} budget. Choose a cheaper piece or replace an existing one.',
       );
     }
     if (validateFinal) _validateSelectionFeasibility(state, product);
@@ -2320,11 +2274,12 @@ class StylistRuntime {
               product.category == scope.target &&
               product.id != scope.adjustingProductId &&
               state.replacementPermits(product) &&
-              product.price <= scope.availableBudget,
+              !euroAmountExceeds(product.price, scope.availableBudget),
         );
   }
 
   Map<String, Object?> _progressFacts(_TurnScope scope) => {
+    'catalog': catalogMetadata,
     'brief': scope.state.briefState.toMap(),
     'constraints': scope.state.briefState.productConstraints.toMap(),
     'city': scope.state.city,
@@ -2361,27 +2316,28 @@ class StylistRuntime {
         'Preferences: ${state.preferences.join('; ')}. Settled brief: ${state.briefState.toMap()}.\n'
         'Hard constraints and preferences: ${state.briefState.productConstraints.toMap()}. '
         'Host notices: ${scope.notices.join(' ')} ${scope.feasibilityNotice}.\n'
-        'Budget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. '
-        'Already spent: ${euro(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : euro(state.remaining)}.\n'
+        'Budget: ${state.budget == null ? 'unknown' : formatEuros(state.budget!)}. '
+        'Already spent: ${formatEuros(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : formatEuros(state.remaining)}.\n'
         'Destination city: ${state.city}. Verified context: ${state.cityContext?.facts ?? state.cityContextNotice ?? 'not loaded'}.\n'
         'Host outfit facts: ${state.outfit.values.map(productFacts).toList()}.\n'
+        'Catalog source capabilities: $catalogMetadata. Do not claim unavailable stock, sizes or checkout.\n'
         '${scope.adjustingProductId == null ? '' : 'The person is adjusting ${scope.target?.name}. Keep ${scope.adjustingProductId} selected until a replacement is chosen. Present different product IDs.\n'}'
         'Last presented IDs, in display order: ${state.lastPresented}.\n'
         'Local library: ${state.savedLooks.length} saved looks. Demo bag: ${state.bag.values.fold<int>(0, (a, b) => a + b)} items; no purchases or stock information. Use the host controls to change these.\n'
         'Plan: ${plan.slots.map((slot) => slot.name).join(', ')}. '
         'Progress: ${plan.filledCount} of ${plan.slots.length}.\n'
         'Next category: ${scope.target?.name ?? 'none'}. '
-        'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : euro(scope.availableBudget)}. $next '
+        'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : formatEuros(scope.availableBudget)}. $next '
         'For capability or general advice questions, respond_to_question takes priority over the outfit next step.';
   }
 
   void _checkBudget(_StylistState state, {StylistBrief? brief}) {
     final budget = (brief ?? state.briefState).budget;
-    if (budget != null && state.spent > budget) {
+    if (budget != null && euroAmountExceeds(state.spent, budget)) {
       throw StylistInputError(
         code: StylistInputErrorCode.budgetConflict,
         message:
-            'Your selected pieces cost ${euro(state.spent)}, above the requested ${euro(budget)} outfit budget. Remove or replace a piece, or keep a higher budget.',
+            'Your selected pieces cost ${formatEuros(state.spent)}, above the requested ${formatEuros(budget)} outfit budget. Remove or replace a piece, or keep a higher budget.',
       );
     }
   }
@@ -2580,7 +2536,7 @@ class StylistRuntime {
           }} cleared',
         );
       } else if (entry.key == 'budget') {
-        parts.add('${euro(entry.value as num)} for the whole outfit');
+        parts.add('${formatEuros(entry.value as num)} for the whole outfit');
       } else if (entry.key == 'gender') {
         parts.add(
           brief.sources['gender'] == BriefFactSource.inferred
@@ -2722,7 +2678,7 @@ String _categoryLabel(ProductCategory category) => switch (category) {
 };
 
 double _cheaperCeiling(Product product) =>
-    ((product.price * 100).round() - 1) / 100;
+    eurosFromCents(product.priceCents - 1);
 
 bool _rejectsCheaper(String text) {
   final clause = text
@@ -2801,7 +2757,9 @@ class _StylistState {
   Map<String, Product> seen = {};
   Map<String, Product> outfit = {};
   StylistBrief briefState = const StylistBrief();
-  double? get budget => briefState.budget;
+  double? get budget => briefState.budgetCents == null
+      ? null
+      : eurosFromCents(briefState.budgetCents!);
   String brief = '';
   List<String> preferences = [];
   String catalogOccasion = '';
@@ -2827,14 +2785,16 @@ class _StylistState {
     final original = outfit[product.category.name];
     if (original == null || original.id != replacementProductId) return true;
     return (replacementPriceMax == null ||
-            product.price <= replacementPriceMax!) &&
+            !euroAmountExceeds(product.price, replacementPriceMax!)) &&
         (!replacementDifferentColor ||
             differentCatalogColor(original, product));
   }
 
-  double get spent => outfit.values.fold(0, (sum, p) => sum + p.price);
-  double get remaining =>
-      budget == null ? double.infinity : max(0, budget! - spent);
+  int get spentCents => outfit.values.fold(0, (sum, p) => sum + p.priceCents);
+  double get spent => eurosFromCents(spentCents);
+  double get remaining => budget == null
+      ? double.infinity
+      : eurosFromCents(max(0, euroCents(budget!) - spentCents));
   _StylistState copy() => _StylistState()
     ..turn = turn
     ..history = List.of(history)
@@ -2893,13 +2853,13 @@ class _TurnScope {
     final candidate = Map<String, Product>.of(state.outfit);
     removeConflictingFoundation(candidate, target!);
     candidate.remove(target!.name);
-    final spent = candidate.values.fold<double>(
+    final spentCents = candidate.values.fold<int>(
       0,
-      (sum, item) => sum + item.price,
+      (sum, item) => sum + item.priceCents,
     );
     final available = state.budget == null
         ? double.infinity
-        : max(0.0, state.budget! - spent);
+        : eurosFromCents(max(0, euroCents(state.budget!) - spentCents));
     return state.outfit[target!.name]?.id == state.replacementProductId &&
             state.replacementPriceMax != null
         ? min(available, state.replacementPriceMax!)
@@ -2917,73 +2877,24 @@ class _TurnScope {
   StylistInputError? atomicFailure;
 }
 
-List<String> _words(Object? value) => '$value'
-    .toLowerCase()
-    .replaceAll(RegExp(r'[^a-z0-9]+'), ' ')
-    .trim()
-    .split(RegExp(r'\s+'))
-    .where((s) => s.isNotEmpty)
-    .toList();
+/// Domain policy wraps the same retrieval algorithm used by preview sources.
 List<Product> searchStylistProducts(
   List<Product> products,
   Map<String, dynamic> filters, {
   StylistConstraints constraints = const StylistConstraints(),
-}) {
-  final query = _words(filters['query'] ?? '');
-  bool facet(String value, String name) =>
-      filters[name] == null ||
-      filters[name] == '' ||
-      (name == 'color'
-          ? matchesCatalogColor(value, filters[name] as String)
-          : _words(value).any(_words(filters[name]).contains));
-  final matches = products.where(
-    (p) =>
-        p.price <=
-            ((filters['priceMax'] as num?)?.toDouble() ?? double.infinity) &&
-        facet(p.category.name, 'category') &&
-        facet(p.color, 'color') &&
-        facet(p.occasion, 'occasion') &&
-        facet(p.season, 'season') &&
-        p.supportsGender(filters['gender'] as String? ?? '') &&
-        constraints.matches(p),
-  );
-  final ranked = matches
-      .map((p) {
-        final title = _words(
-          '${p.name} ${p.category.name} ${p.subcategory} ${p.color}',
-        );
-        final all = _words(
-          '${p.name} ${p.brand} ${p.description} ${p.category.name} ${p.subcategory} ${p.color} ${p.material} ${p.season} ${p.occasion} ${p.keywords}',
-        );
-        final score = query.fold<int>(
-          0,
-          (score, word) =>
-              score +
-              (title.contains(word)
-                  ? 3
-                  : all.contains(word)
-                  ? 1
-                  : 0),
-        );
-        return (product: p, score: score);
-      })
-      .where((entry) => query.isEmpty || entry.score > 0)
-      .toList();
-  ranked.sort((a, b) {
-    final score = b.score.compareTo(a.score);
-    if (score != 0) return score;
-    final preference = constraints
-        .preferenceScore(b.product)
-        .compareTo(constraints.preferenceScore(a.product));
-    if (preference != 0) return preference;
-    final price = a.product.price.compareTo(b.product.price);
-    return price != 0 ? price : a.product.id.compareTo(b.product.id);
-  });
-  return ranked
-      .take(((filters['limit'] as num?)?.toInt() ?? 6).clamp(1, 12))
-      .map((entry) => entry.product)
-      .toList();
-}
+}) => searchCatalogProducts(
+  products,
+  query: filters['query'] as String? ?? '',
+  category: filters['category'] as String?,
+  gender: filters['gender'] as String?,
+  color: filters['color'] as String?,
+  occasion: filters['occasion'] as String?,
+  season: filters['season'] as String?,
+  maxPrice: (filters['priceMax'] as num?)?.toDouble(),
+  limit: ((filters['limit'] as num?)?.toInt() ?? 6).clamp(1, 12),
+  eligible: constraints.matches,
+  preferenceScore: constraints.preferenceScore,
+);
 
 /// Free deterministic provider for development and tests; never selected by BYOK setup.
 Future<ModelResponse> offlineStylistModel(ModelRequest request) async {

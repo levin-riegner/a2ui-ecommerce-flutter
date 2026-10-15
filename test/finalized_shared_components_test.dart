@@ -5,6 +5,7 @@ import 'package:a2ui_core/a2ui_core.dart' as core;
 import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/commerce_widgets.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/finalized_shared_components.dart';
+import 'package:a2ui_flutter_commerce/src/catalog/finalized_shared_a2ui.dart';
 import 'package:a2ui_flutter_commerce/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -45,24 +46,34 @@ void main() {
       }
     },
   );
-  test('replacement contracts retain existing label/text/action schema', () {
-    for (final old in [
-      chipCatalogItem,
-      primaryButtonCatalogItem,
-      eyebrowCatalogItem,
-    ]) {
-      final item = finalizedSharedItems.singleWhere((i) => i.name == old.name);
-      expect(
-        item.dataSchema.value['properties'],
-        old.dataSchema.value['properties'],
-      );
-      expect(
-        item.dataSchema.value['required'],
-        old.dataSchema.value['required'],
-      );
-    }
-    expect(finalizedSharedItems.map((i) => i.name).toSet(), hasLength(10));
-  });
+  test(
+    'replacement contracts preserve value types and allow bound chip drafts',
+    () {
+      for (final old in [
+        chipCatalogItem,
+        primaryButtonCatalogItem,
+        eyebrowCatalogItem,
+      ]) {
+        final item = finalizedSharedItems.singleWhere(
+          (i) => i.name == old.name,
+        );
+        expect(
+          item.dataSchema.value['properties'],
+          old.dataSchema.value['properties'],
+        );
+        if (old.name == 'ChoiceChip') {
+          expect(item.dataSchema.value['required'], contains('label'));
+          expect(item.dataSchema.value['required'], isNot(contains('action')));
+        } else {
+          expect(
+            item.dataSchema.value['required'],
+            old.dataSchema.value['required'],
+          );
+        }
+      }
+      expect(finalizedSharedItems.map((i) => i.name).toSet(), hasLength(10));
+    },
+  );
 
   testWidgets('chip toggles locally and button includes full 48 px target', (
     tester,
