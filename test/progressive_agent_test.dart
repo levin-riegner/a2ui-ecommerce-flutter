@@ -75,7 +75,7 @@ void main() {
         .dataModel
         .getValue<List<Object?>>(DataPath('/recommendations'))!;
     expect((preview.first as Map)['name'], 'Cotton shirt');
-    expect((preview.first as Map)['price'], '€60.00');
+    expect((preview.first as Map)['price'], '€60');
     expect(runtime.outfit['items'], isEmpty);
     expect(agent.latestInlineSurfaceId, isNull);
     expect(

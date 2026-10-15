@@ -8,6 +8,7 @@ import 'package:genui/genui.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/src/catalog/finalized_left_components.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:a2ui_flutter_commerce/src/data/product_repository.dart';
 
@@ -252,7 +253,24 @@ void main() {
               ),
         );
     expect(productImages, isNotEmpty);
-    expect(productImages.every((image) => image.fit == BoxFit.contain), isTrue);
+    final cardImages = tester
+        .widgetList<Image>(
+          find.descendant(
+            of: find.byType(FinalizedProductCard),
+            matching: find.byType(Image),
+          ),
+        )
+        .toSet();
+    expect(cardImages, isNotEmpty);
+    expect(cardImages.every((image) => image.fit == BoxFit.cover), isTrue);
+    final dressingImages = productImages.where(
+      (image) => !cardImages.contains(image),
+    );
+    expect(dressingImages, isNotEmpty);
+    expect(
+      dressingImages.every((image) => image.fit == BoxFit.contain),
+      isTrue,
+    );
     expect(
       productImages.where(
         (image) =>

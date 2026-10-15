@@ -16,9 +16,15 @@ Color commerceColorFromHex(
 
 /// Resolves bundled catalog photographs and rejects arbitrary paths or URLs.
 class CommerceProductImage extends StatelessWidget {
-  const CommerceProductImage({super.key, this.imageAsset, this.swatch});
+  const CommerceProductImage({
+    super.key,
+    this.imageAsset,
+    this.swatch,
+    this.fit = BoxFit.contain,
+  });
   final String? imageAsset;
   final String? swatch;
+  final BoxFit fit;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,7 @@ class CommerceProductImage extends StatelessWidget {
     }
     return Image.asset(
       imageAsset!,
-      fit: BoxFit.contain,
+      fit: fit,
       width: double.infinity,
       filterQuality: FilterQuality.medium,
       gaplessPlayback: true,
