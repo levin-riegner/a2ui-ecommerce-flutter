@@ -219,6 +219,7 @@ class _FirstTurnInputErrorRuntime extends StylistRuntime {
     CancellationToken? cancel,
     StylistProgress? onProgress,
     StylistTextProgress? onText,
+    StylistOutfitPreview? onOutfitPreview,
     StylistResultValidator? validateResult,
   }) {
     if (_reject) {
@@ -235,6 +236,7 @@ class _FirstTurnInputErrorRuntime extends StylistRuntime {
       cancel: cancel,
       onProgress: onProgress,
       onText: onText,
+      onOutfitPreview: onOutfitPreview,
       validateResult: validateResult,
     );
   }

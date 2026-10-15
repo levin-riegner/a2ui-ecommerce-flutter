@@ -1,11 +1,11 @@
 {
-    "name": "Alder",
-    "short_name": "Alder",
+    "name": "ALDER",
+    "short_name": "ALDER",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#F4F4F5",
     "theme_color": "#18181B",
-    "description": "Alder personal stylist.",
+    "description": "ALDER personal stylist.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

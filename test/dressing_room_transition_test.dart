@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:a2ui_core/a2ui_core.dart' as core;
 
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
 import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
 import 'package:a2ui_flutter_commerce/src/app.dart';
 import 'package:a2ui_flutter_commerce/src/data/models.dart';
@@ -14,6 +15,103 @@ import 'package:genui/genui.dart';
 import 'stylist_runtime_test.dart' show products, textResponse;
 
 void main() {
+  for (final reducedMotion in [false, true]) {
+    testWidgets(
+      'X confirms restart and fades between views, reduceMotion=$reducedMotion',
+      (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(951, 669);
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            FakeAccessibilityFeatures(disableAnimations: reducedMotion);
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(
+          tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+        );
+        final agent = _RestartAgent();
+        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+        await tester.pumpWidget(ReferenceApp(agent: agent));
+        await tester.pumpAndSettle();
+        expect(find.byType(PopupMenuButton<String>), findsNothing);
+        expect(find.byIcon(Icons.more_horiz), findsNothing);
+        Future<void> openConfirmation() async {
+          await tester.tap(find.byTooltip('New journey').first);
+          await tester.pumpAndSettle();
+          expect(find.text('Back to start?'), findsOneWidget);
+        }
+
+        await openConfirmation();
+        expect(agent.restarts, 0);
+        await tester.tap(find.text('Keep styling'));
+        await tester.pumpAndSettle();
+        expect(find.text('Back to start?'), findsNothing);
+        expect(find.text('Dressing room'), findsOneWidget);
+        expect(agent.restarts, 0);
+        await openConfirmation();
+        await tester.tapAt(const Offset(4, 4));
+        await tester.pumpAndSettle();
+        expect(agent.restarts, 0);
+        await openConfirmation();
+        await tester.tap(find.text('Back to start'));
+        await tester.pump();
+        double opacity() => tester
+            .widget<FadeTransition>(
+              find.byKey(const ValueKey('stylist-view-fade')),
+            )
+            .opacity
+            .value;
+        if (!reducedMotion) {
+          await tester.pump(const Duration(milliseconds: 120));
+          expect(opacity(), allOf(greaterThan(0), lessThan(1)));
+          expect(agent.restarts, 0, reason: 'Reset happens after fading out.');
+          await tester.pump(const Duration(milliseconds: 140));
+          expect(agent.restarts, 1);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 120));
+          expect(opacity(), allOf(greaterThan(0), lessThan(1)));
+        }
+        await tester.pumpAndSettle();
+        expect(agent.restarts, 1);
+        expect(find.text('Where are you going?'), findsOneWidget);
+        expect(find.byType(PopupMenuButton<String>), findsNothing);
+        expect(opacity(), 1);
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
+  }
+  testWidgets('failed restart fades back to the current look', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    final agent = _RestartAgent()..allowRestart = false;
+    await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+    await tester.pumpWidget(ReferenceApp(agent: agent));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('New journey').first);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.text('Back to start'));
+    await tester.tap(find.text('Back to start'));
+    await tester.pumpAndSettle();
+    expect(agent.restarts, 1);
+    expect(find.text('Where are you going?'), findsNothing);
+    expect(find.text('Dressing room'), findsOneWidget);
+    expect(
+      tester
+          .widget<FadeTransition>(
+            find.byKey(const ValueKey('stylist-view-fade')),
+          )
+          .opacity
+          .value,
+      1,
+    );
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
   testWidgets(
     'first long reply stays at the top and later replies follow the end',
     (tester) async {
@@ -170,5 +268,15 @@ void main() {
         await tester.pumpWidget(const SizedBox.shrink());
       },
     );
+  }
+}
+
+class _RestartAgent extends StubAgent {
+  int restarts = 0;
+  bool allowRestart = true;
+  @override
+  Future<bool> restartChat() async {
+    restarts++;
+    return allowRestart;
   }
 }

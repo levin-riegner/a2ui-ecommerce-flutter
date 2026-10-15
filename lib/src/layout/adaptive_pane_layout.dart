@@ -44,6 +44,7 @@ class AdaptivePaneLayout extends StatefulWidget {
     this.overlayHeader = false,
     this.overlayFooter = false,
     this.followPrimaryEnd = false,
+    this.primaryFollowTrigger,
     this.holdInitialPrimaryBeginning = false,
     this.stackSecondaryInPortrait = false,
     this.portraitHeaderHeight = 56,
@@ -101,6 +102,9 @@ class AdaptivePaneLayout extends StatefulWidget {
   /// Follows renderer growth only while the person is keeping up with the chat.
   final bool followPrimaryEnd;
 
+  /// An explicit interaction resumes following, even when reading older cards.
+  final Object? primaryFollowTrigger;
+
   /// Keeps the opening reply at its beginning until the person scrolls or a
   /// later reply arrives. Subsequent reading-position rules remain unchanged.
   final bool holdInitialPrimaryBeginning;
@@ -144,7 +148,9 @@ class _AdaptivePaneLayoutState extends State<AdaptivePaneLayout> {
   @override
   void didUpdateWidget(AdaptivePaneLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (_holdingInitialBeginning && !widget.holdInitialPrimaryBeginning) {
+    if ((_holdingInitialBeginning && !widget.holdInitialPrimaryBeginning) ||
+        (widget.primaryFollowTrigger != null &&
+            widget.primaryFollowTrigger != oldWidget.primaryFollowTrigger)) {
       _holdingInitialBeginning = false;
       _followingPrimary = true;
       _followEnd(_primaryScroll.hasClients ? _primaryScroll : _compactScroll);

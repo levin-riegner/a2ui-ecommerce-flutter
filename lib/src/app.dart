@@ -95,7 +95,7 @@ class _ReferenceAppState extends State<ReferenceApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Alder',
+      title: 'ALDER',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       builder: (context, child) => DuoLayoutAdapter(child: child!),
@@ -142,92 +142,196 @@ class _AppHome extends StatefulWidget {
   State<_AppHome> createState() => _AppHomeState();
 }
 
-class _AppHomeState extends State<_AppHome> {
+class _AppHomeState extends State<_AppHome>
+    with SingleTickerProviderStateMixin {
   bool showGallery = false;
   bool showStartScreen = false;
+  bool _changingView = false;
+  bool _confirmingRestart = false;
+  late final _viewFade = AnimationController(
+    vsync: this,
+    duration: StylistSurfaceMotion.duration,
+    value: 1,
+  );
+  late final _viewCurve = CurvedAnimation(
+    parent: _viewFade,
+    curve: Curves.easeInOutCubic,
+  );
+
+  @override
+  void dispose() {
+    _viewCurve.dispose();
+    _viewFade.dispose();
+    super.dispose();
+  }
+
+  Future<void> _changeView(Future<void> Function() change) async {
+    if (_changingView) return;
+    setState(() => _changingView = true);
+    _viewFade.duration = MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : StylistSurfaceMotion.duration;
+    try {
+      await _viewFade.reverse();
+      if (!mounted) return;
+      await change();
+      if (!mounted) return;
+      await _viewFade.forward();
+    } finally {
+      if (mounted) {
+        _viewFade.value = 1;
+        setState(() => _changingView = false);
+      }
+    }
+  }
+
+  Future<void> _openStyling(Future<void> Function() start) async {
+    Future<void>? turn;
+    await _changeView(() async {
+      turn = start();
+      setState(() => showStartScreen = false);
+    });
+    if (turn != null) await turn;
+  }
 
   Future<void> _restartChat() async {
-    final restarted = await widget.agent?.restartChat() ?? true;
-    if (mounted && restarted) setState(() => showStartScreen = true);
+    if (_confirmingRestart || _changingView) return;
+    _confirmingRestart = true;
+    try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        animationStyle: MediaQuery.disableAnimationsOf(context)
+            ? AnimationStyle.noAnimation
+            : null,
+        builder: (dialogContext) => AlertDialog(
+          key: const ValueKey('restart-look-dialog'),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          constraints: const BoxConstraints(maxWidth: 400),
+          scrollable: true,
+          title: const Text('Back to start?'),
+          content: const Text(
+            'Your current look and conversation will be cleared. '
+            'Items in your bag and saved looks will be kept.',
+          ),
+          actions: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FilledButton(
+                  onPressed: () => Navigator.pop(dialogContext, true),
+                  child: const Text('Back to start'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton(
+                  autofocus: true,
+                  onPressed: () => Navigator.pop(dialogContext, false),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48),
+                    foregroundColor: const Color(0xff18181b),
+                    side: const BorderSide(color: Color(0xff18181b)),
+                    textStyle: Theme.of(dialogContext).textTheme.bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                    shape: Theme.of(dialogContext)
+                        .filledButtonTheme
+                        .style
+                        ?.shape
+                        ?.resolve({}),
+                  ),
+                  child: const Text('Keep styling'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !mounted) return;
+      await _changeView(() async {
+        final restarted = await widget.agent?.restartChat() ?? true;
+        if (mounted && restarted) setState(() => showStartScreen = true);
+      });
+    } finally {
+      _confirmingRestart = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final agent = widget.agent;
-    return AnimatedBuilder(
-      animation: agent ?? const AlwaysStoppedAnimation(0),
-      builder: (context, _) {
-        if (showGallery) {
-          return _ComponentGallery(
-            onBack: () => setState(() => showGallery = false),
-          );
-        }
-        if (agent == null || showStartScreen || !agent.hasStarted) {
-          return _StartScreen(
-            onOpenSavedLooks: agent?.hasLocalLibrary == true
-                ? () async {
-                    await agent!.openSavedLooks();
-                    if (mounted) setState(() => showStartScreen = false);
-                  }
-                : null,
-            onOpenBag: agent?.hasLocalLibrary == true
-                ? () async {
-                    await agent!.openBag();
-                    if (mounted) setState(() => showStartScreen = false);
-                  }
-                : null,
-            onConnect: agent == null
-                ? () => showDialog<void>(
-                    context: context,
-                    builder: (dialogContext) => Dialog(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 480),
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(24),
-                          child: ModelConnectionForm(
-                            connectionFactory: widget.connectionFactory,
-                            onConnected: (value) {
-                              Navigator.of(dialogContext).pop();
-                              if (!mounted) {
-                                value.dispose();
-                                return;
-                              }
-                              widget.onConnected(value);
-                            },
+    return ColoredBox(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: FadeTransition(
+        key: const ValueKey('stylist-view-fade'),
+        opacity: _viewCurve,
+        child: IgnorePointer(
+          ignoring: _changingView,
+          child: AnimatedBuilder(
+            animation: agent ?? const AlwaysStoppedAnimation(0),
+            builder: (context, _) {
+              if (showGallery) {
+                return _ComponentGallery(
+                  onBack: () => setState(() => showGallery = false),
+                );
+              }
+              if (agent == null || showStartScreen || !agent.hasStarted) {
+                return _StartScreen(
+                  onConnect: agent == null
+                      ? () => showDialog<void>(
+                          context: context,
+                          builder: (dialogContext) => Dialog(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 480),
+                              child: SingleChildScrollView(
+                                padding: const EdgeInsets.all(24),
+                                child: ModelConnectionForm(
+                                  connectionFactory: widget.connectionFactory,
+                                  onConnected: (value) {
+                                    Navigator.of(dialogContext).pop();
+                                    if (!mounted) {
+                                      value.dispose();
+                                      return;
+                                    }
+                                    widget.onConnected(value);
+                                  },
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  )
-                : null,
-            onDisconnect: widget.onDisconnect,
-            onSelect: agent == null
-                ? null
-                : (journey) {
-                    setState(() => showStartScreen = false);
-                    return agent.startJourney(journey);
-                  },
-            onStartBrief: agent?.canStartBrief == true
-                ? (message) {
-                    setState(() => showStartScreen = false);
-                    return agent!.startBrief(message);
-                  }
-                : null,
-            isBusy: agent?.isBusy ?? false,
-            onOpenGallery: () => setState(() => showGallery = true),
-          );
-        }
-        void newJourney() => _restartChat();
-        final builder = widget.sessionBuilder;
-        if (builder != null) return builder(agent, newJourney);
-        if (agent is! CommerceAgent) {
-          throw StateError('A custom session requires a sessionBuilder.');
-        }
-        return StylistBagOverlay(
-          agent: agent,
-          child: _ResponsiveShell(agent: agent, onNewJourney: newJourney),
-        );
-      },
+                        )
+                      : null,
+                  onDisconnect: widget.onDisconnect,
+                  onSelect: agent == null
+                      ? null
+                      : (journey) =>
+                            _openStyling(() => agent.startJourney(journey)),
+                  onStartBrief: agent?.canStartBrief == true
+                      ? (message) =>
+                            _openStyling(() => agent!.startBrief(message))
+                      : null,
+                  isBusy: agent?.isBusy ?? false,
+                  onOpenGallery: () => setState(() => showGallery = true),
+                );
+              }
+              void newJourney() => _restartChat();
+              final builder = widget.sessionBuilder;
+              if (builder != null) return builder(agent, newJourney);
+              if (agent is! CommerceAgent) {
+                throw StateError('A custom session requires a sessionBuilder.');
+              }
+              return StylistBagOverlay(
+                agent: agent,
+                child: _ResponsiveShell(
+                  agent: agent,
+                  onNewJourney: _restartChat,
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }
@@ -240,12 +344,8 @@ class _StartScreen extends StatelessWidget {
     this.onConnect,
     this.onDisconnect,
     this.onStartBrief,
-    this.onOpenSavedLooks,
-    this.onOpenBag,
   });
 
-  final VoidCallback? onOpenSavedLooks;
-  final VoidCallback? onOpenBag;
   final VoidCallback? onConnect;
   final VoidCallback? onDisconnect;
   final Future<void> Function(DemoJourney journey)? onSelect;
@@ -306,28 +406,7 @@ class _StartScreen extends StatelessWidget {
                   child: SizedBox(
                     height: 24,
                     child: Row(
-                      children: [
-                        const Expanded(child: _BrandLockup()),
-                        if (onOpenSavedLooks != null || onOpenBag != null)
-                          PopupMenuButton<String>(
-                            tooltip: 'Styling options',
-                            icon: const Icon(Icons.more_horiz, size: 22),
-                            itemBuilder: (_) => [
-                              if (onOpenSavedLooks != null)
-                                PopupMenuItem(
-                                  enabled: !isBusy,
-                                  onTap: onOpenSavedLooks,
-                                  child: const Text('Saved looks'),
-                                ),
-                              if (onOpenBag != null)
-                                PopupMenuItem(
-                                  enabled: !isBusy,
-                                  onTap: onOpenBag,
-                                  child: const Text('Bag'),
-                                ),
-                            ],
-                          ),
-                      ],
+                      children: [const Expanded(child: _BrandLockup())],
                     ),
                   ),
                 ),
@@ -474,15 +553,15 @@ class _StartIntroduction extends StatelessWidget {
 const _occasionExamples = [
   (
     journey: DemoJourney.lisbon,
-    message: 'A summer wedding in Lisbon in late June — outdoor ceremony, cocktail dress code, around €1,200 for the whole outfit',
+    message: 'A summer lunch in Lisbon in June — a midi dress and sandals, under €500 for the whole outfit',
   ),
   (
     journey: DemoJourney.paris,
-    message: 'Anniversary dinner at a smart restaurant in Paris in October, black tie optional, about €1,500',
+    message: 'A weekend in Paris in October — a sweater, trousers, sneakers and a jacket, casual style, under €650 for the whole outfit',
   ),
   (
     journey: DemoJourney.berlin,
-    message: 'First day at a creative agency in Berlin in September. Smart casual, nothing corporate, under €800',
+    message: 'First day at a creative agency in Berlin in September — a shirt, tailored trousers and loafers, smart casual, under €700 for the whole outfit',
   ),
 ];
 
@@ -829,6 +908,15 @@ class _ResponsiveShell extends StatelessWidget {
           showSecondaryInCompact: !cover || agent.hasDressingRoomSurface,
           compactPaneGap: 32,
           followPrimaryEnd: true,
+          primaryFollowTrigger: agent.latestInlineSurfaceId == null
+              ? null
+              : agent.pendingInlineSurfaceId ??
+                    (agent.conversationEntries
+                                .whereType<CommerceSurfaceEntry>()
+                                .length >
+                            1
+                        ? agent.latestInlineSurfaceId
+                        : null),
           holdInitialPrimaryBeginning:
               agent.conversationEntries
                       .whereType<CommerceUserMessage>()
@@ -845,7 +933,7 @@ class _ResponsiveShell extends StatelessWidget {
           secondaryBackgroundColor: Colors.black,
           secondaryBackgroundOnlyInBookMode: true,
           secondary: _DressingPanel(agent: agent, onNewJourney: onNewJourney),
-          header: _MobileHeader(agent: agent, onNewJourney: onNewJourney),
+          header: _MobileHeader(onNewJourney: onNewJourney),
           footer: StylistComposerDock(
             padding: EdgeInsets.fromLTRB(gutter, 24, gutter, 0),
             child: _ChatComposer(agent: agent),
@@ -1250,9 +1338,7 @@ class _DressingRoomSurface extends StatelessWidget {
 }
 
 class _MobileHeader extends StatelessWidget {
-  const _MobileHeader({required this.agent, required this.onNewJourney});
-
-  final CommerceAgent agent;
+  const _MobileHeader({required this.onNewJourney});
 
   final VoidCallback onNewJourney;
 
@@ -1281,99 +1367,23 @@ class _MobileHeader extends StatelessWidget {
                 heightFactor: 1,
                 child: const SizedBox(width: 76, child: _BrandLockup()),
               ),
-              Positioned(
-                right: 0,
-                top: -12,
-                bottom: -12,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _ConversationMenu(agent: agent, onNewJourney: onNewJourney),
-                    if (showClose)
-                      IconButton(
-                        onPressed: onNewJourney,
-                        icon: const Icon(Icons.close, size: 20),
-                        tooltip: 'New journey',
-                      ),
-                  ],
+              if (showClose)
+                Positioned(
+                  right: 0,
+                  top: -12,
+                  bottom: -12,
+                  child: IconButton(
+                    onPressed: onNewJourney,
+                    icon: const Icon(Icons.close, size: 20),
+                    tooltip: 'New journey',
+                  ),
                 ),
-              ),
             ],
           ),
         ),
       ],
     );
   }
-}
-
-/// The current surface still owns these actions and their validation. Only
-/// their entry points move out of the scrolling conversation.
-class _ConversationMenu extends StatelessWidget {
-  const _ConversationMenu({required this.agent, required this.onNewJourney});
-  final CommerceAgent agent;
-  final VoidCallback onNewJourney;
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: agent,
-    builder: (context, _) {
-      final id = agent.latestInlineSurfaceId;
-      final source = id == null ? null : agent.controller.contextFor(id);
-      final components = source?.definition.value?.components;
-      final entries = {
-        if (components != null)
-          for (final entry in components.entries)
-            if (isStylistUtilityComponent(entry.key) &&
-                entry.value.type == 'PrimaryButton')
-              entry.key: entry.value.properties,
-      };
-      void dispatch(String key) {
-        if (agent.isBusy || agent.latestInlineSurfaceId != id) return;
-        final action = entries[key]?['action'];
-        final event = action is Map ? action['event'] : null;
-        if (event is! Map || event['name'] is! String) return;
-        source?.handleUiEvent(
-          UserActionEvent(
-            surfaceId: id,
-            name: event['name'] as String,
-            sourceComponentId: key,
-            context: event['context'] is Map
-                ? Map<String, Object?>.from(event['context'] as Map)
-                : const {},
-          ),
-        );
-      }
-
-      return PopupMenuButton<String>(
-        tooltip: 'Styling options',
-        icon: const Icon(Icons.more_horiz, size: 22),
-        itemBuilder: (_) => [
-          PopupMenuItem(
-            value: 'restart-chat',
-            onTap: onNewJourney,
-            child: const Text('Start a new look'),
-          ),
-          for (final entry in entries.entries)
-            PopupMenuItem(
-              enabled:
-                  !agent.isBusy &&
-                  agent.pendingInlineSurfaceId == null &&
-                  agent.connectionError == null,
-              value: entry.key,
-              onTap: () => dispatch(entry.key),
-              child: Text(
-                (entry.value['label'] as String)
-                    .replaceFirst(
-                      'Details & demo sizes · ',
-                      'Details & sizes · ',
-                    )
-                    .replaceFirst('Demo bag', 'Bag'),
-              ),
-            ),
-        ],
-      );
-    },
-  );
 }
 
 class _SideRail extends StatelessWidget {

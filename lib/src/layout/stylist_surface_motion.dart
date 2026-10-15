@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 
+import 'stylist_layout.dart';
+
 /// Reveals a new surface when GenUI has a renderable root. The Surface and its
 /// bound controls retain their identity through later component/data updates.
 class StylistSurfaceMotion extends StatefulWidget {
@@ -10,7 +12,7 @@ class StylistSurfaceMotion extends StatefulWidget {
     required this.child,
     this.enabled = true,
   });
-  static const duration = Duration(milliseconds: 240);
+  static const duration = StylistLayout.transitionDuration;
   final SurfaceContext surfaceContext;
   final Widget child;
   final bool enabled;

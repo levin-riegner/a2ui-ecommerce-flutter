@@ -1,3 +1,5 @@
+import '../layout/stylist_layout.dart';
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -250,6 +252,7 @@ final finalizedLeftItems = <CatalogItem>[
       ])
         field: 'string',
       'selected': 'bool',
+      'dimmed': 'bool',
     },
     ['name', 'price', 'brandLine', 'tag', 'swatch', 'action'],
     (context, raw, value) {
@@ -264,6 +267,7 @@ final finalizedLeftItems = <CatalogItem>[
         imageAsset: _str(value, 'imageAsset'),
         category: _str(value, 'category', 'dress'),
         selected: value['selected'] == true || removal,
+        dimmed: value['dimmed'] == true,
         removal: removal,
         onPressed: () => _event(context, raw['action'], {}),
       );
@@ -280,7 +284,9 @@ final finalizedLeftItems = <CatalogItem>[
       category: _str(value, 'category', 'dress'),
       selectedProductId: _str(value, 'selectedProductId'),
       onSelected: (id) {
-        _update(context, raw, 'selectedProductId', id);
+        if (!StylistSurfaceScope.isJourneyOf(context.buildContext)) {
+          _update(context, raw, 'selectedProductId', id);
+        }
         _event(context, raw['action'], {'productId': id});
       },
     ),
@@ -297,7 +303,9 @@ final finalizedLeftItems = <CatalogItem>[
       picked: _str(value, 'picked'),
       question: _str(value, 'question', 'Which do you prefer?'),
       onSelected: (id) {
-        _update(context, raw, 'picked', id);
+        if (!StylistSurfaceScope.isJourneyOf(context.buildContext)) {
+          _update(context, raw, 'picked', id);
+        }
         _event(context, raw['action'], {'productId': id});
       },
     ),

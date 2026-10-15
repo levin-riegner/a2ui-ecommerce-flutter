@@ -11,7 +11,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 
 Finder occasionSuggestion() => find
     .ancestor(
-      of: find.textContaining('A summer wedding in Lisbon'),
+      of: find.textContaining('A summer lunch in Lisbon'),
       matching: find.byType(InkWell),
     )
     .first;

@@ -122,10 +122,14 @@ The protocol boundary is intentionally explicit:
 4. The Flutter `Surface` resolves the catalog item and renders the registered builder.
 5. User actions become structured `UserActionEvent` values and are dispatched back through the transport boundary.
 
-Conversation replies omit utility entry points for preferences, product details/sizes, comparison, saved looks and the bag. The host header menu dispatches those same actions through the latest surface context; historical replies never display them. The start and conversation composers share the Figma dock: a 52-point pill, 32-point inner-display gutters and bottom clearance, and a 24-point fade into an opaque backing. The input fills its column without sampling scrolling cards through a glass blur. Keyboard insets and bottom cutouts still constrain the pane.
+Conversation replies omit utility entry points for preferences, product details/sizes, comparison, saved looks and the bag. The app omits the host overflow menus; the dressing-room close and bag controls remain available, and historical replies never expose auxiliary actions. The start and conversation composers share the Figma dock: a 52-point pill, 32-point inner-display gutters and bottom clearance, and a 24-point fade into an opaque backing. The input fills its column without sampling scrolling cards through a glass blur. Keyboard insets and bottom cutouts still constrain the pane.
 
 Hinge geometry changes on the same inner display ease between pane bounds over 320 ms. The keyed panes preserve draft, focus and scroll state, and a new hinge event retargets the current animation. Display changes, rotation, keyboard changes and Reduce Motion apply geometry immediately.
 
 The persistent `dressing-room` surface owns the evolving look. Inline surfaces are versioned per turn (`inline-0`, `inline-1`, and so on) so recommendations can be replaced without losing the persistent surface state.
 
 See [component-catalog.md](component-catalog.md) and [component-library-audit.md](component-library-audit.md) for the registered vocabulary and extension path. The audit preserves its original baseline; [component-adoption-progress.md](component-adoption-progress.md) records subsequent local integration.
+
+Explicit item choices publish an immutable, renderer-independent outfit preview after local validation. The GenUI adapter presents it immediately and restores the previous room and recommendation emphasis if the turn fails. Size forms collapse during save and return on failure; weather context is shown only at intake, on destination changes, on resume or for explicit weather questions.
+
+Selection replies combine the item, host budget and sizing instruction once. Saving size/fit introduces the actual next category. Unchosen recommendations fade, while the selected choice remains visible. Restart requires confirmation and transitions fade between views, respecting Reduce Motion. Bag dialogs scroll the item list while retaining actions, falling back to full-content scrolling in short or large-text layouts. Catalog scrolling extends through ambient bottom padding, retaining hardware and keyboard bounds.

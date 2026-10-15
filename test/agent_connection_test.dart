@@ -62,14 +62,20 @@ void main() {
       ),
     );
     await tester.pumpWidget(ReferenceApp(agent: agent));
-    final parisExample = find.textContaining(
-      'Anniversary dinner at a smart restaurant',
+    final berlinExample = find.textContaining('First day at a creative agency');
+    await Scrollable.ensureVisible(
+      tester.element(berlinExample),
+      alignment: .5,
     );
-    await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
     await tester.pumpAndSettle();
-    await tester.tap(parisExample);
+    await tester.tap(berlinExample);
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 20));
+    for (var i = 0; i < 40 && calls == 0; i++) {
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 10)),
+      );
+      await tester.pump(const Duration(milliseconds: 20));
+    }
     expect(find.text('Asking your stylist…'), findsOneWidget);
     expect(tester.widget<TextField>(find.byType(TextField)).enabled, isFalse);
     response.completeError(StateError('private provider details'));

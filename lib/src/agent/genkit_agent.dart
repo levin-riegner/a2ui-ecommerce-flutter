@@ -321,6 +321,77 @@ class GenkitAgent extends CommerceAgent {
 
   Future<bool> _performTurn(_AgentTurn turn) async {
     final epoch = _epoch;
+    final optionsSurface = turn.action?['name'] == 'set_product_options'
+        ? latestInlineSurfaceId
+        : null;
+    void setOptionsSubmitting(bool submitting) {
+      if (optionsSurface == null || _disposed || _revoked || epoch != _epoch) {
+        return;
+      }
+      controller
+          .contextFor(optionsSurface)
+          .dataModel
+          .update(DataPath('/selectionOptions/submitting'), submitting);
+    }
+
+    var committed = false;
+    setOptionsSubmitting(true);
+    final choicesSurface = latestInlineSurfaceId;
+    Object? previousChoices;
+    void markChoice(String productId) {
+      if (choicesSurface == null ||
+          _disposed ||
+          _revoked ||
+          epoch != _epoch ||
+          !_surfaceIds.contains(choicesSurface)) {
+        return;
+      }
+      final model = controller.contextFor(choicesSurface).dataModel;
+      final data = model.getValue<Object?>(DataPath.root);
+      if (data is! Map) return;
+      final rows = [
+        ...?data['recommendations'] as List?,
+        ...?data['choices'] as List?,
+      ].whereType<Map>();
+      if (!rows.any((row) => (row['id'] ?? row['productId']) == productId)) {
+        return;
+      }
+      previousChoices ??= jsonDecode(jsonEncode(data));
+      model.update(DataPath('/selectedProductId'), productId);
+      if (data['recommendations'] is List) {
+        model.update(DataPath('/recommendations'), [
+          for (final row in data['recommendations'] as List)
+            {
+              ...row as Map,
+              'selected': row['id'] == productId,
+              'dimmed': row['id'] != productId,
+            },
+        ]);
+      }
+    }
+
+    Object? previousDressingRoom;
+    void publishOutfit(Map<String, Object?> data) {
+      if (_disposed ||
+          _revoked ||
+          epoch != _epoch ||
+          !_surfaceIds.contains('dressing-room')) {
+        return;
+      }
+      previousDressingRoom ??= jsonDecode(
+        jsonEncode(
+          controller
+              .contextFor('dressing-room')
+              .dataModel
+              .getValue<Object?>(DataPath('/')),
+        ),
+      );
+      controller
+          .contextFor('dressing-room')
+          .dataModel
+          .update(DataPath.root, data);
+    }
+
     final id = turn.id ??= 'turn-${++_turnId}';
     if (!turn.recorded && turn.message.isNotEmpty) {
       _entries.add(CommerceUserMessage(id: id, text: turn.message));
@@ -360,6 +431,17 @@ class GenkitAgent extends CommerceAgent {
           textAlreadyVisible = true;
           publishProgress(text);
         },
+        onOutfitPreview: (preview) {
+          final updates = presentStylistResult(preview)['messages'] as List;
+          final update = updates
+              .map((m) => m['updateDataModel'])
+              .whereType<Map>()
+              .firstWhere((m) => m['surfaceId'] == 'dressing-room');
+          publishOutfit(Map<String, Object?>.from(update['value'] as Map));
+          if (turn.action?['name'] == 'select_product') {
+            markChoice((turn.action!['context'] as Map)['productId'] as String);
+          }
+        },
         validateResult: (payload) {
           if (_disposed || _revoked || epoch != _epoch) {
             throw StateError('Turn superseded');
@@ -371,6 +453,9 @@ class GenkitAgent extends CommerceAgent {
       // Parse the whole batch before publishing any part of it to the renderer.
       final events = _parseEvents(presentStylistResult(result));
       _validateSurfaces(events);
+      for (final product in result.outfit.values) {
+        markChoice(product.id);
+      }
       _clearPending();
       for (final event in events) {
         transport.addMessage(event);
@@ -392,6 +477,7 @@ class GenkitAgent extends CommerceAgent {
           }
         }
       }
+      committed = true;
       await Future<void>.delayed(Duration.zero);
       return !_disposed;
     } on StylistInputError catch (error) {
@@ -419,6 +505,25 @@ class GenkitAgent extends CommerceAgent {
       }
       return false;
     } finally {
+      if (!committed) setOptionsSubmitting(false);
+      if (!committed &&
+          previousChoices != null &&
+          choicesSurface != null &&
+          !_disposed &&
+          !_revoked &&
+          epoch == _epoch) {
+        controller
+            .contextFor(choicesSurface)
+            .dataModel
+            .update(DataPath.root, previousChoices);
+      }
+      if (!committed &&
+          previousDressingRoom is Map &&
+          !_disposed &&
+          !_revoked &&
+          epoch == _epoch) {
+        publishOutfit(Map<String, Object?>.from(previousDressingRoom as Map));
+      }
       if (epoch == _epoch) _clearPending();
     }
   }
