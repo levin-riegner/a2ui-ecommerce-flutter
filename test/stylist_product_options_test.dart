@@ -76,7 +76,7 @@ Future<void> settleTurn(WidgetTester tester, GenkitAgent agent) async {
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 10)),
     );
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 20));
   }
   expect(agent.isBusy, false);
   await tester.pumpAndSettle();
@@ -222,6 +222,12 @@ void main() {
         expect(find.byType(Dialog), findsNothing);
         expect(find.byType(FinalizedColourPicker), findsOneWidget);
         expect(find.byType(FinalizedFitSize), findsOneWidget);
+        expect(
+          find.text(
+            'Selected Blue dress. €420.00 left in your budget. Choose your size and preferred fit below.',
+          ),
+          findsOneWidget,
+        );
         Finder save() => find.text('Save size & fit').last;
         Future<void> choose(String label) async {
           final choice = find

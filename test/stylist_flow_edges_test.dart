@@ -68,8 +68,8 @@ ChatMessage nativeAction(
   );
 }
 
-class BusyMenuAgent extends GenkitAgent {
-  BusyMenuAgent(super.runtime);
+class BusyRestartAgent extends GenkitAgent {
+  BusyRestartAgent(super.runtime);
   bool holdBusy = false;
   @override
   bool get isBusy => holdBusy || super.isBusy;
@@ -303,7 +303,8 @@ void main() {
       find.byType(FinalizedFitSize).last,
     );
     expect(editor.fits, isEmpty);
-    expect(editor.question, contains(shoes.name));
+    expect(editor.question, isEmpty);
+    expect(find.textContaining('Choose your size below.'), findsOneWidget);
     final button = find.byWidgetPredicate(
       (w) => w is FinalizedPrimaryButton && w.label == 'Save size',
     );
@@ -325,11 +326,11 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('restart menu remains enabled while the agent is busy', (
+  testWidgets('restart control remains enabled while the agent is busy', (
     tester,
   ) async {
     final agent = (await tester.runAsync(
-      () async => BusyMenuAgent(StylistRuntime(products: products)),
+      () async => BusyRestartAgent(StylistRuntime(products: products)),
     ))!;
     await tester.runAsync(() => agent.startBrief('A summer dress under €500'));
     agent.holdBusy = true;
@@ -337,12 +338,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(agent.isBusy, isTrue);
-    await tester.tap(find.byTooltip('Styling options'));
-    await tester.pump();
+    expect(find.byType(PopupMenuButton<String>), findsNothing);
+    await tester.tap(find.byTooltip('New journey').first);
     await tester.pump(const Duration(milliseconds: 400));
-    await tester.runAsync(() async {
-      await tester.tap(find.text('Start a new look'));
-    });
+    await tester.tap(find.text('Back to start'));
     await settleTurn(tester, agent);
     expect(find.text('Where are you going?'), findsOneWidget);
     expect(agent.hasStarted, isFalse);

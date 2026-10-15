@@ -73,6 +73,103 @@ Widget component(
 }
 
 void main() {
+  for (final name in ['PicksStrip', 'ThisOrThat']) {
+    testWidgets(
+      '$name fades only unchosen alternatives and can change selection',
+      (tester) async {
+        final model = InMemoryDataModel();
+        model.update(DataPath('/choice'), '');
+        final fixture = finalizedLeftFixtures[name]!.first;
+        final listKey = name == 'PicksStrip' ? 'products' : 'options';
+        final selectionKey = name == 'PicksStrip'
+            ? 'selectedProductId'
+            : 'picked';
+        final rows = (fixture[listKey] as List).cast<Map>();
+        final firstId = rows.first['productId'];
+        final secondId = rows[1]['productId'];
+        final events = <UiEvent>[];
+        await tester.pumpWidget(
+          component(
+            name,
+            {
+              ...fixture,
+              selectionKey: {'path': '/choice'},
+            },
+            model: model,
+            events: events,
+          ),
+        );
+        await tester.pumpAndSettle();
+        List<double> opacities() => tester
+            .widgetList<AnimatedOpacity>(find.byType(AnimatedOpacity))
+            .map((w) => w.opacity)
+            .toList();
+        expect(opacities(), everyElement(1.0));
+        model.update(DataPath('/choice'), firstId);
+        await tester.pump();
+        expect(opacities().first, 1);
+        expect(opacities().skip(1), everyElement(.45));
+        await tester.pump(const Duration(milliseconds: 120));
+        final fade = tester
+            .widgetList<FadeTransition>(find.byType(FadeTransition))
+            .last
+            .opacity
+            .value;
+        expect(fade, greaterThan(.45));
+        expect(fade, lessThan(1));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byType(InkWell).at(1));
+        await tester.pumpAndSettle();
+        expect(
+          (events.single as UserActionEvent).context['productId'],
+          secondId,
+        );
+        expect(opacities()[0], .45);
+        expect(opacities()[1], 1);
+        model.update(DataPath('/choice'), '');
+        await tester.pumpAndSettle();
+        expect(opacities(), everyElement(1.0));
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets(
+    'product cards preserve a clear selected state while alternatives fade',
+    (tester) async {
+      final model = InMemoryDataModel();
+      model.update(DataPath('/selected'), false);
+      model.update(DataPath('/dimmed'), false);
+      await tester.pumpWidget(
+        component('ProductCard', {
+          ...finalizedLeftFixtures['ProductCard']!.first,
+          'selected': {'path': '/selected'},
+          'dimmed': {'path': '/dimmed'},
+        }, model: model),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity,
+        1,
+      );
+      model.update(DataPath('/dimmed'), true);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity,
+        .45,
+      );
+      model.update(DataPath('/dimmed'), false);
+      model.update(DataPath('/selected'), true);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity,
+        1,
+      );
+      expect(find.text('In your dressing room'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets(
     'stylist emphasis renders semibold text without Markdown markers',
     (tester) async {

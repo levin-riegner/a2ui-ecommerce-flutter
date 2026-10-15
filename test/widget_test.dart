@@ -202,9 +202,7 @@ void main() {
     );
     expect(find.text('Where are you going?'), findsOneWidget);
 
-    final parisExample = find.textContaining(
-      'Anniversary dinner at a smart restaurant',
-    );
+    final parisExample = find.textContaining('A weekend in Paris in October');
     await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
     await tester.pumpAndSettle();
     await tester.tap(parisExample);
@@ -305,9 +303,7 @@ void main() {
     await tester.pumpWidget(
       ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
     );
-    final parisExample = find.textContaining(
-      'Anniversary dinner at a smart restaurant',
-    );
+    final parisExample = find.textContaining('A weekend in Paris in October');
     await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
     await tester.pumpAndSettle();
     await tester.tap(parisExample);
@@ -331,9 +327,7 @@ void main() {
     await tester.pumpWidget(
       ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
     );
-    final parisExample = find.textContaining(
-      'Anniversary dinner at a smart restaurant',
-    );
+    final parisExample = find.textContaining('A weekend in Paris in October');
     await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
     await tester.pumpAndSettle();
     await tester.tap(parisExample);
@@ -357,14 +351,15 @@ void main() {
     await tester.pumpWidget(
       ReferenceApp(agent: StubAgent(repository: CsvProductRepository())),
     );
-    final parisExample = find.textContaining(
-      'Anniversary dinner at a smart restaurant',
-    );
+    final parisExample = find.textContaining('A weekend in Paris in October');
     await Scrollable.ensureVisible(tester.element(parisExample), alignment: .5);
     await tester.pumpAndSettle();
     await tester.tap(parisExample);
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('New journey'));
+    await tester.pumpAndSettle();
+    expect(find.text('Back to start?'), findsOneWidget);
+    await tester.tap(find.text('Back to start'));
     await tester.pumpAndSettle();
     expect(find.text('Where are you going?'), findsOneWidget);
 

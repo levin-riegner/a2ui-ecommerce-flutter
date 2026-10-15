@@ -630,6 +630,58 @@ void main() {
     },
   );
 
+  for (final obstructed in [false, true]) {
+    testWidgets(
+      'catalog scroll reaches the bottom edge unless it contains hardware, cutout=$obstructed',
+      (tester) async {
+        setWindow(tester, const Size(466, 678));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MediaQuery(
+              data: MediaQueryData(
+                size: const Size(466, 678),
+                padding: const EdgeInsets.only(top: 24, bottom: 34),
+                displayFeatures: [
+                  if (obstructed)
+                    const DisplayFeature(
+                      bounds: Rect.fromLTWH(200, 644, 66, 34),
+                      type: DisplayFeatureType.cutout,
+                      state: DisplayFeatureState.unknown,
+                    ),
+                ],
+              ),
+              child: Scaffold(
+                body: AdaptivePage(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 1200),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text('Last control'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final scroll = find.byType(SingleChildScrollView);
+        expect(tester.getRect(scroll).bottom, obstructed ? 644 : 678);
+        expect(tester.getRect(scroll).top, 24);
+        await tester.ensureVisible(find.text('Last control'));
+        await tester.pumpAndSettle();
+        expect(find.text('Last control').hitTestable(), findsOneWidget);
+        expect(
+          tester.getRect(find.text('Last control')).bottom,
+          lessThanOrEqualTo(644),
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   testWidgets('a catalog page also respects a fold covered by the keyboard', (
     tester,
   ) async {

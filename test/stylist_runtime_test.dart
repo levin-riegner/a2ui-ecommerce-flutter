@@ -207,7 +207,9 @@ void main() {
             );
             expect(
               previous,
-              contains('Linen dress: choose your size and preferred fit.'),
+              contains(
+                'Selected Linen dress. €120.00 left in your budget. Choose your size and preferred fit below.',
+              ),
             );
             expect(previous, isNot(contains('€5')));
             checkedHistory = true;
@@ -232,7 +234,9 @@ void main() {
       );
       expect(
         selected['reply'],
-        contains('Linen dress: choose your size and preferred fit.'),
+        contains(
+          'Selected Linen dress. €120.00 left in your budget. Choose your size and preferred fit below.',
+        ),
       );
       expect(selected['reply'], isNot(contains('€5')));
       expect(
@@ -721,7 +725,12 @@ void main() {
     final picked = await runtime.turn(action('select_product', 'dress-1'));
     expect(picked['products'], isEmpty);
     expect(picked['reply'], contains('€0.00 left'));
-    expect(picked['reply'], contains('raise the budget or replace'));
+    expect(
+      picked['reply'],
+      contains(
+        'Choose a cheaper piece, use something you own, or change the outfit budget.',
+      ),
+    );
     expect(picked['reply'], isNot(contains('look is complete')));
     expect(runtime.outfit['items'], {'dress': 'dress-1'});
   });

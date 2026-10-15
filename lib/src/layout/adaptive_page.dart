@@ -46,13 +46,35 @@ class AdaptivePage extends StatelessWidget {
               .where((region) => region.width > 0 && region.height > 0)
               .toList();
       final region = regions.isEmpty ? safe : regions.first;
+      final bottomMargin = Rect.fromLTRB(
+        region.left,
+        region.bottom,
+        region.right,
+        constraints.maxHeight,
+      );
+      // Ambient bottom clearance belongs inside the scroll content, so it
+      // doesn't leave a fixed blank strip over cards as they scroll past.
+      final bottomClearance =
+          region.bottom == safe.bottom &&
+              media.viewInsets.bottom == 0 &&
+              !media.displayFeatures.any(
+                (feature) => feature.bounds.overlaps(bottomMargin),
+              )
+          ? constraints.maxHeight - region.bottom
+          : 0.0;
+      final viewport = Rect.fromLTRB(
+        region.left,
+        region.top,
+        region.right,
+        region.bottom + bottomClearance,
+      );
       return Stack(
         children: [
           Positioned.fromRect(
-            rect: region,
+            rect: viewport,
             child: Center(
               child: SingleChildScrollView(
-                padding: padding,
+                padding: padding + EdgeInsets.only(bottom: bottomClearance),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxWidth),
                   child: child,

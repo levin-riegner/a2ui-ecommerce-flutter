@@ -5,6 +5,7 @@ import 'package:json_schema_builder/json_schema_builder.dart';
 import '../layout/adaptive_pane_layout.dart';
 import '../layout/stylist_layout.dart';
 import '../layout/stylist_message_queue.dart';
+import '../layout/stylist_surface_motion.dart';
 import 'finalized_left_components.dart';
 
 /// Host-owned spacing for brief sections and recommendation groups. Child
@@ -16,6 +17,7 @@ final stylistSectionCatalogItem = CatalogItem(
       'children': S.list(items: S.string()),
       'spacing': S.number(),
       'compactCarousel': S.boolean(),
+      'collapsed': A2uiSchemas.booleanReference(),
     },
     required: ['children'],
   ),
@@ -64,11 +66,35 @@ final stylistSectionCatalogItem = CatalogItem(
         ),
       );
     }
-    return Column(
+    final column = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: gap,
       children: children,
+    );
+    if (data['collapsed'] == null) return column;
+    return BoundBool(
+      dataContext: context.dataContext,
+      value: data['collapsed'],
+      builder: (buildContext, collapsed) => IgnorePointer(
+        ignoring: collapsed == true,
+        child: TweenAnimationBuilder<double>(
+          key: ValueKey('collapsible-${context.id}'),
+          tween: Tween(end: collapsed == true ? 0 : 1),
+          duration: MediaQuery.disableAnimationsOf(buildContext)
+              ? Duration.zero
+              : StylistSurfaceMotion.duration,
+          curve: Curves.easeOutCubic,
+          child: column,
+          builder: (_, value, child) => ClipRect(
+            child: Align(
+              alignment: Alignment.topCenter,
+              heightFactor: value,
+              child: Opacity(opacity: value, child: child),
+            ),
+          ),
+        ),
+      ),
     );
   },
 );
