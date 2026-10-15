@@ -1,3 +1,5 @@
+import 'money.dart';
+
 enum DemoJourney {
   paris(
     title: 'Anniversary dinner in Paris',
@@ -77,6 +79,7 @@ class Product {
     required this.swatch,
     this.description = '',
     this.subcategory = '',
+    this.gender = 'male, female',
     this.color = '',
     this.material = '',
     this.season = '',
@@ -91,11 +94,15 @@ class Product {
   final String name;
   final String brand;
   final double price;
+  int get priceCents => euroCents(price);
   final String meta;
   final String tag;
   final String swatch;
   final String description;
   final String subcategory;
+
+  /// Garment audience for styling; this does not describe the wearer's identity.
+  final String gender;
   final String color;
   final String material;
   final String season;
@@ -103,7 +110,20 @@ class Product {
   final String imageAsset;
   final String keywords;
 
-  String get priceLabel => '€${price.toStringAsFixed(0)}';
+  bool supportsGender(String requested) {
+    if (requested.trim().isEmpty) return true;
+    Set<String> labels(String value) =>
+        value.toLowerCase().split(',').map((label) => label.trim()).toSet();
+    final wanted = labels(requested);
+    final available = labels(gender);
+    const valid = {'male', 'female'};
+    if (!valid.containsAll(wanted) || !valid.containsAll(available)) {
+      return false;
+    }
+    return available.containsAll(wanted);
+  }
+
+  String get priceLabel => formatEuros(price, omitZeroCents: true);
 
   String get brandLine =>
       '$brand · ${meta.split('·').map(displayDetail).join(' · ')}';

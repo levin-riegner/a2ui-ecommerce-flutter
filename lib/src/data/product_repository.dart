@@ -1,12 +1,15 @@
 import 'package:flutter/services.dart';
 
 import 'models.dart';
-import 'catalog_products.dart';
+import 'catalog_snapshot.dart';
+import 'catalog_search.dart';
+import 'money.dart';
 
 abstract interface class ProductRepository {
   Future<List<Product>> search({
     String query = '',
     String? category,
+    String? gender,
     String? color,
     String? occasion,
     String? season,
@@ -17,6 +20,7 @@ abstract interface class ProductRepository {
   Future<List<Product>> recommendations({
     required DemoJourney journey,
     required ProductCategory category,
+    String? gender,
     int limit = 3,
   });
 }
@@ -164,6 +168,7 @@ class FixtureProductRepository implements ProductRepository {
   Future<List<Product>> search({
     String query = '',
     String? category,
+    String? gender,
     String? color,
     String? occasion,
     String? season,
@@ -173,6 +178,7 @@ class FixtureProductRepository implements ProductRepository {
     _products,
     query: query,
     category: category,
+    gender: gender,
     color: color,
     occasion: occasion,
     season: season,
@@ -184,12 +190,15 @@ class FixtureProductRepository implements ProductRepository {
   Future<List<Product>> recommendations({
     required DemoJourney journey,
     required ProductCategory category,
+    String? gender,
     int limit = 3,
   }) async {
     return _products
         .where(
           (product) =>
-              product.journey == journey && product.category == category,
+              product.journey == journey &&
+              product.category == category &&
+              product.supportsGender(gender ?? ''),
         )
         .take(limit)
         .toList(growable: false);
@@ -201,22 +210,26 @@ class CsvProductRepository implements ProductRepository {
   CsvProductRepository({
     this.assetPath = 'assets/data/catalog/products.csv',
     AssetBundle? bundle,
-  }) : _bundle = bundle ?? rootBundle;
+    CatalogSource? source,
+  }) : _source =
+           source ??
+           CsvCatalogSource(
+             readText: () => (bundle ?? rootBundle).loadString(assetPath),
+           );
 
   final String assetPath;
-  final AssetBundle _bundle;
-  Future<List<Product>>? _products;
+  final CatalogSource _source;
+  Future<CatalogSnapshot>? _snapshot;
 
-  Future<List<Product>> _load() => _products ??= _readProducts();
+  Future<CatalogSnapshot> loadSnapshot() => _snapshot ??= _source.load();
 
-  Future<List<Product>> _readProducts() async {
-    return parseCatalogProducts(await _bundle.loadString(assetPath));
-  }
+  Future<List<Product>> _load() async => (await loadSnapshot()).products;
 
   @override
   Future<List<Product>> search({
     String query = '',
     String? category,
+    String? gender,
     String? color,
     String? occasion,
     String? season,
@@ -226,6 +239,7 @@ class CsvProductRepository implements ProductRepository {
     await _load(),
     query: query,
     category: category,
+    gender: gender,
     color: color,
     occasion: occasion,
     season: season,
@@ -237,18 +251,27 @@ class CsvProductRepository implements ProductRepository {
   Future<List<Product>> recommendations({
     required DemoJourney journey,
     required ProductCategory category,
+    String? gender,
     int limit = 3,
   }) async {
     if (limit <= 0) return const [];
     final products = await _load();
     final byJourney = products.where(
-      (p) => p.journey == journey && p.category == category,
+      (p) =>
+          p.journey == journey &&
+          p.category == category &&
+          p.supportsGender(gender ?? ''),
     );
     if (byJourney.isNotEmpty) return byJourney.take(limit).toList();
     // The public catalog has no hard-coded journeys. Prefer the brief's season
     // and occasion, then fill from the same category within the budget.
     final categoryProducts = products
-        .where((p) => p.category == category && p.price <= journey.budget)
+        .where(
+          (p) =>
+              p.category == category &&
+              !euroAmountExceeds(p.price, journey.budget) &&
+              p.supportsGender(gender ?? ''),
+        )
         .toList();
     int score(Product p) =>
         (_matchesTag(p.season, journey.season)
@@ -269,56 +292,25 @@ List<Product> _filterProducts(
   Iterable<Product> products, {
   required String query,
   required String? category,
+  required String? gender,
   required String? color,
   required String? occasion,
   required String? season,
   required double? maxPrice,
   required int limit,
 }) {
-  if (limit <= 0) return const [];
-  final categoryFilter = category?.trim().toLowerCase();
-  final words = query
-      .toLowerCase()
-      .trim()
-      .split(RegExp(r'\s+'))
-      .where((w) => w.isNotEmpty);
-  return products
-      .where((p) {
-        if (categoryFilter != null &&
-            categoryFilter.isNotEmpty &&
-            p.category.name != categoryFilter) {
-          return false;
-        }
-        if (color != null && color.isNotEmpty && !_matchesTag(p.color, color)) {
-          return false;
-        }
-        if (occasion != null &&
-            occasion.isNotEmpty &&
-            !_matchesTag(p.occasion, occasion)) {
-          return false;
-        }
-        if (season != null &&
-            season.isNotEmpty &&
-            !_matchesTag(p.season, season) &&
-            !_matchesTag(p.season, 'all-season')) {
-          return false;
-        }
-        if (maxPrice != null && p.price > maxPrice) return false;
-        final haystack = [
-          p.name,
-          p.brand,
-          p.description,
-          p.subcategory,
-          p.color,
-          p.material,
-          p.season,
-          p.occasion,
-          p.keywords,
-        ].join(' ').toLowerCase();
-        return words.every(haystack.contains);
-      })
-      .take(limit)
-      .toList(growable: false);
+  return searchCatalogProducts(
+    products,
+    query: query,
+    category: category,
+    gender: gender,
+    color: color,
+    occasion: occasion,
+    season: season,
+    maxPrice: maxPrice,
+    limit: limit,
+    queryMode: CatalogQueryMode.allWords,
+  );
 }
 
 bool _matchesTag(String value, String wanted) =>

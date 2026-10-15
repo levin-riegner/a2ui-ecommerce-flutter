@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:convert';
 
 import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
@@ -126,7 +128,7 @@ void main() {
       });
       expect(recovered['brief'], selected['brief']);
       expect(runtime.outfit, before);
-      final surfaceIds = (recovered['messages'] as List)
+      final surfaceIds = (presentedStylistTurn(recovered)['messages'] as List)
           .where((message) => message['createSurface'] != null)
           .map((message) => message['createSurface']['surfaceId']);
       expect(surfaceIds, contains('inline-3'));

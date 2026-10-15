@@ -1,3 +1,5 @@
+import 'package:a2ui_flutter_commerce/src/agent/stylist_result.dart';
+
 import 'dart:convert';
 
 import 'package:a2ui_flutter_commerce/src/agent/conversation_entry.dart';
@@ -212,7 +214,7 @@ class _FirstTurnInputErrorRuntime extends StylistRuntime {
   bool _reject = true;
 
   @override
-  Future<Map<String, dynamic>> turn(
+  Future<StylistTurnResult> turn(
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,

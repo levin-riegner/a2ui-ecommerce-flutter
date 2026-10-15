@@ -1,10 +1,12 @@
 import '../data/models.dart';
+import '../data/catalog_semantics.dart';
 
 /// Catalog-checkable user instructions. Hard restrictions survive search
 /// fallbacks; preferences affect ranking without excluding alternatives.
 /// Unavailable size, stock and fit facts are deliberately not inferred here.
 class StylistConstraints {
   const StylistConstraints({
+    this.gender = '',
     this.excludedCategories = const {},
     this.ownedCategories = const {},
     this.allowedColors = const {},
@@ -14,11 +16,111 @@ class StylistConstraints {
     this.allowedMaterials = const {},
     this.allowedBrands = const {},
     this.preferredColors = const {},
+    this.preferredBrands = const {},
     this.categoryConstraints = const {},
     this.clarificationRequests = const [],
     this.pendingScopeCategories = const {},
     this.excludedProductTerms = const {},
+    this.excludedGenderProductTerms = const {},
+    this.requiredGarmentTypes = const {},
+    this.dressCode = '',
   });
+
+  factory StylistConstraints.fromMap(Map<String, Object?> data) {
+    Set<String> strings(String key) =>
+        Set.unmodifiable(_storedStrings(data[key]));
+    ProductCategory category(String name) => ProductCategory.values.firstWhere(
+      (c) => c.name == name,
+      orElse: () => throw const FormatException('Saved category is invalid.'),
+    );
+    Set<ProductCategory> categories(String key) =>
+        Set.unmodifiable(strings(key).map(category));
+    final scoped = data['categoryConstraints'] ?? <String, Object?>{};
+    final audienceTerms =
+        data['excludedGenderProductTerms'] ?? <String, Object?>{};
+    final required = data['requiredGarmentTypes'] ?? <String, Object?>{};
+    if (scoped is! Map ||
+        audienceTerms is! Map ||
+        required is! Map ||
+        scoped.values.any((v) => v is! Map) ||
+        audienceTerms.keys.any(
+          (key) => !const {'male', 'female', 'male, female'}.contains(key),
+        ) ||
+        required.values.any(
+          (v) => v is! String || !garmentTypes.containsKey(v),
+        )) {
+      throw const FormatException('Saved product restrictions are invalid.');
+    }
+    final gender = data['gender'] ?? '';
+    if (!const {'', 'male', 'female', 'male, female'}.contains(gender)) {
+      throw const FormatException('Saved styling audience is invalid.');
+    }
+    return StylistConstraints(
+      gender: gender as String,
+      excludedCategories: categories('excludedCategories'),
+      ownedCategories: categories('ownedCategories'),
+      allowedColors: strings('allowedColors'),
+      excludedColors: strings('excludedColors'),
+      excludedMaterials: strings('excludedMaterials'),
+      excludedBrands: strings('excludedBrands'),
+      allowedMaterials: strings('allowedMaterials'),
+      allowedBrands: strings('allowedBrands'),
+      preferredColors: strings('preferredColors'),
+      preferredBrands: strings('preferredBrands'),
+      excludedProductTerms: strings('excludedProductTerms'),
+      clarificationRequests: _storedStrings(data['clarificationRequests']),
+      pendingScopeCategories: categories('pendingScopeCategories'),
+      categoryConstraints: Map.unmodifiable({
+        for (final entry in scoped.entries)
+          category(entry.key as String): StylistConstraints.fromMap(
+            Map<String, Object?>.from(entry.value as Map),
+          ),
+      }),
+      excludedGenderProductTerms: Map.unmodifiable({
+        for (final entry in audienceTerms.entries)
+          entry.key as String: Set<String>.unmodifiable(
+            _storedStrings(entry.value),
+          ),
+      }),
+      requiredGarmentTypes: Map.unmodifiable({
+        for (final entry in required.entries)
+          category(entry.key as String): entry.value as String,
+      }),
+    );
+  }
+
+  final String gender;
+
+  StylistConstraints withGender(String audience, {String dressCode = ''}) =>
+      copyWith(gender: audience, dressCode: dressCode);
+
+  StylistConstraints copyWith({
+    String? gender,
+    String? dressCode,
+    Set<String>? preferredColors,
+    Set<String>? preferredBrands,
+    Set<String>? excludedBrands,
+    Set<ProductCategory>? ownedCategories,
+  }) => StylistConstraints(
+    gender: gender ?? this.gender,
+    excludedCategories: excludedCategories,
+    ownedCategories: ownedCategories ?? this.ownedCategories,
+    allowedColors: allowedColors,
+    excludedColors: excludedColors,
+    excludedMaterials: excludedMaterials,
+    excludedBrands: excludedBrands ?? this.excludedBrands,
+    allowedMaterials: allowedMaterials,
+    allowedBrands: allowedBrands,
+    preferredColors: preferredColors ?? this.preferredColors,
+    preferredBrands: preferredBrands ?? this.preferredBrands,
+    categoryConstraints: categoryConstraints,
+    clarificationRequests: clarificationRequests,
+    pendingScopeCategories: pendingScopeCategories,
+    excludedProductTerms: excludedProductTerms,
+    excludedGenderProductTerms: excludedGenderProductTerms,
+    requiredGarmentTypes: requiredGarmentTypes,
+    dressCode: dressCode ?? this.dressCode,
+  );
 
   final Set<ProductCategory> excludedCategories;
   final Set<ProductCategory> ownedCategories;
@@ -29,10 +131,16 @@ class StylistConstraints {
   final Set<String> allowedMaterials;
   final Set<String> allowedBrands;
   final Set<String> preferredColors;
+  final Set<String> preferredBrands;
   final Map<ProductCategory, StylistConstraints> categoryConstraints;
   final List<String> clarificationRequests;
   final Set<ProductCategory> pendingScopeCategories;
   final Set<String> excludedProductTerms;
+
+  /// Audience-qualified exclusions match that exact catalog audience only.
+  final Map<String, Set<String>> excludedGenderProductTerms;
+  final Map<ProductCategory, String> requiredGarmentTypes;
+  final String dressCode;
 
   Set<ProductCategory> get skippedCategories =>
       Set.unmodifiable({...excludedCategories, ...ownedCategories});
@@ -43,14 +151,25 @@ class StylistConstraints {
   bool matches(Product product) => violations(product).isEmpty;
 
   List<String> violations(Product product) => [
+    if (requiredGarmentTypes[product.category] case final String type)
+      if (!matchesGarmentRequest(product, type))
+        'Choose the requested garment type: $type',
+    if (!matchesCatalogDressCode(product, dressCode))
+      'Catalog describes casual, sleep or activewear outside your $dressCode style',
+    if (!product.supportsGender(gender))
+      '${genderStylingLabel(product.gender)} does not match your ${genderStylingLabel(gender).toLowerCase()} preference',
     if (excludedCategories.contains(product.category))
       '${product.category.name} was excluded',
     if (ownedCategories.contains(product.category))
       '${product.category.name} is already owned',
     if (allowedColors.isNotEmpty &&
-        !allowedColors.any((color) => _contains(product.color, color)))
+        !allowedColors.any(
+          (color) => matchesCatalogColor(product.color, color),
+        ))
       'Color must be ${allowedColors.join(' or ')}',
-    if (excludedColors.any((color) => _contains(product.color, color)))
+    if (excludedColors.any(
+      (color) => matchesCatalogColor(product.color, color),
+    ))
       'Color was excluded',
     if (excludedMaterials.isNotEmpty &&
         {
@@ -80,13 +199,21 @@ class StylistConstraints {
     for (final term in excludedProductTerms)
       if (_matchesProductType(product, term))
         'Catalog describes an excluded product type: $term',
+    for (final entry in excludedGenderProductTerms.entries)
+      for (final term in entry.value)
+        if (product.gender == entry.key && _matchesProductType(product, term))
+          '${genderStylingLabel(entry.key)} $term were excluded',
   ];
 
   int preferenceScore(Product product) =>
-      preferredColors.where((color) => _contains(product.color, color)).length +
+      preferredColors
+          .where((color) => matchesCatalogColor(product.color, color))
+          .length +
+      preferredBrands.where((brand) => _contains(product.brand, brand)).length +
       (categoryConstraints[product.category]?.preferenceScore(product) ?? 0);
 
   Map<String, Object?> toMap() => {
+    if (gender.isNotEmpty) 'gender': gender,
     if (excludedCategories.isNotEmpty)
       'excludedCategories': excludedCategories
           .map((value) => value.name)
@@ -102,6 +229,7 @@ class StylistConstraints {
       'allowedMaterials': allowedMaterials.toList(),
     if (allowedBrands.isNotEmpty) 'allowedBrands': allowedBrands.toList(),
     if (preferredColors.isNotEmpty) 'preferredColors': preferredColors.toList(),
+    if (preferredBrands.isNotEmpty) 'preferredBrands': preferredBrands.toList(),
     if (categoryConstraints.isNotEmpty)
       'categoryConstraints': {
         for (final entry in categoryConstraints.entries)
@@ -109,8 +237,22 @@ class StylistConstraints {
       },
     if (clarificationRequests.isNotEmpty)
       'clarificationRequests': clarificationRequests,
+    if (pendingScopeCategories.isNotEmpty)
+      'pendingScopeCategories': pendingScopeCategories
+          .map((c) => c.name)
+          .toList(),
     if (excludedProductTerms.isNotEmpty)
       'excludedProductTerms': excludedProductTerms.toList(),
+    if (excludedGenderProductTerms.isNotEmpty)
+      'excludedGenderProductTerms': {
+        for (final entry in excludedGenderProductTerms.entries)
+          entry.key: entry.value.toList(),
+      },
+    if (requiredGarmentTypes.isNotEmpty)
+      'requiredGarmentTypes': {
+        for (final entry in requiredGarmentTypes.entries)
+          entry.key.name: entry.value,
+      },
   };
 
   /// Applies explicit instructions to the existing constraints. A positive
@@ -132,6 +274,53 @@ class StylistConstraints {
     final scopedConstraints = {...categoryConstraints};
     final pendingScopes = {...pendingScopeCategories};
     final excludedTypes = {...excludedProductTerms};
+    final requestedTypes = {...requiredGarmentTypes};
+    final excludedAudienceTypes = {
+      for (final entry in excludedGenderProductTerms.entries)
+        entry.key: {...entry.value},
+    };
+    bool recordAudienceExclusion(
+      String term,
+      String clause,
+      RegExpMatch mention,
+    ) {
+      final qualifier = _audienceBefore(clause, mention);
+      var intent = _intent(clause, mention);
+      if (intent == _Intent.unspecified && qualifier != null) {
+        intent = _intent(clause, qualifier.mention);
+      }
+      if (intent != _Intent.exclude &&
+          intent != _Intent.allow &&
+          intent != _Intent.release) {
+        return false;
+      }
+      if (qualifier == null) {
+        final explicitPermission =
+            intent == _Intent.release ||
+            (intent == _Intent.allow &&
+                (RegExp(r'\b(?:allow|include)\b')
+                        .hasMatch(clause.substring(0, mention.start)) ||
+                    RegExp(r'^\s+(?:is|are)\s+(?:ok(?:ay)?|fine|allowed)\b')
+                        .hasMatch(clause.substring(mention.end))));
+        if (explicitPermission) {
+          for (final terms in excludedAudienceTypes.values) {
+            terms.remove(term);
+          }
+        }
+        return false;
+      }
+      final terms = excludedAudienceTypes.putIfAbsent(
+        qualifier.audience,
+        () => {},
+      );
+      if (intent == _Intent.exclude) {
+        terms.add(term);
+      } else {
+        terms.remove(term);
+      }
+      return true;
+    }
+
     var questions = [...clarificationRequests];
     final brandTerms = {
       ...excludedBrands,
@@ -141,6 +330,39 @@ class StylistConstraints {
       for (final scoped in categoryConstraints.values) ...scoped.allowedBrands,
     }.where((brand) => brand.isNotEmpty).toSet();
     for (final clause in _clauses(message)) {
+      for (final entry in garmentTypes.entries) {
+        for (final match in RegExp(entry.value.pattern).allMatches(clause)) {
+          final intent = _intent(clause, match);
+          if (intent == _Intent.exclude &&
+              _audienceBefore(clause, match) != null) {
+            continue;
+          }
+          if (intent == _Intent.owned ||
+              intent == _Intent.exclude ||
+              intent == _Intent.release) {
+            if (requestedTypes[entry.value.category] == entry.key) {
+              requestedTypes.remove(entry.value.category);
+            }
+          } else if (!RegExp(r'\b(?:allow|include)\b').hasMatch(clause) &&
+              !RegExp(r'^\s+(?:is|are)\s+(?:ok(?:ay)?|fine|allowed)\b')
+                  .hasMatch(clause.substring(match.end))) {
+            requestedTypes[entry.value.category] = entry.key;
+          }
+        }
+      }
+      // A broad category request releases the previous narrow garment request.
+      for (final entry in categoryPatterns.entries) {
+        for (final mention in RegExp(entry.value).allMatches(clause)) {
+          if (_intent(clause, mention) != _Intent.exclude &&
+              !garmentTypes.values.any(
+                (type) =>
+                    type.category == entry.key &&
+                    RegExp(type.pattern).hasMatch(clause),
+              )) {
+            requestedTypes.remove(entry.key);
+          }
+        }
+      }
       final scope = _restrictionScope(clause, {
         ..._colors,
         ..._materials,
@@ -176,6 +398,7 @@ class StylistConstraints {
       }
       for (final type in _productTypes.entries) {
         for (final mention in RegExp(type.value.pattern).allMatches(clause)) {
+          if (recordAudienceExclusion(type.key, clause, mention)) continue;
           final intent = _intent(clause, mention);
           if (intent == _Intent.exclude) excludedTypes.add(type.key);
           if (intent == _Intent.allow || intent == _Intent.release) {
@@ -185,6 +408,18 @@ class StylistConstraints {
       }
       for (final entry in categoryPatterns.entries) {
         for (final match in RegExp(entry.value).allMatches(clause)) {
+          final narrowType = _productTypes.entries
+              .where(
+                (type) => RegExp(type.value.pattern).hasMatch(match.group(0)!),
+              )
+              .firstOrNull;
+          if (recordAudienceExclusion(
+            narrowType?.key ?? entry.key.name,
+            clause,
+            match,
+          )) {
+            continue;
+          }
           final intent = _intent(clause, match);
           final modifiedByNarrowType = _productTypes.values.any(
             (type) =>
@@ -202,11 +437,6 @@ class StylistConstraints {
                     ),
           );
           if (modifiedByNarrowType) continue;
-          final narrowType = _productTypes.entries
-              .where(
-                (type) => RegExp(type.value.pattern).hasMatch(match.group(0)!),
-              )
-              .firstOrNull;
           if (narrowType != null && intent != _Intent.owned) {
             if (intent == _Intent.exclude) excludedTypes.add(narrowType.key);
             if (intent == _Intent.allow || intent == _Intent.release) {
@@ -285,6 +515,9 @@ class StylistConstraints {
       }
     }
     return StylistConstraints(
+      gender: gender,
+      requiredGarmentTypes: Map.unmodifiable(requestedTypes),
+      dressCode: dressCode,
       excludedCategories: Set.unmodifiable(categories),
       ownedCategories: Set.unmodifiable(owned),
       allowedColors: Set.unmodifiable(requiredColors),
@@ -294,12 +527,26 @@ class StylistConstraints {
       allowedMaterials: Set.unmodifiable(requiredMaterials),
       allowedBrands: Set.unmodifiable(requiredBrands),
       preferredColors: Set.unmodifiable(preferences),
+      preferredBrands: preferredBrands,
       categoryConstraints: Map.unmodifiable(scopedConstraints),
       clarificationRequests: List.unmodifiable(questions),
       pendingScopeCategories: Set.unmodifiable(pendingScopes),
       excludedProductTerms: Set.unmodifiable(excludedTypes),
+      excludedGenderProductTerms: Map.unmodifiable({
+        for (final entry in excludedAudienceTypes.entries)
+          if (entry.value.isNotEmpty)
+            entry.key: Set<String>.unmodifiable(entry.value),
+      }),
     );
   }
+}
+
+List<String> _storedStrings(Object? input) {
+  if (input == null) return const [];
+  if (input is! List || input.length > 100 || input.any((v) => v is! String)) {
+    throw const FormatException('Saved styling choices are invalid.');
+  }
+  return List.unmodifiable(input.cast<String>());
 }
 
 /// A category mentioned only to reject it or to describe an owned piece is not
@@ -315,7 +562,9 @@ ProductCategory? requestedProductCategory(
       if (!effective.categoryPermitted(entry.key)) continue;
       for (final match in RegExp(entry.value).allMatches(clause)) {
         final intent = _intent(clause, match);
-        if (intent != _Intent.exclude && intent != _Intent.owned) {
+        if (intent != _Intent.owned &&
+            (intent != _Intent.exclude ||
+                _audienceBefore(clause, match) != null)) {
           requested.add(entry.key);
         }
       }
@@ -325,15 +574,15 @@ ProductCategory? requestedProductCategory(
 }
 
 const categoryPatterns = {
-  ProductCategory.dress: r'\bdress(?:es)?\b',
+  ProductCategory.dress:
+      r'\b(?:dress(?:es)?|one[ -]pieces?|coveralls?|jumpsuits?)\b',
   ProductCategory.top: r'\b(?:tops?|shirts?|knits?|blouses?)\b',
   ProductCategory.bottom: r'\b(?:bottoms?|trousers?|pants?|shorts?|skirts?)\b',
-  ProductCategory.layer: r'\b(?:layers?|jackets?|coats?|outerwear)\b',
+  ProductCategory.layer: r'\b(?:layers?|jackets?|coats?|outerwear|cardigans?|blazers?|vests?|parkas?)\b',
   ProductCategory.shoes:
       r'\b(?:shoes?|boots?|sandals?|heels?|trainers?|sneakers?)\b',
   ProductCategory.bag: r'\b(?:bags?|totes?|handbags?)\b',
-  ProductCategory.accessory:
-      r'\b(?:accessor(?:y|ies)|jewell?ery|scarves?|belts?)\b',
+  ProductCategory.accessory: r'\b(?:accessor(?:y|ies)|jewell?ery|scarves?|belts?|watch(?:es)?|earrings?)\b',
 };
 
 // Narrow types do not remove the broader category from the outfit plan.
@@ -384,6 +633,10 @@ const _colors = {
   'orange',
   'silver',
   'gold',
+  'ivory',
+  'camel',
+  'burgundy',
+  'chocolate',
 };
 const _materials = {
   'wool',
@@ -558,6 +811,9 @@ bool _releasesRestriction(String prefix, String suffix) {
 }
 
 bool _matchesProductType(Product product, String term) {
+  if (ProductCategory.values.any((category) => category.name == term)) {
+    return product.category.name == term;
+  }
   final type = _productTypes[term];
   if (type != null && type.category != product.category) return false;
   return RegExp(type?.pattern ?? _term(term).pattern).hasMatch(
@@ -573,3 +829,38 @@ String _normalize(String text) =>
     text.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
 bool _contains(String value, String term) =>
     _term(term).hasMatch(_normalize(value));
+
+const pairedGenderAudiencePattern =
+    r"\b(?:male\s*(?:,|and)\s*female|female\s*(?:,|and)\s*male|men(?:['’]s|s)?\s+and\s+women(?:['’]s|s)?|women(?:['’]s|s)?\s+and\s+men(?:['’]s|s)?)\b";
+const genderAudiencePatterns = {
+  'male':
+      r"\b(?:male|men(?:['’]s|s)?|menswear|man|gents?|gentlemen|gentleman)\b",
+  'female': r"\b(?:female|women(?:['’]s|s)?|womenswear|woman|ladies|lady)\b",
+  'male, female':
+      r'\b(?:unisex|all genders|both genders)\b|' + pairedGenderAudiencePattern,
+};
+
+({String audience, RegExpMatch mention})? _audienceBefore(
+  String clause,
+  RegExpMatch mention,
+) {
+  final prefix = clause.substring(0, mention.start);
+  ({String audience, RegExpMatch mention})? qualifier;
+  var earliest = prefix.length;
+  for (final entry in genderAudiencePatterns.entries) {
+    final match = RegExp("(?:${entry.value})(?:['’]s|['’])?\\s*\$")
+        .firstMatch(prefix);
+    if (match != null && match.start < earliest) {
+      earliest = match.start;
+      qualifier = (audience: entry.key, mention: match);
+    }
+  }
+  return qualifier;
+}
+
+String genderStylingLabel(String gender) => switch (gender) {
+  'male' => 'Men’s styling',
+  'female' => 'Women’s styling',
+  'male, female' => 'Unisex styling',
+  _ => '',
+};

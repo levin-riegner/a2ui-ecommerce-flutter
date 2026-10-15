@@ -44,6 +44,14 @@ tags, styling keywords, prices and image paths. It reads the enriched text;
 the application renders the photos. The enrichment pass performs the image
 inspection ahead of time.
 
+### Product styling audience
+
+All 977 products received a separate audience pass using their photos and available product text. The CSV's `gender` field accepts exactly `male`, `female`, or `male, female`; the combined value is one quoted CSV field. The current catalog contains 289 female, 141 male, and 547 combined-audience products.
+
+These are best-effort labels for a product's cut, styling, and marketed audience, not the photographed person's identity or a size/fit guarantee. Neutral products can support both audiences; targeted garments retain their specific audience. Independent review corrected 25 labels, including menswear and womenswear previously marked too broadly.
+
+Every other catalog field and image remains unchanged by this pass. Source snapshots, per-product reasons, contact sheets, and review corrections remain local under `.catalog-work/gender-enrichment-20261014/`. Validators require a canonical audience label on every public product. No additional image downloads or embeddings are needed.
+
 The import/enrichment scripts are internal helpers. Their diagnostic flags are
 evidence for assistant curation, not a required manual-review workflow. Import
 snapshots and prepare file-based Luna jobs with:

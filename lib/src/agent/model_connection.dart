@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-import 'genkit_agent.dart';
+import 'commerce_session.dart';
 import 'model_settings.dart';
 
 /// Configures a bundled Genkit provider without making a model request.
@@ -9,11 +8,11 @@ class ModelConnectionForm extends StatefulWidget {
   const ModelConnectionForm({
     super.key,
     required this.onConnected,
-    this.client,
+    required this.connectionFactory,
   });
 
-  final ValueChanged<GenkitAgent> onConnected;
-  final http.Client? client;
+  final ValueChanged<CommerceSession> onConnected;
+  final StylistConnectionFactory connectionFactory;
 
   @override
   State<ModelConnectionForm> createState() => _ModelConnectionFormState();
@@ -43,13 +42,15 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
       _error = null;
     });
     try {
-      final agent = await GenkitAgent.connect(
-        onlineContext: true,
-        provider: _provider,
-        model: _model.text.trim(),
-        apiKey: _key.text.trim(),
-        baseUrl: _provider == 'openai-compatible' ? _baseUrl.text.trim() : null,
-        client: widget.client,
+      final agent = await widget.connectionFactory(
+        ModelSettings(
+          provider: _provider,
+          model: _model.text.trim(),
+          apiKey: _key.text.trim(),
+          baseUrl: _provider == 'openai-compatible'
+              ? _baseUrl.text.trim()
+              : null,
+        ),
       );
       if (!mounted) {
         agent.dispose();

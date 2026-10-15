@@ -12,7 +12,10 @@ Flutter remains pinned by `.fvmrc`; unrelated GenUI/A2UI packages are unchanged.
 | --- | --- |
 | [`genkit_providers.dart`](../lib/src/agent/genkit_providers.dart) | Public provider factories, model invocation, HTTP ownership, credentials and provider compatibility |
 | [`stylist_runtime.dart`](../lib/src/agent/stylist_runtime.dart) | Flow, tools, host validation, conversation history, request limits and transactional state |
-| [`genkit_agent.dart`](../lib/src/agent/genkit_agent.dart) | Connection lifecycle and validated A2UI delivery to Flutter |
+| [`app_dependencies.dart`](../lib/src/app_dependencies.dart) | Catalog/provider/weather/store composition and injected connection factory |
+| [`genkit_agent.dart`](../lib/src/agent/genkit_agent.dart) | Session lifecycle and validated A2UI delivery to Flutter |
+| [`stylist_result.dart`](../lib/src/agent/stylist_result.dart) | Typed domain result and renderer-independent view state |
+| [`stylist_presenter.dart`](../lib/src/agent/stylist_presenter.dart) | Explicit domain-to-A2UI conversion before batch validation |
 | [`genkit_providers_test.dart`](../test/genkit_providers_test.dart) | Real plugins exercised through mocked HTTP, including provider wire formats |
 | [`stylist_runtime_test.dart`](../test/stylist_runtime_test.dart) | Host policy, rollback, cancellation, explicit retries and tool-loop limits |
 | [`stylist.dart`](../tools/genkit/stylist.dart) | Offline flow entry point for the optional Developer UI |
@@ -44,7 +47,8 @@ Flutter remains pinned by `.fvmrc`; unrelated GenUI/A2UI packages are unchanged.
    Results/chunks are read-only views. Keep mutable outfit and budget state in
    the host's draft, committing only after the whole turn succeeds.
 
-The production connection is assembled in `GenkitAgent.connect`: supply
+The production connection is assembled by `StylistDependencies.connect` in
+`app_dependencies.dart` (`connectStylist` is a developer convenience). Supply
 `providerModel: connection.model`, `onBeginTurn: connection.beginTurn` and
 `onCancelTurn: connection.cancelTurn` to `StylistRuntime`. Close the connection
 and runtime together. `model:` is the deterministic test/offline callback;

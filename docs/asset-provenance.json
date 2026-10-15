@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "scope": "Current asset inventory and evidence; not a legal clearance certificate. Historical verification media and Git history require a separate release review.",
+  "groups": [
+    {
+      "paths": [
+        "assets/data/**"
+      ],
+      "source": "Fictional demo catalog and local fixture data",
+      "evidence": [
+        "README.md",
+        "docs/catalog-import.md"
+      ],
+      "terms": "Project LICENSE; no live stock, fit or availability claims"
+    },
+    {
+      "paths": [
+        "assets/images/products/demo-0[01][0-9][0-9].jpg",
+        "assets/images/products/demo-0200.jpg"
+      ],
+      "source": "Original 200 catalog photographs",
+      "evidence": [
+        "NOTICE"
+      ],
+      "terms": "Recorded public-use/redistribution grant under project Apache-2.0; original authorship retained"
+    },
+    {
+      "paths": [
+        "assets/images/products/demo-*.jpg"
+      ],
+      "source": "Images 0201 through 0977: generated fictional mock.shop product imagery",
+      "evidence": [
+        "NOTICE"
+      ],
+      "terms_url": "https://demostore.hydrogen.mock.shop/policies/terms-of-service",
+      "terms": "Additional-image group only; original 0001-0200 grant takes precedence"
+    },
+    {
+      "paths": [
+        "assets/fonts/inter/**"
+      ],
+      "source": "Inter / rsms",
+      "evidence": [
+        "assets/fonts/inter/OFL.txt"
+      ],
+      "terms": "SIL Open Font License 1.1"
+    },
+    {
+      "paths": [
+        "assets/fonts/jost/**"
+      ],
+      "source": "Jost Project Authors / indestructible-type",
+      "evidence": [
+        "assets/fonts/jost/OFL.txt"
+      ],
+      "terms": "SIL Open Font License 1.1"
+    },
+    {
+      "paths": [
+        "assets/icons/**",
+        "assets/images/occasions/*.svg",
+        "assets/branding/**"
+      ],
+      "source": "Project branding and supplied design-reference vectors",
+      "evidence": [
+        "LICENSE",
+        "docs/design/README.md"
+      ],
+      "terms": "Project assets; preserve source-design attribution and check source ownership in release review"
+    },
+    {
+      "paths": [
+        "assets/images/finalized_left/*.png"
+      ],
+      "source": "Four photographs extracted from supplied Figma design reference",
+      "evidence": [
+        "docs/design/finalized-screens.json"
+      ],
+      "terms": "Redistribution evidence not recorded independently; confirm grants or replace/exclude before public distribution",
+      "release_status": "requires_review"
+    },
+    {
+      "paths": [
+        "lib/src/catalog/occasion_artwork.dart",
+        "lib/src/catalog/occasion_collage.dart"
+      ],
+      "source": "Original geometric Canvas artwork authored in this reference repository; no source image pixels",
+      "evidence": [
+        "LICENSE"
+      ],
+      "terms": "Project Apache-2.0"
+    },
+    {
+      "paths": [
+        "docs/verification/reference-architecture-2026-10-15/start-*.png"
+      ],
+      "source": "Fresh disconnected ReferenceApp renders with original code-native occasion art and project UI text",
+      "evidence": [
+        "docs/verification/reference-architecture-2026-10-15/README.md",
+        "tool/export_reference_previews.dart",
+        "LICENSE"
+      ],
+      "terms": "Project Apache-2.0; contains no removed Start PNG or unresolved context-photo gallery media"
+    }
+  ],
+  "removed_unverified_assets": [
+    "assets/images/occasions/start-01.png",
+    "assets/images/occasions/start-02.png",
+    "assets/images/occasions/start-03.png",
+    "assets/images/occasions/start-04.png",
+    "assets/images/occasions/start-05.png",
+    "assets/images/occasions/start-06.png",
+    "assets/images/occasions/start-07.png",
+    "assets/images/occasions/start-08.png",
+    "assets/images/occasions/start-09.png",
+    "assets/images/occasions/start-10.png"
+  ],
+  "archive_review": [
+    "docs/verification/**/*.png",
+    "docs/verification/**/*.mp4",
+    "Historical Git blobs for removed assets"
+  ],
+  "vendored_code": [
+    {
+      "path": "lib/src/catalog/a2ui_common_schema.dart",
+      "source": "Pinned GenUI 0.10.3 common component JSON schema",
+      "license": "licenses/genui-BSD-3-Clause.txt",
+      "upgrade": "Compare with the pinned SDK when upgrading GenUI; preserve upstream license."
+    }
+  ]
+}

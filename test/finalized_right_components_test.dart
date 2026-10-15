@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:a2ui_flutter_commerce/src/catalog/commerce_components.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_components.dart';
+import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_a2ui.dart';
 import 'package:a2ui_flutter_commerce/src/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

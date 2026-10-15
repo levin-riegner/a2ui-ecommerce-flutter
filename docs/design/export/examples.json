@@ -832,8 +832,7 @@
         },
         "required": [
           "component",
-          "label",
-          "action"
+          "label"
         ],
         "additionalProperties": true
       },
@@ -1598,8 +1597,7 @@
         },
         "required": [
           "component",
-          "selected",
-          "action"
+          "selected"
         ],
         "additionalProperties": true
       },
@@ -2016,6 +2014,9 @@
               }
             ]
           },
+          "allowCustomBrands": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
+          },
           "action": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
           },
@@ -2035,8 +2036,7 @@
         "required": [
           "component",
           "love",
-          "skip",
-          "action"
+          "skip"
         ],
         "additionalProperties": true
       },
@@ -3054,6 +3054,9 @@
         "type": "object",
         "description": "Finalized Figma BagPreview. Host-provided data; all actions are explicit stable JSON events. Weather, delivery, venue and stock values must be supplied by the host.",
         "properties": {
+          "mode": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          },
           "items": {
             "oneOf": [
               {
@@ -3292,7 +3295,8 @@
               "bottom",
               "layer",
               "shoes",
-              "bag"
+              "bag",
+              "accessory"
             ]
           },
           "imageAsset": {
@@ -3329,7 +3333,8 @@
               "bottom",
               "layer",
               "shoes",
-              "bag"
+              "bag",
+              "accessory"
             ]
           },
           "component": {
@@ -3377,7 +3382,7 @@
       },
       "OccasionCollage": {
         "type": "object",
-        "description": "Decorative occasion collage from exact bundled Figma image originals.",
+        "description": "Decorative occasion collage from original code-native geometric artwork.",
         "properties": {
           "component": {
             "type": "string",
@@ -7976,8 +7981,8 @@
               {
                 "id": "root",
                 "component": "OccasionTile",
-                "label": "Occasion photograph",
-                "imageAsset": "assets/images/occasions/start-01.png",
+                "label": "Catalog photograph example",
+                "imageAsset": "assets/images/products/demo-0001.jpg",
                 "action": {
                   "event": {
                     "name": "choose_occasion",
@@ -8180,6 +8185,34 @@
               {
                 "id": "root",
                 "component": "LookTile",
+                "category": "accessory",
+                "label": "accessory placeholder"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "component": "LookTile",
+      "variant": 7,
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "example-LookTile-7",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "example-LookTile-7",
+            "components": [
+              {
+                "id": "root",
+                "component": "LookTile",
                 "category": "dress",
                 "label": "Catalog product photograph",
                 "imageAsset": "assets/images/products/demo-0001.jpg"
@@ -8345,6 +8378,33 @@
                 "id": "root",
                 "component": "GarmentSilhouette",
                 "category": "bag"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "component": "GarmentSilhouette",
+      "variant": 6,
+      "messages": [
+        {
+          "version": "v0.9",
+          "createSurface": {
+            "surfaceId": "example-GarmentSilhouette-6",
+            "catalogId": "com.example.a2ui_flutter_commerce/catalog",
+            "sendDataModel": true
+          }
+        },
+        {
+          "version": "v0.9",
+          "updateComponents": {
+            "surfaceId": "example-GarmentSilhouette-6",
+            "components": [
+              {
+                "id": "root",
+                "component": "GarmentSilhouette",
+                "category": "accessory"
               }
             ]
           }

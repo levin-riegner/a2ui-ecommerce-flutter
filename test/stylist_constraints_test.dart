@@ -9,11 +9,13 @@ Product product({
   String brand = 'Studio Sample',
   String name = 'Test',
   String subcategory = '',
+  String gender = 'male, female',
 }) => Product(
   id: 'test',
   category: category,
   name: name,
   subcategory: subcategory,
+  gender: gender,
   brand: brand,
   price: 50,
   meta: '',
@@ -24,6 +26,124 @@ Product product({
 );
 
 void main() {
+  test('audience-qualified exclusions retain type and audience scope', () {
+    final constraints = const StylistConstraints()
+        .recordMessage("No men's jackets")
+        .recordMessage('A winter weekend please');
+    expect(constraints.excludedProductTerms, isEmpty);
+    expect(constraints.excludedCategories, isEmpty);
+    expect(constraints.excludedGenderProductTerms, {
+      'male': {'jackets'},
+    });
+    for (final gender in ['female', 'male, female']) {
+      expect(
+        constraints.matches(
+          product(
+            category: ProductCategory.layer,
+            name: 'Jacket',
+            gender: gender,
+          ),
+        ),
+        isTrue,
+      );
+    }
+    expect(
+      constraints.matches(
+        product(
+          category: ProductCategory.layer,
+          name: 'Jacket',
+          gender: 'male',
+        ),
+      ),
+      isFalse,
+    );
+    expect(
+      constraints
+          .withGender('male')
+          .matches(
+            product(
+              category: ProductCategory.layer,
+              name: 'Jacket',
+              gender: 'male',
+            ),
+          ),
+      isFalse,
+    );
+    expect(
+      constraints.matches(
+        product(category: ProductCategory.layer, name: 'Coat', gender: 'male'),
+      ),
+      isTrue,
+    );
+    expect(
+      constraints.matches(
+        product(
+          category: ProductCategory.top,
+          name: 'Jacket print shirt',
+          gender: 'male',
+        ),
+      ),
+      isTrue,
+    );
+  });
+
+  test(
+    'qualified releases preserve other audiences and global restrictions',
+    () {
+      final original = const StylistConstraints().recordMessage(
+        "No men's jackets, no women's jackets, no wool, no bags",
+      );
+      final revised = original.recordMessage("Men's jackets are okay now");
+      expect(revised.excludedGenderProductTerms, {
+        'female': {'jackets'},
+      });
+      expect(original.excludedGenderProductTerms.keys, {'male', 'female'});
+      expect(
+        original.recordMessage('Show jackets').excludedGenderProductTerms,
+        original.excludedGenderProductTerms,
+      );
+      expect(
+        original
+            .recordMessage("Allow men's jackets")
+            .excludedGenderProductTerms,
+        {
+          'female': {'jackets'},
+        },
+      );
+      expect(revised.excludedMaterials, {'wool'});
+      expect(revised.excludedCategories, {ProductCategory.bag});
+      final released = revised.recordMessage('Jackets are okay now');
+      expect(released.excludedGenderProductTerms, isEmpty);
+      expect(released.excludedMaterials, {'wool'});
+      expect(released.excludedCategories, {ProductCategory.bag});
+      expect(
+        requestedProductCategory("No men's jackets"),
+        ProductCategory.layer,
+      );
+      expect(requestedProductCategory('No jackets'), isNull);
+    },
+  );
+
+  test('female, unisex and broader audience exclusions use catalog facts', () {
+    for (final (message, audience, category, name) in [
+      ('No ladies’ jackets', 'female', ProductCategory.layer, 'Jacket'),
+      ('No unisex jackets', 'male, female', ProductCategory.layer, 'Jacket'),
+      ("Avoid men's outerwear", 'male', ProductCategory.layer, 'Coat'),
+    ]) {
+      final constraints = const StylistConstraints().recordMessage(message);
+      expect(constraints.categoryPermitted(category), isTrue);
+      for (final gender in ['male', 'female', 'male, female']) {
+        expect(
+          constraints.matches(
+            product(category: category, name: name, gender: gender),
+          ),
+          gender != audience,
+          reason: message,
+        );
+      }
+    }
+  });
+
   test('olive restrictions are acknowledged and enforced by color facts', () {
     final required = const StylistConstraints()
         .recordMessage('Only olive')

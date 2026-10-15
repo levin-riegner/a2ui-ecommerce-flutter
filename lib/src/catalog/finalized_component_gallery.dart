@@ -6,9 +6,9 @@ import 'package:genui/genui.dart';
 
 import 'catalog_export.dart';
 import 'commerce_catalog.dart';
-import 'finalized_left_components.dart';
-import 'finalized_right_components.dart';
-import 'finalized_shared_components.dart';
+import 'finalized_left_a2ui.dart';
+import 'finalized_right_a2ui.dart';
+import 'finalized_shared_a2ui.dart';
 
 /// Previews the same schemas, bindings and widgets used by model surfaces.
 /// No provider connection is needed; actions remain visible for inspection.

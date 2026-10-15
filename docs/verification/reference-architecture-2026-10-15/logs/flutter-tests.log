@@ -1,0 +1,537 @@
+00:00 +0: loading <worktree>/test/stylist_composer_dictation_test.dart
+00:00 +0: <worktree>/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:00 +1: <worktree>/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:00 +2: <worktree>/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:00 +3: <worktree>/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:00 +4: <worktree>/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:00 +5: <worktree>/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:01 +6: <worktree>/test/stylist_composer_dictation_test.dart: manual edit and send reject late transcription
+00:02 +7: <worktree>/test/stylist_composer_dictation_test.dart: denied permissions keep text usable and can be retried
+00:02 +8: <worktree>/test/stylist_composer_dictation_test.dart: denied permissions keep text usable and can be retried
+00:02 +9: <worktree>/test/stylist_data_contract_test.dart: completion, search, selection, save and restore agree on an exact decimal budget
+00:03 +10: <worktree>/test/stylist_data_contract_test.dart: completion, search, selection, save and restore agree on an exact decimal budget
+00:03 +11: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:03 +12: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:03 +13: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:03 +14: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:03 +15: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:03 +16: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:03 +17: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:03 +18: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:04 +19: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:04 +20: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:04 +21: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:04 +22: <worktree>/test/speech_dictation_plugin_test.dart: native speech_to_text callbacks fill the draft before manual send
+00:05 +23: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:05 +24: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:05 +25: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:06 +26: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:06 +27: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:06 +28: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:06 +29: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:06 +30: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:06 +31: <worktree>/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:07 +32: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +33: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +34: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +35: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +36: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +37: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +38: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +39: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +40: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +41: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +42: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +43: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +44: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +45: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +46: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +47: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +48: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +49: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +50: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +51: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +52: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +53: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +54: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +55: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +56: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +57: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +58: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +59: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +60: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +61: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +62: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +63: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +64: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +65: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +66: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +67: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +68: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +69: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +70: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +71: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +72: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +73: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +74: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +75: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +76: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +77: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +78: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +79: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +80: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +81: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +82: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +83: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +84: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +85: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +86: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +87: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +88: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +89: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +90: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +91: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +92: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +93: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +94: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +95: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +96: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +97: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +98: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +99: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +100: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +101: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +102: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +103: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +104: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +105: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +106: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +107: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +108: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +109: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +110: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +111: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +112: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +113: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +114: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +115: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +116: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +117: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +118: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +119: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +120: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +121: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +122: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +123: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +124: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +125: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +126: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +127: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +128: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +129: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +130: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +131: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +132: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +133: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +134: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +135: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +136: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +137: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +138: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +139: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +140: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +141: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +142: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +143: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +144: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +145: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +146: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +147: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +148: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +149: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +150: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +151: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +152: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +153: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +154: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +155: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +156: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +157: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +158: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +159: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +160: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +161: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +162: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +163: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +164: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +165: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +166: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +167: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +168: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +169: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +170: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +171: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +172: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +173: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +174: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +175: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +176: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +177: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +178: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +179: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +180: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +181: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +182: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +183: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +184: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +185: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +186: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +187: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +188: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +189: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +190: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +191: <worktree>/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +192: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +193: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +194: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +195: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +196: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +197: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +198: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +199: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +200: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +201: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:18 +202: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +203: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +204: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +205: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +206: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +207: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +208: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +209: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +210: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +211: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +212: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +213: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +214: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +215: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +216: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +217: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +218: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +219: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +220: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +221: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +222: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +223: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +224: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +225: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +226: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +227: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +228: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +229: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +230: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +231: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +232: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +233: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +234: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +235: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +236: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +237: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +238: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +239: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:19 +240: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +241: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +242: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +243: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +244: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +245: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +246: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +247: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +248: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +249: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +250: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +251: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +252: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +253: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +254: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +255: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +256: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +257: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +258: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +259: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +260: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +261: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +262: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +263: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +264: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +265: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +266: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +267: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +268: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +269: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +270: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +271: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +272: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +273: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +274: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +275: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +276: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +277: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +278: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +279: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +280: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +281: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +282: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +283: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +284: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +285: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +286: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +287: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +288: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +289: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +290: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +291: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +292: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +293: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +294: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +295: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +296: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +297: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +298: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +299: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +300: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +301: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +302: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +303: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +304: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +305: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +306: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +307: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +308: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +309: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +310: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +311: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +312: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +313: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +314: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +315: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +316: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +317: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +318: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +319: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +320: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +321: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +322: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +323: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +324: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +325: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +326: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +327: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +328: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +329: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +330: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +331: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +332: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +333: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +334: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +335: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +336: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +337: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +338: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +339: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +340: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +341: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +342: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +343: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +344: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +345: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +346: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +347: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +348: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +349: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +350: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +351: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +352: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +353: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +354: <worktree>/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +355: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +356: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +357: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +358: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +359: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +360: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +361: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +362: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +363: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +364: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:26 +365: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:27 +366: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:27 +367: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:27 +368: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:27 +369: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:27 +370: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(669.0, 951.0) at maximum text
+00:27 +371: <worktree>/test/stylist_component_adoption_test.dart: Cheaper exposes actual cheaper alternatives and rejects cached original selection
+00:27 +372: <worktree>/test/duo_layout_adapter_test.dart: cover keeps one content column and preserves draft across poses
+00:27 +373: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +374: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +375: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +376: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +377: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +378: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +379: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +380: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:27 +381: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +382: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +383: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +384: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +385: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +386: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +387: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +388: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +389: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +390: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +391: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +392: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +393: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +394: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +395: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +396: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +397: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +398: <worktree>/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(951.0, 669.0) at maximum text
+00:28 +399: <worktree>/test/dressing_room_transition_test.dart: first long reply stays at the top and later replies follow the end
+00:29 +400: <worktree>/test/dressing_room_transition_test.dart: first long reply stays at the top and later replies follow the end
+00:29 +401: <worktree>/test/dressing_room_transition_test.dart: first long reply stays at the top and later replies follow the end
+00:29 +402: <worktree>/test/dressing_room_transition_test.dart: first long reply stays at the top and later replies follow the end
+00:29 +403: <worktree>/test/duo_layout_adapter_test.dart: actual stylist preserves draft, focus, session and selected outfit through cover/inner/posture/keyboard transitions
+00:29 +404: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:29 +405: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:29 +406: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:29 +407: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:29 +408: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:29 +409: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +410: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +411: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +412: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +413: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +414: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +415: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +416: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +417: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +418: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:30 +419: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:31 +420: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:31 +421: <worktree>/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:31 +422: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:31 +423: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:31 +424: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:32 +425: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:32 +426: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:32 +427: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:32 +428: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:32 +429: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:32 +430: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:32 +431: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +432: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +433: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +434: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +435: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +436: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +437: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +438: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +439: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +440: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +441: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +442: <worktree>/test/stylist_library_test.dart: actual controls save, add, change quantity, remove, undo and restore a look
+00:33 +443: <worktree>/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:33 +444: <worktree>/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:34 +445: <worktree>/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:34 +446: <worktree>/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:34 +447: <worktree>/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:35 +448: <worktree>/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:35 +449: <worktree>/test/finalized_screen_gallery_test.dart: brief choices update bound state and submit the preserved budget/draft
+00:35 +450: <worktree>/test/finalized_right_components_test.dart: every right variant renders in 172.0 panes at 300 percent text
+00:35 +451: <worktree>/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:35 +452: <worktree>/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:35 +453: <worktree>/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:36 +454: <worktree>/test/stylist_component_adoption_test.dart: preference widgets edit drafts and submit all choices together
+00:36 +455: <worktree>/test/finalized_right_components_test.dart: every right variant renders in 351.0 panes at 300 percent text
+00:36 +456: <worktree>/test/finalized_right_components_test.dart: every right variant renders in 351.0 panes at 300 percent text
+00:36 +457: <worktree>/test/finalized_right_components_test.dart: every right variant renders in 351.0 panes at 300 percent text
+00:36 +458: <worktree>/test/finalized_right_components_test.dart: every right variant renders in 351.0 panes at 300 percent text
+00:36 +459: <worktree>/test/finalized_right_components_test.dart: every right variant renders in 351.0 panes at 300 percent text
+00:36 +460: <worktree>/test/finalized_right_components_test.dart: every right variant renders in 351.0 panes at 300 percent text
+00:36 +461: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 1.0 text
+00:36 +462: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 1.0 text
+00:36 +463: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 1.0 text
+00:36 +464: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 1.0 text
+00:37 +465: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 1.0 text
+00:37 +466: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 1.0 text
+00:37 +467: <worktree>/test/stylist_constraint_runtime_test.dart: hard color/material/brand filters survive optional search fallback
+00:37 +468: <worktree>/test/stylist_constraint_runtime_test.dart: hard color/material/brand filters survive optional search fallback
+00:37 +469: <worktree>/test/stylist_constraint_runtime_test.dart: hard color/material/brand filters survive optional search fallback
+00:37 +470: <worktree>/test/stylist_constraint_runtime_test.dart: hard color/material/brand filters survive optional search fallback
+00:37 +471: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +472: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +473: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +474: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +475: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +476: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +477: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +478: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +479: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +480: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +481: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +482: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +483: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +484: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +485: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +486: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +487: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +488: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +489: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +490: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +491: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +492: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +493: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +494: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +495: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:37 +496: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:38 +497: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:38 +498: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:38 +499: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:38 +500: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:38 +501: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:38 +502: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:38 +503: <worktree>/test/progressive_agent_test.dart: shows skeleton then validated facts before final prose
+00:38 +504: <worktree>/test/progressive_agent_test.dart: shows skeleton then validated facts before final prose
+00:38 +505: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +506: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +507: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +508: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +509: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +510: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +511: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +512: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +513: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:38 +514: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:39 +515: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:39 +516: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:39 +517: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:39 +518: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:39 +519: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:39 +520: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 1.0 text
+00:39 +521: <worktree>/test/dressing_room_progression_test.dart: updated outfit stays visible through reveal, reduced=false
+00:39 +522: <worktree>/test/dressing_room_progression_test.dart: updated outfit stays visible through reveal, reduced=false
+00:39 +523: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 3.12 text
+00:39 +524: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 3.12 text
+00:39 +525: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 3.12 text
+00:39 +526: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 3.12 text
+00:39 +527: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 3.12 text
+00:39 +528: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(669.0, 951.0) / 3.12 text
+00:39 +529: <worktree>/test/dressing_room_progression_test.dart: removal can reopen a slot different from the planner’s first gap
+00:39 +530: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(951.0, 669.0) / 1.0 text
+00:40 +531: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(951.0, 669.0) / 1.0 text
+00:40 +532: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(951.0, 669.0) / 1.0 text
+00:40 +533: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(951.0, 669.0) / 1.0 text
+00:40 +534: <worktree>/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(951.0, 669.0) / 3.12 text
+00:40 +535: All tests passed!

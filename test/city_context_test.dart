@@ -1,3 +1,5 @@
+import 'stylist_wire_helpers.dart';
+
 import 'dart:convert';
 
 import 'package:a2ui_flutter_commerce/src/agent/city_context.dart';
@@ -74,7 +76,7 @@ class FixtureContext implements CityContextSource {
 }
 
 Map<String, Object?> inlineData(Map<String, dynamic> turn) =>
-    ((turn['messages'] as List).lastWhere(
+    ((presentedStylistTurn(turn)['messages'] as List).lastWhere(
               (message) =>
                   message['updateDataModel']?['surfaceId'].startsWith(
                     'inline-',
@@ -189,7 +191,7 @@ void main() {
       expect(requests.first, contains('12'));
       expect(source.calls, hasLength(1));
       expect(
-        (turn['messages'] as List).any(
+        (presentedStylistTurn(turn)['messages'] as List).any(
           (m) => '$m'.contains('selected-products'),
         ),
         isFalse,

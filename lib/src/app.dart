@@ -10,8 +10,10 @@ import 'package:foldable/foldable.dart';
 import 'agent/commerce_agent.dart';
 import 'agent/conversation_entry.dart';
 import 'agent/model_connection.dart';
-import 'agent/genkit_agent.dart';
+import 'agent/commerce_session.dart';
+import 'app_dependencies.dart';
 import 'catalog/commerce_examples.dart';
+import 'catalog/occasion_artwork.dart';
 import 'catalog/commerce_components.dart';
 import 'catalog/finalized_left_components.dart';
 import 'catalog/finalized_component_gallery.dart';
@@ -45,23 +47,42 @@ const _basicComponentGalleryNames = <String>[
 ];
 
 class ReferenceApp extends StatefulWidget {
-  const ReferenceApp({super.key, this.agent, this.connectionClient});
+  const ReferenceApp({
+    super.key,
+    this.agent,
+    this.connectionClient,
+    this.connectionFactory,
+    this.sessionBuilder,
+  });
 
   /// Injection for tests and component previews. The app disposes this agent.
-  final CommerceAgent? agent;
+  final CommerceSession? agent;
   final http.Client? connectionClient;
+  final StylistConnectionFactory? connectionFactory;
+  final Widget Function(CommerceSession session, VoidCallback onNewJourney)?
+  sessionBuilder;
 
   @override
   State<ReferenceApp> createState() => _ReferenceAppState();
 }
 
 class _ReferenceAppState extends State<ReferenceApp> {
-  CommerceAgent? agent;
+  CommerceSession? agent;
 
   @override
   void initState() {
     super.initState();
     agent = widget.agent;
+  }
+
+  @override
+  void didUpdateWidget(covariant ReferenceApp oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(widget.agent, oldWidget.agent)) {
+      final previous = agent;
+      agent = widget.agent;
+      if (!identical(previous, agent)) previous?.dispose();
+    }
   }
 
   @override
@@ -80,7 +101,12 @@ class _ReferenceAppState extends State<ReferenceApp> {
       home: _AppHome(
         key: ObjectKey(agent),
         agent: agent,
-        connectionClient: widget.connectionClient,
+        connectionFactory:
+            widget.connectionFactory ??
+            (settings) =>
+                StylistDependencies.defaults(client: widget.connectionClient)
+                    .connect(settings),
+        sessionBuilder: widget.sessionBuilder,
         onConnected: (value) => setState(() => agent = value),
         onDisconnect: widget.agent == null && agent != null
             ? () {
@@ -100,13 +126,16 @@ class _AppHome extends StatefulWidget {
     required this.agent,
     required this.onConnected,
     this.onDisconnect,
-    this.connectionClient,
+    required this.connectionFactory,
+    this.sessionBuilder,
   });
 
-  final CommerceAgent? agent;
-  final ValueChanged<GenkitAgent> onConnected;
+  final CommerceSession? agent;
+  final ValueChanged<CommerceSession> onConnected;
   final VoidCallback? onDisconnect;
-  final http.Client? connectionClient;
+  final StylistConnectionFactory connectionFactory;
+  final Widget Function(CommerceSession session, VoidCallback onNewJourney)?
+  sessionBuilder;
 
   @override
   State<_AppHome> createState() => _AppHomeState();
@@ -138,9 +167,13 @@ class _AppHomeState extends State<_AppHome> {
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(24),
                           child: ModelConnectionForm(
-                            client: widget.connectionClient,
+                            connectionFactory: widget.connectionFactory,
                             onConnected: (value) {
                               Navigator.of(dialogContext).pop();
+                              if (!mounted) {
+                                value.dispose();
+                                return;
+                              }
                               widget.onConnected(value);
                             },
                           ),
@@ -166,10 +199,13 @@ class _AppHomeState extends State<_AppHome> {
             onOpenGallery: () => setState(() => showGallery = true),
           );
         }
-        return _ResponsiveShell(
-          agent: agent,
-          onNewJourney: () => setState(() => showStartScreen = true),
-        );
+        void newJourney() => setState(() => showStartScreen = true);
+        final builder = widget.sessionBuilder;
+        if (builder != null) return builder(agent, newJourney);
+        if (agent is! CommerceAgent) {
+          throw StateError('A custom session requires a sessionBuilder.');
+        }
+        return _ResponsiveShell(agent: agent, onNewJourney: newJourney);
       },
     );
   }
@@ -546,15 +582,10 @@ class _MosaicPreview extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           for (final number in column.images) ...[
-                            Image.asset(
-                              'assets/images/occasions/start-${number.toString().padLeft(2, '0')}.png',
+                            OccasionArtwork(
+                              seed: number,
                               width: columnWidth,
                               height: columnWidth * 4 / 3,
-                              fit: BoxFit.cover,
-                              alignment: number == 6
-                                  ? Alignment.topCenter
-                                  : Alignment.center,
-                              excludeFromSemantics: true,
                             ),
                             if (number != column.images.last)
                               const SizedBox(height: 4),
@@ -999,7 +1030,7 @@ class _ChatComposerState extends State<_ChatComposer> {
       return;
     }
     textController.clear();
-    await widget.agent.conversation.sendRequest(ChatMessage.user(text));
+    await widget.agent.sendMessage(text);
   }
 
   @override
@@ -1092,7 +1123,13 @@ class _DressingPanel extends StatelessWidget {
                             Expanded(child: room),
                             SizedBox(
                               width: 84,
-                              child: _SideRail(onNewJourney: onNewJourney),
+                              child: _SideRail(
+                                onNewJourney: onNewJourney,
+                                bagCount: agent.bagCount,
+                                onBag: agent.hasLocalLibrary && !agent.isBusy
+                                    ? agent.openBag
+                                    : null,
+                              ),
                             ),
                           ],
                         )
@@ -1214,9 +1251,11 @@ class _MobileHeader extends StatelessWidget {
 }
 
 class _SideRail extends StatelessWidget {
-  const _SideRail({required this.onNewJourney});
+  const _SideRail({required this.onNewJourney, this.bagCount = 0, this.onBag});
 
   final VoidCallback onNewJourney;
+  final int bagCount;
+  final VoidCallback? onBag;
 
   @override
   Widget build(BuildContext context) {
@@ -1244,7 +1283,7 @@ class _SideRail extends StatelessWidget {
               dark ? Colors.white54 : Colors.black54,
               BlendMode.srcIn,
             ),
-            child: const FinalizedBagIcon(count: 0),
+            child: FinalizedBagIcon(count: bagCount, onPressed: onBag),
           ),
           const SizedBox(height: 24),
         ],

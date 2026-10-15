@@ -1,0 +1,4 @@
+00:00 +0: loading <worktree>/tool/export_commerce_catalog.dart
+00:00 +0: export the runtime catalog and replayable A2UI examples
+Shell: Exported 60 component schemas and 126 replayable examples.
+00:00 +1: All tests passed!
