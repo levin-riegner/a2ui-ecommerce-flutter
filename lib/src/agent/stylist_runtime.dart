@@ -9,6 +9,8 @@ import 'stylist_surfaces.dart';
 import 'city_context.dart';
 import 'outfit_plan.dart';
 import 'stylist_brief.dart';
+import 'stylist_constraints.dart';
+import 'stylist_input_error.dart';
 
 typedef StylistModel = Future<ModelResponse> Function(ModelRequest request);
 typedef StylistProgress = void Function(List<Product> products);
@@ -16,6 +18,11 @@ typedef StylistResultValidator = void Function(Map<String, dynamic> result);
 
 const _instructions =
     'You are a personal stylist in a fictional demo catalog. '
+    'First distinguish questions about your capabilities or general styling advice from requests to build or change an outfit. '
+    'For a capability question, greeting, or general advice, call respond_to_question before any other tool, '
+    'then answer naturally and ask at most one relevant follow-up. Do not force the outfit intake form. '
+    'Its facts must be exact quotes of explicit preferences supplied alongside the question; use [] for a pure question. '
+    'A mention in a question (such as what is casual or can I spend 500) is not an accepted preference. '
     'Ask for the occasion and budget if missing. Search products before recommending them, '
     'then call present_products with 1 to 5 IDs from the search results you want to show. '
     'You have four model requests per interaction: use at most two requests for searches, '
@@ -35,6 +42,12 @@ const _instructions =
     'For verbal choices (including the second one), call add_to_outfit with an ID from '
     'Last presented IDs. For verbal removal call remove_from_outfit with a selected ID. '
     'Call save_outfit to record explicit changes to style, season, occasion or preferences; '
+    'Before searching, you MUST save any explicitly supplied occasion or other fact missing from Settled brief. '
+    'Mentioning a fact in your reply does not save it. Check the authoritative brief returned by the tool. '
+    'When saving an occasion, include occasionEvidence quoting the user\'s actual event and keep the occasion within that quote. '
+    'Never save greetings, capability questions or the entire conversation as an occasion. '
+    'For combined changes, use apply_outfit_changes once with all brief edits, removals and additions before searching. '
+    'Never change an explicit user fact to a suggestion. Hard exclusions must survive every search. '
     'never assume missing dressCode or budget. After an edit, use the updated tool result '
     'to search and present the next category in the same turn. '
     'Save an explicitly mentioned destination city using save_outfit city. '
@@ -100,6 +113,7 @@ final _briefSchema = _object({
   'properties': {
     for (final name in [
       'occasion',
+      'occasionEvidence',
       'dressCode',
       'season',
       'palette',
@@ -112,20 +126,61 @@ final _briefSchema = _object({
   'additionalProperties': false,
 });
 
-double? parseStylistBudget(String message) {
-  final match = RegExp(
-    r'(?:€|EUR)\s*([0-9][0-9.,\s]*[0-9]|[0-9])|([0-9][0-9.,\s]*[0-9]|[0-9])\s*(?:€|EUR\b)',
-    caseSensitive: false,
-  ).firstMatch(message);
-  if (match == null) return null;
-  final raw = (match.group(1) ?? match.group(2)!).replaceAll(RegExp(r'\s'), '');
-  final decimal = RegExp(r'[.,](\d{1,2})$').firstMatch(raw);
-  final digits = decimal == null
-      ? raw.replaceAll(RegExp(r'[.,]'), '')
-      : '${raw.substring(0, decimal.start).replaceAll(RegExp(r'[.,]'), '')}.${decimal.group(1)}';
-  final value = double.tryParse(digits);
-  return value != null && value.isFinite && value >= 0 ? value : null;
-}
+final _changesSchema = _object({
+  'type': 'object',
+  'properties': {
+    'brief': {
+      'type': 'object',
+      'properties': {
+        for (final name in [
+          'occasion',
+          'occasionEvidence',
+          'dressCode',
+          'season',
+          'palette',
+          'notes',
+          'city',
+        ])
+          name: {'type': 'string'},
+        'budget': {'type': 'number', 'exclusiveMinimum': 0},
+      },
+      'additionalProperties': false,
+    },
+    'clearFields': {
+      'type': 'array',
+      'items': {'type': 'string', 'enum': StylistBrief.fields.toList()},
+      'uniqueItems': true,
+    },
+    for (final name in ['removeProductIds', 'addProductIds'])
+      name: {
+        'type': 'array',
+        'items': {'type': 'string'},
+        'uniqueItems': true,
+        'maxItems': 7,
+      },
+  },
+  'additionalProperties': false,
+});
+
+final _questionSchema = _object({
+  'type': 'object',
+  'properties': {
+    'intent': {
+      'type': 'string',
+      'enum': ['capabilities', 'styling_advice'],
+    },
+    'facts': {
+      'type': 'array',
+      'items': {'type': 'string', 'minLength': 1},
+      'maxItems': 7,
+      'description': 'Exact quotes of explicit new outfit facts, excluding the question itself. Empty for a pure question.',
+    },
+  },
+  'required': ['intent', 'facts'],
+  'additionalProperties': false,
+});
+
+double? parseStylistBudget(String message) => parseBriefBudget(message);
 
 /// Shared by the bundled Flutter agent and the offline Genkit Developer UI.
 /// Mutable draft state stays in a Dart Zone, outside serialized flow inputs.
@@ -156,7 +211,23 @@ class StylistRuntime {
             needsPicks && scope.searches == 0 && !scope.allowEdits;
         final forcePresentation =
             needsPicks && scope.searchFoundProducts && scope.requests == 3;
-        if (scope.requests == 4 ||
+        final budgetConflict =
+            scope.state.budget != null &&
+            scope.state.spent > scope.state.budget!;
+        if (budgetConflict && scope.requests < 4) {
+          request.tools = request.tools!
+              .where(
+                (tool) => [
+                  'apply_outfit_changes',
+                  'remove_from_outfit',
+                  'save_outfit',
+                  'respond_to_question',
+                ].contains(tool.name),
+              )
+              .toList();
+          request.toolChoice = ToolChoice.required;
+        } else if (scope.questionIntent != null ||
+            scope.requests == 4 ||
             scope.picks.isNotEmpty ||
             (scope.adjustingProductId != null && !scope.needsProducts) ||
             (scope.target == null &&
@@ -171,8 +242,10 @@ class StylistRuntime {
               .where(
                 (tool) => [
                   'save_outfit',
+                  'apply_outfit_changes',
                   'add_to_outfit',
                   'remove_from_outfit',
+                  'respond_to_question',
                 ].contains(tool.name),
               )
               .toList();
@@ -188,7 +261,8 @@ class StylistRuntime {
         } else if (needsPicks && scope.searchFoundProducts) {
           request.toolChoice = ToolChoice.required;
         }
-        if ((scope.searches > 0 || scope.adjustingProductId != null) &&
+        if (!budgetConflict &&
+            (scope.searches > 0 || scope.adjustingProductId != null) &&
             request.tools?.isNotEmpty == true) {
           request.tools = request.tools!
               .where(
@@ -245,6 +319,68 @@ class StylistRuntime {
       },
     );
     ai.defineTool(
+      name: 'respond_to_question',
+      description: 'Answer a capability question, greeting or general styling question without searching or advancing the outfit. Call first. Include only exact quotes of explicitly stated outfit facts alongside the question; facts is empty for pure questions. Returns the response mode; write your answer after this tool.',
+      inputSchema: _questionSchema,
+      fn: (input, context) async {
+        final scope = _scope;
+        scope.cancel.token.throwIfCancelled();
+        if (!scope.allowEdits ||
+            scope.searches > 0 ||
+            scope.confirmations.isNotEmpty) {
+          return ToolResult.response({
+            'error': 'Answer questions before editing or searching.',
+          });
+        }
+        final quotes = List<String>.from(input['facts'] as List);
+        if (quotes.any(
+          (quote) => quote.trim().isEmpty || !scope.userMessage.contains(quote),
+        )) {
+          return ToolResult.response({
+            'error': 'Facts must quote the current user message exactly.',
+          });
+        }
+        try {
+          var brief = scope.previousBrief;
+          for (final quote in quotes) {
+            brief = brief.recordMessage(
+              quote,
+              knownBrands: products.map((p) => p.brand),
+            );
+          }
+          _checkBudget(scope.state, brief: brief);
+          final before = scope.beforeInput!;
+          scope.state
+            ..briefState = brief
+            ..brief = before.brief
+            ..preferences = List.of(before.preferences)
+            ..city = before.city
+            ..cityContext = before.cityContext
+            ..cityContextNotice = before.cityContextNotice;
+          final accepted = quotes.join('\n');
+          if (accepted.isNotEmpty) {
+            if (scope.state.brief.isEmpty) {
+              scope.state.brief = accepted;
+            } else {
+              scope.state.preferences.add(accepted);
+            }
+          }
+          scope.userMessage = accepted;
+          scope.questionIntent = input['intent'] as String;
+          scope.allowEdits = false;
+          scope.notices.clear();
+          _refreshProgress(scope);
+          return ToolResult.response({
+            'intent': scope.questionIntent,
+            'brief': brief.toMap(),
+            'instruction': 'Answer the question naturally. Ask at most one relevant follow-up. No outfit intake controls or product search this turn.',
+          });
+        } on FormatException catch (error) {
+          return ToolResult.response({'error': error.message});
+        }
+      },
+    );
+    ai.defineTool(
       name: 'search_products',
       description:
           'Search the local fictional fashion catalog before offering products. '
@@ -263,6 +399,18 @@ class StylistRuntime {
           return ToolResult.response({
             'error': 'First save the missing brief fields',
             'missingFields': state.briefState.missingFields,
+          });
+        }
+        if (state.briefState.constraints.clarificationRequests.isNotEmpty) {
+          return ToolResult.response({
+            'error': 'Clarify the scope of your restrictions before searching.',
+            'clarificationRequests':
+                state.briefState.constraints.clarificationRequests,
+          });
+        }
+        if (state.budget != null && state.spent > state.budget!) {
+          return ToolResult.response({
+            'error': 'Apply the requested outfit removals before searching.',
           });
         }
         scope.searches++;
@@ -287,17 +435,24 @@ class StylistRuntime {
             filters['season'] = state.season;
           }
         }
-        final candidates = scope.adjustingProductId == null
-            ? products
-            : products.where((p) => p.id != scope.adjustingProductId).toList();
-        var found = searchStylistProducts(candidates, filters);
+        final candidates = _recommendableProducts(scope);
+        var found = searchStylistProducts(
+          candidates,
+          filters,
+          constraints: state.briefState.constraints,
+        );
         if (found.isEmpty && scope.target != null) {
           found = searchStylistProducts(candidates, {
-            'query': input['query'],
+            'query': '',
             'category': scope.target!.name,
             'priceMax': cap,
             'limit': input['limit'] ?? 6,
-          });
+          }, constraints: state.briefState.constraints);
+          if (found.isNotEmpty) {
+            scope.notices.add(
+              'There are no matches for those optional search filters. These alternatives still respect your required constraints.',
+            );
+          }
         }
         if (found.isNotEmpty) scope.searchFoundProducts = true;
         for (final product in found) {
@@ -306,6 +461,7 @@ class StylistRuntime {
         return ToolResult.response({
           'products': found.map(productFacts).toList(),
           'nextCategory': scope.target?.name,
+          if (scope.notices.isNotEmpty) 'notices': scope.notices.toList(),
         });
       },
     );
@@ -344,6 +500,14 @@ class StylistRuntime {
             'error': 'Presentation exceeds the remaining budget; search for cheaper options',
           });
         }
+        final allowedIds = _recommendableProducts(scope)
+            .map((p) => p.id)
+            .toSet();
+        if (ids.any((id) => !allowedIds.contains(id))) {
+          return ToolResult.response({
+            'error': 'These choices violate your constraints or leave insufficient budget when affordable complete-outfit alternatives exist.',
+          });
+        }
         scope.picks = ids.map((id) => state.seen[id]!).toList();
         scope.onProgress?.call(List<Product>.unmodifiable(scope.picks));
         return ToolResult.response({'presentedIds': ids});
@@ -365,7 +529,7 @@ class StylistRuntime {
                   city.length > 100)) {
             throw const FormatException('Enter a city name');
           }
-          final next = scope.state.briefState.merge(patch);
+          final next = _mergeModelBrief(scope, scope.state.briefState, patch);
           if (next.budget != null && next.budget! < scope.state.spent) {
             return ToolResult.response({
               'error': 'Budget is below selected outfit total',
@@ -405,7 +569,7 @@ class StylistRuntime {
           scope.picks = [];
           _refreshProgress(scope);
           return ToolResult.response(_progressFacts(scope));
-        } on StateError catch (error) {
+        } on StylistInputError catch (error) {
           return ToolResult.response({'error': error.message});
         }
       },
@@ -424,7 +588,100 @@ class StylistRuntime {
           scope.picks = [];
           _refreshProgress(scope, requested: removed.category);
           return ToolResult.response(_progressFacts(scope));
-        } on StateError catch (error) {
+        } on StylistInputError catch (error) {
+          return ToolResult.response({'error': error.message});
+        }
+      },
+    );
+    ai.defineTool(
+      name: 'apply_outfit_changes',
+      description: 'Apply all requested brief changes, field clears, product removals and verbal additions together before search. Validate the resulting outfit and budget atomically. Add only IDs from last presented choices.',
+      inputSchema: _changesSchema,
+      fn: (input, context) async {
+        final scope = _scope;
+        scope.cancel.token.throwIfCancelled();
+        final state = scope.state;
+        final draft = state.copy();
+        final confirmations = <String>[];
+        try {
+          if (!(input['brief'] is Map && (input['brief'] as Map).isNotEmpty) &&
+              !['clearFields', 'removeProductIds', 'addProductIds'].any(
+                (name) =>
+                    input[name] is List && (input[name] as List).isNotEmpty,
+              )) {
+            throw const FormatException(
+              'Provide the requested outfit changes before applying them.',
+            );
+          }
+          final patch = Map<String, Object?>.from(
+            input['brief'] as Map? ?? const {},
+          );
+          final city = patch.remove('city');
+          draft.briefState = _mergeModelBrief(
+            scope,
+            draft.briefState,
+            patch,
+            clearFields: (input['clearFields'] as List? ?? const [])
+                .cast<String>()
+                .toSet(),
+          );
+          if (city != null &&
+              (city is! String ||
+                  city.trim().length < 2 ||
+                  city.length > 100)) {
+            throw const FormatException('Enter a city name');
+          }
+          for (final id in input['removeProductIds'] as List? ?? const []) {
+            confirmations.add('Removed ${_recordRemoval(draft, id).name}.');
+          }
+          // Check all additions against the final budget, without publishing partial changes.
+          final addedCategories = <ProductCategory>{};
+          for (final id in input['addProductIds'] as List? ?? const []) {
+            if (!state.lastPresented.contains(id)) {
+              throw const StylistInputError(
+                code: StylistInputErrorCode.invalidSelection,
+                message: 'Choose a product from the current recommendations.',
+              );
+            }
+            final product = draft.seen[id];
+            if (product != null && !addedCategories.add(product.category)) {
+              throw const StylistInputError(
+                code: StylistInputErrorCode.invalidSelection,
+                message: 'Choose one product per outfit category.',
+              );
+            }
+            confirmations.add(
+              'Selected ${_recordSelection(draft, id, validateFinal: false).name}.',
+            );
+          }
+          _checkBudget(draft);
+          for (final id in input['addProductIds'] as List? ?? const []) {
+            _validateSelectionFeasibility(draft, draft.seen[id]!);
+          }
+          if (city is String) {
+            draft.city = city.trim();
+            await _loadCityContext(draft);
+            scope.cancel.token.throwIfCancelled();
+          }
+          state.briefState = draft.briefState;
+          state.outfit = draft.outfit;
+          state.city = draft.city;
+          state.cityContext = draft.cityContext;
+          state.cityContextNotice = draft.cityContextNotice;
+          scope.confirmations.addAll(confirmations);
+          scope.atomicFailure = null;
+          scope.allowEdits = false;
+          scope.picks = [];
+          _refreshProgress(scope, requested: scope.requested);
+          return ToolResult.response(_progressFacts(scope));
+        } on StylistInputError catch (error) {
+          scope.atomicFailure = error;
+          return ToolResult.response({'error': error.message});
+        } on FormatException catch (error) {
+          scope.atomicFailure = StylistInputError(
+            code: StylistInputErrorCode.invalidBrief,
+            message: error.message,
+          );
           return ToolResult.response({'error': error.message});
         }
       },
@@ -563,6 +820,18 @@ class StylistRuntime {
   ) async {
     final state = scope.state;
     final message = (input['message'] as String?) ?? '';
+    final unsupportedCurrency = unsupportedBriefBudgetCurrency(message);
+    if (unsupportedCurrency != null) {
+      throw StylistInputError(
+        code: StylistInputErrorCode.invalidBrief,
+        message:
+            'You entered a $unsupportedCurrency budget. This local catalog uses EUR; enter your outfit budget in euros. No currency conversion has been applied.',
+      );
+    }
+    scope.userMessage = message;
+    scope.userBudget = parseStylistBudget(message);
+    scope.previousBrief = state.briefState;
+    scope.beforeInput = state.copy();
     final action = input['action'] as Map?;
     if (message.isEmpty && action == null) {
       throw const FormatException('A message or action is required');
@@ -588,7 +857,9 @@ class StylistRuntime {
                 outfit: state.outfit,
                 budget: state.budget,
                 occasion: state.briefState.summary,
-                clarification: state.briefState.canSearch
+                clarification:
+                    state.lastQuestionIntent != null ||
+                        state.briefState.canSearch
                     ? null
                     : {
                         'missingFields': state.briefState.missingFields,
@@ -597,6 +868,8 @@ class StylistRuntime {
                 plan: OutfitPlan.from(
                   brief: state.briefState.planningText,
                   outfit: state.outfit,
+                  constraints: state.briefState.constraints,
+                  dressCode: state.briefState.dressCode,
                 ),
                 nextCategory: state.lastNextCategory,
                 cityContext: state.cityContext,
@@ -610,13 +883,19 @@ class StylistRuntime {
               }).toList(),
         };
       } else if (action['name'] == 'find_options') {
-        final next = state.briefState.merge({
-          for (final name in ['dressCode', 'season', 'budget'])
-            if (context[name] != null) name: context[name],
-        });
-        if (next.budget != null && next.budget! < state.spent) {
-          throw StateError('Budget is below the selected outfit total');
+        StylistBrief next;
+        try {
+          next = state.briefState.merge({
+            for (final name in ['dressCode', 'season', 'budget'])
+              if (context[name] != null) name: context[name],
+          });
+        } on FormatException catch (error) {
+          throw StylistInputError(
+            code: StylistInputErrorCode.invalidBrief,
+            message: error.message,
+          );
         }
+        _checkBudget(state, brief: next);
         state.briefState = next;
         actionNote = 'The person confirmed the brief: ${next.toMap()}.';
       } else if (action['name'] == 'select_product') {
@@ -637,17 +916,27 @@ class StylistRuntime {
               )
             : const <ProductCategory>[];
         if (matches.length != 1) {
-          throw const FormatException('Invalid category for adjustment');
+          throw const StylistInputError(
+            code: StylistInputErrorCode.invalidAdjustment,
+            message: 'Choose a selected outfit category to change.',
+          );
         }
         adjustedCategory = matches.single;
         final selected = state.outfit[adjustedCategory.name];
         if (selected == null || selected.category != adjustedCategory) {
-          throw StateError('No selected piece for this category');
+          throw const StylistInputError(
+            code: StylistInputErrorCode.invalidAdjustment,
+            message: 'Choose a piece that is currently in your outfit.',
+          );
         }
         final rawAdjustment = context['adjustment'];
         if (rawAdjustment != null &&
             (rawAdjustment is! String || rawAdjustment.trim().length > 120)) {
-          throw const FormatException('Invalid piece adjustment');
+          throw const StylistInputError(
+            code: StylistInputErrorCode.invalidAdjustment,
+            message:
+                'Describe the piece adjustment in 120 characters or fewer.',
+          );
         }
         final adjustment = (rawAdjustment as String?)?.trim() ?? '';
         final preference = adjustment.isEmpty
@@ -662,16 +951,13 @@ class StylistRuntime {
             '${preference.isEmpty ? '' : '$preference. '}'
             'Keep the selected piece and the rest of the outfit until they choose a replacement.';
       } else {
-        throw StateError('Unsupported action');
+        throw const StylistInputError(
+          code: StylistInputErrorCode.unsupportedAction,
+          message: 'This action is not available in the local catalog yet. You can continue editing your outfit.',
+        );
       }
     }
-    final budget = parseStylistBudget(message);
-    if (budget != null) {
-      if (budget < state.spent) {
-        throw StateError('Budget is below the selected outfit total');
-      }
-      state.briefState = state.briefState.merge({'budget': budget});
-    }
+    final budget = scope.userBudget;
     if (message.isNotEmpty) {
       if (state.brief.isEmpty) {
         state.brief = message;
@@ -679,7 +965,26 @@ class StylistRuntime {
         state.preferences.add(message);
       }
     }
-    state.briefState = state.briefState.recordMessage(message, budget: budget);
+    try {
+      state.briefState = state.briefState.recordMessage(
+        message,
+        budget: budget,
+        knownBrands: products.map((product) => product.brand),
+      );
+    } on FormatException catch (error) {
+      throw StylistInputError(
+        code: StylistInputErrorCode.invalidBrief,
+        message: error.message,
+      );
+    }
+    // Combined removals and a lower budget are validated against the final draft.
+    // A budget-only conflict remains a cheap, immediately correctable input error.
+    if (!RegExp(
+      r'\b(?:remove|drop|reject|discard)\b',
+      caseSensitive: false,
+    ).hasMatch(message)) {
+      _checkBudget(state);
+    }
     final mentionedCity = RegExp(
       r'\bin\s+(Berlin|Paris|Lisbon|Oxford)(?:,\s*(Germany|France|Portugal|United Kingdom|United States|USA|[A-Z]{2})\b)?\b',
       caseSensitive: false,
@@ -699,7 +1004,12 @@ class StylistRuntime {
         state.catalogOccasion.isNotEmpty && message == state.brief;
     scope.requested =
         adjustedCategory ??
-        (openingJourney ? null : _requestedCategory(message)) ??
+        (openingJourney
+            ? null
+            : requestedProductCategory(
+                message,
+                constraints: state.briefState.constraints,
+              )) ??
         removedCategory;
     scope.allowEdits =
         adjustedCategory == null && message.isNotEmpty && !openingJourney;
@@ -724,11 +1034,13 @@ class StylistRuntime {
       ],
       system: _systemFor(scope),
       toolNames: [
+        'respond_to_question',
         'search_products',
         'present_products',
         'save_outfit',
         'add_to_outfit',
         'remove_from_outfit',
+        'apply_outfit_changes',
       ],
       maxTurns: 4,
       // Retries are opt-in in Genkit 1.0. Keep each turn bounded; a failed
@@ -737,6 +1049,8 @@ class StylistRuntime {
       cancel: scope.cancel.token,
     );
     scope.cancel.token.throwIfCancelled();
+    _checkBudget(state);
+    if (scope.atomicFailure != null) throw scope.atomicFailure!;
     if (response.finishReason != FinishReason.stop) {
       throw StateError('Incomplete model response');
     }
@@ -757,28 +1071,44 @@ class StylistRuntime {
     final hostFacts = scope.confirmations.isEmpty
         ? ''
         : '${scope.confirmations.join(' ')}${state.budget == null ? '' : ' ${euro(state.remaining)} left in your budget.'}';
+    final acknowledgment = _acknowledgment(scope);
     final nextStep = !state.briefState.canSearch
         ? 'Tell me ${state.briefState.missingFields.map((field) => field == 'dressCode' ? 'the style or dress code' : 'your budget').join(' and ')} so I can find the right pieces.'
+        : state.briefState.constraints.clarificationRequests.isNotEmpty
+        ? state.briefState.constraints.clarificationRequests.join(' ')
         : scope.target == null && plan.complete
         ? 'Your look is complete. Keep it, or tell me which piece you want to swap.'
+        : scope.target == null
+        ? 'Remove or replace the selected pieces that conflict with your instructions before completing the look.'
         : scope.needsProducts
         ? 'Next, choose ${_categoryLabel(scope.target!)} to continue the look.'
         : scope.adjustingProductId != null
         ? 'There are no alternatives for that piece within the available budget. '
               'Keep it, or raise the budget to see more options.'
+        : state.briefState.constraints.toMap().isNotEmpty
+        ? 'There are no ${_categoryLabel(scope.target!)} that satisfy your current constraints and budget. '
+              'Change a restriction, use something you own, or replace a selected piece.'
         : 'There are no ${_categoryLabel(scope.target!)} in the catalog within the available budget. '
               'Would you like to raise the budget or replace a selected piece?';
     final reply = [
       hostFacts,
+      acknowledgment,
+      if (scope.feasibilityNotice.isNotEmpty) scope.feasibilityNotice,
+      ...scope.notices,
       guidance,
-      if (scope.confirmations.isNotEmpty ||
-          plan.complete ||
-          !scope.needsProducts)
+      if (scope.questionIntent == null &&
+          (scope.confirmations.isNotEmpty ||
+              plan.complete ||
+              !scope.needsProducts) &&
+          (state.briefState.canSearch || guidance.isEmpty))
         nextStep,
     ].where((text) => text.isNotEmpty).join('\n\n');
     state.lastReply = reply;
-    state.lastNextCategory = scope.target;
-    state.lastPresented = scope.picks.map((product) => product.id).toList();
+    state.lastQuestionIntent = scope.questionIntent;
+    if (scope.questionIntent == null) {
+      state.lastNextCategory = scope.target;
+      state.lastPresented = scope.picks.map((product) => product.id).toList();
+    }
     if (state.history.isNotEmpty && state.history.last.role == Role.model) {
       state.history[state.history.length - 1] = Message(
         role: Role.model,
@@ -787,9 +1117,11 @@ class StylistRuntime {
     }
     return {
       'reply': reply,
+      if (scope.questionIntent != null) 'intent': scope.questionIntent,
       'products': scope.picks.map(productFacts).toList(),
       'brief': state.briefState.toMap(),
       'missingFields': state.briefState.missingFields,
+      'constraints': state.briefState.constraints.toMap(),
       'outfit': {
         'budget': state.budget,
         'items': {
@@ -803,7 +1135,8 @@ class StylistRuntime {
         outfit: state.outfit,
         budget: state.budget,
         occasion: state.briefState.summary,
-        clarification: state.briefState.canSearch
+        clarification:
+            scope.questionIntent != null || state.briefState.canSearch
             ? null
             : {
                 'missingFields': state.briefState.missingFields,
@@ -818,10 +1151,25 @@ class StylistRuntime {
     };
   }
 
-  Product _recordSelection(_StylistState state, Object? id) {
+  Product _recordSelection(
+    _StylistState state,
+    Object? id, {
+    bool validateFinal = true,
+  }) {
     final product = state.seen[id];
     if (product == null) {
-      throw StateError('Product was not returned by a catalog search');
+      throw const StylistInputError(
+        code: StylistInputErrorCode.invalidSelection,
+        message: 'Choose a product from the current catalog recommendations.',
+      );
+    }
+    final violations = state.briefState.constraints.violations(product);
+    if (violations.isNotEmpty) {
+      throw StylistInputError(
+        code: StylistInputErrorCode.invalidSelection,
+        message:
+            '${product.name} does not satisfy your instructions: ${violations.join('; ')}.',
+      );
     }
     final candidate = Map<String, Product>.of(state.outfit);
     removeConflictingFoundation(candidate, product.category);
@@ -830,34 +1178,78 @@ class StylistRuntime {
       0,
       (sum, item) => sum + item.price,
     );
-    if (state.budget != null && total > state.budget!) {
-      throw StateError('Selection exceeds the outfit budget');
+    if (validateFinal && state.budget != null && total > state.budget!) {
+      throw StylistInputError(
+        code: StylistInputErrorCode.budgetConflict,
+        message:
+            'Selecting ${product.name} would cost ${euro(total)} for the outfit, above your ${euro(state.budget!)} budget. Choose a cheaper piece or replace an existing one.',
+      );
     }
+    if (validateFinal) _validateSelectionFeasibility(state, product);
     state.outfit = candidate;
     return product;
+  }
+
+  void _validateSelectionFeasibility(_StylistState state, Product product) {
+    final assessment = _assessment(state, product);
+    if (!assessment.feasible &&
+        products.any(
+          (alternative) =>
+              alternative.category == product.category &&
+              state.briefState.constraints.matches(alternative) &&
+              _assessment(state, alternative).feasible,
+        )) {
+      throw StylistInputError(
+        code: StylistInputErrorCode.invalidSelection,
+        message: assessment.explanation,
+      );
+    }
   }
 
   Product _recordRemoval(_StylistState state, Object? id) {
     final slots = state.outfit.keys
         .where((slot) => state.outfit[slot]!.id == id)
         .toList();
-    if (slots.isEmpty) throw StateError('Product is not in the outfit');
+    if (slots.isEmpty) {
+      throw const StylistInputError(
+        code: StylistInputErrorCode.invalidSelection,
+        message: 'That piece is not currently in your outfit. Choose one of your selected pieces to remove.',
+      );
+    }
     return state.outfit.remove(slots.single)!;
   }
 
   void _refreshProgress(_TurnScope scope, {ProductCategory? requested}) {
     final state = scope.state;
+    scope.feasibilityNotice = '';
+    for (final product in state.outfit.values) {
+      final conflicts = state.briefState.constraints.violations(product);
+      if (conflicts.isNotEmpty) {
+        scope.notices.add(
+          'Your selected ${product.name} conflicts with your new instructions: ${conflicts.join('; ')}. Remove or replace it to satisfy them.',
+        );
+      }
+    }
     final plan = OutfitPlan.from(
       brief: state.briefState.planningText,
       outfit: state.outfit,
+      constraints: state.briefState.constraints,
+      dressCode: state.briefState.dressCode,
     );
     scope.plan = plan;
-    scope.target = state.briefState.canSearch
+    if (requested != null &&
+        !state.briefState.constraints.categoryPermitted(requested)) {
+      requested = null;
+    }
+    scope.target =
+        scope.questionIntent == null &&
+            state.briefState.canSearch &&
+            state.briefState.constraints.clarificationRequests.isEmpty
         ? requested ?? plan.nextCategory
         : null;
     scope.needsProducts =
         scope.target != null &&
-        products.any(
+        _recommendableProducts(scope).any(
           (product) =>
               product.category == scope.target &&
               product.id != scope.adjustingProductId &&
@@ -867,6 +1259,7 @@ class StylistRuntime {
 
   Map<String, Object?> _progressFacts(_TurnScope scope) => {
     'brief': scope.state.briefState.toMap(),
+    'constraints': scope.state.briefState.constraints.toMap(),
     'city': scope.state.city,
     if (scope.state.cityContext != null)
       'cityContext': scope.state.cityContext!.facts,
@@ -884,15 +1277,23 @@ class StylistRuntime {
   String _systemFor(_TurnScope scope) {
     final state = scope.state;
     final plan = scope.plan!;
-    final next = !state.briefState.canSearch
+    final next = scope.questionIntent != null
+        ? 'This turn answers a ${scope.questionIntent} question. Answer it directly; ask at most one relevant follow-up. Do not ask for missing outfit fields or suggest a search.'
+        : !state.briefState.canSearch
         ? 'Searching is blocked. Ask only for missing fields: ${state.briefState.missingFields.join(', ')}. Save explicit answers with save_outfit.'
+        : state.briefState.constraints.clarificationRequests.isNotEmpty
+        ? 'Searching is blocked. Ask only these scope questions: ${state.briefState.constraints.clarificationRequests.join(' ')}.'
         : scope.target == null && plan.complete
         ? 'The outfit is complete. Summarize it, identify any weakest piece, and offer keep or swap.'
+        : scope.target == null
+        ? 'Selected pieces conflict with the current instructions. Explain which pieces need removal or replacement; do not claim the outfit is complete.'
         : scope.needsProducts
         ? 'Search and present this category now; do not stop at an acknowledgement.'
         : 'No affordable catalog choices for this category. Explain that limit and offer a budget change or replacing a selected piece.';
     return '$_instructions\nRetained original brief: ${state.brief}. '
         'Preferences: ${state.preferences.join('; ')}. Settled brief: ${state.briefState.toMap()}.\n'
+        'Hard constraints and preferences: ${state.briefState.constraints.toMap()}. '
+        'Host notices: ${scope.notices.join(' ')} ${scope.feasibilityNotice}.\n'
         'Budget: ${state.budget == null ? 'unknown' : euro(state.budget!)}. '
         'Already spent: ${euro(state.spent)}. Remaining: ${state.budget == null ? 'unknown' : euro(state.remaining)}.\n'
         'Destination city: ${state.city}. Verified context: ${state.cityContext?.facts ?? state.cityContextNotice ?? 'not loaded'}.\n'
@@ -902,7 +1303,226 @@ class StylistRuntime {
         'Plan: ${plan.slots.map((slot) => slot.name).join(', ')}. '
         'Progress: ${plan.filledCount} of ${plan.slots.length}.\n'
         'Next category: ${scope.target?.name ?? 'none'}. '
-        'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : euro(scope.availableBudget)}. $next';
+        'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : euro(scope.availableBudget)}. $next '
+        'For capability or general advice questions, respond_to_question takes priority over the outfit next step.';
+  }
+
+  void _checkBudget(_StylistState state, {StylistBrief? brief}) {
+    final budget = (brief ?? state.briefState).budget;
+    if (budget != null && state.spent > budget) {
+      throw StylistInputError(
+        code: StylistInputErrorCode.budgetConflict,
+        message:
+            'Your selected pieces cost ${euro(state.spent)}, above the requested ${euro(budget)} outfit budget. Remove or replace a piece, or keep a higher budget.',
+      );
+    }
+  }
+
+  StylistBrief _mergeModelBrief(
+    _TurnScope scope,
+    StylistBrief brief,
+    Map<String, Object?> patch, {
+    Set<String> clearFields = const {},
+  }) {
+    patch = Map.of(patch);
+    final occasionEvidence = patch.remove('occasionEvidence');
+    final proposedOccasion = patch['occasion'];
+    if (proposedOccasion != null &&
+        (brief.sources['occasion'] != BriefFactSource.user ||
+            proposedOccasion != brief.occasion) &&
+        (proposedOccasion is! String ||
+            proposedOccasion.contains('?') ||
+            occasionEvidence is! String ||
+            occasionEvidence.trim().isEmpty ||
+            !scope.userMessage.contains(occasionEvidence) ||
+            !occasionEvidence.toLowerCase().contains(
+              proposedOccasion.toLowerCase(),
+            ))) {
+      throw const FormatException(
+        'Save only a stated occasion, supported by an exact quote from the current message.',
+      );
+    }
+    final authorized = <String>{};
+    for (final entry in {
+      'occasion': r'\b(?:occasion|actually|instead|wedding|dinner|interview|party|lunch|trip|holiday)\b',
+      'dressCode': r'\b(?:style|dress code|formal|casual|cocktail|black.?tie|relaxed|smart)\b',
+      'season': r'\b(?:season|spring|summer|autumn|winter)\b',
+      'palette':
+          r'\b(?:palette|colou?r|blue|red|black|white|navy|cream|green)\b',
+      'notes': r'\b(?:notes|prefer|avoid|no|without|comfortable|heels|wool)\b',
+      'budget': r'\b(?:budget|spend|under|limit|euros?)\b|€|\bEUR\b',
+    }.entries) {
+      if (RegExp(
+        entry.value,
+        caseSensitive: false,
+      ).hasMatch(scope.userMessage)) {
+        authorized.add(entry.key);
+      }
+    }
+    // Facts explicitly extracted this turn are already current; the model cannot
+    // reinterpret them to a different value or silently clear them.
+    final extracted = scope.previousBrief.recordMessage(
+      scope.userMessage,
+      knownBrands: products.map((product) => product.brand),
+    );
+    for (final field in extracted.changedFactsSince(scope.previousBrief).keys) {
+      if (extracted.sources[field] == BriefFactSource.user &&
+          extracted.toMap().containsKey(field)) {
+        authorized.remove(field);
+      }
+    }
+    authorized.removeAll(
+      extracted.acceptedFactsFromMessage(scope.userMessage).keys,
+    );
+    if (scope.userBudget != null) authorized.remove('budget');
+    if (patch['budget'] != null &&
+        brief.budget == null &&
+        !authorized.contains('budget')) {
+      throw const FormatException(
+        'Ask for the outfit budget instead of suggesting one as a fact.',
+      );
+    }
+    if (patch['dressCode'] != null &&
+        brief.dressCode.isEmpty &&
+        !authorized.contains('dressCode')) {
+      throw const FormatException(
+        'Ask for the style or dress code instead of assuming it.',
+      );
+    }
+    return brief.merge(
+      patch,
+      source: BriefFactSource.model,
+      protectUserFacts: true,
+      authorizedFields: authorized,
+      clearFields: clearFields.intersection(authorized),
+    );
+  }
+
+  OutfitSelectionAssessment _assessment(_StylistState state, Product product) =>
+      assessOutfitSelection(
+        candidate: product,
+        outfit: state.outfit,
+        catalog: products,
+        brief: state.briefState.planningText,
+        dressCode: state.briefState.dressCode,
+        constraints: state.briefState.constraints,
+        budget: state.budget,
+      );
+
+  List<Product> _recommendableProducts(_TurnScope scope) {
+    final state = scope.state;
+    var candidates = products
+        .where(
+          (product) =>
+              product.id != scope.adjustingProductId &&
+              state.briefState.constraints.matches(product),
+        )
+        .toList();
+    if (scope.target != null) {
+      final category = candidates
+          .where((product) => product.category == scope.target)
+          .toList();
+      final feasible = category
+          .where((product) => _assessment(state, product).feasible)
+          .toList();
+      if (feasible.isNotEmpty) {
+        final allowed = feasible.map((product) => product.id).toSet();
+        candidates = candidates
+            .where(
+              (product) =>
+                  product.category != scope.target ||
+                  allowed.contains(product.id),
+            )
+            .toList();
+      } else if (category.isNotEmpty && state.briefState.canSearch) {
+        final assessments =
+            category.map((product) => _assessment(state, product)).toList()
+              ..sort((a, b) => a.minimumTotal.compareTo(b.minimumTotal));
+        final explanation = assessments.first.explanation;
+        scope.feasibilityNotice = explanation;
+      }
+    }
+    candidates.sort(
+      (a, b) => state.briefState.constraints
+          .preferenceScore(b)
+          .compareTo(state.briefState.constraints.preferenceScore(a)),
+    );
+    return candidates;
+  }
+
+  String _acknowledgment(_TurnScope scope) {
+    final brief = scope.state.briefState;
+    final facts = {
+      ...brief.changedFactsSince(scope.previousBrief),
+      ...brief.acceptedFactsFromMessage(scope.userMessage),
+    };
+    final parts = <String>[];
+    for (final entry in facts.entries) {
+      if (entry.value == null) {
+        parts.add('${entry.key == 'dressCode' ? 'style' : entry.key} cleared');
+      } else if (entry.key == 'budget') {
+        parts.add('${euro(entry.value as num)} for the whole outfit');
+      } else if (brief.sources[entry.key] != BriefFactSource.inferred) {
+        parts.add(
+          '${entry.key == 'dressCode' ? 'style' : entry.key}: ${entry.value.toString().replaceAll('-', ' ')}',
+        );
+      }
+    }
+    final constraints = brief.constraints.toMap();
+    if (constraints.toString() !=
+        scope.previousBrief.constraints.toMap().toString()) {
+      final previousConstraints = scope.previousBrief.constraints.toMap();
+      for (final key in {...previousConstraints.keys, ...constraints.keys}) {
+        if (key == 'clarificationRequests') continue;
+        if (constraints[key].toString() !=
+            previousConstraints[key].toString()) {
+          final label = _constraintLabel(key);
+          parts.add(
+            constraints[key] == null
+                ? '$label cleared'
+                : '$label: ${_constraintDescription(constraints[key]!)}',
+          );
+        }
+      }
+    }
+    if (RegExp(
+      r'\b(?:size|fit|stock|availability)\b',
+      caseSensitive: false,
+    ).hasMatch(scope.userMessage)) {
+      scope.notices.add(
+        'I have noted your sizing or availability request, but this local catalog cannot verify sizes, fit, or stock.',
+      );
+    }
+    return parts.isEmpty ? '' : 'Got it — ${parts.join('; ')}.';
+  }
+
+  String _constraintLabel(String key) => switch (key) {
+    'excludedCategories' => 'skip',
+    'ownedCategories' => 'already owned',
+    'allowedColors' => 'only these colors',
+    'excludedColors' => 'avoid colors',
+    'excludedMaterials' => 'avoid materials',
+    'allowedMaterials' => 'only these materials',
+    'excludedBrands' => 'avoid brands',
+    'allowedBrands' => 'only these brands',
+    'excludedProductTerms' => 'avoid these product types',
+    'categoryConstraints' => 'category restrictions',
+    _ => 'preferred colors',
+  };
+
+  String _constraintDescription(Object value) {
+    if (value is List) return value.join(', ');
+    if (value is Map) {
+      return value.entries
+          .map((entry) {
+            final label = value.values.any((v) => v is Map)
+                ? entry.key.toString()
+                : _constraintLabel(entry.key.toString());
+            return '$label: ${_constraintDescription(entry.value as Object)}';
+          })
+          .join('; ');
+    }
+    return value.toString();
   }
 
   Future<void> _loadCityContext(
@@ -944,31 +1564,6 @@ class StylistRuntime {
   }
 }
 
-ProductCategory? _requestedCategory(String message) {
-  final text = message.toLowerCase().replaceAll(
-    RegExp(r'\bdress[ -]*code\b|\bdressing[ -]*code\b'),
-    'style',
-  );
-  final matches = <ProductCategory>[];
-  for (final entry in {
-    ProductCategory.dress: r'\bdress(?:es)?\b',
-    ProductCategory.top: r'\b(?:tops?|shirts?|knits?|blouses?)\b',
-    ProductCategory.bottom:
-        r'\b(?:bottoms?|trousers?|pants?|shorts?|skirts?)\b',
-    ProductCategory.layer: r'\b(?:layers?|jackets?|coats?|outerwear)\b',
-    ProductCategory.shoes:
-        r'\b(?:shoes?|boots?|sandals?|heels?|trainers?|sneakers?)\b',
-    ProductCategory.bag: r'\b(?:bags?|totes?|handbags?)\b',
-    ProductCategory.accessory:
-        r'\b(?:accessor(?:y|ies)|jewell?ery|scarves?|belts?)\b',
-  }.entries) {
-    if (RegExp(entry.value).hasMatch(text)) matches.add(entry.key);
-  }
-  // Broad multi-category briefs follow the planner; one requested category can
-  // deliberately jump ahead or reopen a settled slot for alternatives.
-  return matches.length == 1 ? matches.single : null;
-}
-
 String _categoryLabel(ProductCategory category) => switch (category) {
   ProductCategory.dress => 'a dress',
   ProductCategory.top => 'a top',
@@ -1002,6 +1597,7 @@ class _StylistState {
   String catalogOccasion = '';
   String city = '';
   String lastReply = '';
+  String? lastQuestionIntent;
   ProductCategory? lastNextCategory;
   CityContext? cityContext;
   String? cityContextNotice;
@@ -1021,6 +1617,7 @@ class _StylistState {
     ..catalogOccasion = catalogOccasion
     ..city = city
     ..lastReply = lastReply
+    ..lastQuestionIntent = lastQuestionIntent
     ..lastNextCategory = lastNextCategory
     ..cityContext = cityContext
     ..cityContextNotice = cityContextNotice
@@ -1058,6 +1655,14 @@ class _TurnScope {
   }
 
   List<Product> picks = [];
+  String userMessage = '';
+  double? userBudget;
+  StylistBrief previousBrief = const StylistBrief();
+  _StylistState? beforeInput;
+  String? questionIntent;
+  final Set<String> notices = {};
+  String feasibilityNotice = '';
+  StylistInputError? atomicFailure;
 }
 
 List<String> _words(Object? value) => '$value'
@@ -1069,8 +1674,9 @@ List<String> _words(Object? value) => '$value'
     .toList();
 List<Product> searchStylistProducts(
   List<Product> products,
-  Map<String, dynamic> filters,
-) {
+  Map<String, dynamic> filters, {
+  StylistConstraints constraints = const StylistConstraints(),
+}) {
   final query = _words(filters['query'] ?? '');
   bool facet(String value, String name) =>
       filters[name] == null ||
@@ -1083,7 +1689,8 @@ List<Product> searchStylistProducts(
         facet(p.category.name, 'category') &&
         facet(p.color, 'color') &&
         facet(p.occasion, 'occasion') &&
-        facet(p.season, 'season'),
+        facet(p.season, 'season') &&
+        constraints.matches(p),
   );
   final ranked = matches
       .map((p) {
@@ -1110,6 +1717,10 @@ List<Product> searchStylistProducts(
   ranked.sort((a, b) {
     final score = b.score.compareTo(a.score);
     if (score != 0) return score;
+    final preference = constraints
+        .preferenceScore(b.product)
+        .compareTo(constraints.preferenceScore(a.product));
+    if (preference != 0) return preference;
     final price = a.product.price.compareTo(b.product.price);
     return price != 0 ? price : a.product.id.compareTo(b.product.id);
   });
@@ -1127,8 +1738,36 @@ Future<ModelResponse> offlineStylistModel(ModelRequest request) async {
       ? responses.last.toolResponse
       : null;
   final List<Part> content;
-  if (request.tools == null ||
+  if (result?.name == 'respond_to_question') {
+    content = [
+      TextPart(
+        text: 'I can help build an outfit from the catalog, compare pieces, or refine a look. What are you dressing for?',
+      ),
+    ];
+  } else if (last.role == Role.user &&
+      request.tools?.any((tool) => tool.name == 'respond_to_question') ==
+          true &&
+      RegExp(
+        r'^(?:what can (?:we do here|you do)|hello|hi)[?.!]*$',
+        caseSensitive: false,
+      ).hasMatch(last.text.trim())) {
+    content = [
+      ToolRequestPart(
+        toolRequest: ToolRequest(
+          name: 'respond_to_question',
+          ref: 'preview-question',
+          input: {'intent': 'capabilities', 'facts': <String>[]},
+        ),
+      ),
+    ];
+  } else if (request.tools == null ||
       request.tools!.isEmpty ||
+      (!request.tools!.any((tool) => tool.name == 'search_products') &&
+          request.messages.any(
+            (message) =>
+                message.role == Role.system &&
+                message.text.contains('The outfit is complete.'),
+          )) ||
       result?.name == 'present_products') {
     content = [
       TextPart(text: 'Offline preview: here are some catalog options.'),
@@ -1154,7 +1793,23 @@ Future<ModelResponse> offlineStylistModel(ModelRequest request) async {
   } else if (request.messages
       .where((message) => message.role == Role.system)
       .any((message) => message.text.contains('Searching is blocked'))) {
-    content = [TextPart(text: 'Let’s settle the brief first.')];
+    final fields =
+        RegExp(r'Ask only for missing fields: ([^.]+)')
+            .firstMatch(
+              request.messages
+                  .where((m) => m.role == Role.system)
+                  .map((m) => m.text)
+                  .join(' '),
+            )
+            ?.group(1)
+            ?.split(', ') ??
+        const ['dressCode', 'budget'];
+    content = [
+      TextPart(
+        text:
+            'Tell me ${fields.map((field) => field == 'dressCode' ? 'the style or dress code' : 'your budget').join(' and ')} so I can find the right pieces.',
+      ),
+    ];
   } else {
     content = [
       ToolRequestPart(

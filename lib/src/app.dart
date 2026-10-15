@@ -198,6 +198,9 @@ class _StartScreen extends StatelessWidget {
       builder: (context, constraints) {
         final fold = DuoLayoutScope.of(context);
         final closed = fold.status == HingeStatus.closed;
+        final horizontalInsets = closed
+            ? const EdgeInsets.only(left: 16, right: 8)
+            : const EdgeInsets.symmetric(horizontal: StylistLayout.gutter);
         final innerLandscape =
             fold.status == HingeStatus.fullyOpen &&
             constraints.maxWidth > constraints.maxHeight;
@@ -227,9 +230,10 @@ class _StartScreen extends StatelessWidget {
           extendSecondaryToEdges: true,
           secondaryBackgroundColor: Colors.black,
           secondaryPadding: EdgeInsets.zero,
-          panePadding: closed
-              ? const EdgeInsets.fromLTRB(16, 8, 8, 8)
-              : EdgeInsets.fromLTRB(32, innerPortrait ? 16 : 0, 32, 8),
+          panePadding: horizontalInsets.copyWith(
+            top: closed ? 8 : (innerPortrait ? 16 : 0),
+            bottom: 8,
+          ),
           header: ClipRect(
             key: const ValueKey('alder-header'),
             child: BackdropFilter(
@@ -287,7 +291,9 @@ class _StartScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 400),
+                          constraints: const BoxConstraints(
+                            maxWidth: StylistLayout.startContentMaxWidth,
+                          ),
                           child: _OccasionSuggestion(
                             message: example.message,
                             onPressed: isBusy || onSelect == null
@@ -326,19 +332,25 @@ class _StartScreen extends StatelessWidget {
           secondary: const _MosaicPreview(),
           footer: onStartBrief != null
               ? StylistComposerDock(
-                  horizontalPadding: 32,
-                  padding: closed
-                      ? const EdgeInsets.fromLTRB(16, 8, 8, 0)
-                      : const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: _CustomBriefEntry(
-                    onStart: onStartBrief!,
-                    isBusy: isBusy,
+                  padding: horizontalInsets.copyWith(top: 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    heightFactor: 1,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: StylistLayout.startContentMaxWidth,
+                      ),
+                      child: _CustomBriefEntry(
+                        onStart: onStartBrief!,
+                        isBusy: isBusy,
+                      ),
+                    ),
                   ),
                 )
               : Padding(
                   padding: closed
                       ? const EdgeInsets.fromLTRB(16, 16, 8, 0)
-                      : const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                      : horizontalInsets.copyWith(top: 16, bottom: 24),
                   child: onConnect != null
                       ? FilledButton(
                           onPressed: onConnect,
@@ -766,7 +778,7 @@ class _ResponsiveShell extends StatelessWidget {
           secondary: _DressingPanel(agent: agent, onNewJourney: onNewJourney),
           header: _MobileHeader(onNewJourney: onNewJourney),
           footer: StylistComposerDock(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: gutter),
             child: _ChatComposer(agent: agent),
           ),
         );
@@ -868,6 +880,11 @@ class _ChatSurface extends StatelessWidget {
                 message: agent.connectionError!,
                 onRetry: agent.canRetry ? agent.retryLastTurn : null,
               ),
+            if (agent.inputError != null)
+              _ConnectionNotice(
+                title: 'Update your outfit',
+                message: agent.inputError!,
+              ),
             if (agent.connectionNotice != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -916,8 +933,13 @@ class _ConversationSurface extends StatelessWidget {
 }
 
 class _ConnectionNotice extends StatelessWidget {
-  const _ConnectionNotice({required this.message, this.onRetry});
+  const _ConnectionNotice({
+    required this.message,
+    this.title = 'Stylist unavailable',
+    this.onRetry,
+  });
   final String message;
+  final String title;
   final Future<void> Function()? onRetry;
 
   @override
@@ -933,10 +955,7 @@ class _ConnectionNotice extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Stylist unavailable',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
+          Text(title, style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           Text(message),
           if (onRetry != null) ...[
@@ -989,7 +1008,7 @@ class _ChatComposerState extends State<_ChatComposer> {
         !widget.agent.isBusy &&
         widget.agent.pendingInlineSurfaceId == null &&
         widget.agent.connectionError == null &&
-        widget.agent.latestInlineSurfaceId != null;
+        widget.agent.hasStarted;
     return StylistComposer(
       controller: textController,
       enabled: canSend,
