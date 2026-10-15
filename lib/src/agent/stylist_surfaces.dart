@@ -12,7 +12,7 @@ String _budgetEuro(num value) => formatEuros(value, omitZeroCents: true);
 Map<String, Object?> _card(Product p, String tag) => {
   'id': p.id,
   'name': p.name,
-  'price': euro(p.price),
+  'price': _budgetEuro(p.price),
   'brandLine': p.brandLine,
   'tag': tag,
   'swatch': p.swatch,

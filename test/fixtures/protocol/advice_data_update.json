@@ -10,7 +10,7 @@
           {
             "id": "demo-0001",
             "name": "Solstice Brown Knit Top",
-            "price": "€85.00",
+            "price": "€85",
             "brandLine": "Quiet Meridian · Deep brown · Unspecified",
             "tag": "weekend",
             "swatch": "#e4e4e7",
@@ -19,7 +19,7 @@
           {
             "id": "demo-0002",
             "name": "Arc Forest Ribbed Cardigan",
-            "price": "€125.00",
+            "price": "€125",
             "brandLine": "Soft Current · Forest green · Unspecified",
             "tag": "weekend",
             "swatch": "#e4e4e7",

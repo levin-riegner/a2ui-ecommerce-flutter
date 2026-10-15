@@ -465,11 +465,12 @@ Widget _productVisual(
   String? asset,
   String? swatch, {
   bool tile = false,
+  BoxFit fit = BoxFit.contain,
 }) {
   if (asset != null &&
       RegExp(r'^assets/images/products/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$')
           .hasMatch(asset)) {
-    return CommerceProductImage(imageAsset: asset, swatch: swatch);
+    return CommerceProductImage(imageAsset: asset, swatch: swatch, fit: fit);
   }
   if (category == 'accessory') {
     return const Center(child: Icon(Icons.category_outlined, size: 40));
@@ -567,7 +568,12 @@ class FinalizedProductCard extends StatelessWidget {
                     ),
                     child: Text(
                       displayDetail(tag),
-                      style: const TextStyle(fontSize: 10, height: 1.2),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        height: 1.2,
+                        letterSpacing: -.1,
+                        color: _ink,
+                      ),
                     ),
                   ),
                 );
@@ -584,6 +590,7 @@ class FinalizedProductCard extends StatelessWidget {
                           category.toLowerCase(),
                           imageAsset,
                           swatch,
+                          fit: BoxFit.cover,
                         ),
                         if (!largeText)
                           Positioned(left: 6, top: 6, right: 6, child: badge),
@@ -598,7 +605,6 @@ class FinalizedProductCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(child: Text(name, style: _body)),
-                        const SizedBox(width: 8),
                         Text(price, style: _body),
                       ],
                     ),
@@ -622,7 +628,7 @@ class FinalizedProductCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Flexible(
+                        Expanded(
                           flex: 3,
                           child: Text(
                             removal

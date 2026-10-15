@@ -64,6 +64,11 @@ void main() {
           tester.getSize(find.byType(FinalizedProductCard)).height,
           closeTo(122, .01),
         );
+        final card = tester.getRect(find.byType(FinalizedProductCard));
+        expect(
+          tester.getRect(find.text('Add to dressing room')).right,
+          closeTo(card.right - 9, .01),
+        );
         expect(tester.takeException(), isNull);
       },
     );

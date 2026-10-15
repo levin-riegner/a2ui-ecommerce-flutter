@@ -5,6 +5,7 @@ import 'package:a2ui_flutter_commerce/src/agent/stylist_surfaces.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
 import 'package:a2ui_flutter_commerce/src/catalog/finalized_left_components.dart';
 import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
+import 'package:a2ui_flutter_commerce/src/data/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
@@ -63,6 +64,31 @@ void main() {
     );
   });
 
+  test('recommendation prices omit zero decimals and preserve cents', () {
+    final messages = renderPendingStylistSurface(
+      surfaceId: 'preview',
+      picks: [
+        for (final price in [45.0, 45.75, 45.5])
+          Product(
+            id: 'price-$price',
+            category: ProductCategory.top,
+            name: 'Shirt',
+            brand: 'Alder Studio',
+            price: price,
+            meta: 'Stone · Cotton',
+            tag: 'work',
+            swatch: '#fff',
+          ),
+      ],
+    );
+    final update = messages.last['updateDataModel'] as Map;
+    final data = update['value'] as Map;
+    expect(
+      (data['recommendations'] as List).map((row) => (row as Map)['price']),
+      ['€45', '€45.75', '€45.50'],
+    );
+  });
+
   testWidgets('recorded bound cards resolve facts and submit product IDs', (
     tester,
   ) async {
@@ -74,8 +100,8 @@ void main() {
 
     expect(find.text('Solstice Brown Knit Top'), findsOneWidget);
     expect(find.text('Arc Forest Ribbed Cardigan'), findsOneWidget);
-    expect(find.text('€85.00'), findsOneWidget);
-    expect(find.text('€125.00'), findsOneWidget);
+    expect(find.text('€85'), findsOneWidget);
+    expect(find.text('€125'), findsOneWidget);
     final completedCards = tester.widgetList<FinalizedProductCard>(
       find.byType(FinalizedProductCard),
     );
@@ -224,7 +250,7 @@ void main() {
       expect(find.text('Adding styling advice…'), findsOneWidget);
       expect(find.text('Solstice Brown Knit Top'), findsOneWidget);
       expect(find.text('Arc Forest Ribbed Cardigan'), findsOneWidget);
-      expect(find.text('€85.00'), findsOneWidget);
+      expect(find.text('€85'), findsOneWidget);
       final previewCards = tester.widgetList<FinalizedProductCard>(
         find.byType(FinalizedProductCard),
       );
