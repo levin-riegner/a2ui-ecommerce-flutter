@@ -80,11 +80,32 @@
   {
     "gate": "python-tests",
     "exitCode": 0,
-    "log": "logs/python-tests.log"
+    "log": "logs/python-tests.log",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tool",
+      "-p",
+      "test_*.py"
+    ]
   },
   {
     "gate": "format",
     "exitCode": 0,
-    "log": "logs/format.log"
+    "log": "logs/format.log",
+    "command": [
+      "fvm",
+      "dart",
+      "format",
+      "--output=none",
+      "--set-exit-if-changed",
+      "lib",
+      "test",
+      "tools/genkit",
+      "tool"
+    ]
   }
 ]
