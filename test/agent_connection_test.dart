@@ -80,6 +80,9 @@ void main() {
       ChatMessage.user('Accidental extra message'),
     );
     expect(calls, 1);
+    await tester.ensureVisible(find.text('Retry'));
+    await tester.pumpAndSettle();
+    expect(find.text('Retry').hitTestable(), findsOneWidget);
     await tester.tap(find.text('Retry'));
     await tester.pumpAndSettle();
     expect(calls, 4);

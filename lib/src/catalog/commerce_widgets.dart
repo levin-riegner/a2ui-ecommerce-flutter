@@ -105,11 +105,11 @@ final choiceGroupCatalogItem = CatalogItem(
   },
 );
 
-void _dispatchChoiceGroupAction(
+Future<void> _dispatchChoiceGroupAction(
   CatalogItemContext context,
   Object? action,
   String value,
-) {
+) async {
   if (action is! Map || action['event'] is! Map) return;
   final event = _map(action['event']!);
   final name = event['name'];
@@ -118,7 +118,13 @@ void _dispatchChoiceGroupAction(
     UserActionEvent(
       name: name,
       sourceComponentId: context.id,
-      context: {'value': value},
+      context: {
+        ...await resolveContext(
+          context.dataContext,
+          _map(event['context'] ?? const <String, Object?>{}),
+        ),
+        'value': value,
+      },
     ),
   );
 }
@@ -129,6 +135,7 @@ final primaryButtonCatalogItem = CatalogItem(
     description: 'A single primary action button.',
     properties: {
       'label': A2uiSchemas.stringReference(),
+      'enabled': A2uiSchemas.booleanReference(),
       'action': A2uiSchemas.action(),
     },
     required: ['label', 'action'],
@@ -138,9 +145,15 @@ final primaryButtonCatalogItem = CatalogItem(
     return BoundString(
       dataContext: context.dataContext,
       value: data['label'],
-      builder: (_, label) => CommercePrimaryButton(
-        label: label ?? '',
-        onPressed: () => _dispatchAction(context, data['action']),
+      builder: (_, label) => BoundBool(
+        dataContext: context.dataContext,
+        value: data['enabled'] ?? true,
+        builder: (_, enabled) => CommercePrimaryButton(
+          label: label ?? '',
+          onPressed: enabled == true
+              ? () => _dispatchAction(context, data['action'])
+              : null,
+        ),
       ),
     );
   },
@@ -314,6 +327,7 @@ final dressingRoomCatalogItem = CatalogItem(
         ),
       ),
       'planCaption': A2uiSchemas.stringReference(),
+      'changeAction': A2uiSchemas.action(),
       for (final slot in ['dress', 'layer', 'shoes', 'bag'])
         for (final suffix in ['Name', 'Meta', 'Swatch', 'ImageAsset'])
           '$slot$suffix': A2uiSchemas.stringReference(),

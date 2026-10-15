@@ -25,6 +25,7 @@ import 'layout/adaptive_pane_layout.dart';
 import 'layout/duo_layout_adapter.dart';
 import 'layout/stylist_composer.dart';
 import 'layout/stylist_layout.dart';
+import 'layout/stylist_bag_overlay.dart';
 import 'layout/stylist_surface_motion.dart';
 import 'theme.dart';
 
@@ -145,6 +146,11 @@ class _AppHomeState extends State<_AppHome> {
   bool showGallery = false;
   bool showStartScreen = false;
 
+  Future<void> _restartChat() async {
+    final restarted = await widget.agent?.restartChat() ?? true;
+    if (mounted && restarted) setState(() => showStartScreen = true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final agent = widget.agent;
@@ -158,6 +164,18 @@ class _AppHomeState extends State<_AppHome> {
         }
         if (agent == null || showStartScreen || !agent.hasStarted) {
           return _StartScreen(
+            onOpenSavedLooks: agent?.hasLocalLibrary == true
+                ? () async {
+                    await agent!.openSavedLooks();
+                    if (mounted) setState(() => showStartScreen = false);
+                  }
+                : null,
+            onOpenBag: agent?.hasLocalLibrary == true
+                ? () async {
+                    await agent!.openBag();
+                    if (mounted) setState(() => showStartScreen = false);
+                  }
+                : null,
             onConnect: agent == null
                 ? () => showDialog<void>(
                     context: context,
@@ -199,13 +217,16 @@ class _AppHomeState extends State<_AppHome> {
             onOpenGallery: () => setState(() => showGallery = true),
           );
         }
-        void newJourney() => setState(() => showStartScreen = true);
+        void newJourney() => _restartChat();
         final builder = widget.sessionBuilder;
         if (builder != null) return builder(agent, newJourney);
         if (agent is! CommerceAgent) {
           throw StateError('A custom session requires a sessionBuilder.');
         }
-        return _ResponsiveShell(agent: agent, onNewJourney: newJourney);
+        return StylistBagOverlay(
+          agent: agent,
+          child: _ResponsiveShell(agent: agent, onNewJourney: newJourney),
+        );
       },
     );
   }
@@ -219,8 +240,12 @@ class _StartScreen extends StatelessWidget {
     this.onConnect,
     this.onDisconnect,
     this.onStartBrief,
+    this.onOpenSavedLooks,
+    this.onOpenBag,
   });
 
+  final VoidCallback? onOpenSavedLooks;
+  final VoidCallback? onOpenBag;
   final VoidCallback? onConnect;
   final VoidCallback? onDisconnect;
   final Future<void> Function(DemoJourney journey)? onSelect;
@@ -237,9 +262,7 @@ class _StartScreen extends StatelessWidget {
         final horizontalInsets = closed
             ? const EdgeInsets.only(left: 16, right: 8)
             : const EdgeInsets.symmetric(horizontal: StylistLayout.gutter);
-        final innerLandscape =
-            fold.status == HingeStatus.fullyOpen &&
-            constraints.maxWidth > constraints.maxHeight;
+        final innerDisplay = fold.capabilities.isFoldable && !closed;
         final innerPortrait =
             fold.capabilities.isFoldable &&
             !closed &&
@@ -257,7 +280,7 @@ class _StartScreen extends StatelessWidget {
           compactSecondaryFirst: false,
           showSecondaryInCompact: !closed,
           primaryBottomInset: StylistLayout.composerBottomClearance,
-          extendPrimaryIntoBottomPadding: innerLandscape,
+          extendPrimaryIntoBottomPadding: innerDisplay,
           overlayHeader: true,
           overlayFooter: onStartBrief != null,
           stackSecondaryInPortrait: fold.capabilities.isFoldable && !closed,
@@ -280,7 +303,33 @@ class _StartScreen extends StatelessWidget {
                   padding: closed
                       ? const EdgeInsets.fromLTRB(16, 24, 8, 16)
                       : const EdgeInsets.fromLTRB(32, 32, 32, 24),
-                  child: const _BrandLockup(),
+                  child: SizedBox(
+                    height: 24,
+                    child: Row(
+                      children: [
+                        const Expanded(child: _BrandLockup()),
+                        if (onOpenSavedLooks != null || onOpenBag != null)
+                          PopupMenuButton<String>(
+                            tooltip: 'Styling options',
+                            icon: const Icon(Icons.more_horiz, size: 22),
+                            itemBuilder: (_) => [
+                              if (onOpenSavedLooks != null)
+                                PopupMenuItem(
+                                  enabled: !isBusy,
+                                  onTap: onOpenSavedLooks,
+                                  child: const Text('Saved looks'),
+                                ),
+                              if (onOpenBag != null)
+                                PopupMenuItem(
+                                  enabled: !isBusy,
+                                  onTap: onOpenBag,
+                                  child: const Text('Bag'),
+                                ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -368,19 +417,10 @@ class _StartScreen extends StatelessWidget {
           secondary: const _MosaicPreview(),
           footer: onStartBrief != null
               ? StylistComposerDock(
-                  padding: horizontalInsets.copyWith(top: 8),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    heightFactor: 1,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: StylistLayout.startContentMaxWidth,
-                      ),
-                      child: _CustomBriefEntry(
-                        onStart: onStartBrief!,
-                        isBusy: isBusy,
-                      ),
-                    ),
+                  padding: horizontalInsets.copyWith(top: 24),
+                  child: _CustomBriefEntry(
+                    onStart: onStartBrief!,
+                    isBusy: isBusy,
                   ),
                 )
               : Padding(
@@ -772,17 +812,15 @@ class _ResponsiveShell extends StatelessWidget {
       builder: (context, constraints) {
         final fold = DuoLayoutScope.of(context);
         final cover = fold.status == HingeStatus.closed;
-        final innerLandscape =
-            fold.status == HingeStatus.fullyOpen &&
-            constraints.maxWidth > constraints.maxHeight;
-        final gutter = cover || constraints.maxWidth < 600
+        final innerDisplay = fold.capabilities.isFoldable && !cover;
+        final gutter = cover || (!innerDisplay && constraints.maxWidth < 600)
             ? StylistLayout.compactGutter
             : StylistLayout.gutter;
         return AdaptivePaneLayout(
           overlayFooter: true,
           overlayHeader: true,
           primaryBottomInset: StylistLayout.composerBottomClearance,
-          extendPrimaryIntoBottomPadding: innerLandscape,
+          extendPrimaryIntoBottomPadding: innerDisplay,
           panePadding: EdgeInsets.fromLTRB(gutter, 32, gutter, 8),
           secondaryPadding: EdgeInsets.zero,
           compactSecondaryPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -807,9 +845,9 @@ class _ResponsiveShell extends StatelessWidget {
           secondaryBackgroundColor: Colors.black,
           secondaryBackgroundOnlyInBookMode: true,
           secondary: _DressingPanel(agent: agent, onNewJourney: onNewJourney),
-          header: _MobileHeader(onNewJourney: onNewJourney),
+          header: _MobileHeader(agent: agent, onNewJourney: onNewJourney),
           footer: StylistComposerDock(
-            padding: EdgeInsets.symmetric(horizontal: gutter),
+            padding: EdgeInsets.fromLTRB(gutter, 24, gutter, 0),
             child: _ChatComposer(agent: agent),
           ),
         );
@@ -843,36 +881,41 @@ class _ChatSurface extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 24),
                   child: FinalizedUserMessage(text: text),
                 ),
-                CommerceSurfaceEntry(surfaceId: final entryId) => Padding(
-                  key: ValueKey('conversation-surface-$entryId'),
-                  padding: EdgeInsets.only(
-                    bottom:
-                        entry == entries.last &&
-                            pendingId == null &&
-                            !agent.isBusy
-                        ? 8
-                        : 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (entryId != surfaceId)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Text(
-                            'Previous response',
-                            style: Theme.of(context).textTheme.labelMedium,
+                CommerceSurfaceEntry(
+                  surfaceId: final entryId,
+                  :final textAlreadyVisible,
+                ) =>
+                  Padding(
+                    key: ValueKey('conversation-surface-$entryId'),
+                    padding: EdgeInsets.only(
+                      bottom:
+                          entry == entries.last &&
+                              pendingId == null &&
+                              !agent.isBusy
+                          ? 8
+                          : 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (entryId != surfaceId)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              'Previous response',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
                           ),
+                        _ConversationSurface(
+                          agent: agent,
+                          surfaceId: entryId,
+                          inactive: controlsDisabled || entryId != surfaceId,
+                          reveal: entryId == surfaceId,
+                          textAlreadyVisible: textAlreadyVisible,
                         ),
-                      _ConversationSurface(
-                        agent: agent,
-                        surfaceId: entryId,
-                        inactive: controlsDisabled || entryId != surfaceId,
-                        reveal: entryId == surfaceId,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
               },
             if (pendingId != null)
               Padding(
@@ -934,12 +977,14 @@ class _ConversationSurface extends StatelessWidget {
     required this.surfaceId,
     required this.inactive,
     this.reveal = false,
+    this.textAlreadyVisible = false,
   });
 
   final CommerceAgent agent;
   final String surfaceId;
   final bool inactive;
   final bool reveal;
+  final bool textAlreadyVisible;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -949,9 +994,11 @@ class _ConversationSurface extends StatelessWidget {
       child: ExcludeFocus(
         excluding: inactive,
         child: StylistSurfaceScope(
+          enqueueMessages: reveal && agent.pendingInlineSurfaceId != surfaceId,
+          textAlreadyVisible: textAlreadyVisible,
           child: StylistSurfaceMotion(
             surfaceContext: agent.controller.contextFor(surfaceId),
-            enabled: reveal,
+            enabled: reveal && !textAlreadyVisible,
             child: Surface(
               key: ValueKey(surfaceId),
               surfaceContext: agent.controller.contextFor(surfaceId),
@@ -1203,7 +1250,9 @@ class _DressingRoomSurface extends StatelessWidget {
 }
 
 class _MobileHeader extends StatelessWidget {
-  const _MobileHeader({required this.onNewJourney});
+  const _MobileHeader({required this.agent, required this.onNewJourney});
+
+  final CommerceAgent agent;
 
   final VoidCallback onNewJourney;
 
@@ -1224,6 +1273,7 @@ class _MobileHeader extends StatelessWidget {
               ? const EdgeInsets.fromLTRB(32, 32, 32, 24)
               : const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Stack(
+            clipBehavior: Clip.none,
             alignment: Alignment.center,
             children: [
               Align(
@@ -1231,23 +1281,99 @@ class _MobileHeader extends StatelessWidget {
                 heightFactor: 1,
                 child: const SizedBox(width: 76, child: _BrandLockup()),
               ),
-              if (showClose)
-                Positioned(
-                  right: 0,
-                  top: -12,
-                  bottom: -12,
-                  child: IconButton(
-                    onPressed: onNewJourney,
-                    icon: const Icon(Icons.close, size: 20),
-                    tooltip: 'New journey',
-                  ),
+              Positioned(
+                right: 0,
+                top: -12,
+                bottom: -12,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _ConversationMenu(agent: agent, onNewJourney: onNewJourney),
+                    if (showClose)
+                      IconButton(
+                        onPressed: onNewJourney,
+                        icon: const Icon(Icons.close, size: 20),
+                        tooltip: 'New journey',
+                      ),
+                  ],
                 ),
+              ),
             ],
           ),
         ),
       ],
     );
   }
+}
+
+/// The current surface still owns these actions and their validation. Only
+/// their entry points move out of the scrolling conversation.
+class _ConversationMenu extends StatelessWidget {
+  const _ConversationMenu({required this.agent, required this.onNewJourney});
+  final CommerceAgent agent;
+  final VoidCallback onNewJourney;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: agent,
+    builder: (context, _) {
+      final id = agent.latestInlineSurfaceId;
+      final source = id == null ? null : agent.controller.contextFor(id);
+      final components = source?.definition.value?.components;
+      final entries = {
+        if (components != null)
+          for (final entry in components.entries)
+            if (isStylistUtilityComponent(entry.key) &&
+                entry.value.type == 'PrimaryButton')
+              entry.key: entry.value.properties,
+      };
+      void dispatch(String key) {
+        if (agent.isBusy || agent.latestInlineSurfaceId != id) return;
+        final action = entries[key]?['action'];
+        final event = action is Map ? action['event'] : null;
+        if (event is! Map || event['name'] is! String) return;
+        source?.handleUiEvent(
+          UserActionEvent(
+            surfaceId: id,
+            name: event['name'] as String,
+            sourceComponentId: key,
+            context: event['context'] is Map
+                ? Map<String, Object?>.from(event['context'] as Map)
+                : const {},
+          ),
+        );
+      }
+
+      return PopupMenuButton<String>(
+        tooltip: 'Styling options',
+        icon: const Icon(Icons.more_horiz, size: 22),
+        itemBuilder: (_) => [
+          PopupMenuItem(
+            value: 'restart-chat',
+            onTap: onNewJourney,
+            child: const Text('Start a new look'),
+          ),
+          for (final entry in entries.entries)
+            PopupMenuItem(
+              enabled:
+                  !agent.isBusy &&
+                  agent.pendingInlineSurfaceId == null &&
+                  agent.connectionError == null,
+              value: entry.key,
+              onTap: () => dispatch(entry.key),
+              child: Text(
+                (entry.value['label'] as String)
+                    .replaceFirst(
+                      'Details & demo sizes · ',
+                      'Details & sizes · ',
+                    )
+                    .replaceFirst('Demo bag', 'Bag'),
+              ),
+            ),
+        ],
+      );
+    },
+  );
 }
 
 class _SideRail extends StatelessWidget {

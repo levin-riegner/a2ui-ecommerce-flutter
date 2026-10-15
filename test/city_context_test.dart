@@ -75,18 +75,40 @@ class FixtureContext implements CityContextSource {
   void dispose() {}
 }
 
-Map<String, Object?> inlineData(Map<String, dynamic> turn) =>
-    ((presentedStylistTurn(turn)['messages'] as List).lastWhere(
-              (message) =>
-                  message['updateDataModel']?['surfaceId'].startsWith(
-                    'inline-',
-                  ) ==
-                  true,
-            )['updateDataModel']['value']
-            as Map)
-        .cast<String, Object?>();
+Map<String, Object?> inlineData(Map<String, dynamic> turn) {
+  final result = <String, Object?>{};
+  for (final message in presentedStylistTurn(turn)['messages'] as List) {
+    final update = message['updateDataModel'];
+    if (update is! Map ||
+        !(update['surfaceId'] as String).startsWith('inline-')) {
+      continue;
+    }
+    final path = update['path'];
+    if (path == null || path == '/') {
+      result.addAll(Map<String, Object?>.from(update['value'] as Map));
+    } else {
+      result[(path as String).substring(1)] = update['value'];
+    }
+  }
+  return result;
+}
 
 void main() {
+  test('destination stays Paris when the brief also contains in October', () {
+    expect(
+      parseDestinationCity(
+        'Anniversary dinner at a smart restaurant in Paris in October, black tie optional, about €1,500',
+      ),
+      'Paris',
+    );
+    expect(parseDestinationCity('Dinner in Paris, October'), 'Paris');
+    expect(
+      parseDestinationCity('Dinner in Paris, France in October'),
+      'Paris, France',
+    );
+    expect(parseDestinationCity('October', allowBare: true), isNull);
+    expect(parseDestinationCity('Trip to Cape May'), 'Cape May');
+  });
   test(
     'online geocoding and forecast values are validated and cached',
     () async {

@@ -155,7 +155,6 @@ class _StylistComposerState extends State<StylistComposer>
         liveRegion: active,
         label: active ? 'Dictation active' : null,
         child: FinalizedChatInput(
-          glassBackground: true,
           externalController: widget.controller,
           enabled: widget.enabled,
           fieldKey: widget.fieldKey,
@@ -219,8 +218,8 @@ class StylistGlassBackdrop extends StatelessWidget {
   );
 }
 
-/// Reserves space around the composer. Glass belongs to the input pill; this
-/// outer spacing stays clear while conversation content scrolls underneath.
+/// Figma's dock fades the thread over 24 points, then paints a solid surface
+/// behind the input. The pill never samples scrolling cards through a blur.
 class StylistComposerDock extends StatelessWidget {
   const StylistComposerDock({
     super.key,
@@ -233,10 +232,31 @@ class StylistComposerDock extends StatelessWidget {
   final EdgeInsets? padding;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding:
-        padding ??
-        EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 8),
-    child: child,
+  Widget build(BuildContext context) => Stack(
+    children: [
+      const Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 24,
+        child: IgnorePointer(
+          child: Image(
+            image: AssetImage('assets/images/occasions/composer-fade.png'),
+            fit: BoxFit.fill,
+            excludeFromSemantics: true,
+          ),
+        ),
+      ),
+      const Positioned.fill(
+        top: 24,
+        child: IgnorePointer(child: ColoredBox(color: Colors.white)),
+      ),
+      Padding(
+        padding:
+            padding ??
+            EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 0),
+        child: child,
+      ),
+    ],
   );
 }

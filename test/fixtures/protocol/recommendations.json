@@ -35,6 +35,12 @@
           },
           "planCaption": {
             "path": "/planCaption"
+          },
+          "changeAction": {
+            "event": {
+              "name": "adjust_piece",
+              "context": {}
+            }
           }
         }
       ]

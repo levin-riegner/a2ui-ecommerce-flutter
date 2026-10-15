@@ -183,6 +183,30 @@ final productFactsJsonSchema = <String, Object?>{
       'image_asset',
     ])
       k: _text,
+    'attributes': {'type': 'object'},
+    'demo_variants': {
+      'type': 'array',
+      'items': {
+        'type': 'object',
+        'properties': {
+          'id': _id,
+          'size': _id,
+          'stock': {'type': 'integer', 'minimum': 0},
+          'available': {'type': 'boolean'},
+          'source': {'const': 'local_demo_fixture'},
+          'sourceVersion': _id,
+        },
+        'required': [
+          'id',
+          'size',
+          'stock',
+          'available',
+          'source',
+          'sourceVersion',
+        ],
+        'additionalProperties': false,
+      },
+    },
     'category': _category,
     'color_families': _texts,
     'price_eur': {'type': 'number', 'minimum': 0},
@@ -353,6 +377,22 @@ final stylistCommandContexts = <String, Map<String, Object?>>{
       },
       ['productId', 'quantity'],
     ),
+  'preview_demo_checkout': _context({}),
+  'open_demo_receipt': _context({}),
+  'confirm_demo_checkout': _context({'quoteKey': _id}, ['quoteKey']),
+  'open_product_details': _context({'productId': _id}, ['productId']),
+  'set_fit_size': _context(
+    {'productId': _id, 'size': _id, 'fit': _text},
+    ['productId', 'size'],
+  ),
+  'choose_product_colour': _context(
+    {'productId': _id, 'colour': _id, 'colours': _texts},
+    ['productId', 'colour'],
+  ),
+  'set_product_options': _context(
+    {'productId': _id, 'colourProductId': _id, 'size': _id, 'fit': _text},
+    ['productId', 'size'],
+  ),
   'adjust_piece': _context(
     {
       'category': _category,

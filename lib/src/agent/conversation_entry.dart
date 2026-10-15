@@ -13,7 +13,11 @@ class CommerceUserMessage extends CommerceConversationEntry {
 
 /// A committed assistant surface retained in the conversation.
 class CommerceSurfaceEntry extends CommerceConversationEntry {
-  const CommerceSurfaceEntry({required this.surfaceId});
+  const CommerceSurfaceEntry({
+    required this.surfaceId,
+    this.textAlreadyVisible = false,
+  });
 
   final String surfaceId;
+  final bool textAlreadyVisible;
 }

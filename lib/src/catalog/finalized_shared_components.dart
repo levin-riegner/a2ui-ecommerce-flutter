@@ -31,7 +31,10 @@ class FinalizedPrimaryButton extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 44),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: onPressed == null
+                  ? Theme.of(context).colorScheme.onSurface
+                        .withValues(alpha: .12)
+                  : Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(8),
             ),
             alignment: Alignment.center,
@@ -43,7 +46,10 @@ class FinalizedPrimaryButton extends StatelessWidget {
                 height: 1.4,
                 fontWeight: FontWeight.w400,
                 letterSpacing: 0,
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: onPressed == null
+                    ? Theme.of(context).colorScheme.onSurface
+                          .withValues(alpha: .38)
+                    : Theme.of(context).colorScheme.onPrimary,
               ),
             ),
           ),
@@ -298,12 +304,14 @@ class FinalizedQuantityStepper extends StatefulWidget {
     this.updateLocally = true,
     this.onChanged,
     this.onRemove,
+    this.compact = false,
   });
   final int value;
   final int max;
   final bool updateLocally;
   final ValueChanged<int>? onChanged;
   final VoidCallback? onRemove;
+  final bool compact;
   @override
   State<FinalizedQuantityStepper> createState() =>
       _FinalizedQuantityStepperState();
@@ -392,7 +400,10 @@ class _FinalizedQuantityStepperState extends State<FinalizedQuantityStepper> {
         onTap: tap,
         borderRadius: BorderRadius.circular(999),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+          constraints: BoxConstraints(
+            minWidth: widget.compact ? 30 : 48,
+            minHeight: widget.compact ? 30 : 48,
+          ),
           child: Center(
             child: ExcludeSemantics(
               child: Text(

@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:genkit/genkit.dart';
 
 import '../data/models.dart';
+import '../data/demo_commerce.dart';
 import '../data/money.dart';
 import '../data/catalog_semantics.dart';
 import '../data/stylist_store.dart';
@@ -23,6 +24,7 @@ import 'stylist_input_error.dart';
 
 typedef StylistModel = Future<ModelResponse> Function(ModelRequest request);
 typedef StylistProgress = void Function(List<Product> products);
+typedef StylistTextProgress = void Function(String text);
 typedef StylistResultValidator = FutureOr<void> Function(
   StylistTurnResult result,
 );
@@ -58,6 +60,8 @@ const _instructions =
     'Call save_outfit to record explicit changes to style, season, occasion or preferences; '
     'That tool updates brief facts only; a saved look requires the host Save look action. '
     'Never claim a saved look, bag change or purchase without a host confirmation. '
+    'Product attributes include evidence, confidence and basis; these are catalog descriptions or estimates, never verified fit, composition or weather protection. '
+    'Sizes, stock, delivery and checkout are explicitly local demo fixtures. Never describe them as real inventory, measured fit, a paid order or a carrier promise. '
     'Before searching, you MUST save any explicitly supplied occasion or other fact missing from Settled brief. '
     'Mentioning a fact in your reply does not save it. Check the authoritative brief returned by the tool. '
     'When saving an occasion, include occasionEvidence quoting the user\'s actual event and keep the occasion within that quote. '
@@ -88,7 +92,9 @@ class StylistRuntime {
     this.onModelRequest,
     this.onCancelTurn,
     this.store,
-  }) : products = List.unmodifiable(products),
+    DateTime Function()? now,
+  }) : now = now ?? DateTime.now,
+       products = List.unmodifiable(products),
        catalog = catalog,
        ai = Genkit(isDevEnv: developerTools, promptDir: null) {
     if (catalog != null &&
@@ -189,7 +195,48 @@ class StylistRuntime {
         if (model != null) {
           response = await model(request);
         } else if (providerModel != null) {
-          response = await providerModel(request, cancel: scope.cancel.token);
+          // Tool-stage prose can be superseded by later tool results. Only
+          // stream the final, tool-free response, without committing its draft.
+          final streamText =
+              scope.onText != null &&
+              request.tools?.isEmpty == true &&
+              _selectionOptions(scope) == null;
+          var text = '';
+          var visible = '';
+          void publishText() {
+            scope.cancel.token.throwIfCancelled();
+            // Financial prose is filtered by complete sentence. Never show a
+            // partial amount that a later token would force us to retract.
+            final boundary = RegExp(r'(?<=[.!?])\s+|\n+')
+                .allMatches(text)
+                .lastOrNull;
+            final guidance = boundary == null
+                ? ''
+                : _withoutFinancialProse(text.substring(0, boundary.end));
+            final next = [
+              ..._replyPrefix(scope),
+              guidance,
+            ].where((part) => part.isNotEmpty).join('\n\n');
+            if (next.isNotEmpty && next != visible) {
+              visible = next;
+              scope.onText!(next);
+            }
+          }
+
+          if (streamText) publishText();
+          response = await providerModel(
+            request,
+            cancel: scope.cancel.token,
+            onChunk: streamText
+                ? (chunk) {
+                    scope.cancel.token.throwIfCancelled();
+                    text = chunk.aggregated == true
+                        ? chunk.text
+                        : text + chunk.text;
+                    publishText();
+                  }
+                : null,
+          );
         } else {
           response = await offlineStylistModel(request);
         }
@@ -651,6 +698,7 @@ class StylistRuntime {
         input,
         cancel: context.cancel,
         onProgress: Zone.current[_progressKey] as StylistProgress?,
+        onText: Zone.current[_textProgressKey] as StylistTextProgress?,
         validateResult: Zone.current[_validationKey] as StylistResultValidator?,
       ),
     );
@@ -674,6 +722,7 @@ class StylistRuntime {
   late final Flow<Map<String, dynamic>, Map<String, dynamic>, void, void> flow;
   final _zoneKey = Object();
   final _progressKey = Object();
+  final _textProgressKey = Object();
   final _validationKey = Object();
   _StylistState _state = _StylistState();
   final StylistStore? store;
@@ -697,6 +746,16 @@ class StylistRuntime {
     'brief': state.briefState.toSnapshot(),
     'items': state.outfit.values.map((p) => p.id).toList(),
     'city': state.city,
+    'fit': {
+      'usualSize': state.usualSize,
+      'usualSizes': state.usualSizes,
+      'preferredFit': state.preferredFit,
+    },
+    'variants': {
+      for (final p in state.outfit.values)
+        if (state.productVariants[p.id] != null)
+          p.id: state.productVariants[p.id],
+    },
   };
   Map<String, Object?> _storeSnapshot(_StylistState state) => {
     'version': 1,
@@ -704,6 +763,10 @@ class StylistRuntime {
     'looks': state.savedLooks,
     'bag': state.bag,
     'nextLookId': state.nextLookId,
+    'bagVariants': state.bagVariants,
+    'demoSold': state.demoSold,
+    'lastDemoReceipt': state.lastDemoReceipt,
+    'nextReceiptId': state.nextReceiptId,
   };
 
   void _restoreLook(_StylistState state, Map<String, Object?> value) {
@@ -722,6 +785,33 @@ class StylistRuntime {
     final brief = StylistBrief.fromSnapshot(
       Map<String, Object?>.from(rawBrief),
     );
+    final fit = value['fit'] ?? const {},
+        variants = value['variants'] ?? const {};
+    if (fit is! Map ||
+        variants is! Map ||
+        !const [
+          '',
+          'Fitted',
+          'Regular',
+          'Relaxed',
+        ].contains(fit['preferredFit'] ?? '') ||
+        (fit['usualSize'] ?? '') is! String ||
+        (fit['usualSize'] as String? ?? '').length > 20 ||
+        variants.entries.any(
+          (e) => !rawIds.contains(e.key) || e.value is! String,
+        )) {
+      throw const FormatException('Saved size preferences are invalid.');
+    }
+    final usualSizes = fit['usualSizes'] ?? const {};
+    if (usualSizes is! Map ||
+        usualSizes.entries.any(
+          (e) =>
+              !const {'clothing', 'shoes', 'one_size'}.contains(e.key) ||
+              e.value is! String ||
+              (e.value as String).length > 20,
+        )) {
+      throw const FormatException('Saved size groups are invalid.');
+    }
     final outfit = <String, Product>{};
     for (final id in rawIds) {
       final product = products.where((p) => p.id == id).firstOrNull;
@@ -740,6 +830,12 @@ class StylistRuntime {
         throw const FormatException('Saved look repeats a category.');
       }
       outfit[product.category.name] = product;
+      if (variants[id] != null &&
+          !commerce.variants(product).any((v) => v.id == variants[id])) {
+        throw const FormatException(
+          'A saved demo size is no longer available.',
+        );
+      }
     }
     if (outfit.containsKey('dress') &&
         (outfit.containsKey('top') || outfit.containsKey('bottom'))) {
@@ -753,6 +849,10 @@ class StylistRuntime {
     }
     state
       ..briefState = brief
+      ..usualSize = fit['usualSize'] as String? ?? ''
+      ..usualSizes = Map<String, String>.from(usualSizes)
+      ..preferredFit = fit['preferredFit'] as String? ?? ''
+      ..productVariants = Map<String, String>.from(variants)
       ..brief = brief.planningText
       ..outfit = outfit
       ..seen = {for (final p in outfit.values) p.id: p}
@@ -829,6 +929,38 @@ class StylistRuntime {
         if (products.any((p) => p.id == e.key)) e.key as String: e.value as int,
     };
     restored.nextLookId = next;
+    final bagVariants = value['bagVariants'] ?? const {},
+        sold = value['demoSold'] ?? const {};
+    if (bagVariants is! Map ||
+        sold is! Map ||
+        bagVariants.entries.any(
+          (e) => e.key is! String || e.value is! String,
+        ) ||
+        sold.entries.any(
+          (e) => e.key is! String || e.value is! int || (e.value as int) < 0,
+        )) {
+      throw const FormatException('Saved demo inventory is invalid.');
+    }
+    restored.demoSold = Map<String, int>.from(sold);
+    restored.bagVariants = {
+      for (final e in bagVariants.entries)
+        if (restored.bag.containsKey(e.key) &&
+            products.any(
+              (p) =>
+                  p.id == e.key &&
+                  commerce.variants(p).any((v) => v.id == e.value),
+            ))
+          e.key as String: e.value as String,
+    };
+    restored.nextReceiptId =
+        value['nextReceiptId'] is int && (value['nextReceiptId'] as int) > 0
+        ? value['nextReceiptId'] as int
+        : 1;
+    if (value['lastDemoReceipt'] is Map) {
+      restored.lastDemoReceipt = Map<String, Object?>.from(
+        value['lastDemoReceipt'] as Map,
+      );
+    }
     var resumed = false;
     if (!_resetBeforeLoad && value['current'] is Map) {
       try {
@@ -852,6 +984,8 @@ class StylistRuntime {
   }
 
   final Set<CancellationController> _active = {};
+  final DateTime Function() now;
+  final commerce = const DemoCommerce();
   bool _disposed = false;
   Future<void> _pending = Future.value();
   _TurnScope get _scope => Zone.current[_zoneKey] as _TurnScope;
@@ -868,6 +1002,13 @@ class StylistRuntime {
     _state = _StylistState()
       ..savedLooks = List.of(previous.savedLooks)
       ..bag = Map.of(previous.bag)
+      ..bagVariants = Map.of(previous.bagVariants)
+      ..demoSold = Map.of(previous.demoSold)
+      ..lastDemoReceipt = previous.lastDemoReceipt
+      ..nextReceiptId = previous.nextReceiptId
+      ..usualSize = previous.usualSize
+      ..usualSizes = Map.of(previous.usualSizes)
+      ..preferredFit = previous.preferredFit
       ..nextLookId = previous.nextLookId
       ..brief = journey == null ? '' : '${journey.title}. ${journey.brief}'
       ..briefState = journey == null
@@ -887,10 +1028,15 @@ class StylistRuntime {
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,
+    StylistTextProgress? onText,
     StylistResultValidator? validateResult,
   }) => runZoned(
     () async => await flow(input, cancel: cancel) as StylistTurnResult,
-    zoneValues: {_progressKey: onProgress, _validationKey: validateResult},
+    zoneValues: {
+      _progressKey: onProgress,
+      _textProgressKey: onText,
+      _validationKey: validateResult,
+    },
   );
 
   /// Invalidates draft work without discarding the last committed outfit.
@@ -904,6 +1050,7 @@ class StylistRuntime {
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,
+    StylistTextProgress? onText,
     StylistResultValidator? validateResult,
   }) {
     if (_disposed) return Future.error(StateError('Model connection closed'));
@@ -913,6 +1060,7 @@ class StylistRuntime {
         input,
         cancel: cancel,
         onProgress: onProgress,
+        onText: onText,
         validateResult: validateResult,
       );
     });
@@ -924,6 +1072,7 @@ class StylistRuntime {
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,
+    StylistTextProgress? onText,
     StylistResultValidator? validateResult,
   }) async {
     if (_disposed) throw StateError('Model connection closed');
@@ -936,7 +1085,7 @@ class StylistRuntime {
       () => cancellation.cancel('Stylist turn timed out'),
     );
     final state = _state.copy();
-    final scope = _TurnScope(state, cancellation, onProgress);
+    final scope = _TurnScope(state, cancellation, onProgress, onText);
     onBeginTurn?.call();
     final removeCancel = cancellation.token.onCancel(
       () => onCancelTurn?.call(),
@@ -944,10 +1093,19 @@ class StylistRuntime {
     try {
       // A direct Developer UI run reaches this same path with an offline model.
       // The flow queues this turn; ai.run traces the nested work without re-entering it.
-      final result = await runZoned(
-        () => ai.run('stylistTurn.execute', () => _generateTurn(input, scope)),
-        zoneValues: {_zoneKey: scope},
-      );
+      final result = await Future.any<StylistTurnResult>([
+        runZoned(
+          () =>
+              ai.run('stylistTurn.execute', () => _generateTurn(input, scope)),
+          zoneValues: {_zoneKey: scope},
+        ),
+        cancellation.token.whenCancelled.then<StylistTurnResult>(
+          (_) => throw CancelledException(
+            token: cancellation.token,
+            reason: cancellation.token.reason,
+          ),
+        ),
+      ]);
       cancellation.token.throwIfCancelled();
       if (_disposed) throw StateError('Model connection closed');
       if ((await stylistResultSchema.validate(result.toJson())).isNotEmpty) {
@@ -996,7 +1154,15 @@ class StylistRuntime {
     _TurnScope scope,
   ) async {
     final state = scope.state;
-    final message = (input['message'] as String?) ?? '';
+    var message = (input['message'] as String?) ?? '';
+    final restart = input['action'] == null
+        ? restartStylistBrief(message)
+        : null;
+    if (restart != null) {
+      _libraryAction(scope, 'reset_look', const {});
+      message = restart;
+      if (message.isNotEmpty) scope.hostReply = null;
+    }
     final unsupportedCurrency = unsupportedBriefBudgetCurrency(message);
     if (unsupportedCurrency != null) {
       throw StylistInputError(
@@ -1010,7 +1176,7 @@ class StylistRuntime {
     scope.previousBrief = state.briefState;
     scope.beforeInput = state.copy();
     final action = input['action'] as Map?;
-    if (message.isEmpty && action == null) {
+    if (message.isEmpty && action == null && restart == null) {
       throw const FormatException('A message or action is required');
     }
     var actionNote = '';
@@ -1018,8 +1184,69 @@ class StylistRuntime {
     ProductCategory? adjustedCategory;
     if (action == null) {
       final command = _localCommand(message);
+      if (RegExp(
+        r"^(?:i(?:['’]ve| have)? )?(?:changed? my mind|want a change)[.!?]*$",
+        caseSensitive: false,
+      ).hasMatch(message.trim())) {
+        scope.questionIntent = 'change_direction';
+        scope.hostReply =
+            'Would you like to change a selected piece or start a new look?';
+      }
       if (command != null) {
-        _libraryAction(scope, command, const <String, Object?>{});
+        if (const {
+          'preview_demo_checkout',
+          'open_demo_receipt',
+        }.contains(command)) {
+          _commerceAction(scope, command, const {});
+        } else {
+          _libraryAction(scope, command, const <String, Object?>{});
+        }
+      } else if (RegExp(
+            r'^(?:what|which|how|does|is|are)\b|^show (?:me )?(?:the )?(?:sizes|stock|details)',
+            caseSensitive: false,
+          ).hasMatch(message) &&
+          RegExp(
+            r'\b(?:sizes?|fit|stock|availability|details)\b',
+            caseSensitive: false,
+          ).hasMatch(message)) {
+        final named = state.seen.values
+            .where((p) => message.toLowerCase().contains(p.name.toLowerCase()))
+            .toList();
+        final askedCategory = requestedProductCategory(message);
+        final categoryMatches = state.seen.values
+            .where((p) => p.category == askedCategory)
+            .toList();
+        final selected = named.length == 1
+            ? named.single
+            : askedCategory != null
+            ? (categoryMatches.length == 1 ? categoryMatches.single : null)
+            : state.outfit.length == 1
+            ? state.outfit.values.single
+            : null;
+        if (selected != null) {
+          _commerceAction(scope, 'open_product_details', {
+            'productId': selected.id,
+          });
+        }
+      }
+      final sizeMatch = RegExp(
+        r'\b(?:I (?:usually )?(?:wear|take)|(?:my |usual )?size(?: is)?)\s+(XS|XL|S|M|L|3[6-9]|4[0-6])\b',
+        caseSensitive: false,
+      ).firstMatch(message);
+      final size = sizeMatch?.group(1)?.toUpperCase();
+      if (size != null) {
+        state.usualSize = size;
+        state.usualSizes[int.tryParse(size) == null ? 'clothing' : 'shoes'] =
+            size;
+        scope.notices.add('Usual size $size noted.');
+        if (sizeMatch!.start == 0 &&
+            message
+                .substring(sizeMatch.end)
+                .replaceAll(RegExp(r'[.!?\s]'), '')
+                .isEmpty) {
+          scope.questionIntent = 'commerce';
+          scope.hostReply = 'Your usual size is saved. Choose a size for each piece to confirm your selection.';
+        }
       }
     }
     if (action != null) {
@@ -1030,6 +1257,7 @@ class StylistRuntime {
         await _loadCityContext(state, refresh: true);
         scope.cancel.token.throwIfCancelled();
         return StylistTurnResult(
+          demoSold: state.demoSold,
           reply: state.lastReply,
           intent: 'weather',
           products: const [],
@@ -1064,6 +1292,16 @@ class StylistRuntime {
             city: state.city,
           ),
         );
+      } else if (const {
+        'open_product_details',
+        'set_fit_size',
+        'set_product_options',
+        'choose_product_colour',
+        'preview_demo_checkout',
+        'confirm_demo_checkout',
+        'open_demo_receipt',
+      }.contains(action['name'])) {
+        _commerceAction(scope, action['name'] as String, context);
       } else if (const {
         'resume_session',
         'open_saved_looks',
@@ -1396,8 +1634,12 @@ class StylistRuntime {
         ),
       ],
     );
+    final openingSizingOptions = _selectionOptions(scope);
     final directReply =
         scope.hostReply ??
+        (!scope.needsProducts
+            ? (openingSizingOptions?['question'] as String?)
+            : null) ??
         (scope.questionIntent == 'weather'
             ? _weatherAnswer(state, message)
             : null);
@@ -1450,6 +1692,8 @@ class StylistRuntime {
     if (scope.needsProducts && scope.picks.isEmpty) {
       throw StateError('Stylist did not present the next outfit choices');
     }
+    // Tool selections can change the outfit during generation too.
+    final sizingOptions = _selectionOptions(scope);
     // Financial facts belong to the host; retain stylist guidance separately.
     if (scope.adjustingProductId != null && scope.picks.isNotEmpty) {
       if (state.replacementPriceMax != null) {
@@ -1462,7 +1706,10 @@ class StylistRuntime {
         );
       }
     }
-    final guidance = directReply ?? _withoutFinancialProse(generatedReply);
+    final guidance =
+        (sizingOptions?['question'] as String?) ??
+        directReply ??
+        _withoutFinancialProse(generatedReply);
     final plan = scope.plan!;
     final hostFacts = scope.confirmations.isEmpty
         ? ''
@@ -1498,7 +1745,8 @@ class StylistRuntime {
       ?_localStorageNotice,
       ...scope.notices,
       guidance,
-      if (scope.questionIntent == null &&
+      if ((sizingOptions == null || !scope.needsProducts) &&
+          scope.questionIntent == null &&
           (scope.confirmations.isNotEmpty ||
               plan.complete ||
               !scope.needsProducts) &&
@@ -1555,7 +1803,11 @@ class StylistRuntime {
             scope.picks.isEmpty &&
             !scope.preferencePanel &&
             !scope.showBag &&
-            !scope.showSavedLooks
+            scope.detailProduct == null &&
+            !scope.showCheckout &&
+            !scope.showReceipt &&
+            !scope.showSavedLooks &&
+            scope.questionIntent != 'change_direction'
         ? [
             for (final id in state.lastPresented)
               if (state.seen[id] != null &&
@@ -1566,7 +1818,10 @@ class StylistRuntime {
                 state.seen[id]!,
           ]
         : scope.picks;
+    final options = sizingOptions;
+    final details = _productDetailData(scope);
     return StylistTurnResult(
+      demoSold: state.demoSold,
       reply: reply,
       intent: scope.questionIntent,
       products: scope.picks,
@@ -1575,7 +1830,7 @@ class StylistRuntime {
       catalog: catalogMetadata,
       view: StylistViewState(
         turn: state.turn,
-        picks: visiblePicks,
+        picks: options != null || details != null ? const [] : visiblePicks,
         clarification:
             (scope.questionIntent != null &&
                     scope.questionIntent != 'resume') ||
@@ -1597,6 +1852,10 @@ class StylistRuntime {
         cityContext: state.cityContext,
         cityContextNotice: state.cityContextNotice,
         city: state.city,
+        inspectProducts: true,
+        productDetails: options == null ? details : null,
+        selectionOptions: options,
+        changeDirection: scope.questionIntent == 'change_direction',
         presentation: presentation,
         adjusting: adjusting,
         adjustmentSelected: adjusting == null
@@ -1638,6 +1897,342 @@ class StylistRuntime {
             : _libraryData(scope),
       ),
     );
+  }
+
+  List<Product> _colourVariants(_StylistState state, Product product) {
+    if (product.variantGroup.isEmpty || product.color.isEmpty) return [product];
+    final otherSpend = sumEuros(
+      state.outfit.values.where((p) => p.id != product.id).map((p) => p.price),
+    );
+    final colours = <String>{product.color.toLowerCase()};
+    return [
+      product,
+      for (final candidate in products)
+        if (candidate.id != product.id &&
+            candidate.variantGroup == product.variantGroup &&
+            candidate.brand == product.brand &&
+            candidate.category == product.category &&
+            candidate.color.isNotEmpty &&
+            candidate.supportsGender(state.briefState.gender) &&
+            commerce
+                .variants(candidate, sold: state.demoSold)
+                .any((v) => v.stock > 0) &&
+            state.briefState.productConstraints.matches(candidate) &&
+            (state.budget == null ||
+                !euroAmountExceeds(
+                  sumEuros([otherSpend, candidate.price]),
+                  state.budget!,
+                )) &&
+            colours.add(candidate.color.toLowerCase()))
+          candidate,
+    ];
+  }
+
+  Map<String, Object?>? _selectionOptions(_TurnScope scope) {
+    if (scope.questionIntent != null && scope.optionsProduct == null) {
+      return null;
+    }
+    final state = scope.state;
+    final product =
+        scope.optionsProduct ??
+        state.outfit.entries
+            .where(
+              (entry) =>
+                  scope.beforeInput?.outfit[entry.key]?.id != entry.value.id,
+            )
+            .map((entry) => entry.value)
+            .firstOrNull;
+    if (product == null) return null;
+    final choices = _colourVariants(state, product);
+    if (choices.length < 2 &&
+        commerce
+                .variants(product, sold: state.demoSold)
+                .where((v) => v.stock > 0)
+                .length <
+            2) {
+      return null;
+    }
+    return {
+      'productId': product.id,
+      'fits': DemoCommerce.fitsFor(product),
+      'fit': DemoCommerce.fitsFor(product).isEmpty ? '' : state.preferredFit,
+      'question':
+          '${product.name}: choose your ${DemoCommerce.fitsFor(product).isEmpty ? 'size' : 'size and preferred fit'}.',
+      'saveLabel': DemoCommerce.fitsFor(product).isEmpty
+          ? 'Save size'
+          : 'Save size & fit',
+      'choices': [
+        for (final choice in choices)
+          {
+            'id': choice.id,
+            'name': choice.name,
+            'colour': choice.color,
+            'imageAsset': choice.imageAsset,
+            'swatch': choice.swatch,
+            'price': formatEuros(choice.price),
+            'sizes': commerce
+                .variants(choice, sold: state.demoSold)
+                .where((v) => v.stock > 0)
+                .map((v) => v.size)
+                .toList(),
+            'size':
+                _selectedVariant(state, choice)?.size ??
+                state.usualSizes[_sizeGroup(choice)] ??
+                '',
+          },
+      ],
+    };
+  }
+
+  DemoVariant? _selectedVariant(
+    _StylistState state,
+    Product product, {
+    bool bag = false,
+  }) => commerce
+      .variants(product, sold: state.demoSold)
+      .where(
+        (v) =>
+            v.id ==
+            (bag
+                ? state.bagVariants[product.id]
+                : state.productVariants[product.id]),
+      )
+      .firstOrNull;
+
+  void _checkDemoStock(_StylistState state, Product product, int quantity) {
+    final variant = _selectedVariant(state, product, bag: true);
+    if (variant != null && quantity > variant.stock) {
+      throw FormatException(
+        'Only ${variant.stock} units of demo size ${variant.size} remain for ${product.name}. This is fictional inventory.',
+      );
+    }
+  }
+
+  Map<String, Object?> _checkoutData(_StylistState state) {
+    if (state.bag.isEmpty) {
+      throw const FormatException('Add pieces to your demo bag first.');
+    }
+    final lines = <Map<String, Object?>>[];
+    for (final entry in state.bag.entries) {
+      final product = products.firstWhere((p) => p.id == entry.key);
+      final variant = _selectedVariant(state, product, bag: true);
+      if (variant == null) {
+        throw FormatException(
+          'Choose a demo size for ${product.name} before previewing checkout.',
+        );
+      }
+      _checkDemoStock(state, product, entry.value);
+      lines.add({
+        'productId': product.id,
+        'variantId': variant.id,
+        'name': product.name,
+        'size': variant.size,
+        'quantity': entry.value,
+        'unitCents': (product.price * 100).round(),
+      });
+    }
+    final delivery = commerce.delivery(today: now(), destination: state.city);
+    final subtotal = lines.fold<int>(
+      0,
+      (sum, p) => sum + (p['unitCents'] as int) * (p['quantity'] as int),
+    );
+    return {
+      'mode': 'local_demo',
+      'currency': 'EUR',
+      'lines': lines,
+      'subtotalCents': subtotal,
+      'shippingCents': DemoCommerce.shippingCents,
+      'taxCents': 0,
+      'totalCents': subtotal + DemoCommerce.shippingCents,
+      'delivery': delivery,
+      'key': jsonEncode([lines, delivery]),
+    };
+  }
+
+  void _commerceAction(_TurnScope scope, String name, Map context) {
+    final state = scope.state;
+    scope.questionIntent = 'commerce';
+    try {
+      if (name == 'set_product_options' || name == 'choose_product_colour') {
+        final current = state.outfit.values
+            .where((p) => p.id == context['productId'])
+            .firstOrNull;
+        if (current == null) {
+          throw const FormatException(
+            'Choose options for a currently selected piece.',
+          );
+        }
+        final target = _colourVariants(state, current)
+            .where(
+              (p) => name == 'choose_product_colour'
+                  ? displayDetail(p.color) == context['colour']
+                  : p.id == (context['colourProductId'] ?? current.id),
+            )
+            .firstOrNull;
+        if (target == null) {
+          throw const FormatException('Choose one of the available colours.');
+        }
+        if (name == 'set_product_options' &&
+            (context['size'] is! String ||
+                (context['size'] as String).isEmpty)) {
+          throw const FormatException('Choose a size to continue.');
+        }
+        if (target.id != current.id) {
+          state.seen[target.id] = target;
+          _recordSelection(state, target.id);
+        }
+        if (name == 'choose_product_colour') {
+          scope.optionsProduct = target;
+          scope.hostReply =
+              '${target.name}: choose your size and preferred fit.';
+          return;
+        }
+        _commerceAction(scope, 'set_fit_size', {
+          ...context,
+          'productId': target.id,
+        });
+        scope.detailProduct = null;
+        scope.hostReply = 'Saved your options for ${target.name}.';
+        return;
+      }
+      if (name == 'open_demo_receipt') {
+        if (state.lastDemoReceipt == null) {
+          throw const FormatException('No simulated checkout receipt yet.');
+        }
+        scope.showReceipt = true;
+        scope.hostReply = 'Your last simulated checkout receipt. No real order or payment was created.';
+        return;
+      }
+      if (name == 'preview_demo_checkout') {
+        _checkoutData(state);
+        scope.showCheckout = true;
+        scope.hostReply = 'Review your local demo checkout. Shipping, tax and delivery are fictional; no payment details are collected.';
+        return;
+      }
+      if (name == 'confirm_demo_checkout') {
+        final quote = _checkoutData(state);
+        if (context['quoteKey'] != quote['key']) {
+          throw const FormatException(
+            'Your demo bag or delivery scenario changed. Review checkout again.',
+          );
+        }
+        for (final line in quote['lines'] as List) {
+          final id = line['variantId'] as String;
+          state.demoSold[id] =
+              (state.demoSold[id] ?? 0) + (line['quantity'] as int);
+        }
+        state.lastDemoReceipt = Map.unmodifiable(
+          {
+            ...quote,
+            'id': 'demo-checkout-${state.nextReceiptId++}',
+            'createdAt': now().toUtc().toIso8601String(),
+            'status': 'simulated',
+          }..remove('key'),
+        );
+        state.bag.clear();
+        state.bagVariants.clear();
+        state.bagUndo = null;
+        state.bagVariantsUndo = null;
+        state.removedBagItems.clear();
+        state.removedBagVariants.clear();
+        scope.showReceipt = true;
+        scope.hostReply = 'Demo checkout complete. Your local demo stock was updated and the bag cleared. No payment, real order or shipment was created.';
+        return;
+      }
+      final id = context['productId'];
+      final product = products.where((p) => p.id == id).firstOrNull;
+      if (product == null ||
+          (!state.seen.containsKey(id) &&
+              !state.bag.containsKey(id) &&
+              !state.outfit.values.any((p) => p.id == id))) {
+        throw const FormatException(
+          'Open details for a current recommendation, selected piece or bag item.',
+        );
+      }
+      scope.detailProduct = product;
+      if (name == 'set_fit_size') {
+        final size = context['size'], fit = context['fit'];
+        if (size is! String ||
+            size.isEmpty ||
+            (DemoCommerce.fitsFor(product).isNotEmpty &&
+                !DemoCommerce.fitsFor(product).contains(fit))) {
+          throw const FormatException('Choose a size and fit to continue.');
+        }
+        final variant = commerce
+            .variants(product, sold: state.demoSold)
+            .where((v) => v.size == size)
+            .firstOrNull;
+        if (variant == null || variant.stock == 0) {
+          throw const FormatException('Choose an available size.');
+        }
+        if ((state.bag[product.id] ?? 1) > variant.stock) {
+          throw FormatException(
+            'Reduce the bag quantity to ${variant.stock} before choosing this size.',
+          );
+        }
+        state.productVariants[product.id] = variant.id;
+        state.usualSize = variant.size;
+        state.usualSizes[_sizeGroup(product)] = variant.size;
+        if (state.bag.containsKey(product.id)) {
+          state.bagVariants[product.id] = variant.id;
+        }
+        if (DemoCommerce.fitsFor(product).isNotEmpty) {
+          state.preferredFit = fit as String;
+        }
+        state.bagUndo = null;
+        state.bagVariantsUndo = null;
+        scope.hostReply =
+            'Saved size $size${DemoCommerce.fitsFor(product).isEmpty ? '' : ' and ${state.preferredFit.toLowerCase()} fit'} for ${product.name}.';
+        scope.detailProduct = null;
+      } else {
+        scope.hostReply =
+            '${product.name}: choose your ${DemoCommerce.fitsFor(product).isEmpty ? 'size' : 'size and preferred fit'}.';
+      }
+    } on FormatException catch (error) {
+      throw StylistInputError(
+        code: StylistInputErrorCode.invalidSelection,
+        message: error.message,
+      );
+    }
+  }
+
+  Map<String, Object?>? _productDetailData(_TurnScope scope) {
+    final p = scope.detailProduct;
+    if (p == null) return null;
+    final state = scope.state,
+        variants = commerce.variants(p, sold: scope.state.demoSold);
+    final selected = _selectedVariant(
+      state,
+      p,
+      bag: state.bag.containsKey(p.id),
+    );
+    final usualSize = state.usualSizes[_sizeGroup(p)] ?? state.usualSize;
+    final size =
+        selected?.size ??
+        (variants.any((v) => v.size == usualSize && v.stock > 0)
+            ? usualSize
+            : '');
+    return {
+      'id': p.id,
+      'name': p.name,
+      'description': p.description,
+      'attributes': p.attributes.toMap(),
+      'sizes': variants.where((v) => v.stock > 0).map((v) => v.size).toList(),
+      'size': size,
+      'fits': DemoCommerce.fitsFor(p),
+      'fit': DemoCommerce.fitsFor(p).isEmpty ? '' : state.preferredFit,
+      'question':
+          '${p.name}: choose your ${DemoCommerce.fitsFor(p).isEmpty ? 'size' : 'size and preferred fit'}.',
+      'saveLabel': DemoCommerce.fitsFor(p).isEmpty
+          ? 'Save size'
+          : 'Save size & fit',
+      'canSave':
+          size.isNotEmpty &&
+          (DemoCommerce.fitsFor(p).isEmpty ||
+              DemoCommerce.fitsFor(p).contains(state.preferredFit)),
+      'stockText':
+          'Fictional demo stock by size: ${variants.map((v) => '${v.size}: ${v.stock}').join(' · ')}',
+    };
   }
 
   void _libraryAction(_TurnScope scope, String name, Map context) {
@@ -1732,6 +2327,7 @@ class StylistRuntime {
             ..brief = ''
             ..preferences = []
             ..outfit = {}
+            ..productVariants = {}
             ..seen = {}
             ..history = []
             ..lastPresented = []
@@ -1761,7 +2357,7 @@ class StylistRuntime {
           ];
         case 'open_bag':
           scope.showBag = true;
-          scope.hostReply = 'Demo bag — local selections only. Purchases, stock and delivery are unavailable.';
+          scope.hostReply = 'Your local demo bag. Sizes, inventory, delivery and checkout are fictional simulations; no real purchase is available.';
         case 'add_look_to_bag':
           if (state.outfit.isEmpty ||
               state.outfit.values.any(
@@ -1773,8 +2369,19 @@ class StylistRuntime {
           }
           _checkBudget(state);
           state.bagUndo = Map.of(state.bag);
+          state.bagVariantsUndo = Map.of(state.bagVariants);
           for (final p in state.outfit.values) {
             state.bag.putIfAbsent(p.id, () => 1);
+            final choices = commerce.variants(p, sold: state.demoSold);
+            final selected = _selectedVariant(state, p);
+            if (!state.bagVariants.containsKey(p.id)) {
+              if (selected != null) {
+                state.bagVariants[p.id] = selected.id;
+              } else if (choices.length == 1) {
+                state.bagVariants[p.id] = choices.single.id;
+              }
+            }
+            _checkDemoStock(state, p, state.bag[p.id]!);
           }
           state.removedBagItems.clear();
           scope.showBag = true;
@@ -1793,6 +2400,7 @@ class StylistRuntime {
               'Choose a bag item and a demo quantity from 1 to 99.',
             );
           }
+          _checkDemoStock(state, product(id), quantity);
           state.bag[id as String] = quantity;
           state.bagUndo = null;
           state.removedBagItems.clear();
@@ -1808,6 +2416,10 @@ class StylistRuntime {
             );
           }
           state.removedBagItems = {id as String: quantity};
+          state.removedBagVariants = {
+            if (state.bagVariants[id] != null)
+              id: state.bagVariants.remove(id)!,
+          };
           state.bagUndo = null;
           scope.showBag = true;
           scope.hostReply = 'Removed ${product(id).name} from the demo bag.';
@@ -1825,7 +2437,12 @@ class StylistRuntime {
               'That removal can no longer be undone.',
             );
           }
+          if (state.removedBagVariants[id] != null) {
+            state.bagVariants[id as String] = state.removedBagVariants[id]!;
+          }
+          _checkDemoStock(state, product(id), quantity as int);
           state.bag[id as String] = state.removedBagItems.remove(id)!;
+          state.removedBagVariants.clear();
           state.bagUndo = null;
           scope.showBag = true;
           scope.hostReply = 'Restored ${product(id).name} to the demo bag.';
@@ -1837,6 +2454,8 @@ class StylistRuntime {
             );
           }
           state.bag = Map.of(previous);
+          state.bagVariants = Map.of(state.bagVariantsUndo ?? const {});
+          state.bagVariantsUndo = null;
           state.bagUndo = null;
           state.removedBagItems.clear();
           scope.showBag = true;
@@ -1875,6 +2494,24 @@ class StylistRuntime {
       'looks': looks,
       'selectedId': state.selectedLookId ?? '',
       'showBag': scope.showBag,
+      'checkout': scope.showCheckout ? _checkoutData(state) : null,
+      'receipt': scope.showReceipt ? state.lastDemoReceipt : null,
+      'hasReceipt': state.lastDemoReceipt != null,
+      'delivery': scope.showBag && state.bag.isNotEmpty
+          ? commerce.delivery(today: now(), destination: state.city)
+          : null,
+      'fitPieces': [
+        for (final p in state.outfit.values)
+          {
+            'id': p.id,
+            'name': p.name,
+            'size': _selectedVariant(state, p)?.size ?? 'Choose size',
+            'note':
+                DemoCommerce.fitsFor(p).isEmpty || state.preferredFit.isEmpty
+                ? ''
+                : '${state.preferredFit} fit',
+          },
+      ],
       'bagCount': state.bag.values.fold<int>(0, (a, b) => a + b),
       'lookInBag':
           state.outfit.isNotEmpty &&
@@ -1890,7 +2527,11 @@ class StylistRuntime {
               'swatch': p.swatch,
               'unitPrice': eurosFromCents(p.priceCents),
               'quantity': e.value,
-              'meta': p.brand,
+              'meta':
+                  '${p.brand} · ${_selectedVariant(state, p, bag: true)?.size ?? 'Choose size'} · fictional inventory',
+              'size': _selectedVariant(state, p, bag: true)?.size ?? '',
+              'variantId': state.bagVariants[p.id],
+              'demoStock': _selectedVariant(state, p, bag: true)?.stock,
             },
       ],
       if (scope.toastMessage != null)
@@ -2148,6 +2789,12 @@ class StylistRuntime {
         message: 'Choose a product from the current catalog recommendations.',
       );
     }
+    if (!_hasAvailableStock(state, product)) {
+      throw const StylistInputError(
+        code: StylistInputErrorCode.invalidSelection,
+        message: 'That item has sold out. Choose another available piece.',
+      );
+    }
     final replacing = state.outfit[product.category.name];
     if (!state.replacementPermits(product)) {
       throw const StylistInputError(
@@ -2179,6 +2826,14 @@ class StylistRuntime {
     }
     if (validateFinal) _validateSelectionFeasibility(state, product);
     state.outfit = candidate;
+    final availableSizes = commerce
+        .variants(product, sold: state.demoSold)
+        .where((variant) => variant.stock > 0)
+        .toList();
+    if (availableSizes.length == 1 &&
+        _selectedVariant(state, product) == null) {
+      state.productVariants[product.id] = availableSizes.single.id;
+    }
     state.briefState = nextBrief;
     if (replacing?.id == state.replacementProductId) {
       state.replacementProductId = null;
@@ -2278,6 +2933,9 @@ class StylistRuntime {
         );
   }
 
+  Map<String, Object?> _facts(Product product) =>
+      productFacts(product, demoSold: _scope.state.demoSold);
+
   Map<String, Object?> _progressFacts(_TurnScope scope) => {
     'catalog': catalogMetadata,
     'brief': scope.state.briefState.toMap(),
@@ -2286,7 +2944,7 @@ class StylistRuntime {
     if (scope.state.cityContext != null)
       'cityContext': scope.state.cityContext!.facts,
     'missingFields': scope.state.briefState.missingFields,
-    'outfit': scope.state.outfit.values.map(productFacts).toList(),
+    'outfit': scope.state.outfit.values.map(_facts).toList(),
     'spent': scope.state.spent,
     'remaining': scope.state.budget == null ? null : scope.state.remaining,
     'availableForNextCategory': scope.state.budget == null
@@ -2467,7 +3125,7 @@ class StylistRuntime {
     return assessOutfitSelection(
       candidate: product,
       outfit: state.outfit,
-      catalog: products,
+      catalog: products.where((p) => _hasAvailableStock(state, p)).toList(),
       brief: prospectiveBrief.planningText,
       dressCode: prospectiveBrief.dressCode,
       constraints: prospectiveBrief.productConstraints,
@@ -2475,11 +3133,15 @@ class StylistRuntime {
     );
   }
 
+  bool _hasAvailableStock(_StylistState state, Product product) =>
+      commerce.variants(product, sold: state.demoSold).any((v) => v.stock > 0);
+
   List<Product> _recommendableProducts(_TurnScope scope) {
     final state = scope.state;
     var candidates = products
         .where(
           (product) =>
+              _hasAvailableStock(state, product) &&
               product.id != scope.adjustingProductId &&
               state.briefState.productConstraints.matches(product) &&
               state.replacementPermits(product),
@@ -2515,6 +3177,23 @@ class StylistRuntime {
           .compareTo(state.briefState.productConstraints.preferenceScore(a)),
     );
     return candidates;
+  }
+
+  List<String> _replyPrefix(_TurnScope scope) {
+    final state = scope.state;
+    return [
+      if (scope.confirmations.isNotEmpty)
+        '${scope.confirmations.join(' ')}${state.budget == null ? '' : ' ${formatEuros(state.remaining)} left in your budget.'}',
+      if (scope.questionIntent != 'weather') _acknowledgment(scope),
+      if (scope.questionIntent == null && scope.feasibilityNotice.isNotEmpty)
+        scope.feasibilityNotice,
+      ...scope.notices,
+      if (scope.adjustingProductId != null && scope.picks.isNotEmpty)
+        if (state.replacementPriceMax != null)
+          'These replacements cost less. Your current piece stays selected until you choose one.'
+        else if (state.replacementDifferentColor)
+          'These alternatives use a different color family. Your current piece stays selected until you choose one.',
+    ];
   }
 
   String _acknowledgment(_TurnScope scope) {
@@ -2574,14 +3253,6 @@ class StylistRuntime {
           );
         }
       }
-    }
-    if (RegExp(
-      r'\b(?:size|fit|stock|availability)\b',
-      caseSensitive: false,
-    ).hasMatch(scope.userMessage)) {
-      scope.notices.add(
-        'I have noted your sizing or availability request, but this local catalog cannot verify sizes, fit, or stock.',
-      );
     }
     return parts.isEmpty ? '' : 'Got it — ${parts.join('; ')}.';
   }
@@ -2704,14 +3375,18 @@ bool _requestsCheaper(String text) =>
     ).hasMatch(text);
 
 String? _localCommand(String text) {
+  if (restartStylistBrief(text) == '') return 'reset_look';
   for (final entry in const {
+    'preview_demo_checkout':
+        r'(?:preview (?:demo )?checkout|check out|checkout)',
+    'open_demo_receipt':
+        r'(?:show|view|open) (?:my |the |last )?(?:demo )?receipt',
     'save_look': r'save (?:this|my|the)(?: current)? (?:look|outfit)',
     'open_saved_looks':
         r'(?:show|open|view) (?:my |the )?(?:saved|session) looks',
     'open_bag': r"(?:(?:show|open|view) (?:my |the |demo )?bag|what(?: is|'s|’s) in (?:my|the|this) bag)",
     'add_look_to_bag':
         r'add (?:this|my|the) (?:look|outfit) to (?:my |the |demo )?bag',
-    'reset_look': r'(?:start over|start a new look|new look)',
   }.entries) {
     if (RegExp(
       '^(?:please |can you |could you )?${entry.value}(?: please)?[.!?]*\$',
@@ -2721,6 +3396,16 @@ String? _localCommand(String text) {
     }
   }
   return null;
+}
+
+/// Explicit whole-look restarts only. Vague changes are clarified separately;
+/// negated or quoted wording does not match this anchored host command.
+String? restartStylistBrief(String text) {
+  final match = RegExp(
+    r'^(?:(?:please|can (?:you|we)|could (?:you|we))\s+)?(?:start (?:over|again)|start (?:a )?new (?:look|chat)|new (?:look|chat)|restart(?: (?:the |my |this )?(?:chat|look|outfit))?|reset (?:the |my |this )?(?:look|chat|outfit))(?:\s+(?:with|for)\s+(.+?))?(?:\s+please)?[.!?]*$',
+    caseSensitive: false,
+  ).firstMatch(text.trim());
+  return match == null ? null : (match.group(1) ?? '').trim();
 }
 
 Set<String>? _choiceValues(Object? input, Iterable<String> allowed) {
@@ -2751,6 +3436,12 @@ String _withoutFinancialProse(String text) => text
     .join(' ')
     .trim();
 
+String _sizeGroup(Product product) => switch (product.category) {
+  ProductCategory.shoes => 'shoes',
+  ProductCategory.bag || ProductCategory.accessory => 'one_size',
+  _ => 'clothing',
+};
+
 class _StylistState {
   int turn = 0;
   List<Message> history = [];
@@ -2773,6 +3464,15 @@ class _StylistState {
   List<String> lastPresented = [];
   List<Map<String, Object?>> savedLooks = [];
   Map<String, int> bag = {};
+  Map<String, String> productVariants = {},
+      bagVariants = {},
+      removedBagVariants = {};
+  Map<String, String>? bagVariantsUndo;
+  Map<String, int> demoSold = {};
+  Map<String, Object?>? lastDemoReceipt;
+  int nextReceiptId = 1;
+  String usualSize = '', preferredFit = '';
+  Map<String, String> usualSizes = {};
   Map<String, int> removedBagItems = {};
   Map<String, int>? bagUndo;
   int nextLookId = 1;
@@ -2813,6 +3513,18 @@ class _StylistState {
     ..lastPresented = List.of(lastPresented)
     ..savedLooks = List.of(savedLooks)
     ..bag = Map.of(bag)
+    ..productVariants = Map.of(productVariants)
+    ..bagVariants = Map.of(bagVariants)
+    ..removedBagVariants = Map.of(removedBagVariants)
+    ..bagVariantsUndo = bagVariantsUndo == null
+        ? null
+        : Map.of(bagVariantsUndo!)
+    ..demoSold = Map.of(demoSold)
+    ..lastDemoReceipt = lastDemoReceipt
+    ..nextReceiptId = nextReceiptId
+    ..usualSize = usualSize
+    ..usualSizes = Map.of(usualSizes)
+    ..preferredFit = preferredFit
     ..removedBagItems = Map.of(removedBagItems)
     ..bagUndo = bagUndo == null ? null : Map.of(bagUndo!)
     ..nextLookId = nextLookId
@@ -2824,10 +3536,11 @@ class _StylistState {
 }
 
 class _TurnScope {
-  _TurnScope(this.state, this.cancel, this.onProgress);
+  _TurnScope(this.state, this.cancel, this.onProgress, this.onText);
   final _StylistState state;
   final CancellationController cancel;
   final StylistProgress? onProgress;
+  final StylistTextProgress? onText;
   int requests = 0;
   bool searchFoundProducts = false;
   int searches = 0;
@@ -2843,6 +3556,9 @@ class _TurnScope {
   bool preferencePanel = false;
   bool showSavedLooks = false;
   bool showBag = false;
+  bool showCheckout = false, showReceipt = false;
+  Product? detailProduct;
+  Product? optionsProduct;
   String? toastMessage;
   String toastLabel = '';
   String toastAction = '';

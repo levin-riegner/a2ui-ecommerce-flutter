@@ -19,6 +19,16 @@ const refresh = {
   'action': {'name': 'refresh_city_context', 'context': <String, Object?>{}},
 };
 
+Map<String, Object?> applyInlinePatch(
+  Map result,
+  Map<String, Object?> previous,
+) => {
+  ...previous,
+  for (final message in presentedStylistTurn(result)['messages'] as List)
+    if (message['updateDataModel'] case final Map update)
+      (update['path'] as String).substring(1): update['value'],
+};
+
 class PendingContext extends FixtureContext {
   final started = Completer<void>();
   final pending = Completer<CityContext>();
@@ -63,6 +73,8 @@ void main() {
           .getValue<Object?>(DataPath('/weather')),
     );
     final current = agent.controller.contextFor('inline-2').dataModel;
+    current.update(DataPath('/selectionOptions/size'), 'M');
+    current.update(DataPath('/selectionOptions/fit'), 'Relaxed');
     final choices = jsonEncode(
       current.getValue<Object?>(DataPath('/recommendations')),
     );
@@ -81,6 +93,11 @@ void main() {
       contains('Could not load'),
     );
     expect(current.getValue<String>(DataPath('/message')), reply);
+    expect(current.getValue<String>(DataPath('/selectionOptions/size')), 'M');
+    expect(
+      current.getValue<String>(DataPath('/selectionOptions/fit')),
+      'Relaxed',
+    );
     expect(current.getValue<String>(DataPath('/eyebrow')), next);
     expect(
       jsonEncode(current.getValue<Object?>(DataPath('/recommendations'))),
@@ -138,7 +155,7 @@ void main() {
       });
       final data = inlineData(first);
       final updated = await runtime.turn(refresh);
-      expect(inlineData(updated), data);
+      expect(applyInlinePatch(updated, data), data);
       expect(
         (presentedStylistTurn(updated)['messages'] as List).every(
           (m) => m['createSurface'] == null,
@@ -212,7 +229,10 @@ void main() {
       );
       fail = false;
       final restored = await runtime.turn(refresh);
-      expect(inlineData(restored)['cityLabel'], 'Berlin, Test country');
+      expect(
+        applyInlinePatch(restored, {})['cityLabel'],
+        'Berlin, Test country',
+      );
       expect(runtime.outfit['items'], isEmpty);
     },
   );

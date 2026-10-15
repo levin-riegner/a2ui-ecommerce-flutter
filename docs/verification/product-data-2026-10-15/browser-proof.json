@@ -1,0 +1,55 @@
+{
+  "realApp": true,
+  "fullCatalog": 977,
+  "offlineModel": true,
+  "source": "local_demo_fixture",
+  "selectedSize": "M",
+  "preferredFit": "Relaxed",
+  "budget": 500,
+  "gender": "female",
+  "bag": {},
+  "sold": {
+    "demo-0198-size-m": 2
+  },
+  "receipt": {
+    "mode": "local_demo",
+    "currency": "EUR",
+    "lines": [
+      {
+        "productId": "demo-0198",
+        "variantId": "demo-0198-size-m",
+        "name": "Black Sheer-Panel Maxi Dress",
+        "size": "M",
+        "quantity": 2,
+        "unitCents": 5500
+      }
+    ],
+    "subtotalCents": 11000,
+    "shippingCents": 395,
+    "taxCents": 0,
+    "totalCents": 11395,
+    "delivery": {
+      "source": "local_demo_policy",
+      "origin": "Demo warehouse",
+      "destination": "Sample destination",
+      "service": "Demo standard shipping",
+      "dispatchDate": "2026-10-16",
+      "earliestDate": "2026-10-18",
+      "latestDate": "2026-10-20",
+      "shippingCents": 395,
+      "taxCents": 0,
+      "currency": "EUR",
+      "disclaimer": "Fictional delivery scenario; no carrier, tax or arrival guarantee."
+    },
+    "id": "demo-checkout-1",
+    "createdAt": "2026-10-15T07:49:00.794Z",
+    "status": "simulated"
+  },
+  "fullReload": true,
+  "providerRequests": 0,
+  "blockedExternalByHost": {
+    "json-schema.org": 123,
+    "fonts.gstatic.com": 11
+  },
+  "pageErrors": []
+}

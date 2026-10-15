@@ -399,7 +399,7 @@ void main() {
       expect((await store.read())!['looks'], hasLength(1));
       await tap(find.text('Add look to demo bag · €230.00').last);
       expect(find.byType(FinalizedBagPreview), findsOneWidget);
-      expect(find.text('Check out'), findsNothing);
+      expect(find.text('Check out'), findsOneWidget);
       expect(runtime.bagCount, 1);
       final plus = find.descendant(
         of: find.byType(FinalizedBagPreview).last,
@@ -418,7 +418,7 @@ void main() {
       store.beforeWrite = null;
       await tap(plus);
       expect(runtime.bagCount, 2);
-      expect(find.text('€460.00'), findsWidgets);
+      expect(find.text('€460'), findsWidgets);
       await tap(find.byTooltip('Remove Black Draped Wrap Dress').last);
       expect(runtime.bagCount, 0);
       await tap(find.text('Undo').last);
@@ -426,6 +426,8 @@ void main() {
       await tap(find.byTooltip('Close bag').last);
       await tap(find.text('Start over').last);
       expect(runtime.outfit['items'], isEmpty);
+      await tester.tap(find.byTooltip('Styling options'));
+      await tester.pumpAndSettle();
       await tap(find.text('Saved looks').last);
       final rail = find
           .byWidgetPredicate(

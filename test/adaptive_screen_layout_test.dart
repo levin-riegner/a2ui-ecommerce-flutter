@@ -24,33 +24,30 @@ void main() {
   }
 
   for (final safeBottom in [0.0, 34.0]) {
-    testWidgets(
-      'opening and conversation composer share bottom clearance, safe=$safeBottom',
-      (tester) async {
-        setWindow(tester, const Size(951, 669));
-        tester.view.padding = FakeViewPadding(bottom: safeBottom);
-        addTearDown(tester.view.resetPadding);
-        final agent = _SpacingAgent();
-        await tester.pumpWidget(ReferenceApp(agent: agent));
-        await tester.pumpAndSettle();
-        final openingBottom = tester
-            .getRect(find.byType(StylistComposer))
-            .bottom;
-        expect(openingBottom, 669 - (safeBottom > 8 ? safeBottom : 8));
-        final opening = tester.getRect(find.byType(StylistComposer));
-        final card = tester.getRect(find.byType(InkWell).first);
-        expect(opening.left, card.left);
-        expect(opening.right, card.right);
-        await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
-        await tester.pumpAndSettle();
-        expect(
-          tester.getRect(find.byType(StylistComposer)).bottom,
-          openingBottom,
-        );
-        expect(tester.getRect(find.byType(StylistComposer)).left, opening.left);
-        expect(tester.takeException(), isNull);
-      },
-    );
+    testWidgets('composer matches Figma dock clearance, safe=$safeBottom', (
+      tester,
+    ) async {
+      setWindow(tester, const Size(951, 669));
+      tester.view.padding = FakeViewPadding(bottom: safeBottom);
+      addTearDown(tester.view.resetPadding);
+      final agent = _SpacingAgent();
+      await tester.pumpWidget(ReferenceApp(agent: agent));
+      await tester.pumpAndSettle();
+      final openingBottom = tester.getRect(find.byType(StylistComposer)).bottom;
+      expect(openingBottom, 669 - (safeBottom > 32 ? safeBottom : 32));
+      final opening = tester.getRect(find.byType(StylistComposer));
+      final card = tester.getRect(find.byType(InkWell).first);
+      expect(opening.left, card.left);
+      expect(opening.right, 475.5 - 32);
+      await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.byType(StylistComposer)).bottom,
+        669 - (safeBottom > 32 ? safeBottom : 32),
+      );
+      expect(tester.getRect(find.byType(StylistComposer)).left, opening.left);
+      expect(tester.takeException(), isNull);
+    });
   }
 
   testWidgets(

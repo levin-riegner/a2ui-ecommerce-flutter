@@ -186,7 +186,7 @@ void main() {
   );
 
   test(
-    'action confirmations preserve styling guidance and host budget in history',
+    'action confirmations preserve visible guidance and host budget in history',
     () async {
       var afterOpening = false;
       var removing = false;
@@ -205,7 +205,10 @@ void main() {
               previous,
               contains('Selected Linen dress. €120.00 left in your budget.'),
             );
-            expect(previous, contains('The linen keeps the look relaxed.'));
+            expect(
+              previous,
+              contains('Linen dress: choose your size and preferred fit.'),
+            );
             expect(previous, isNot(contains('€5')));
             checkedHistory = true;
           }
@@ -227,7 +230,10 @@ void main() {
         selected['reply'],
         contains('Selected Linen dress. €120.00 left in your budget.'),
       );
-      expect(selected['reply'], contains('The linen keeps the look relaxed.'));
+      expect(
+        selected['reply'],
+        contains('Linen dress: choose your size and preferred fit.'),
+      );
       expect(selected['reply'], isNot(contains('€5')));
       expect(
         (selected['products'] as List).every((p) => p['category'] == 'shoes'),
@@ -554,6 +560,12 @@ void main() {
       expect(calls, 4);
       expect(runtime.outfit['items'], {'dress': 'dress-2'});
       expect(picked['reply'], contains('Selected Silk dress. €150.00'));
+      final pickedData =
+          (presentedStylistTurn(picked)['messages'] as List)
+                  .last['updateDataModel']['value']
+              as Map;
+      expect(pickedData['selectionOptions']['productId'], 'dress-2');
+      expect(pickedData['recommendations'], isEmpty);
       expect(
         (picked['products'] as List).every((p) => p['category'] == 'shoes'),
         isTrue,

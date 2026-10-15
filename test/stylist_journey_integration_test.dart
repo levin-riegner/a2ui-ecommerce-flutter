@@ -90,6 +90,36 @@ void main() {
         spent += productFor(id).price;
         selected.add(id);
         await agent.conversation.sendRequest(_action('select_product', id));
+        final sizing = agent.controller
+            .contextFor(agent.latestInlineSurfaceId!)
+            .dataModel
+            .getValue<Map>(DataPath('/selectionOptions'));
+        if (sizing != null) {
+          final choice = (sizing['choices'] as List).first as Map;
+          await agent.conversation.sendRequest(
+            ChatMessage.user(
+              '',
+              parts: [
+                UiInteractionPart.create(
+                  jsonEncode({
+                    'action': {
+                      'name': 'set_product_options',
+                      'context': {
+                        'productId': id,
+                        'colourProductId': id,
+                        'size': (choice['sizes'] as List).first,
+                        'fit': (sizing['fits'] as List).isEmpty
+                            ? ''
+                            : 'Regular',
+                      },
+                    },
+                  }),
+                ),
+              ],
+            ),
+          );
+        }
+
         expect(agent.connectionError, isNull);
         final dressing = agent.controller.contextFor('dressing-room').dataModel;
         expect(

@@ -1,5 +1,7 @@
 # Genkit 1.0 implementation reference
 
+The [flow edge-case matrix](stylist-flow-edge-cases.md) documents restart, cancellation, stale events, category-specific sizing and recovery within this architecture.
+
 This is the integration contract for implementers and coding agents working on
 Alder. The reference pins `genkit`, `genkit_openai`, `genkit_anthropic`,
 `genkit_google_genai`, and `schemantic` to **1.0.0**. Its lockfile resolves
@@ -110,6 +112,23 @@ model call. The connection also aborts HTTP when a turn is cancelled or the
 connection is closed. The runtime rejects late responses and discards the draft.
 The 60-second turn deadline and four-request cap remain host policy; SDK retries
 must never silently expand them.
+
+## Streaming reply order
+
+`StylistRuntime.turn(onText: ...)` streams cumulative, display-only prose from
+only the final tool-free request using the public `Model(..., onChunk: ...)`
+API. Tool requests stay non-streaming. The provider wrapper forwards chunks and
+cancellation through its public action context. OpenAI Luna continues to send
+`reasoning_effort: none`, including the streaming request.
+
+The runtime buffers complete sentences before applying the final reply's
+financial filter and prepends the same host-owned acknowledgments and notices.
+`GenkitAgent` publishes that text to a temporary actionless surface. Product
+cards remain hidden until validation and commit, then appear below the text;
+already-visible paragraphs bypass the reveal queue and surface entrance motion.
+Failure, cancellation, superseding a turn, or disconnect removes provisional
+text and retains the last committed outfit. Injected non-streaming test models
+and direct host replies keep the existing paragraph queue.
 
 ## Remaining upstream exception
 

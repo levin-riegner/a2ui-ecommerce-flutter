@@ -94,15 +94,30 @@ class FinalizedStylistMessage extends StatelessWidget {
   const FinalizedStylistMessage({super.key, required this.text});
   final String text;
   @override
-  Widget build(BuildContext context) => Text(
-    text,
-    style: _body.copyWith(
+  Widget build(BuildContext context) {
+    final emphasis = RegExp(r'\*\*([^*\n]+)\*\*').allMatches(text);
+    final spans = <InlineSpan>[];
+    var end = 0;
+    for (final match in emphasis) {
+      spans.add(TextSpan(text: text.substring(end, match.start)));
+      spans.add(
+        TextSpan(
+          text: match.group(1),
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      );
+      end = match.end;
+    }
+    final style = _body.copyWith(
       height: 1.5,
       color: CommerceDressingRoomStyle.maybeOf(context)?.dark == true
           ? Colors.white
           : _ink,
-    ),
-  );
+    );
+    if (spans.isEmpty) return Text(text, style: style);
+    spans.add(TextSpan(text: text.substring(end)));
+    return Text.rich(TextSpan(children: spans), style: style);
+  }
 }
 
 class FinalizedSuggestion extends StatelessWidget {
@@ -869,11 +884,13 @@ class FinalizedColourPicker extends StatelessWidget {
     this.selected = const [],
     this.onChanged,
     this.question = 'Any colours you’re drawn to? Pick a few.',
+    this.singleSelect = false,
   });
   final List<Map<String, Object?>> options;
   final List<String> selected;
   final ValueChanged<List<String>>? onChanged;
   final String question;
+  final bool singleSelect;
   @override
   Widget build(BuildContext context) => _stack([
     Text(question, style: _body),
@@ -894,6 +911,10 @@ class FinalizedColourPicker extends StatelessWidget {
                   : () {
                       final next = [...selected];
                       final name = option['name'].toString();
+                      if (singleSelect) {
+                        onChanged!([name]);
+                        return;
+                      }
                       next.contains(name) ? next.remove(name) : next.add(name);
                       onChanged!(next);
                     },
@@ -925,7 +946,9 @@ class FinalizedColourPicker extends StatelessWidget {
       ],
     ),
     Text(
-      '${selected.length} chosen${selected.isEmpty ? '' : ' · ${selected.join(', ')}'}',
+      singleSelect
+          ? selected.join(', ')
+          : '${selected.length} chosen${selected.isEmpty ? '' : ' · ${selected.join(', ')}'}',
       style: _small.copyWith(color: const Color(0xff999999)),
     ),
   ]);
@@ -1097,17 +1120,24 @@ class FinalizedFitSize extends StatelessWidget {
     this.fit = '',
     this.onSize,
     this.onFit,
+    this.question = 'Your usual size, and how you like it to sit?',
+    this.sizeLabel = 'DRESS SIZE',
   });
   final List<String> sizes, fits;
   final String size, fit;
   final ValueChanged<String>? onSize, onFit;
+  final String question, sizeLabel;
   @override
   Widget build(BuildContext context) => _stack([
-    const Text('Your usual size, and how you like it to sit?', style: _body),
-    const CommerceEyebrow(text: 'DRESS SIZE'),
-    _choices(sizes, [size], onSize),
-    const CommerceEyebrow(text: 'FIT'),
-    _choices(fits, [fit], onFit),
+    Text(question, style: _body),
+    if (sizes.isNotEmpty) ...[
+      CommerceEyebrow(text: sizeLabel),
+      _choices(sizes, [size], onSize),
+    ],
+    if (fits.isNotEmpty) ...[
+      const CommerceEyebrow(text: 'FIT'),
+      _choices(fits, [fit], onFit),
+    ],
   ]);
 }
 

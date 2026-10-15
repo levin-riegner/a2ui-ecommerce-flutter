@@ -44,6 +44,8 @@ final List<CatalogItem> finalizedRightItems = [
 ];
 
 /// Finalized hangers with the six original proportions and an accessory fallback.
+/// Category-less legacy data
+/// intentionally retains the original presentation.
 final finalizedPieceSlotCatalogItem = CatalogItem(
   name: 'PieceSlot',
   dataSchema: S.object(
@@ -227,6 +229,7 @@ const _rightSpecs = [
     'restoreAction',
     'quantityAction',
     'checkoutAction',
+    'sizeAction',
   ]),
 ];
 
@@ -632,13 +635,23 @@ class _FinalizedRoomBindings extends StatelessWidget {
           for (final row in rows)
             if (row is Map) Map<String, Object?>.from(row),
         ],
-        onChange: (category) => itemContext.dispatchEvent(
-          UserActionEvent(
-            name: 'adjust_piece',
-            sourceComponentId: itemContext.id,
-            context: {'category': category},
-          ),
-        ),
+        onChange: (category) async {
+          final action = data['changeAction'];
+          final event = action is Map ? action['event'] : null;
+          final values = event is Map && event['context'] is Map
+              ? await resolveContext(
+                  itemContext.dataContext,
+                  Map<String, Object?>.from(event['context'] as Map),
+                )
+              : <String, Object?>{};
+          itemContext.dispatchEvent(
+            UserActionEvent(
+              name: event is Map ? event['name'] as String : 'adjust_piece',
+              sourceComponentId: itemContext.id,
+              context: {...values, 'category': category},
+            ),
+          );
+        },
       );
       return BoundNumber(
         dataContext: itemContext.dataContext,

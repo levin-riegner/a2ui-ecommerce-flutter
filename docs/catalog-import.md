@@ -1,5 +1,7 @@
 # Demo catalog curation
 
+The subsequent [product-data pass](product-data-and-demo-commerce.md) derives evidence-bearing attributes from the retained text and supplies separately labelled local demo variants, stock, size guides and checkout scenarios. It does not overwrite these catalog facts or turn synthetic source options into purchasable SKUs.
+
 This is an outfit proof of concept. Make useful, conservative guesses instead
 of requiring a person to approve every synthetic source inconsistency.
 
@@ -67,3 +69,18 @@ fixture, which uses synthetic IDs, local JPEGs and fictional EUR prices.
 mock.shop content is fictional. Its [source terms](https://demostore.hydrogen.mock.shop/policies/terms-of-service)
 permit development against it and prohibit presenting imagery or copy as real
 merchandise. Additional images are credited separately in `NOTICE`.
+
+### Assigned size options
+
+`assets/data/catalog/products.csv` includes `size_options`, a pipe-separated
+list of sizes configured for each product. The initial assignments are
+`XS|S|M|L|XL`, `36|37|38|39|40|41|42|43|44|45|46`, or `One size` by category.
+Edit the item row to change its offered sizes. These values are catalog choices;
+they do not define garment measurements or a manufacturer size chart.
+
+To offer colour variants, optionally append a `variant_group` column. Give only
+rows for the same style the same nonempty group value. Each colour retains its
+own product ID, image, price and size options; do not group similar-looking
+items. Blank/missing groups offer no alternative colours. The selector also
+filters the group by brand, garment category, audience, accepted restrictions,
+availability and the remaining outfit budget.

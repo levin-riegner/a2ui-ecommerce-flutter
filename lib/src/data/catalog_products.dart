@@ -1,4 +1,5 @@
 import 'models.dart';
+import 'product_attributes.dart';
 
 /// Parses the bundled public catalog for Flutter and the Dart developer tools.
 List<Product> parseCatalogProducts(String source) {
@@ -47,11 +48,20 @@ List<Product> parseCatalogProducts(String source) {
         subcategory: row['subcategory'] ?? '',
         gender: row['gender'] ?? 'male, female',
         color: color,
+        variantGroup: row['variant_group'] ?? '',
         material: material,
         season: row['season'] ?? '',
         occasion: row['occasion'] ?? '',
         imageAsset: row['image_asset'] ?? '',
         keywords: [categoryName, row['keywords'] ?? ''].join(' '),
+        attributes: ProductAttributes.fromCatalog(row),
+        sizeOptions: List.unmodifiable(
+          (row['size_options'] ?? '')
+              .split('|')
+              .map((value) => value.trim())
+              .where((value) => value.isNotEmpty)
+              .toSet(),
+        ),
       ),
     );
   }

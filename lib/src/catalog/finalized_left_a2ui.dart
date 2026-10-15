@@ -319,13 +319,17 @@ final finalizedLeftItems = <CatalogItem>[
         'question',
         'Any colours you’re drawn to? Pick a few.',
       ),
+      singleSelect: raw['singleSelect'] == true,
       onChanged: (colours) {
         _update(context, raw, 'selected', colours);
-        _event(context, raw['action'], {'colours': colours});
+        _event(context, raw['action'], {
+          'colours': colours,
+          if (raw['singleSelect'] == true) 'colour': colours.single,
+        });
       },
     ),
     actions: ['action'],
-    extra: {'selectedPath': S.string()},
+    extra: {'selectedPath': S.string(), 'singleSelect': S.boolean()},
   ),
   _item(
     'PhotoUpload',
@@ -360,8 +364,15 @@ final finalizedLeftItems = <CatalogItem>[
   _item(
     'FitSize',
     'Usual size and preferred fit bind separately; host persists and applies to product availability/fit notes.',
-    {'sizes': 'list', 'fits': 'list', 'size': 'string', 'fit': 'string'},
-    ['size', 'fit', 'action'],
+    {
+      'sizes': 'list',
+      'fits': 'list',
+      'size': 'string',
+      'fit': 'string',
+      'question': 'string',
+      'sizeLabel': 'string',
+    },
+    ['size', 'fit'],
     (context, raw, value) => FinalizedFitSize(
       sizes: raw.containsKey('sizes')
           ? _strings(value['sizes'])
@@ -371,8 +382,22 @@ final finalizedLeftItems = <CatalogItem>[
           : const ['Fitted', 'True to size', 'Relaxed'],
       size: _str(value, 'size'),
       fit: _str(value, 'fit'),
+      question: raw.containsKey('question')
+          ? _str(value, 'question')
+          : 'Your usual size, and how you like it to sit?',
+      sizeLabel: raw.containsKey('sizeLabel')
+          ? _str(value, 'sizeLabel')
+          : 'DRESS SIZE',
       onSize: (size) {
         _update(context, raw, 'size', size);
+        _update(
+          context,
+          raw,
+          'canSave',
+          _strings(value['sizes']).contains(size) &&
+              (_strings(value['fits']).isEmpty ||
+                  _strings(value['fits']).contains(_str(value, 'fit'))),
+        );
         _event(context, raw['action'], {
           'size': size,
           'fit': _str(value, 'fit'),
@@ -380,6 +405,14 @@ final finalizedLeftItems = <CatalogItem>[
       },
       onFit: (fit) {
         _update(context, raw, 'fit', fit);
+        _update(
+          context,
+          raw,
+          'canSave',
+          _strings(value['sizes']).contains(_str(value, 'size')) &&
+              (_strings(value['fits']).isEmpty ||
+                  _strings(value['fits']).contains(fit)),
+        );
         _event(context, raw['action'], {
           'size': _str(value, 'size'),
           'fit': fit,
@@ -387,7 +420,11 @@ final finalizedLeftItems = <CatalogItem>[
       },
     ),
     actions: ['action'],
-    extra: {'sizePath': S.string(), 'fitPath': S.string()},
+    extra: {
+      'sizePath': S.string(),
+      'fitPath': S.string(),
+      'canSavePath': S.string(),
+    },
   ),
   _item(
     'OccasionTimeline',
