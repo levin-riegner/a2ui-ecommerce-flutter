@@ -77,6 +77,7 @@ class Product {
     required this.swatch,
     this.description = '',
     this.subcategory = '',
+    this.gender = 'male, female',
     this.color = '',
     this.material = '',
     this.season = '',
@@ -96,12 +97,28 @@ class Product {
   final String swatch;
   final String description;
   final String subcategory;
+
+  /// Garment audience for styling; this does not describe the wearer's identity.
+  final String gender;
   final String color;
   final String material;
   final String season;
   final String occasion;
   final String imageAsset;
   final String keywords;
+
+  bool supportsGender(String requested) {
+    if (requested.trim().isEmpty) return true;
+    Set<String> labels(String value) =>
+        value.toLowerCase().split(',').map((label) => label.trim()).toSet();
+    final wanted = labels(requested);
+    final available = labels(gender);
+    const valid = {'male', 'female'};
+    if (!valid.containsAll(wanted) || !valid.containsAll(available)) {
+      return false;
+    }
+    return available.containsAll(wanted);
+  }
 
   String get priceLabel => '€${price.toStringAsFixed(0)}';
 

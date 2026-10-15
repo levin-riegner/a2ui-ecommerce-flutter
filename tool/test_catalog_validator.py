@@ -16,9 +16,9 @@ class CatalogValidatorTest(unittest.TestCase):
         image.write_bytes(b'\xff\xd8\xff')
         self.catalog = self.root / 'products.csv'
 
-    def check(self, category, subcategory, name='Fictional Workwear Item'):
+    def check(self, category, subcategory, name='Fictional Workwear Item', gender='male, female'):
         row = dict.fromkeys(COLUMNS, 'demo')
-        row.update(id='demo-0001', name=name, category=category,
+        row.update(id='demo-0001', name=name, category=category, gender=gender,
                    subcategory=subcategory, price_eur='75',
                    image_asset='assets/images/products/demo-0001.jpg')
         with self.catalog.open('w', newline='') as stream:
@@ -38,6 +38,12 @@ class CatalogValidatorTest(unittest.TestCase):
 
     def test_accessory_names_can_reference_a_one_piece_garment(self):
         self.assertEqual(self.check('accessory', 'belt', 'Jumpsuit Belt'), [])
+
+    def test_gender_audience_uses_the_three_canonical_labels(self):
+        for value in ['male', 'female', 'male, female']:
+            self.assertEqual(self.check('top', 'shirt', gender=value), [])
+        for value in ['', 'unisex', 'female, male', 'unknown']:
+            self.assertTrue(any('gender audience' in e for e in self.check('top', 'shirt', gender=value)))
 
 
 if __name__ == '__main__':

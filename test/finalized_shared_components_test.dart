@@ -323,7 +323,7 @@ void main() {
         );
       }
     }
-    expect(exampleCount, 30);
+    expect(exampleCount, 32); // Accessory LookTile and silhouette examples.
   });
 
   test('manifest exact static SVG roots agree with local files', () {

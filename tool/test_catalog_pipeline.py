@@ -21,6 +21,7 @@ def result(record):
     attrs = {name: {'value': [] if name in catalog.LIST_FIELDS else '',
                     'evidence': ['product_description'], 'confidence': 'medium'} for name in catalog.FIELDS}
     attrs['category']['value'] = 'bottom'
+    attrs['gender']['value'] = 'male, female'
     attrs['keywords']['value'] = ['pleated']
     return {'key': record['key'], 'source_fingerprint': record['source_fingerprint'],
             'review_fingerprint': catalog.review_fingerprint(record), 'attributes': attrs,
@@ -55,6 +56,17 @@ class CatalogPipelineTest(unittest.TestCase):
         self.assertEqual(len(records[0]['revisions']), 1)
         self.assertEqual(catalog.state(records[0]), 'candidate')
         self.assertEqual(records[0]['source']['product']['variants']['nodes'][0]['price']['currencyCode'], 'USD')
+
+    def test_enrichment_requires_a_canonical_gender_audience(self):
+        for gender in ['male', 'female', 'male, female']:
+            candidate = result(self.record)
+            candidate['attributes']['gender']['value'] = gender
+            catalog.validate_result(candidate, self.record)
+        for gender in ['', 'unisex', 'female, male', 'unknown']:
+            candidate = result(self.record)
+            candidate['attributes']['gender']['value'] = gender
+            with self.assertRaisesRegex(ValueError, 'gender audience'):
+                catalog.validate_result(candidate, self.record)
 
     def test_color_synonyms_and_source_mismatch(self):
         self.assertFalse(catalog.source_flags(product()))

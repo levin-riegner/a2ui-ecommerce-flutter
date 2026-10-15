@@ -24,6 +24,9 @@ abstract class CommerceAgent extends ChangeNotifier {
   String? get connectionNotice => null;
   bool get canRetry => false;
   bool get canStartBrief => false;
+  int get bagCount => 0;
+  bool get hasLocalLibrary => false;
+  Future<void> openBag() async {}
   Future<void> retryLastTurn() async {}
   Future<void> startBrief(String message) async {}
   SurfaceController get controller;

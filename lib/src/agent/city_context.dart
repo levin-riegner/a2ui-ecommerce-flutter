@@ -2,6 +2,71 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+bool isWeatherQuestion(String message) =>
+    RegExp(
+      r'\b(?:weather|forecast|temperature|rain|snow)\b',
+      caseSensitive: false,
+    ).hasMatch(message) &&
+    RegExp(
+      r'^\s*(?:what|how|will|is|tell|show|check|get|can|could|please|do|does|are|weather|forecast|temperature)\b',
+      caseSensitive: false,
+    ).hasMatch(message) &&
+    !RegExp(
+      r'\b(?:wear|outfit|dress|clothes|recommend|shop|buy)\b',
+      caseSensitive: false,
+    ).hasMatch(message);
+
+/// Only destination phrases are recognized; ordinary clothing requests are not locations.
+String? parseDestinationCity(String message, {bool allowBare = false}) {
+  const words =
+      r"[A-Za-zÀ-ž][A-Za-zÀ-ž'’.-]*(?:\s+[A-Za-zÀ-ž][A-Za-zÀ-ž'’.-]*){0,3}?";
+  const stop =
+      r'(?=\s+(?:for|this|next|today|tomorrow|on|during|under|with|budget|and|in|business|casual|formal)\b|[,;.!?]|$)';
+  final explicit = RegExp(
+    '\\b(?:in|to|visiting|visit${isWeatherQuestion(message) ? '|for' : ''})\\s+($words)$stop',
+    caseSensitive: false,
+  ).allMatches(message).toList();
+  final heading = RegExp(
+    '^\\s*($words)\\s+(?:for\\s+(?:the\\s+)?|this\\s+|next\\s+)(?:weekend|week|trip)\\b',
+    caseSensitive: false,
+  ).firstMatch(message);
+  final match = explicit.isNotEmpty ? explicit.last : heading;
+  var location = match?.group(1)?.trim();
+  if (location == null &&
+      allowBare &&
+      RegExp(
+        '^$words(?:,\\s*$words)?[.!?]?\$',
+        caseSensitive: false,
+      ).hasMatch(message.trim())) {
+    location = message.trim().replaceFirst(RegExp(r'[.!?]$'), '');
+  }
+  if (location == null ||
+      RegExp(
+        r'\b(?:a|an|the|dress|shirt|top|bottom|shoes|jacket|bag|outfit|budget|spend|weather|weekend|today|tomorrow|tonight|monday|tuesday|wednesday|thursday|friday|saturday|sunday|casual|formal|business|winter|summer|spring|autumn|wool|cotton|black|blue|red|rain|yes|no|thanks|please)\b',
+        caseSensitive: false,
+      ).hasMatch(location)) {
+    return null;
+  }
+  if (match != null) {
+    final locationEnd =
+        match.start +
+        match.group(0)!.indexOf(match.group(1)!) +
+        match.group(1)!.length;
+    final country = RegExp(
+      '^,\\s*($words)$stop',
+      caseSensitive: false,
+    ).firstMatch(message.substring(locationEnd));
+    if (country != null &&
+        !RegExp(
+          r'\b(?:business|casual|formal|budget|outfit|dress|winter|summer|spring|autumn)\b',
+          caseSensitive: false,
+        ).hasMatch(country.group(1)!)) {
+      location = '$location, ${country.group(1)!.trim()}';
+    }
+  }
+  return location;
+}
+
 abstract class CityContextSource {
   Future<CityContext> fetch(String city, {bool refresh = false});
   void dispose();

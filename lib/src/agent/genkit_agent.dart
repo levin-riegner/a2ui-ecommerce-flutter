@@ -11,6 +11,8 @@ import '../data/models.dart';
 import 'commerce_agent.dart';
 import 'conversation_entry.dart';
 import '../data/catalog_products.dart';
+import '../data/stylist_store.dart';
+import '../data/local_stylist_store.dart';
 import 'model_settings.dart';
 import 'genkit_providers.dart';
 import 'stylist_runtime.dart';
@@ -37,6 +39,7 @@ class GenkitAgent extends CommerceAgent {
     String? baseUrl,
     http.Client? client,
     bool onlineContext = false,
+    StylistStore? store,
   }) async {
     final settings = ModelSettings(
       provider: provider,
@@ -50,7 +53,7 @@ class GenkitAgent extends CommerceAgent {
         await rootBundle.loadString('assets/data/catalog/products.csv'),
       );
       if (products.isEmpty) throw const FormatException('Catalog unavailable');
-      return GenkitAgent(
+      final agent = GenkitAgent(
         StylistRuntime(
           products: products,
           cityContextSource: onlineContext
@@ -59,9 +62,17 @@ class GenkitAgent extends CommerceAgent {
           providerModel: connection.model,
           onBeginTurn: connection.beginTurn,
           onCancelTurn: connection.cancelTurn,
+          store: store ?? LocalStylistStore(),
         ),
         provider: connection,
       );
+      try {
+        await agent.resumeLocalState();
+        return agent;
+      } catch (_) {
+        agent.dispose();
+        rethrow;
+      }
     } catch (_) {
       connection.dispose();
       rethrow;
@@ -71,6 +82,36 @@ class GenkitAgent extends CommerceAgent {
   StylistRuntime? _runtime;
   final GenkitProvider? _provider;
   bool _revoked = false;
+
+  Future<void> resumeLocalState() async {
+    final runtime = _runtime;
+    if (runtime == null) return;
+    final resumed = await runtime.loadLocalState();
+    if (resumed || runtime.hasLocalLibrary) {
+      _hasStarted = true;
+      await _enqueue(
+        () => _performTurn(
+          _AgentTurn(
+            action: {
+              'name': resumed ? 'resume_session' : 'open_saved_looks',
+              'context': <String, Object?>{},
+            },
+          ),
+        ).then<void>((_) {}),
+      );
+    }
+  }
+
+  @override
+  int get bagCount => _runtime?.bagCount ?? 0;
+  @override
+  bool get hasLocalLibrary => true;
+  @override
+  Future<void> openBag() => _enqueue(
+    () => _performTurn(
+      _AgentTurn(action: {'name': 'open_bag', 'context': <String, Object?>{}}),
+    ).then<void>((_) {}),
+  );
 
   Future<void> disconnect() async {
     if (_revoked) return;

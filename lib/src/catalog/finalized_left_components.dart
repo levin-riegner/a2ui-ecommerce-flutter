@@ -460,6 +460,7 @@ const _tileHeight = <String, double>{
   'layer': 136,
   'shoes': 64,
   'bag': 64,
+  'accessory': 82,
 };
 
 Widget _productVisual(
@@ -472,6 +473,9 @@ Widget _productVisual(
       RegExp(r'^assets/images/products/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$')
           .hasMatch(asset)) {
     return CommerceProductImage(imageAsset: asset, swatch: swatch);
+  }
+  if (category == 'accessory') {
+    return const Center(child: Icon(Icons.category_outlined, size: 40));
   }
   final file = tile
       ? switch (category) {
@@ -705,7 +709,7 @@ class FinalizedPicksStrip extends StatelessWidget {
         for (var i = 0; i < products.length; i++) ...[
           if (i > 0) const SizedBox(width: 8),
           Semantics(
-            label: products[i]['name']?.toString(),
+            label: '${products[i]['name'] ?? ''} ${products[i]['price'] ?? ''}',
             button: true,
             selected: products[i]['productId'] == selectedProductId,
             child: Material(
@@ -725,12 +729,39 @@ class FinalizedPicksStrip extends StatelessWidget {
                     : () => onSelected!(products[i]['productId'].toString()),
                 child: SizedBox(
                   width: 120,
-                  height: _tileHeight[category.toLowerCase()] ?? 240,
-                  child: _productVisual(
-                    category.toLowerCase(),
-                    products[i]['imageAsset']?.toString(),
-                    products[i]['swatch']?.toString(),
-                    tile: true,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        height: _tileHeight[category.toLowerCase()] ?? 240,
+                        child: _productVisual(
+                          category.toLowerCase(),
+                          products[i]['imageAsset']?.toString(),
+                          products[i]['swatch']?.toString(),
+                          tile: true,
+                        ),
+                      ),
+                      if (products[i]['name'] != null)
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+                          child: Text(
+                            products[i]['name'].toString(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: _body,
+                          ),
+                        ),
+                      if (products[i]['price'] != null)
+                        Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Text(
+                            products[i]['price'].toString(),
+                            style: _body,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -849,7 +880,8 @@ class FinalizedColourPicker extends StatelessWidget {
       children: [
         for (final option in options)
           Semantics(
-            label: option['name']?.toString(),
+            label:
+                '${option['name']}${option['count'] == null ? '' : ' · ${option['count']} matching products'}',
             selected: selected.contains(option['name']),
             button: true,
             child: InkWell(
@@ -862,11 +894,29 @@ class FinalizedColourPicker extends StatelessWidget {
                       next.contains(name) ? next.remove(name) : next.add(name);
                       onChanged!(next);
                     },
-              child: SizedBox(
-                width: 48,
-                height: 48,
-                child: Center(child: _swatch(option)),
-              ),
+              child: option['count'] != null
+                  ? SizedBox(
+                      width: 80,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 48,
+                            height: 48,
+                            child: Center(child: _swatch(option)),
+                          ),
+                          Text(
+                            '${option['name']} (${option['count']})',
+                            style: _small,
+                          ),
+                        ],
+                      ),
+                    )
+                  : SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: Center(child: _swatch(option)),
+                    ),
             ),
           ),
       ],
@@ -1301,9 +1351,11 @@ class FinalizedBrandPreferences extends StatelessWidget {
     this.love = const [],
     this.skip = const [],
     this.onChanged,
+    this.allowCustomBrands = true,
   });
   final List<String> brands, love, skip;
   final void Function(List<String> love, List<String> skip)? onChanged;
+  final bool allowCustomBrands;
   @override
   Widget build(BuildContext context) => _stack([
     const Text('Any brands you love, or would rather I skip?', style: _body),
@@ -1319,23 +1371,24 @@ class FinalizedBrandPreferences extends StatelessWidget {
       skip,
       onChanged == null ? null : (brand) => _toggle(brand, false),
     ),
-    Align(
-      alignment: Alignment.centerLeft,
-      child: TextButton(
-        onPressed: onChanged == null
-            ? null
-            : () async {
-                final brand = await _newBrand(context);
-                if (brand != null && brand.isNotEmpty) {
-                  onChanged!([
-                    ...love.where((item) => item != brand),
-                    brand,
-                  ], skip.where((item) => item != brand).toList());
-                }
-              },
-        child: const Text('+ Add'),
+    if (allowCustomBrands)
+      Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton(
+          onPressed: onChanged == null
+              ? null
+              : () async {
+                  final brand = await _newBrand(context);
+                  if (brand != null && brand.isNotEmpty) {
+                    onChanged!([
+                      ...love.where((item) => item != brand),
+                      brand,
+                    ], skip.where((item) => item != brand).toList());
+                  }
+                },
+          child: const Text('+ Add'),
+        ),
       ),
-    ),
   ]);
   void _toggle(String brand, bool loving) {
     final nextLove = [...love], nextSkip = [...skip];
@@ -1695,7 +1748,7 @@ final finalizedLeftItems = <CatalogItem>[
     'ColourPicker',
     'Multi-select named colours, ring and dot, explicit selected array event.',
     {'options': 'list', 'selected': 'list', 'question': 'string'},
-    ['selected', 'action'],
+    ['selected'],
     (context, raw, value) => FinalizedColourPicker(
       options: raw.containsKey('options')
           ? _rows(value['options'])
@@ -1838,8 +1891,13 @@ final finalizedLeftItems = <CatalogItem>[
   _item(
     'BrandPreferences',
     'Disjoint love/skip lists. Love biases and skip filters host search; host owns cross-visit persistence.',
-    {'brands': 'list', 'love': 'list', 'skip': 'list'},
-    ['love', 'skip', 'action'],
+    {
+      'brands': 'list',
+      'love': 'list',
+      'skip': 'list',
+      'allowCustomBrands': 'bool',
+    },
+    ['love', 'skip'],
     (context, raw, value) => FinalizedBrandPreferences(
       brands: {
         ..._strings(value['brands']),
@@ -1856,6 +1914,9 @@ final finalizedLeftItems = <CatalogItem>[
       }.toList(),
       love: _strings(value['love']),
       skip: _strings(value['skip']),
+      allowCustomBrands:
+          !raw.containsKey('allowCustomBrands') ||
+          value['allowCustomBrands'] == true,
       onChanged: (love, skip) {
         _update(context, raw, 'love', love);
         _update(context, raw, 'skip', skip);

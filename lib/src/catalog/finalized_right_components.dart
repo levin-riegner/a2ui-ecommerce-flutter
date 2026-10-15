@@ -17,6 +17,7 @@ const _hangerLabels = {
   'layer': 'A layer over it',
   'shoes': 'Shoes',
   'bag': 'A bag',
+  'accessory': 'An accessory',
 };
 const _hangerNames = {
   'dress': 'Indra Long Dress',
@@ -25,6 +26,7 @@ const _hangerNames = {
   'layer': 'Wool Cape',
   'shoes': 'Satin Pointed Pump',
   'bag': 'Le Petit Bambino',
+  'accessory': 'Accessory',
 };
 const _hangerMeta = {
   'dress': 'Zimmermann · €874',
@@ -33,6 +35,7 @@ const _hangerMeta = {
   'layer': 'Max Mara · €1,150',
   'shoes': 'Manolo Blahnik · €545',
   'bag': 'Jacquemus · €425',
+  'accessory': 'Optional piece',
 };
 
 const _hangerHeights = <String, double>{
@@ -42,6 +45,7 @@ const _hangerHeights = <String, double>{
   'layer': 90,
   'shoes': 64,
   'bag': 64,
+  'accessory': 82,
 };
 const _hangerGlyphSizes = <String, double>{
   'dress': 80,
@@ -50,6 +54,7 @@ const _hangerGlyphSizes = <String, double>{
   'layer': 63,
   'shoes': 44.8,
   'bag': 44.8,
+  'accessory': 50,
 };
 
 /// Finalized dressing-room items. Replace the legacy PieceSlot entry
@@ -60,7 +65,8 @@ final List<CatalogItem> finalizedRightItems = [
   for (final spec in _rightSpecs) _rightCatalogItem(spec),
 ];
 
-/// Finalized hangers for all six verified categories. Category-less legacy data
+/// Finalized hangers with the six original proportions and an accessory fallback.
+/// Category-less legacy data
 /// intentionally retains the original presentation.
 class FinalizedPieceSlot extends StatelessWidget {
   const FinalizedPieceSlot({
@@ -698,19 +704,22 @@ class FinalizedRightComponent extends StatelessWidget {
                 spacing: 16,
                 runSpacing: 4,
                 children: [
-                  _rightLink(context, 'Save look', action('saveAction')),
-                  _rightLink(
-                    context,
-                    'Share',
-                    action('shareAction'),
-                    muted: true,
-                  ),
-                  _rightLink(
-                    context,
-                    'Start over',
-                    action('resetAction'),
-                    muted: true,
-                  ),
+                  if (data['saveAction'] != null)
+                    _rightLink(context, 'Save look', action('saveAction')),
+                  if (data['shareAction'] != null)
+                    _rightLink(
+                      context,
+                      'Share',
+                      action('shareAction'),
+                      muted: true,
+                    ),
+                  if (data['resetAction'] != null)
+                    _rightLink(
+                      context,
+                      'Start over',
+                      action('resetAction'),
+                      muted: true,
+                    ),
                 ],
               ),
             ],
@@ -1252,54 +1261,56 @@ class FinalizedLook extends StatelessWidget {
   const FinalizedLook({super.key, required this.base, this.pieces = const []});
   final String base;
   final List<Map<String, Object?>> pieces;
-  Map<String, Object?> piece(String category, String swatch) =>
-      pieces.firstWhere(
-        (p) => p['category']?.toString().toLowerCase() == category,
-        orElse: () => {'category': category, 'swatch': swatch},
-      );
   @override
-  Widget build(BuildContext context) => AspectRatio(
-    aspectRatio: 248 / 240,
-    child: LayoutBuilder(
-      builder: (context, constraints) {
-        final scale = constraints.maxHeight / 240;
-        Widget tile(String category, double h, String swatch, double glyph) =>
-            _rightThumb(
-              piece(category, swatch),
-              height: h * scale,
-              glyphSize: glyph * scale,
-              radius: 10,
-            );
-        return Row(
-          children: [
-            Expanded(
-              child: base == 'Separates'
-                  ? Column(
-                      children: [
-                        tile('top', 96, '#3c3c3f', 70),
-                        SizedBox(height: 8 * scale),
-                        tile('bottom', 136, '#5b5a57', 70),
-                      ],
-                    )
-                  : tile('dress', 240, '#b8a98e', 96),
-            ),
-            SizedBox(width: 8 * scale),
+  Widget build(BuildContext context) {
+    if (pieces.isEmpty) return const Text('No catalog pieces selected');
+    final foundation = pieces
+        .where((p) => const {'dress', 'top', 'bottom'}.contains(p['category']))
+        .toList();
+    final extras = pieces.where((p) => !foundation.contains(p)).toList();
+    final columns = foundation.isEmpty
+        ? [
+            pieces.take((pieces.length + 1) ~/ 2).toList(),
+            pieces.skip((pieces.length + 1) ~/ 2).toList(),
+          ]
+        : [foundation, extras];
+    final visible = columns.where((column) => column.isNotEmpty).toList();
+    return AspectRatio(
+      aspectRatio: 248 / 240,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var column = 0; column < visible.length; column++) ...[
+            if (column > 0) const SizedBox(width: 8),
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  tile('layer', 78, '#3e3a2c', 48),
-                  SizedBox(height: 8 * scale),
-                  tile('shoes', 64, '#2b2a28', 50),
-                  SizedBox(height: 8 * scale),
-                  tile('bag', 82, '#2a211c', 50),
+                  for (var i = 0; i < visible[column].length; i++) ...[
+                    if (i > 0) const SizedBox(height: 8),
+                    Expanded(
+                      flex:
+                          (_hangerHeights[visible[column][i]['category']] ?? 82)
+                              .round(),
+                      child: Semantics(
+                        label: visible[column][i]['name']?.toString(),
+                        image: true,
+                        child: _rightThumb(
+                          visible[column][i],
+                          height: double.infinity,
+                          radius: 10,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
           ],
-        );
-      },
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }
 
 class FinalizedBagPreview extends StatefulWidget {
@@ -1312,6 +1323,8 @@ class FinalizedBagPreview extends StatefulWidget {
 
 class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
   late List<Map<String, Object?>> items;
+  bool get hostOwned => widget.data['mode'] == 'demo-host';
+  String money(double value) => '€${value.toStringAsFixed(hostOwned ? 2 : 0)}';
   void load() {
     items = [
       for (final row in widget.data['items'] as List? ?? [])
@@ -1350,7 +1363,7 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
       return null;
     }
     return () {
-      if (update != null) setState(update);
+      if (update != null && !hostOwned) setState(update);
       widget.onAction!(key, extra);
     };
   }
@@ -1360,6 +1373,7 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
       'productId': item['id'],
     }, () => items.remove(item));
     if (removeCallback == null) return null;
+    if (hostOwned) return removeCallback;
     return () {
       final index = items.indexOf(item);
       removeCallback();
@@ -1395,7 +1409,11 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
           Row(
             children: [
               Expanded(
-                child: _rightText(context, 'Your bag — $count items', size: 16),
+                child: _rightText(
+                  context,
+                  '${hostOwned ? 'Demo bag' : 'Your bag'} — $count items',
+                  size: 16,
+                ),
               ),
               IconButton(
                 tooltip: 'Close bag',
@@ -1452,6 +1470,7 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
                           key: ValueKey('bag-quantity-${item['id']}'),
                           value: quantity(item),
                           max: 99,
+                          updateLocally: !hostOwned,
                           onChanged:
                               callback('quantityAction', {}, null) == null
                               ? null
@@ -1466,7 +1485,10 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
                       ),
                       _rightText(
                         context,
-                        '€${(((item['unitPrice'] as num?)?.toDouble() ?? 0) * quantity(item)).toStringAsFixed(0)}',
+                        money(
+                          ((item['unitPrice'] as num?)?.toDouble() ?? 0) *
+                              quantity(item),
+                        ),
                         size: 14,
                       ),
                     ],
@@ -1482,16 +1504,17 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
             alignment: WrapAlignment.spaceBetween,
             children: [
               _rightText(context, 'Subtotal', size: 16, muted: true),
-              _rightText(context, '€${total.toStringAsFixed(0)}', size: 16),
+              _rightText(context, money(total), size: 16),
             ],
           ),
           const SizedBox(height: 14),
-          CommercePrimaryButton(
-            label: 'Check out',
-            onPressed: items.isEmpty
-                ? null
-                : callback('checkoutAction', {}, null),
-          ),
+          if (!hostOwned)
+            CommercePrimaryButton(
+              label: 'Check out',
+              onPressed: items.isEmpty
+                  ? null
+                  : callback('checkoutAction', {}, null),
+            ),
           const SizedBox(height: 14),
           _rightLink(
             context,
@@ -1677,19 +1700,13 @@ const _rightSpecs = [
   _RightSpec('IfWeatherTurns', ['verdict', 'condition'], [], ['products'], [
     'action',
   ]),
-  _RightSpec(
-    'BagPreview',
-    [],
-    [],
-    ['items'],
-    [
-      'closeAction',
-      'removeAction',
-      'restoreAction',
-      'quantityAction',
-      'checkoutAction',
-    ],
-  ),
+  _RightSpec('BagPreview', ['mode'], [], ['items'], [
+    'closeAction',
+    'removeAction',
+    'restoreAction',
+    'quantityAction',
+    'checkoutAction',
+  ]),
 ];
 
 CatalogItem _rightCatalogItem(_RightSpec spec) => CatalogItem(

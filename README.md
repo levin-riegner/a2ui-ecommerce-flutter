@@ -29,6 +29,8 @@ Connecting loads the bundled catalog and configures Genkit without calling a mod
 
 The key stays in memory on the device and is added only to the provider's outgoing HTTP headers. It is not saved to files or browser storage and is never a Genkit flow input or generation option. **New journey → Disconnect model** clears the key and session. Reloading or closing the app requires configuring it again. Never embed keys in source, assets, or `--dart-define` values.
 
+Accepted styling preferences, the current look, saved looks and demo bag quantities are stored locally under `alder.stylist.v1`, separately from the model connection. Reconnecting restores catalog IDs and accepted facts against current prices and restrictions. Start over clears the working look while retaining saved looks and the demo bag. The bag supports quantities, removal and undo; it has no checkout or stock reservation. See [component-adoption-progress.md](docs/component-adoption-progress.md) for implemented components and verification.
+
 Without a model connection, journeys are disabled and the component gallery remains available. The conversation keeps submitted messages and previous recommendations in order; only the latest completed recommendation accepts input. During a turn, the app displays a loading surface, then previews catalog-validated cards as they become available, with chat/product actions disabled until the full turn succeeds. The final stylist explanation appears after validation. Failed turns remove the preview, show Retry, and retain the previous outfit and completed surfaces. Retrying keeps the original user message without adding a duplicate. No scripted fallback runs in the app.
 
 Once connected, choose a preset journey or enter your own occasion with **Start my look**. Missing style and budget are gathered together; editing those controls makes no model request until **Find options**. Choosing a piece immediately offers the next part of the look. You can also choose or remove pieces in words, refine the brief, and revisit a completed outfit. The dressing room follows the current outfit plan, including tops and bottoms.
@@ -60,6 +62,14 @@ STYLIST_LIVE_TEST=1 STYLIST_LIVE_SEED_PREVIEW=1 STYLIST_LIVE_INTERACTIONS=2 STYL
 ```
 
 This narrower mode verifies that selecting a seeded top produces real model-generated bottom options. It does not test an entirely live journey or removal.
+
+To try question handling with the configured live model:
+
+```sh
+STYLIST_LIVE_TEST=1 fvm flutter test tools/genkit/intent_smoke_test.dart
+```
+
+This bounded test makes at most eight paid requests across a capability question, an outfit request, and a styling question. It checks that questions show no intake controls, explicit occasion/budget/exclusion facts persist, and advice does not change the brief. Free runtime and phone-width widget coverage is in `test/stylist_question_test.dart`.
 
 For free prompt/tool/flow inspection with the same catalog and stylist implementation, install the Genkit CLI on your development machine and run from the repository root:
 
@@ -93,6 +103,8 @@ The bundled catalog contains 977 products: the original 200 plus 777 curated fro
 Catalog expansion uses [best-effort demo curation](docs/catalog-import.md): use the pictured item, infer useful style tags, omit unsupported claims and skip broken records. Raw sources and enrichment history remain local for traceability; no manual review interface is required.
 
 All 977 products have photo-based descriptions and styling tags, including a separate Luna pass over the original 200. Original IDs, prices and photographs are preserved; unsupported original material labels are replaced with `unspecified`. Search passes matching product descriptions and styling keywords to the LLM as structured text facts. Images are inspected during enrichment and displayed in the cards; local retrieval uses word matching and filters without a vector database.
+
+Every product also has a styling audience: `male`, `female`, or `male, female`. Explicit menswear, womenswear, and unisex requests are retained. Selecting a piece with one audience establishes the outfit's audience when none was specified, so a female dress leads to female-compatible jackets and accessories, including neutral pieces. Explicit unisex requests return only products supporting both audiences. Search fallback, presentation, and budget completion enforce this preference. These labels describe product styling, not the wearer's identity or size/fit.
 
 ## Verification
 

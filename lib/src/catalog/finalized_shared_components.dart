@@ -11,6 +11,7 @@ import 'package:json_schema_builder/json_schema_builder.dart';
 import 'commerce_widgets.dart';
 
 /// Finalized shared catalog, read from exact native Figma properties and SVGs.
+/// Accessories extend the original six-category set with a neutral placeholder.
 final finalizedSharedItems = <CatalogItem>[
   _chipItem,
   _bagItem,
@@ -169,7 +170,15 @@ class FinalizedEyebrow extends StatelessWidget {
 }
 
 const _assetRoot = 'assets/icons/finalized_shared/';
-const finalizedCategories = ['dress', 'top', 'bottom', 'layer', 'shoes', 'bag'];
+const finalizedCategories = [
+  'dress',
+  'top',
+  'bottom',
+  'layer',
+  'shoes',
+  'bag',
+  'accessory',
+];
 
 Map<String, Object?> _data(CatalogItemContext c) =>
     Map<String, Object?>.from(c.data as Map);
@@ -240,7 +249,7 @@ final _chipItem = CatalogItem(
         builder: (_, selected) => FinalizedChip(
           label: label,
           selected: selected == true,
-          onChanged: _hasEvent(d['action'])
+          onChanged: _hasEvent(d['action']) || d['selected'] is Map
               ? (next) {
                   _updateBound(c, d['selected'], next);
                   _dispatchValue(c, d['action'], {'selected': next});
@@ -657,11 +666,13 @@ class FinalizedQuantityStepper extends StatefulWidget {
     super.key,
     required this.value,
     this.max = 99,
+    this.updateLocally = true,
     this.onChanged,
     this.onRemove,
   });
   final int value;
   final int max;
+  final bool updateLocally;
   final ValueChanged<int>? onChanged;
   final VoidCallback? onRemove;
   @override
@@ -698,14 +709,15 @@ class _FinalizedQuantityStepperState extends State<FinalizedQuantityStepper> {
               ? widget.onRemove == null
                     ? null
                     : () {
-                        setState(() => quantity = 0);
+                        if (widget.updateLocally) setState(() => quantity = 0);
                         widget.onRemove!();
                       }
               : widget.onChanged == null
               ? null
               : () {
-                  setState(() => quantity--);
-                  widget.onChanged!(quantity);
+                  final next = quantity - 1;
+                  if (widget.updateLocally) setState(() => quantity = next);
+                  widget.onChanged!(next);
                 },
         ),
         Semantics(
@@ -728,8 +740,9 @@ class _FinalizedQuantityStepperState extends State<FinalizedQuantityStepper> {
                   widget.onChanged == null
               ? null
               : () {
-                  setState(() => quantity++);
-                  widget.onChanged!(quantity);
+                  final next = quantity + 1;
+                  if (widget.updateLocally) setState(() => quantity = next);
+                  widget.onChanged!(next);
                 },
         ),
       ],
@@ -847,6 +860,7 @@ class FinalizedLookTile extends StatelessWidget {
     'layer': 150.0,
     'shoes': 64.0,
     'bag': 82.0,
+    'accessory': 82.0,
   };
   static const colors = {
     'dress': Color(0xffb8a98e),
@@ -855,6 +869,7 @@ class FinalizedLookTile extends StatelessWidget {
     'layer': Color(0xff3e3a2c),
     'shoes': Color(0xff2b2a28),
     'bag': Color(0xff2a211c),
+    'accessory': Color(0xff3c3c3f),
   };
   static const origins = {
     'dress': Offset(12, 72),
@@ -863,6 +878,7 @@ class FinalizedLookTile extends StatelessWidget {
     'layer': Offset(25, 40),
     'shoes': Offset(35, 7),
     'bag': Offset(35, 16),
+    'accessory': Offset(28, 9),
   };
   static const glyphSizes = {
     'dress': Size(96, 96),
@@ -871,6 +887,7 @@ class FinalizedLookTile extends StatelessWidget {
     'layer': Size(72, 89),
     'shoes': Size(85, 50),
     'bag': Size(76, 66),
+    'accessory': Size(64, 64),
   };
   @override
   Widget build(BuildContext context) => Align(

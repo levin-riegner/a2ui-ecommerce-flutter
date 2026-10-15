@@ -28,6 +28,7 @@ class OutfitPlan {
     required Map<String, Product> outfit,
     StylistConstraints? constraints,
     String? dressCode,
+    Iterable<Product>? catalog,
   }) {
     final text = brief.toLowerCase();
     final restrictions =
@@ -61,7 +62,17 @@ class OutfitPlan {
         !restrictions.excludedCategories.contains(ProductCategory.dress) &&
         (hasDress ||
             (!hasSeparates &&
-                (formal ||
+                ((formal &&
+                        (dressCode == 'dress' ||
+                            restrictions.requiredGarmentTypes.containsKey(
+                              ProductCategory.dress,
+                            ) ||
+                            catalog == null ||
+                            catalog.any(
+                              (p) =>
+                                  p.category == ProductCategory.dress &&
+                                  restrictions.matches(p),
+                            ))) ||
                     restrictions.excludedCategories.contains(
                       ProductCategory.top,
                     ) ||
@@ -183,6 +194,7 @@ OutfitSelectionAssessment assessOutfitSelection({
   proposed.removeWhere((_, product) => product.category == candidate.category);
   proposed[candidate.category.name] = candidate;
   final plan = OutfitPlan.from(
+    catalog: catalog,
     brief: brief,
     dressCode: dressCode,
     constraints: constraints,

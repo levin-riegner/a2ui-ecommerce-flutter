@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import 'genkit_providers_test.dart' show providerReply;
+import 'stylist_store_helpers.dart';
+
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 Finder occasionSuggestion() => find
     .ancestor(
@@ -22,6 +25,14 @@ Future<void> fill(WidgetTester tester) async {
 }
 
 void main() {
+  SharedPreferencesAsyncPlatform? previous;
+  setUp(() {
+    previous = SharedPreferencesAsyncPlatform.instance;
+    SharedPreferencesAsyncPlatform.instance = MemoryPreferencePlatform();
+  });
+  tearDown(() {
+    SharedPreferencesAsyncPlatform.instance = previous;
+  });
   testWidgets(
     'bundled BYOK has no service address, masks the key, and connects without network calls',
     (tester) async {

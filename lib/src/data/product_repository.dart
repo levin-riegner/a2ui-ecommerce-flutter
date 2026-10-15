@@ -7,6 +7,7 @@ abstract interface class ProductRepository {
   Future<List<Product>> search({
     String query = '',
     String? category,
+    String? gender,
     String? color,
     String? occasion,
     String? season,
@@ -17,6 +18,7 @@ abstract interface class ProductRepository {
   Future<List<Product>> recommendations({
     required DemoJourney journey,
     required ProductCategory category,
+    String? gender,
     int limit = 3,
   });
 }
@@ -164,6 +166,7 @@ class FixtureProductRepository implements ProductRepository {
   Future<List<Product>> search({
     String query = '',
     String? category,
+    String? gender,
     String? color,
     String? occasion,
     String? season,
@@ -173,6 +176,7 @@ class FixtureProductRepository implements ProductRepository {
     _products,
     query: query,
     category: category,
+    gender: gender,
     color: color,
     occasion: occasion,
     season: season,
@@ -184,12 +188,15 @@ class FixtureProductRepository implements ProductRepository {
   Future<List<Product>> recommendations({
     required DemoJourney journey,
     required ProductCategory category,
+    String? gender,
     int limit = 3,
   }) async {
     return _products
         .where(
           (product) =>
-              product.journey == journey && product.category == category,
+              product.journey == journey &&
+              product.category == category &&
+              product.supportsGender(gender ?? ''),
         )
         .take(limit)
         .toList(growable: false);
@@ -217,6 +224,7 @@ class CsvProductRepository implements ProductRepository {
   Future<List<Product>> search({
     String query = '',
     String? category,
+    String? gender,
     String? color,
     String? occasion,
     String? season,
@@ -226,6 +234,7 @@ class CsvProductRepository implements ProductRepository {
     await _load(),
     query: query,
     category: category,
+    gender: gender,
     color: color,
     occasion: occasion,
     season: season,
@@ -237,18 +246,27 @@ class CsvProductRepository implements ProductRepository {
   Future<List<Product>> recommendations({
     required DemoJourney journey,
     required ProductCategory category,
+    String? gender,
     int limit = 3,
   }) async {
     if (limit <= 0) return const [];
     final products = await _load();
     final byJourney = products.where(
-      (p) => p.journey == journey && p.category == category,
+      (p) =>
+          p.journey == journey &&
+          p.category == category &&
+          p.supportsGender(gender ?? ''),
     );
     if (byJourney.isNotEmpty) return byJourney.take(limit).toList();
     // The public catalog has no hard-coded journeys. Prefer the brief's season
     // and occasion, then fill from the same category within the budget.
     final categoryProducts = products
-        .where((p) => p.category == category && p.price <= journey.budget)
+        .where(
+          (p) =>
+              p.category == category &&
+              p.price <= journey.budget &&
+              p.supportsGender(gender ?? ''),
+        )
         .toList();
     int score(Product p) =>
         (_matchesTag(p.season, journey.season)
@@ -269,6 +287,7 @@ List<Product> _filterProducts(
   Iterable<Product> products, {
   required String query,
   required String? category,
+  required String? gender,
   required String? color,
   required String? occasion,
   required String? season,
@@ -284,6 +303,7 @@ List<Product> _filterProducts(
       .where((w) => w.isNotEmpty);
   return products
       .where((p) {
+        if (!p.supportsGender(gender ?? '')) return false;
         if (categoryFilter != null &&
             categoryFilter.isNotEmpty &&
             p.category.name != categoryFilter) {

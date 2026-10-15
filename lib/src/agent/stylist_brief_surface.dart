@@ -19,6 +19,7 @@ StylistBriefSurface renderStylistBriefSurface({
   final dressCode = clarification['dressCode']?.toString() ?? '';
   final season = clarification['season']?.toString() ?? '';
   final budget = (clarification['budget'] as num?)?.toDouble();
+  final adjustingBudget = clarification['adjustBudget'] == true;
   final styles = [
     'casual',
     'smart-casual',
@@ -111,33 +112,38 @@ StylistBriefSurface renderStylistBriefSurface({
         'id': 'budget-group',
         'component': 'StylistSection',
         'spacing': 8,
-        'children': ['budget-label', 'brief-budget'],
+        'children': [if (!adjustingBudget) 'budget-label', 'brief-budget'],
       },
-      {
-        'id': 'budget-label',
-        'component': 'Eyebrow',
-        'text': budget == null
-            ? 'Suggested whole-outfit budget. Adjust to suit you.'
-            : 'Your whole-outfit budget',
-      },
+      if (!adjustingBudget)
+        {
+          'id': 'budget-label',
+          'component': 'Eyebrow',
+          'text': budget == null
+              ? 'Suggested whole-outfit budget. Adjust to suit you.'
+              : 'Your whole-outfit budget',
+        },
       {
         'id': 'brief-budget',
         'component': 'BudgetSlider',
         'value': {'path': '/budget'},
-        'min': displayBudget < 50 ? displayBudget : 50,
+        'min': adjustingBudget
+            ? (clarification['minimumBudget'] as num? ?? 1).toDouble()
+            : displayBudget < 50
+            ? displayBudget
+            : 50,
         'max': displayBudget > 2500 ? displayBudget : 2500,
       },
     ],
     {
       'id': 'find-options',
       'component': 'PrimaryButton',
-      'label': 'Find options',
+      'label': adjustingBudget ? 'Update budget' : 'Find options',
       'action': {
         'event': {
-          'name': 'find_options',
+          'name': adjustingBudget ? 'update_budget' : 'find_options',
           'context': {
-            'dressCode': {'path': '/dressCode'},
-            'season': {'path': '/season'},
+            if (!adjustingBudget) 'dressCode': {'path': '/dressCode'},
+            if (!adjustingBudget) 'season': {'path': '/season'},
             'budget': {'path': '/budget'},
           },
         },
