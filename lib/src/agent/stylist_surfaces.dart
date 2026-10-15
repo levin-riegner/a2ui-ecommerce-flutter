@@ -1,15 +1,15 @@
 import '../data/models.dart';
-import '../data/money.dart';
 import '../data/catalog_semantics.dart';
+import '../data/money.dart';
 import 'outfit_plan.dart';
 import 'city_context.dart';
 import 'stylist_brief_surface.dart';
 
 const stylistCatalogId = 'com.example.a2ui_flutter_commerce/catalog';
-String euro(num value) => '€${value.toStringAsFixed(2)}';
+String formatEuros(num value) => '€${value.toStringAsFixed(2)}';
 String _budgetEuro(num value) => value == value.roundToDouble()
     ? '€${value.toStringAsFixed(0)}'
-    : euro(value);
+    : formatEuros(value);
 
 Map<String, Object?> _card(Product p, String tag) => {
   'id': p.id,
@@ -20,6 +20,8 @@ Map<String, Object?> _card(Product p, String tag) => {
   'swatch': p.swatch,
   'imageAsset': p.imageAsset,
   'category': p.category.name,
+  'selected': false,
+  'dimmed': false,
 };
 Map<String, Object?> _path(String value) => {'path': value};
 Map<String, Object?> _eventAction(
@@ -38,8 +40,8 @@ Map<String, Object?> _selectionAction([String? productId]) => {
 Map<String, Object?> productChoice(Product product) => {
   'productId': product.id,
   'name': product.name,
-  'label': '${product.name} · ${euro(product.price)}',
-  'price': euro(product.price),
+  'label': '${product.name} · ${formatEuros(product.price)}',
+  'price': formatEuros(product.price),
   'category': product.category.name,
   'imageAsset': product.imageAsset,
   'swatch': product.swatch,
@@ -67,7 +69,7 @@ List<Map<String, Object?>> renderPendingStylistSurface({
         {
           'id': 'root',
           'component': 'StylistSection',
-          'children': ['message'],
+          'children': [if (text?.isNotEmpty == true) 'message'],
         },
         {
           'id': 'message',
@@ -81,7 +83,7 @@ List<Map<String, Object?>> renderPendingStylistSurface({
     'version': 'v0.9',
     'updateDataModel': {
       'surfaceId': surfaceId,
-      'value': {'reply': text ?? 'Preparing your stylist’s reply…'},
+      'value': {'reply': text ?? ''},
     },
   },
 ];
@@ -102,6 +104,8 @@ Map<String, Object?> _productComponent(
     'swatch',
     'imageAsset',
     'category',
+    'selected',
+    'dimmed',
   ])
     property: _path('/$collection/$index/$property'),
   'action': {
@@ -182,7 +186,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
               ? slot == next
                     ? 'Next piece'
                     : 'Not yet'
-              : '${outfit[slot.name]!.brand} · ${euro(outfit[slot.name]!.price)}',
+              : '${outfit[slot.name]!.brand} · ${formatEuros(outfit[slot.name]!.price)}',
           'swatch': outfit[slot.name]?.swatch ?? '#e4e4e7',
           'imageAsset': outfit[slot.name]?.imageAsset ?? '',
           'state': outfit[slot.name] != null
@@ -212,6 +216,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
   ];
   final inlineData = <String, Object?>{
     'message': reply,
+    'selectedProductId': '',
     'selectionOptions': ?selectionOptions,
     'eyebrow': picks.isEmpty ? 'Your stylist' : 'Catalog options',
     'recommendations': picks
@@ -262,7 +267,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'component': 'ThisOrThat',
         'options': _path('/choices'),
         'question': 'Which works better for you?',
-        'picked': '',
+        'picked': _path('/selectedProductId'),
         'action': _selectionAction(),
       });
     } else if (presentation == 'alternative') {
@@ -272,12 +277,12 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'id': 'recommendations',
         'component': 'AlternativePiece',
         'title': saving > 0
-            ? 'Save ${euro(saving)} with this replacement'
+            ? 'Save ${formatEuros(saving)} with this replacement'
             : 'A replacement option',
         'productId': product.id,
         'category': product.category.name,
         'name': product.name,
-        'meta': '${product.brand} · ${euro(product.price)}',
+        'meta': '${product.brand} · ${formatEuros(product.price)}',
         'imageAsset': product.imageAsset,
         'swatch': product.swatch,
         'action': _selectionAction(product.id),
@@ -288,7 +293,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'component': 'PicksStrip',
         'products': _path('/choices'),
         'category': picks.first.category.name,
-        'selectedProductId': '',
+        'selectedProductId': _path('/selectedProductId'),
         'action': _selectionAction(),
       });
     }
@@ -446,7 +451,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
     inlineData['look'] = {
       'name': 'Your look',
       'meta':
-          '${outfit.length} catalog pieces · ${euro(spent)}'
+          '${outfit.length} catalog pieces · ${formatEuros(spent)}'
           '${ownedCategories.isEmpty ? '' : ' · Owned: ${ownedCategories.map((c) => c == ProductCategory.dress ? 'one-piece' : c.name).join(', ')}'}',
       'pieces': [
         for (final product in outfit.values)
@@ -454,7 +459,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
             'id': product.id,
             'category': product.category.name,
             'name': product.name,
-            'meta': '${product.brand} · ${euro(product.price)}',
+            'meta': '${product.brand} · ${formatEuros(product.price)}',
             'imageAsset': product.imageAsset,
             'swatch': product.swatch,
           },
@@ -492,8 +497,8 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'state': library['lookInBag'] == true ? 'Added' : 'Default',
         'label': library['lookInBag'] == true
             ? 'These pieces are in your demo bag'
-            : 'Add look to demo bag · ${euro(spent)}',
-        'total': euro(spent),
+            : 'Add look to demo bag · ${formatEuros(spent)}',
+        'total': formatEuros(spent),
         'pieceCount': outfit.length,
         'action': _eventAction('add_look_to_bag'),
       });
@@ -560,6 +565,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
     final preferred = selected['size'] as String;
     inlineData['selectionOptions'] = {
       ...selectionOptions,
+      'submitting': false,
       'size': sizes.contains(preferred)
           ? preferred
           : sizes.length == 1
@@ -581,17 +587,12 @@ List<Map<String, Object?>> renderStylistSurfaces({
       {
         'id': 'selection-options',
         'component': 'StylistSection',
+        'collapsed': _path('/selectionOptions/submitting'),
         'children': [
-          'selection-heading',
           if (choices.length > 1) 'selection-colour',
           'selection-fit',
           'selection-save',
         ],
-      },
-      {
-        'id': 'selection-heading',
-        'component': 'Eyebrow',
-        'text': selected['name'],
       },
       if (choices.length > 1)
         {
@@ -623,7 +624,8 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'fitPath': '/selectionOptions/fit',
         'canSavePath': '/selectionOptions/canSave',
         'sizeLabel': 'SIZE',
-        'question': _path('/selectionOptions/question'),
+        // The conversation already asks this; the form owns only the controls.
+        'question': '',
       },
       {
         'id': 'selection-save',
@@ -872,7 +874,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
           'id': 'checkout-summary',
           'component': 'StylistMessage',
           'text':
-              'LOCAL DEMO CHECKOUT\n${lines.map((line) => '${line['name']} · ${line['size']} × ${line['quantity']}').join('\n')}\nSubtotal: ${euro((quote['subtotalCents'] as int) / 100)}\nDemo shipping: ${euro((quote['shippingCents'] as int) / 100)}\nDemo tax: €0.00 (fictional)\nDemo total: ${euro((quote['totalCents'] as int) / 100)}\nNo payment details, real order or shipment.',
+              'LOCAL DEMO CHECKOUT\n${lines.map((line) => '${line['name']} · ${line['size']} × ${line['quantity']}').join('\n')}\nSubtotal: ${formatEuros((quote['subtotalCents'] as int) / 100)}\nDemo shipping: ${formatEuros((quote['shippingCents'] as int) / 100)}\nDemo tax: €0.00 (fictional)\nDemo total: ${formatEuros((quote['totalCents'] as int) / 100)}\nNo payment details, real order or shipment.',
         },
         {
           'id': 'checkout-delivery',
@@ -904,7 +906,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'id': 'demo-receipt',
         'component': 'StylistMessage',
         'text':
-            'SIMULATED RECEIPT · ${receipt['id']}\n${(receipt['lines'] as List).map((line) => '${line['name']} · ${line['size']} × ${line['quantity']}').join('\n')}\nDemo total: ${euro((receipt['totalCents'] as int) / 100)}\nNo payment taken, real order placed or shipment booked.',
+            'SIMULATED RECEIPT · ${receipt['id']}\n${(receipt['lines'] as List).map((line) => '${line['name']} · ${line['size']} × ${line['quantity']}').join('\n')}\nDemo total: ${formatEuros((receipt['totalCents'] as int) / 100)}\nNo payment taken, real order placed or shipment booked.',
       });
     }
     if (library['hasReceipt'] == true) {

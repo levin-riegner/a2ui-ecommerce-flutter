@@ -430,7 +430,13 @@ class FinalizedBudgetSlider extends StatelessWidget {
                 activeTrackColor: _ink,
                 inactiveTrackColor: _wash,
                 overlayShape: SliderComponentShape.noOverlay,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+                // The SVG above paints the thumb; this transparent hit target
+                // must not cast a second shadow, including while dragging.
+                thumbShape: const RoundSliderThumbShape(
+                  enabledThumbRadius: 10,
+                  elevation: 0,
+                  pressedElevation: 0,
+                ),
                 thumbColor: Colors.transparent,
                 padding: EdgeInsets.zero,
               ),
@@ -527,6 +533,19 @@ Widget _productVisual(
   );
 }
 
+Widget _recommendationEmphasis(
+  BuildContext context, {
+  required bool dimmed,
+  required Widget child,
+}) => AnimatedOpacity(
+  opacity: dimmed ? .45 : 1,
+  duration: MediaQuery.disableAnimationsOf(context)
+      ? Duration.zero
+      : StylistLayout.transitionDuration,
+  curve: Curves.easeOutCubic,
+  child: child,
+);
+
 class FinalizedProductCard extends StatelessWidget {
   const FinalizedProductCard({
     super.key,
@@ -537,169 +556,174 @@ class FinalizedProductCard extends StatelessWidget {
     this.category = 'dress',
     this.selected = false,
     this.removal = false,
+    this.dimmed = false,
     this.imageAsset,
     this.swatch,
     this.onPressed,
   });
   final String name, price, brandLine, tag, category;
-  final bool selected, removal;
+  final bool selected, removal, dimmed;
   final String? imageAsset, swatch;
   final VoidCallback? onPressed;
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      selected: selected,
-      button: true,
-      enabled: onPressed != null,
-      child: Material(
-        color: selected ? _wash : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: BorderSide(
-            color: selected ? _ink : _line,
-            width: selected ? 1.5 : 1,
+    return _recommendationEmphasis(
+      context,
+      dimmed: dimmed,
+      child: Semantics(
+        selected: selected,
+        button: true,
+        enabled: onPressed != null,
+        child: Material(
+          color: selected ? _wash : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(
+              color: selected ? _ink : _line,
+              width: selected ? 1.5 : 1,
+            ),
           ),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(8),
-          onTap: onPressed,
-          child: Padding(
-            padding: const EdgeInsets.all(9),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final largeText =
-                    MediaQuery.textScalerOf(context).scale(16) > 24;
-                final badge = Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    key: const ValueKey('finalized-product-tag'),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Text(
-                      displayDetail(tag),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        height: 1.2,
-                        letterSpacing: -.1,
-                        color: _ink,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: onPressed,
+            child: Padding(
+              padding: const EdgeInsets.all(9),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final largeText =
+                      MediaQuery.textScalerOf(context).scale(16) > 24;
+                  final badge = Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      key: const ValueKey('finalized-product-tag'),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Text(
+                        displayDetail(tag),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          height: 1.2,
+                          letterSpacing: -.1,
+                          color: _ink,
+                        ),
                       ),
                     ),
-                  ),
-                );
-                final image = SizedBox(
-                  key: const ValueKey('finalized-product-image'),
-                  width: StylistLayout.productImage,
-                  height: StylistLayout.productImage,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        _productVisual(
-                          category.toLowerCase(),
-                          imageAsset,
-                          swatch,
-                          fit: BoxFit.cover,
-                        ),
-                        if (!largeText)
-                          Positioned(left: 6, top: 6, right: 6, child: badge),
-                      ],
+                  );
+                  final image = SizedBox(
+                    key: const ValueKey('finalized-product-image'),
+                    width: StylistLayout.productImage,
+                    height: StylistLayout.productImage,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          _productVisual(
+                            category.toLowerCase(),
+                            imageAsset,
+                            swatch,
+                            fit: BoxFit.cover,
+                          ),
+                          if (!largeText)
+                            Positioned(left: 6, top: 6, right: 6, child: badge),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-                final body = Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: Text(name, style: _body)),
-                        Text(price, style: _body),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(brandLine, style: _small),
-                    const SizedBox(height: 4),
-                    const Spacer(),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            category.isEmpty
-                                ? ''
-                                : '${category[0].toUpperCase()}${category.substring(1)}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              height: 1.4,
-                              color: Color(0xff999999),
+                  );
+                  final body = Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: Text(name, style: _body)),
+                          Text(price, style: _body),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(brandLine, style: _small),
+                      const SizedBox(height: 4),
+                      const Spacer(),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              category.isEmpty
+                                  ? ''
+                                  : '${category[0].toUpperCase()}${category.substring(1)}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                height: 1.4,
+                                color: Color(0xff999999),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
+                          const SizedBox(width: 8),
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              removal
+                                  ? 'Remove'
+                                  : selected
+                                  ? 'In your dressing room'
+                                  : 'Add to dressing room',
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(fontSize: 14, height: 1.4),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                  if (constraints.maxWidth < 280 || largeText) {
+                    return _stack([
+                      if (largeText) badge, image,
+                      // Large text grows naturally rather than using a flex spacer.
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(name, style: _body),
+                          Text(price, style: _body),
+                          const SizedBox(height: 4),
+                          Text(brandLine, style: _small),
+                          const SizedBox(height: 8),
+                          Text(
+                            category,
+                            style: _small.copyWith(
+                              color: const Color(0xff999999),
+                            ),
+                          ),
+                          Text(
                             removal
                                 ? 'Remove'
                                 : selected
                                 ? 'In your dressing room'
                                 : 'Add to dressing room',
-                            textAlign: TextAlign.right,
-                            style: const TextStyle(fontSize: 14, height: 1.4),
+                            style: _body,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-                if (constraints.maxWidth < 280 || largeText) {
-                  return _stack([
-                    if (largeText) badge, image,
-                    // Large text grows naturally rather than using a flex spacer.
-                    Column(
+                        ],
+                      ),
+                    ]);
+                  }
+                  return IntrinsicHeight(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(name, style: _body),
-                        Text(price, style: _body),
-                        const SizedBox(height: 4),
-                        Text(brandLine, style: _small),
-                        const SizedBox(height: 8),
-                        Text(
-                          category,
-                          style: _small.copyWith(
-                            color: const Color(0xff999999),
-                          ),
-                        ),
-                        Text(
-                          removal
-                              ? 'Remove'
-                              : selected
-                              ? 'In your dressing room'
-                              : 'Add to dressing room',
-                          style: _body,
-                        ),
+                        image,
+                        const SizedBox(width: 14),
+                        Expanded(child: body),
                       ],
                     ),
-                  ]);
-                }
-                return IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      image,
-                      const SizedBox(width: 14),
-                      Expanded(child: body),
-                    ],
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -726,60 +750,67 @@ class FinalizedPicksStrip extends StatelessWidget {
       children: [
         for (var i = 0; i < products.length; i++) ...[
           if (i > 0) const SizedBox(width: 8),
-          Semantics(
-            label: '${products[i]['name'] ?? ''} ${products[i]['price'] ?? ''}',
-            button: true,
-            selected: products[i]['productId'] == selectedProductId,
-            child: Material(
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: products[i]['productId'] == selectedProductId
-                      ? _ink
-                      : Colors.transparent,
-                  width: 1.5,
+          _recommendationEmphasis(
+            context,
+            dimmed:
+                selectedProductId.isNotEmpty &&
+                products[i]['productId'] != selectedProductId,
+            child: Semantics(
+              label:
+                  '${products[i]['name'] ?? ''} ${products[i]['price'] ?? ''}',
+              button: true,
+              selected: products[i]['productId'] == selectedProductId,
+              child: Material(
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: products[i]['productId'] == selectedProductId
+                        ? _ink
+                        : Colors.transparent,
+                    width: 1.5,
+                  ),
                 ),
-              ),
-              child: InkWell(
-                onTap: onSelected == null
-                    ? null
-                    : () => onSelected!(products[i]['productId'].toString()),
-                child: SizedBox(
-                  width: 120,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 120,
-                        height: _tileHeight[category.toLowerCase()] ?? 240,
-                        child: _productVisual(
-                          category.toLowerCase(),
-                          products[i]['imageAsset']?.toString(),
-                          products[i]['swatch']?.toString(),
-                          tile: true,
-                        ),
-                      ),
-                      if (products[i]['name'] != null)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
-                          child: Text(
-                            products[i]['name'].toString(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: _body,
+                child: InkWell(
+                  onTap: onSelected == null
+                      ? null
+                      : () => onSelected!(products[i]['productId'].toString()),
+                  child: SizedBox(
+                    width: 120,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: _tileHeight[category.toLowerCase()] ?? 240,
+                          child: _productVisual(
+                            category.toLowerCase(),
+                            products[i]['imageAsset']?.toString(),
+                            products[i]['swatch']?.toString(),
+                            tile: true,
                           ),
                         ),
-                      if (products[i]['price'] != null)
-                        Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Text(
-                            products[i]['price'].toString(),
-                            style: _body,
+                        if (products[i]['name'] != null)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 6, 4, 0),
+                            child: Text(
+                              products[i]['name'].toString(),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: _body,
+                            ),
                           ),
-                        ),
-                    ],
+                        if (products[i]['price'] != null)
+                          Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Text(
+                              products[i]['price'].toString(),
+                              style: _body,
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -807,43 +838,48 @@ class FinalizedThisOrThat extends StatelessWidget {
     Text(question, style: _body),
     LayoutBuilder(
       builder: (context, constraints) {
-        Widget tile(Map<String, Object?> option) => Semantics(
-          selected: option['productId'] == picked,
-          button: true,
-          child: Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(
-                color: option['productId'] == picked ? _ink : _line,
-                width: option['productId'] == picked ? 1.5 : 1,
+        Widget tile(Map<String, Object?> option) => _recommendationEmphasis(
+          context,
+          dimmed: picked.isNotEmpty && option['productId'] != picked,
+          child: Semantics(
+            selected: option['productId'] == picked,
+            button: true,
+            child: Material(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(
+                  color: option['productId'] == picked ? _ink : _line,
+                  width: option['productId'] == picked ? 1.5 : 1,
+                ),
               ),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: onSelected == null
-                  ? null
-                  : () => onSelected!(option['productId'].toString()),
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: _stack([
-                  SizedBox(
-                    height: 96,
-                    width: double.infinity,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: _productVisual(
-                        option['category']?.toString().toLowerCase() ?? 'shoes',
-                        option['imageAsset']?.toString(),
-                        option['swatch']?.toString(),
-                        tile: true,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: onSelected == null
+                    ? null
+                    : () => onSelected!(option['productId'].toString()),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: _stack([
+                    SizedBox(
+                      height: 96,
+                      width: double.infinity,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: _productVisual(
+                          option['category']?.toString().toLowerCase() ??
+                              'shoes',
+                          option['imageAsset']?.toString(),
+                          option['swatch']?.toString(),
+                          tile: true,
+                        ),
                       ),
                     ),
-                  ),
-                  Text(
-                    option['label']?.toString() ?? '',
-                    style: const TextStyle(fontSize: 14, height: 1.4),
-                  ),
-                ], gap: 6),
+                    Text(
+                      option['label']?.toString() ?? '',
+                      style: const TextStyle(fontSize: 14, height: 1.4),
+                    ),
+                  ], gap: 6),
+                ),
               ),
             ),
           ),
@@ -1129,7 +1165,7 @@ class FinalizedFitSize extends StatelessWidget {
   final String question, sizeLabel;
   @override
   Widget build(BuildContext context) => _stack([
-    Text(question, style: _body),
+    if (question.isNotEmpty) Text(question, style: _body),
     if (sizes.isNotEmpty) ...[
       CommerceEyebrow(text: sizeLabel),
       _choices(sizes, [size], onSize),

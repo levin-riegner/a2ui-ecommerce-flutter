@@ -12,7 +12,7 @@ Future<void> finishTurn(WidgetTester tester, GenkitAgent agent) async {
       () => Future<void>.delayed(const Duration(milliseconds: 10)),
     );
     await tester.pump(const Duration(milliseconds: 20));
-    if (!agent.isBusy) break;
+    if (!agent.isBusy && !tester.binding.hasScheduledFrame) break;
   }
   await tester.pumpAndSettle();
   expect(agent.isBusy, isFalse);
@@ -128,9 +128,10 @@ void main() {
       // Starting an example replaces the prior brief and selected outfit.
       await tester.tap(find.byTooltip('New journey').first);
       await tester.pumpAndSettle();
-      final parisExample = find.textContaining(
-        'Anniversary dinner at a smart restaurant',
-      );
+      expect(find.text('Back to start?'), findsOneWidget);
+      await tester.tap(find.text('Back to start'));
+      await finishTurn(tester, agent);
+      final parisExample = find.textContaining('A weekend in Paris in October');
       await Scrollable.ensureVisible(
         tester.element(parisExample),
         alignment: .5,
@@ -139,7 +140,7 @@ void main() {
       await tester.tap(parisExample);
       await finishTurn(tester, agent);
       expect(agent.activeJourney, isNull);
-      expect(runtime.outfit['budget'], 1500);
+      expect(runtime.outfit['budget'], 650);
       expect(runtime.outfit['items'], isEmpty);
       expect(
         agent.controller
@@ -147,9 +148,9 @@ void main() {
             .dataModel
             .getValue<String>(DataPath('/brief')),
         allOf(
-          contains('Anniversary dinner'),
+          contains('weekend'),
           contains('Paris in October'),
-          contains('black tie'),
+          contains('casual'),
         ),
       );
       expect(find.text('A spring day in Berlin'), findsNothing);

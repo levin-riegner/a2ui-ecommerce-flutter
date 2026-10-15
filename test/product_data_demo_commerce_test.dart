@@ -433,8 +433,7 @@ void main() {
       );
       expect(runtime.bagCount, 1);
       expect(find.text('Demo bag (1)'), findsNothing);
-      await tap(find.byTooltip('Styling options'));
-      await tap(find.text('Bag (1)').last);
+      await tap(find.byType(FinalizedBagIcon).last);
       await tap(find.text('Check out').last);
       expect(find.textContaining('LOCAL DEMO CHECKOUT'), findsOneWidget);
       await tap(find.text('Complete demo checkout — no payment').last);

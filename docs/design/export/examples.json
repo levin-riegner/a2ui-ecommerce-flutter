@@ -797,6 +797,9 @@
           "compactCarousel": {
             "type": "boolean"
           },
+          "collapsed": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
+          },
           "component": {
             "type": "string",
             "enum": [
@@ -872,6 +875,9 @@
         "properties": {
           "label": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          },
+          "enabled": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
           },
           "action": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
@@ -990,6 +996,9 @@
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
           },
           "selected": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
+          },
+          "dimmed": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicBoolean"
           },
           "action": {
@@ -1219,6 +1228,9 @@
           },
           "planCaption": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          },
+          "changeAction": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
           },
           "dressName": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
@@ -1588,6 +1600,9 @@
           "selectedPath": {
             "type": "string"
           },
+          "singleSelect": {
+            "type": "boolean"
+          },
           "component": {
             "type": "string",
             "enum": [
@@ -1726,6 +1741,12 @@
           "fit": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
           },
+          "question": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          },
+          "sizeLabel": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+          },
           "action": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
           },
@@ -1733,6 +1754,9 @@
             "type": "string"
           },
           "fitPath": {
+            "type": "string"
+          },
+          "canSavePath": {
             "type": "string"
           },
           "component": {
@@ -1745,8 +1769,7 @@
         "required": [
           "component",
           "size",
-          "fit",
-          "action"
+          "fit"
         ],
         "additionalProperties": true
       },
@@ -3163,6 +3186,9 @@
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
           },
           "checkoutAction": {
+            "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+          },
+          "sizeAction": {
             "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
           },
           "component": {

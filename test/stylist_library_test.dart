@@ -426,9 +426,8 @@ void main() {
       await tap(find.byTooltip('Close bag').last);
       await tap(find.text('Start over').last);
       expect(runtime.outfit['items'], isEmpty);
-      await tester.tap(find.byTooltip('Styling options'));
+      await tester.runAsync(agent.openSavedLooks);
       await tester.pumpAndSettle();
-      await tap(find.text('Saved looks').last);
       final rail = find
           .byWidgetPredicate(
             (w) =>

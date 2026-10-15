@@ -71,6 +71,7 @@ class _StylistBagOverlayState extends State<StylistBagOverlay> {
         (toastData?['action'] as Map?)?['event']?['name'] == 'restore_bag_item'
         ? toastData
         : null;
+
     return PopScope(
       canPop: !open,
       onPopInvokedWithResult: (didPop, _) {
@@ -133,12 +134,12 @@ class _StylistBagOverlayState extends State<StylistBagOverlay> {
                             elevation: 0,
                             insetPadding: const EdgeInsets.all(24),
                             constraints: const BoxConstraints(maxWidth: 400),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  AbsorbPointer(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Flexible(
+                                  child: AbsorbPointer(
                                     absorbing: agent.isBusy,
                                     child: FinalizedBagPreview(
                                       data: data,
@@ -146,30 +147,28 @@ class _StylistBagOverlayState extends State<StylistBagOverlay> {
                                           dispatch(data[key], extra),
                                     ),
                                   ),
-                                  if (agent.inputError ?? agent.connectionError
-                                      case final String error)
-                                    Material(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12),
-                                        child: Text(error),
-                                      ),
+                                ),
+                                if (agent.inputError ?? agent.connectionError
+                                    case final String error)
+                                  Material(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Text(error),
                                     ),
-                                  if (toast != null) ...[
-                                    const SizedBox(height: 8),
-                                    FinalizedToast(
-                                      message:
-                                          toast['message']?.toString() ?? '',
-                                      actionLabel:
-                                          toast['actionLabel']?.toString() ??
-                                          '',
-                                      onPressed: agent.isBusy
-                                          ? null
-                                          : () => dispatch(toast['action']),
-                                    ),
-                                  ],
+                                  ),
+                                if (toast != null) ...[
+                                  const SizedBox(height: 8),
+                                  FinalizedToast(
+                                    message: toast['message']?.toString() ?? '',
+                                    actionLabel:
+                                        toast['actionLabel']?.toString() ?? '',
+                                    onPressed: agent.isBusy
+                                        ? null
+                                        : () => dispatch(toast['action']),
+                                  ),
                                 ],
-                              ),
+                              ],
                             ),
                           ),
                         ),

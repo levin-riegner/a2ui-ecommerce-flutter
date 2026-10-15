@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 /// Measurements shared by the host layout and its catalog components.
 /// Source: Figma Designs section 205:7995, landscape and portrait picks.
 abstract final class StylistLayout {
+  static const transitionDuration = Duration(milliseconds: 240);
   static const gutter = 32.0;
   static const compactGutter = 16.0;
   static const startContentMaxWidth = 400.0;
@@ -48,7 +49,7 @@ class StylistSurfaceScope extends InheritedWidget {
       textAlreadyVisible != oldWidget.textAlreadyVisible;
 }
 
-/// Utility entry points belong in the host menu, outside conversation replies.
+/// Auxiliary action definitions are not part of conversation content.
 bool isStylistUtilityComponent(String id) =>
     id == 'edit-preferences' ||
     id == 'local-library' ||

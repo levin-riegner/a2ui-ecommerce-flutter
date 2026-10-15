@@ -1385,85 +1385,130 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
       ),
     );
     final count = items.fold<int>(0, (n, item) => n + quantity(item));
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .18),
-            blurRadius: 20,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _rightText(
-                  context,
-                  'Your bag — $count ${count == 1 ? 'item' : 'items'}',
-                  size: 16,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Keep a useful item viewport above the actions. Short viewports and
+        // large text fall back to scrolling all content inside the panel.
+        final bounded = constraints.hasBoundedHeight;
+        final pinActions =
+            bounded &&
+            MediaQuery.textScalerOf(context).scale(16) <= 32 &&
+            constraints.maxHeight >=
+                240 + MediaQuery.textScalerOf(context).scale(16) * 6;
+        final contents = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final item in items) bagRow(context, item),
+            if (items.isEmpty)
+              _rightText(context, 'Your bag is empty', size: 14, muted: true),
+          ],
+        );
+        final sections = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: _rightText(
+                    context,
+                    'Your bag — $count ${count == 1 ? 'item' : 'items'}',
+                    size: 16,
+                  ),
                 ),
-              ),
-              IconButton(
-                tooltip: 'Close bag',
-                onPressed: callback('closeAction', {}, null),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints.tightFor(
-                  width: 24,
-                  height: 24,
+                IconButton(
+                  tooltip: 'Close bag',
+                  onPressed: callback('closeAction', {}, null),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints.tightFor(
+                    width: 24,
+                    height: 24,
+                  ),
+                  style: IconButton.styleFrom(
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  icon: _rightIcon('close'),
                 ),
-                style: IconButton.styleFrom(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ],
+            ),
+            const SizedBox(height: 14),
+            if (pinActions)
+              Flexible(
+                child: SingleChildScrollView(
+                  key: const ValueKey('bag-items-scroll'),
+                  primary: false,
+                  child: contents,
                 ),
-                icon: _rightIcon('close'),
+              )
+            else
+              contents,
+            const SizedBox(height: 14),
+            Column(
+              key: const ValueKey('bag-footer'),
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  children: [
+                    _rightText(context, 'Subtotal', size: 16, muted: true),
+                    _rightText(context, money(total), size: 16),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                if (!hostOwned || widget.data['checkoutAction'] != null)
+                  CommercePrimaryButton(
+                    label: 'Check out',
+                    style: FilledButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.bodyLarge,
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                    ),
+                    onPressed: items.isEmpty
+                        ? null
+                        : callback('checkoutAction', {}, null),
+                  ),
+                const SizedBox(height: 14),
+                OutlinedButton(
+                  onPressed: callback('closeAction', {}, null),
+                  style: OutlinedButton.styleFrom(
+                    shape: Theme.of(context).filledButtonTheme.style?.shape
+                        ?.resolve({}),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    minimumSize: const Size(48, 48),
+                    foregroundColor: const Color(0xff18181b),
+                    side: const BorderSide(color: Color(0xff18181b)),
+                    textStyle: Theme.of(context).textTheme.bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  child: const Text('Keep styling'),
+                ),
+              ],
+            ),
+          ],
+        );
+        return Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: .18),
+                blurRadius: 20,
+                offset: const Offset(0, 12),
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          for (final item in items) bagRow(context, item),
-          if (items.isEmpty)
-            _rightText(context, 'Your bag is empty', size: 14, muted: true),
-          const SizedBox(height: 14),
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            children: [
-              _rightText(context, 'Subtotal', size: 16, muted: true),
-              _rightText(context, money(total), size: 16),
-            ],
-          ),
-          const SizedBox(height: 14),
-          if (!hostOwned || widget.data['checkoutAction'] != null)
-            CommercePrimaryButton(
-              label: 'Check out',
-              style: FilledButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.bodyLarge,
-                padding: const EdgeInsets.symmetric(vertical: 13),
-              ),
-              onPressed: items.isEmpty
-                  ? null
-                  : callback('checkoutAction', {}, null),
-            ),
-          const SizedBox(height: 14),
-          TextButton(
-            onPressed: callback('closeAction', {}, null),
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: const Size(48, 22),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              foregroundColor: const Color(0xff71717a),
-              textStyle: Theme.of(context).textTheme.bodyLarge,
-            ),
-            child: const Text('Keep styling'),
-          ),
-        ],
-      ),
+          child: bounded && !pinActions
+              ? SingleChildScrollView(
+                  key: const ValueKey('bag-content-scroll'),
+                  primary: false,
+                  child: sections,
+                )
+              : sections,
+        );
+      },
     );
   }
 }

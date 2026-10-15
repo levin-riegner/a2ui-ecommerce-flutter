@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart' as g;
 
+import 'progressive_agent_test.dart' show action;
 import 'stylist_budget_weather_recovery_test.dart' show WeekendForecast;
 
 final actualCatalog = parseCatalogProducts(
@@ -83,6 +84,18 @@ List<Map> components(Map result) =>
         .toList();
 const openingDress =
     "Women's initial wrap dress for a winter celebration under €500";
+
+Future<void> settleStylistTurn(WidgetTester tester, GenkitAgent agent) async {
+  await tester.pump();
+  for (var i = 0; i < 500 && agent.isBusy; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
+    await tester.pump();
+  }
+  expect(agent.isBusy, false);
+  await tester.pumpAndSettle();
+}
 
 void main() {
   test('formal male styling uses available separates instead of unsuitable utility coveralls', () async {
@@ -280,19 +293,17 @@ void main() {
       final runtime = (await tester.runAsync(
         () async => runtimeFor('Black Draped Wrap Dress'),
       ))!;
-      final agent = GenkitAgent(runtime);
+      final agent = (await tester.runAsync(() async => GenkitAgent(runtime)))!;
       await tester.pumpWidget(ReferenceApp(agent: agent));
       await tester.runAsync(() => agent.startBrief(openingDress));
       await tester.pumpAndSettle();
       expect(agent.connectionError, isNull);
-      await tester.tap(find.byTooltip('Styling options'));
-      await tester.pumpAndSettle();
-      final compare = find.text('Compare these two').last;
-      await tester.ensureVisible(compare);
-      await tester.runAsync(() async {
-        await tester.tap(compare);
-      });
-      await tester.pumpAndSettle();
+      expect(find.text('Compare these two'), findsNothing);
+      expect(find.byType(PopupMenuButton<String>), findsNothing);
+      await tester.runAsync(
+        () => agent.conversation.sendRequest(action('compare_products', {})),
+      );
+      await settleStylistTurn(tester, agent);
       expect(agent.connectionError, isNull);
       expect(find.byType(FinalizedThisOrThat), findsOneWidget);
       final choice = find.descendant(
@@ -303,7 +314,7 @@ void main() {
       await tester.runAsync(() async {
         await tester.tap(choice);
       });
-      await tester.pumpAndSettle();
+      await settleStylistTurn(tester, agent);
       expect(agent.connectionError, isNull);
       expect(agent.inputError, isNull);
       expect((runtime.outfit['items'] as Map)['dress'], 'demo-0092');
@@ -403,18 +414,16 @@ void main() {
       final runtime = (await tester.runAsync(
         () async => runtimeFor('Black Draped Wrap Dress'),
       ))!;
-      final agent = GenkitAgent(runtime);
+      final agent = (await tester.runAsync(() async => GenkitAgent(runtime)))!;
       await tester.pumpWidget(ReferenceApp(agent: agent));
       await tester.runAsync(() => agent.startBrief(openingDress));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Styling options'));
-      await tester.pumpAndSettle();
-      final open = find.text('Colors, brands & owned pieces').last;
-      await tester.ensureVisible(open);
-      await tester.runAsync(() async {
-        await tester.tap(open);
-      });
-      await tester.pumpAndSettle();
+      expect(find.text('Colors, brands & owned pieces'), findsNothing);
+      expect(find.textContaining('Details & demo sizes'), findsNothing);
+      await tester.runAsync(
+        () => agent.conversation.sendRequest(action('edit_preferences', {})),
+      );
+      await settleStylistTurn(tester, agent);
       expect(agent.connectionError, isNull);
       expect(find.byType(FinalizedColourPicker), findsOneWidget);
       final watch = find
@@ -453,7 +462,7 @@ void main() {
       await tester.runAsync(() async {
         await tester.tap(button);
       });
-      await tester.pumpAndSettle();
+      await settleStylistTurn(tester, agent);
       expect(agent.connectionError, isNull);
       expect(agent.inputError, isNull);
       final panel = await tester.runAsync(

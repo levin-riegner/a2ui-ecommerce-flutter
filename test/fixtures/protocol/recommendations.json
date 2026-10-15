@@ -176,6 +176,12 @@
           },
           "category": {
             "path": "/recommendations/0/category"
+          },
+          "selected": {
+            "path": "/recommendations/0/selected"
+          },
+          "dimmed": {
+            "path": "/recommendations/0/dimmed"
           }
         },
         {
@@ -209,6 +215,12 @@
           },
           "category": {
             "path": "/recommendations/1/category"
+          },
+          "selected": {
+            "path": "/recommendations/1/selected"
+          },
+          "dimmed": {
+            "path": "/recommendations/1/dimmed"
           }
         }
       ]
@@ -230,7 +242,9 @@
             "tag": "weekend",
             "swatch": "#e4e4e7",
             "imageAsset": "assets/images/products/demo-0001.jpg",
-            "category": "top"
+            "category": "top",
+            "selected": false,
+            "dimmed": false
           },
           {
             "id": "demo-0002",
@@ -240,9 +254,12 @@
             "tag": "weekend",
             "swatch": "#e4e4e7",
             "imageAsset": "assets/images/products/demo-0002.jpg",
-            "category": "layer"
+            "category": "layer",
+            "selected": false,
+            "dimmed": false
           }
-        ]
+        ],
+        "selectedProductId": ""
       }
     }
   }

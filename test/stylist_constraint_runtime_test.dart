@@ -93,6 +93,26 @@ StylistModel _searchModel(
   return _text();
 };
 
+Future<Map<String, dynamic>> _selectAndSize(
+  StylistRuntime runtime,
+  String id,
+) async {
+  final picked = await runtime.turn(_select(id));
+  final options = picked.view.selectionOptions;
+  if (options == null) return picked;
+  final choice = (options['choices'] as List).first as Map;
+  return runtime.turn({
+    'action': {
+      'name': 'set_product_options',
+      'context': {
+        'productId': id,
+        'size': (choice['sizes'] as List).first,
+        'fit': 'Regular',
+      },
+    },
+  });
+}
+
 void main() {
   test(
     'hard color/material/brand filters survive optional search fallback',
@@ -277,7 +297,7 @@ void main() {
       );
       final bottom = await runtime.turn(_select('top-red-cotton'));
       expect(_ids(bottom), ['bottom-red']);
-      final complete = await runtime.turn(_select('bottom-red'));
+      final complete = await _selectAndSize(runtime, 'bottom-red');
       expect(_ids(complete), isEmpty);
       expect(complete['reply'], contains('Your look is complete'));
       expect(complete['constraints']['ownedCategories'], ['shoes']);
@@ -328,14 +348,14 @@ void main() {
       await runtime.turn(_select('top-blue-wool'));
       await runtime.turn(_select('bottom-red'));
       await runtime.turn(_select('shoes-red'));
-      final complete = await runtime.turn(_select('bag-red'));
+      final complete = await _selectAndSize(runtime, 'bag-red');
       expect(complete['reply'], contains('Your look is complete'));
       final revised = await runtime.turn({'message': 'No wool'});
       expect(_ids(revised), ['top-red-cotton']);
       expect((runtime.outfit['items'] as Map)['top'], 'top-blue-wool');
       expect(revised['reply'], isNot(contains('Your look is complete')));
       expect(revised['reply'], contains('conflict'));
-      final repaired = await runtime.turn(_select('top-red-cotton'));
+      final repaired = await _selectAndSize(runtime, 'top-red-cotton');
       expect((runtime.outfit['items'] as Map)['top'], 'top-red-cotton');
       expect(repaired['reply'], contains('Your look is complete'));
     },
