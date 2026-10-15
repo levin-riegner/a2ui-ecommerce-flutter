@@ -61,6 +61,14 @@ STYLIST_LIVE_TEST=1 STYLIST_LIVE_SEED_PREVIEW=1 STYLIST_LIVE_INTERACTIONS=2 STYL
 
 This narrower mode verifies that selecting a seeded top produces real model-generated bottom options. It does not test an entirely live journey or removal.
 
+To try question handling with the configured live model:
+
+```sh
+STYLIST_LIVE_TEST=1 fvm flutter test tools/genkit/intent_smoke_test.dart
+```
+
+This bounded test makes at most eight paid requests across a capability question, an outfit request, and a styling question. It checks that questions show no intake controls, explicit occasion/budget/exclusion facts persist, and advice does not change the brief. Free runtime and phone-width widget coverage is in `test/stylist_question_test.dart`.
+
 For free prompt/tool/flow inspection with the same catalog and stylist implementation, install the Genkit CLI on your development machine and run from the repository root:
 
 ```sh

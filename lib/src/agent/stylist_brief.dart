@@ -198,6 +198,10 @@ class StylistBrief {
     final correctedOccasion = occasionCorrection == null
         ? null
         : _occasionFromMessage(occasionCorrection.group(1)!);
+    final statedOccasion = RegExp(
+      r'\b(?:for my|attending|going to|occasion(?: is|:))\s+([^.!?;]+)',
+      caseSensitive: false,
+    ).firstMatch(text);
     var inferredOccasion = false;
     if (correctedOccasion != null &&
         RegExp(
@@ -206,9 +210,14 @@ class StylistBrief {
         ).hasMatch(correctedOccasion)) {
       patch['occasion'] = correctedOccasion;
     } else if (occasion.isEmpty &&
-        RegExp(r'[a-z]', caseSensitive: false).hasMatch(
-          text.replaceAll(RegExp(r'\bEUR\b', caseSensitive: false), ''),
-        )) {
+        statedOccasion != null &&
+        !_negatedBefore(text, statedOccasion.start)) {
+      patch['occasion'] = _occasionFromMessage(statedOccasion.group(1)!);
+    } else if (occasion.isEmpty &&
+        RegExp(
+          r'\b(?:wedding|dinner|interview|party|lunch|holiday|trip|meeting|date|concert|festival|work|weekend|day|walk)\b',
+          caseSensitive: false,
+        ).allMatches(text).any((match) => !_negatedBefore(text, match.start))) {
       patch['occasion'] = _occasionFromMessage(text);
       inferredOccasion = true;
     }

@@ -50,6 +50,19 @@ The production connection is assembled in `GenkitAgent.connect`: supply
 and runtime together. `model:` is the deterministic test/offline callback;
 connected production requests use the cancellation-aware `providerModel:` path.
 
+The model can call `respond_to_question` first to classify capability questions
+or general styling advice. Its structured input includes the intent and exact
+quotes of any explicitly supplied outfit facts. The host rejects quotes absent
+from the current message, restores the prior brief, and applies only those
+quoted facts. This response mode suppresses searches, intake controls and fixed
+follow-up prose while preserving selected pieces and the last presented IDs.
+It uses the existing four-request tool loop rather than a separate classifier.
+
+Occasion saves require `occasionEvidence` from the current message. The host
+also retains explicit event phrases such as "for my graduation"; it no longer
+treats arbitrary first messages as occasions. Schema and quote checks establish
+shape and grounding, but semantic interpretation still needs conversation tests.
+
 ## Transport and credentials
 
 OpenAI and Anthropic expose a public `httpClient:` parameter. The caller owns an

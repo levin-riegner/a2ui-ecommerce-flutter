@@ -257,6 +257,22 @@ void main() {
       gap: 34.0,
     ),
     (
+      name: 'book portrait',
+      size: const Size(669, 951),
+      status: HingeStatus.partiallyOpen,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
+      name: 'closed landscape',
+      size: const Size(678, 466),
+      status: HingeStatus.closed,
+      keyboard: 0.0,
+      cutout: false,
+      gap: 34.0,
+    ),
+    (
       name: 'open keyboard',
       size: const Size(951, 669),
       status: HingeStatus.fullyOpen,
@@ -303,12 +319,18 @@ void main() {
         await tester.pumpAndSettle();
         final opening = tester.getRect(find.byType(StylistComposer));
         expect(opening.bottom, scenario.size.height - scenario.gap);
-        expect(opening.left, 16);
+        expect(opening.left, scenario.status == HingeStatus.closed ? 16 : 32);
+        final card = tester.getRect(find.byType(InkWell).first);
+        expect(opening.left, card.left);
+        expect(opening.right, card.right);
         await tester.runAsync(() => agent.startJourney(DemoJourney.paris));
         await tester.pumpAndSettle();
         final conversation = tester.getRect(find.byType(StylistComposer));
         expect(conversation.bottom, opening.bottom);
-        expect(conversation.left, 16);
+        expect(
+          conversation.left,
+          scenario.status == HingeStatus.closed ? 16 : 32,
+        );
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

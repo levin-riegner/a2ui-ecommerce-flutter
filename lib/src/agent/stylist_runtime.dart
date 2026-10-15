@@ -18,6 +18,11 @@ typedef StylistResultValidator = void Function(Map<String, dynamic> result);
 
 const _instructions =
     'You are a personal stylist in a fictional demo catalog. '
+    'First distinguish questions about your capabilities or general styling advice from requests to build or change an outfit. '
+    'For a capability question, greeting, or general advice, call respond_to_question before any other tool, '
+    'then answer naturally and ask at most one relevant follow-up. Do not force the outfit intake form. '
+    'Its facts must be exact quotes of explicit preferences supplied alongside the question; use [] for a pure question. '
+    'A mention in a question (such as what is casual or can I spend 500) is not an accepted preference. '
     'Ask for the occasion and budget if missing. Search products before recommending them, '
     'then call present_products with 1 to 5 IDs from the search results you want to show. '
     'You have four model requests per interaction: use at most two requests for searches, '
@@ -37,6 +42,10 @@ const _instructions =
     'For verbal choices (including the second one), call add_to_outfit with an ID from '
     'Last presented IDs. For verbal removal call remove_from_outfit with a selected ID. '
     'Call save_outfit to record explicit changes to style, season, occasion or preferences; '
+    'Before searching, you MUST save any explicitly supplied occasion or other fact missing from Settled brief. '
+    'Mentioning a fact in your reply does not save it. Check the authoritative brief returned by the tool. '
+    'When saving an occasion, include occasionEvidence quoting the user\'s actual event and keep the occasion within that quote. '
+    'Never save greetings, capability questions or the entire conversation as an occasion. '
     'For combined changes, use apply_outfit_changes once with all brief edits, removals and additions before searching. '
     'Never change an explicit user fact to a suggestion. Hard exclusions must survive every search. '
     'never assume missing dressCode or budget. After an edit, use the updated tool result '
@@ -104,6 +113,7 @@ final _briefSchema = _object({
   'properties': {
     for (final name in [
       'occasion',
+      'occasionEvidence',
       'dressCode',
       'season',
       'palette',
@@ -124,6 +134,7 @@ final _changesSchema = _object({
       'properties': {
         for (final name in [
           'occasion',
+          'occasionEvidence',
           'dressCode',
           'season',
           'palette',
@@ -148,6 +159,24 @@ final _changesSchema = _object({
         'maxItems': 7,
       },
   },
+  'additionalProperties': false,
+});
+
+final _questionSchema = _object({
+  'type': 'object',
+  'properties': {
+    'intent': {
+      'type': 'string',
+      'enum': ['capabilities', 'styling_advice'],
+    },
+    'facts': {
+      'type': 'array',
+      'items': {'type': 'string', 'minLength': 1},
+      'maxItems': 7,
+      'description': 'Exact quotes of explicit new outfit facts, excluding the question itself. Empty for a pure question.',
+    },
+  },
+  'required': ['intent', 'facts'],
   'additionalProperties': false,
 });
 
@@ -192,11 +221,13 @@ class StylistRuntime {
                   'apply_outfit_changes',
                   'remove_from_outfit',
                   'save_outfit',
+                  'respond_to_question',
                 ].contains(tool.name),
               )
               .toList();
           request.toolChoice = ToolChoice.required;
-        } else if (scope.requests == 4 ||
+        } else if (scope.questionIntent != null ||
+            scope.requests == 4 ||
             scope.picks.isNotEmpty ||
             (scope.adjustingProductId != null && !scope.needsProducts) ||
             (scope.target == null &&
@@ -214,6 +245,7 @@ class StylistRuntime {
                   'apply_outfit_changes',
                   'add_to_outfit',
                   'remove_from_outfit',
+                  'respond_to_question',
                 ].contains(tool.name),
               )
               .toList();
@@ -284,6 +316,68 @@ class StylistRuntime {
           throw StateError('Stylist did not continue the outfit journey');
         }
         return response;
+      },
+    );
+    ai.defineTool(
+      name: 'respond_to_question',
+      description: 'Answer a capability question, greeting or general styling question without searching or advancing the outfit. Call first. Include only exact quotes of explicitly stated outfit facts alongside the question; facts is empty for pure questions. Returns the response mode; write your answer after this tool.',
+      inputSchema: _questionSchema,
+      fn: (input, context) async {
+        final scope = _scope;
+        scope.cancel.token.throwIfCancelled();
+        if (!scope.allowEdits ||
+            scope.searches > 0 ||
+            scope.confirmations.isNotEmpty) {
+          return ToolResult.response({
+            'error': 'Answer questions before editing or searching.',
+          });
+        }
+        final quotes = List<String>.from(input['facts'] as List);
+        if (quotes.any(
+          (quote) => quote.trim().isEmpty || !scope.userMessage.contains(quote),
+        )) {
+          return ToolResult.response({
+            'error': 'Facts must quote the current user message exactly.',
+          });
+        }
+        try {
+          var brief = scope.previousBrief;
+          for (final quote in quotes) {
+            brief = brief.recordMessage(
+              quote,
+              knownBrands: products.map((p) => p.brand),
+            );
+          }
+          _checkBudget(scope.state, brief: brief);
+          final before = scope.beforeInput!;
+          scope.state
+            ..briefState = brief
+            ..brief = before.brief
+            ..preferences = List.of(before.preferences)
+            ..city = before.city
+            ..cityContext = before.cityContext
+            ..cityContextNotice = before.cityContextNotice;
+          final accepted = quotes.join('\n');
+          if (accepted.isNotEmpty) {
+            if (scope.state.brief.isEmpty) {
+              scope.state.brief = accepted;
+            } else {
+              scope.state.preferences.add(accepted);
+            }
+          }
+          scope.userMessage = accepted;
+          scope.questionIntent = input['intent'] as String;
+          scope.allowEdits = false;
+          scope.notices.clear();
+          _refreshProgress(scope);
+          return ToolResult.response({
+            'intent': scope.questionIntent,
+            'brief': brief.toMap(),
+            'instruction': 'Answer the question naturally. Ask at most one relevant follow-up. No outfit intake controls or product search this turn.',
+          });
+        } on FormatException catch (error) {
+          return ToolResult.response({'error': error.message});
+        }
       },
     );
     ai.defineTool(
@@ -737,6 +831,7 @@ class StylistRuntime {
     scope.userMessage = message;
     scope.userBudget = parseStylistBudget(message);
     scope.previousBrief = state.briefState;
+    scope.beforeInput = state.copy();
     final action = input['action'] as Map?;
     if (message.isEmpty && action == null) {
       throw const FormatException('A message or action is required');
@@ -762,7 +857,9 @@ class StylistRuntime {
                 outfit: state.outfit,
                 budget: state.budget,
                 occasion: state.briefState.summary,
-                clarification: state.briefState.canSearch
+                clarification:
+                    state.lastQuestionIntent != null ||
+                        state.briefState.canSearch
                     ? null
                     : {
                         'missingFields': state.briefState.missingFields,
@@ -937,6 +1034,7 @@ class StylistRuntime {
       ],
       system: _systemFor(scope),
       toolNames: [
+        'respond_to_question',
         'search_products',
         'present_products',
         'save_outfit',
@@ -998,14 +1096,19 @@ class StylistRuntime {
       if (scope.feasibilityNotice.isNotEmpty) scope.feasibilityNotice,
       ...scope.notices,
       guidance,
-      if (scope.confirmations.isNotEmpty ||
-          plan.complete ||
-          !scope.needsProducts)
+      if (scope.questionIntent == null &&
+          (scope.confirmations.isNotEmpty ||
+              plan.complete ||
+              !scope.needsProducts) &&
+          (state.briefState.canSearch || guidance.isEmpty))
         nextStep,
     ].where((text) => text.isNotEmpty).join('\n\n');
     state.lastReply = reply;
-    state.lastNextCategory = scope.target;
-    state.lastPresented = scope.picks.map((product) => product.id).toList();
+    state.lastQuestionIntent = scope.questionIntent;
+    if (scope.questionIntent == null) {
+      state.lastNextCategory = scope.target;
+      state.lastPresented = scope.picks.map((product) => product.id).toList();
+    }
     if (state.history.isNotEmpty && state.history.last.role == Role.model) {
       state.history[state.history.length - 1] = Message(
         role: Role.model,
@@ -1014,6 +1117,7 @@ class StylistRuntime {
     }
     return {
       'reply': reply,
+      if (scope.questionIntent != null) 'intent': scope.questionIntent,
       'products': scope.picks.map(productFacts).toList(),
       'brief': state.briefState.toMap(),
       'missingFields': state.briefState.missingFields,
@@ -1031,7 +1135,8 @@ class StylistRuntime {
         outfit: state.outfit,
         budget: state.budget,
         occasion: state.briefState.summary,
-        clarification: state.briefState.canSearch
+        clarification:
+            scope.questionIntent != null || state.briefState.canSearch
             ? null
             : {
                 'missingFields': state.briefState.missingFields,
@@ -1137,7 +1242,8 @@ class StylistRuntime {
       requested = null;
     }
     scope.target =
-        state.briefState.canSearch &&
+        scope.questionIntent == null &&
+            state.briefState.canSearch &&
             state.briefState.constraints.clarificationRequests.isEmpty
         ? requested ?? plan.nextCategory
         : null;
@@ -1171,7 +1277,9 @@ class StylistRuntime {
   String _systemFor(_TurnScope scope) {
     final state = scope.state;
     final plan = scope.plan!;
-    final next = !state.briefState.canSearch
+    final next = scope.questionIntent != null
+        ? 'This turn answers a ${scope.questionIntent} question. Answer it directly; ask at most one relevant follow-up. Do not ask for missing outfit fields or suggest a search.'
+        : !state.briefState.canSearch
         ? 'Searching is blocked. Ask only for missing fields: ${state.briefState.missingFields.join(', ')}. Save explicit answers with save_outfit.'
         : state.briefState.constraints.clarificationRequests.isNotEmpty
         ? 'Searching is blocked. Ask only these scope questions: ${state.briefState.constraints.clarificationRequests.join(' ')}.'
@@ -1195,7 +1303,8 @@ class StylistRuntime {
         'Plan: ${plan.slots.map((slot) => slot.name).join(', ')}. '
         'Progress: ${plan.filledCount} of ${plan.slots.length}.\n'
         'Next category: ${scope.target?.name ?? 'none'}. '
-        'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : euro(scope.availableBudget)}. $next';
+        'Available for next category, including released replacements: ${state.budget == null ? 'unknown' : euro(scope.availableBudget)}. $next '
+        'For capability or general advice questions, respond_to_question takes priority over the outfit next step.';
   }
 
   void _checkBudget(_StylistState state, {StylistBrief? brief}) {
@@ -1215,6 +1324,24 @@ class StylistRuntime {
     Map<String, Object?> patch, {
     Set<String> clearFields = const {},
   }) {
+    patch = Map.of(patch);
+    final occasionEvidence = patch.remove('occasionEvidence');
+    final proposedOccasion = patch['occasion'];
+    if (proposedOccasion != null &&
+        (brief.sources['occasion'] != BriefFactSource.user ||
+            proposedOccasion != brief.occasion) &&
+        (proposedOccasion is! String ||
+            proposedOccasion.contains('?') ||
+            occasionEvidence is! String ||
+            occasionEvidence.trim().isEmpty ||
+            !scope.userMessage.contains(occasionEvidence) ||
+            !occasionEvidence.toLowerCase().contains(
+              proposedOccasion.toLowerCase(),
+            ))) {
+      throw const FormatException(
+        'Save only a stated occasion, supported by an exact quote from the current message.',
+      );
+    }
     final authorized = <String>{};
     for (final entry in {
       'occasion': r'\b(?:occasion|actually|instead|wedding|dinner|interview|party|lunch|trip|holiday)\b',
@@ -1470,6 +1597,7 @@ class _StylistState {
   String catalogOccasion = '';
   String city = '';
   String lastReply = '';
+  String? lastQuestionIntent;
   ProductCategory? lastNextCategory;
   CityContext? cityContext;
   String? cityContextNotice;
@@ -1489,6 +1617,7 @@ class _StylistState {
     ..catalogOccasion = catalogOccasion
     ..city = city
     ..lastReply = lastReply
+    ..lastQuestionIntent = lastQuestionIntent
     ..lastNextCategory = lastNextCategory
     ..cityContext = cityContext
     ..cityContextNotice = cityContextNotice
@@ -1529,6 +1658,8 @@ class _TurnScope {
   String userMessage = '';
   double? userBudget;
   StylistBrief previousBrief = const StylistBrief();
+  _StylistState? beforeInput;
+  String? questionIntent;
   final Set<String> notices = {};
   String feasibilityNotice = '';
   StylistInputError? atomicFailure;
@@ -1607,7 +1738,29 @@ Future<ModelResponse> offlineStylistModel(ModelRequest request) async {
       ? responses.last.toolResponse
       : null;
   final List<Part> content;
-  if (request.tools == null ||
+  if (result?.name == 'respond_to_question') {
+    content = [
+      TextPart(
+        text: 'I can help build an outfit from the catalog, compare pieces, or refine a look. What are you dressing for?',
+      ),
+    ];
+  } else if (last.role == Role.user &&
+      request.tools?.any((tool) => tool.name == 'respond_to_question') ==
+          true &&
+      RegExp(
+        r'^(?:what can (?:we do here|you do)|hello|hi)[?.!]*$',
+        caseSensitive: false,
+      ).hasMatch(last.text.trim())) {
+    content = [
+      ToolRequestPart(
+        toolRequest: ToolRequest(
+          name: 'respond_to_question',
+          ref: 'preview-question',
+          input: {'intent': 'capabilities', 'facts': <String>[]},
+        ),
+      ),
+    ];
+  } else if (request.tools == null ||
       request.tools!.isEmpty ||
       (!request.tools!.any((tool) => tool.name == 'search_products') &&
           request.messages.any(
@@ -1640,7 +1793,23 @@ Future<ModelResponse> offlineStylistModel(ModelRequest request) async {
   } else if (request.messages
       .where((message) => message.role == Role.system)
       .any((message) => message.text.contains('Searching is blocked'))) {
-    content = [TextPart(text: 'Let’s settle the brief first.')];
+    final fields =
+        RegExp(r'Ask only for missing fields: ([^.]+)')
+            .firstMatch(
+              request.messages
+                  .where((m) => m.role == Role.system)
+                  .map((m) => m.text)
+                  .join(' '),
+            )
+            ?.group(1)
+            ?.split(', ') ??
+        const ['dressCode', 'budget'];
+    content = [
+      TextPart(
+        text:
+            'Tell me ${fields.map((field) => field == 'dressCode' ? 'the style or dress code' : 'your budget').join(' and ')} so I can find the right pieces.',
+      ),
+    ];
   } else {
     content = [
       ToolRequestPart(
