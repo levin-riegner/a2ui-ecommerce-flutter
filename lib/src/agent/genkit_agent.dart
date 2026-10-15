@@ -59,11 +59,19 @@ class GenkitAgent extends CommerceAgent {
   @override
   bool get hasLocalLibrary => true;
   @override
-  Future<void> openBag() => _enqueue(
-    () => _performTurn(
-      _AgentTurn(action: {'name': 'open_bag', 'context': <String, Object?>{}}),
-    ).then<void>((_) {}),
-  );
+  Future<void> openBag() => _openLibrary('open_bag');
+
+  @override
+  Future<void> openSavedLooks() => _openLibrary('open_saved_looks');
+
+  Future<void> _openLibrary(String name) => _enqueue(() async {
+    if (await _performTurn(
+      _AgentTurn(action: {'name': name, 'context': <String, Object?>{}}),
+    )) {
+      _hasStarted = true;
+      notifyListeners();
+    }
+  });
 
   Future<void> disconnect() async {
     if (_revoked) return;
@@ -104,6 +112,7 @@ class GenkitAgent extends CommerceAgent {
   final List<CommerceConversationEntry> _entries = [];
   int _turnId = 0;
   int _epoch = 0;
+  int _interactionGeneration = 0;
   @override
   List<CommerceConversationEntry> get conversationEntries =>
       List.unmodifiable(_entries);
@@ -145,6 +154,28 @@ class GenkitAgent extends CommerceAgent {
   bool get canStartBrief => true;
 
   @override
+  Future<bool> restartChat() async {
+    final epoch = _supersedeTurn();
+    var restarted = false;
+    await _enqueue(() async {
+      if (epoch != _epoch) return;
+      final saved = await _performTurn(
+        _AgentTurn(
+          action: {'name': 'reset_look', 'context': <String, Object?>{}},
+        ),
+      );
+      if (!saved || epoch != _epoch || _disposed || _revoked) return;
+      _clearSurfaces();
+      _runtime?.reset();
+      activeJourney = null;
+      _hasStarted = false;
+      restarted = true;
+      notifyListeners();
+    });
+    return restarted;
+  }
+
+  @override
   Future<void> startBrief(String message) {
     final text = message.trim();
     if (text.isEmpty) return Future<void>.value();
@@ -163,6 +194,7 @@ class GenkitAgent extends CommerceAgent {
   }
 
   void _clearSurfaces() {
+    _interactionGeneration++;
     for (final surfaceId in _surfaceIds) {
       if (!_disposed) {
         transport.addMessage(core.DeleteSurfaceMessage(surfaceId: surfaceId));
@@ -193,10 +225,20 @@ class GenkitAgent extends CommerceAgent {
   }
 
   Future<void> _handleSend(ChatMessage message) async {
-    if (_disposed || isBusy || _connectionError != null) return;
+    if (_disposed || _revoked) return;
     if (!_acceptsInteractions(message)) return;
     final action = _actionFrom(message);
     final text = message.text.trim();
+    final restart = action?['name'] == 'reset_look'
+        ? ''
+        : action == null
+        ? restartStylistBrief(text)
+        : null;
+    if (restart != null) {
+      if (await restartChat() && restart.isNotEmpty) await startBrief(restart);
+      return;
+    }
+    if (isBusy || _connectionError != null) return;
     if (action == null && text.isEmpty) return;
     await _enqueue(
       () => _performTurn(_AgentTurn(message: text, action: action)),
@@ -241,7 +283,8 @@ class GenkitAgent extends CommerceAgent {
       if (action['name'] is! String || action['context'] is! Map) continue;
       return {
         'name': action['name'],
-        'context': Map<String, Object?>.from(action['context'] as Map),
+        'context': Map<String, Object?>.from(action['context'] as Map)
+          ..remove('_chatGeneration'),
       };
     }
     return null;
@@ -256,6 +299,12 @@ class GenkitAgent extends CommerceAgent {
         if (decoded is! Map || decoded['action'] is! Map) return false;
         final action = decoded['action'] as Map;
         final surfaceId = action['surfaceId'] ?? decoded['surfaceId'];
+        final context = action['context'];
+        if (action['sourceComponentId'] != null &&
+            (context is! Map ||
+                context['_chatGeneration'] != _interactionGeneration)) {
+          return false;
+        }
         if (surfaceId != null &&
             (surfaceId is! String ||
                 !_surfaceIds.contains(surfaceId) ||
@@ -278,11 +327,12 @@ class GenkitAgent extends CommerceAgent {
       turn.recorded = true;
     }
     final pendingId = 'pending-$id';
-    void publishProgress(List<Product>? picks) {
+    var textAlreadyVisible = false;
+    void publishProgress([String? text]) {
       if (_disposed || _revoked || epoch != _epoch) return;
       final messages = renderPendingStylistSurface(
         surfaceId: pendingId,
-        picks: picks,
+        text: text,
       );
       for (final raw in messages) {
         final event = core.A2uiMessage.fromJson(Map<String, dynamic>.from(raw));
@@ -306,7 +356,10 @@ class GenkitAgent extends CommerceAgent {
           if (turn.message.isNotEmpty) 'message': turn.message,
           if (turn.action != null) 'action': turn.action,
         },
-        onProgress: publishProgress,
+        onText: (text) {
+          textAlreadyVisible = true;
+          publishProgress(text);
+        },
         validateResult: (payload) {
           if (_disposed || _revoked || epoch != _epoch) {
             throw StateError('Turn superseded');
@@ -325,7 +378,12 @@ class GenkitAgent extends CommerceAgent {
           _surfaceIds.add(event.surfaceId);
           if (event.surfaceId.startsWith('inline-')) {
             latestInlineSurfaceId = event.surfaceId;
-            _entries.add(CommerceSurfaceEntry(surfaceId: event.surfaceId));
+            _entries.add(
+              CommerceSurfaceEntry(
+                surfaceId: event.surfaceId,
+                textAlreadyVisible: textAlreadyVisible,
+              ),
+            );
           }
         } else if (event is core.DeleteSurfaceMessage) {
           _surfaceIds.remove(event.surfaceId);
@@ -370,7 +428,33 @@ class GenkitAgent extends CommerceAgent {
     if (messages is! List) throw const FormatException('Invalid A2UI batch');
     return messages.map((raw) {
       if (raw is! Map) throw const FormatException('Invalid A2UI message');
-      return core.A2uiMessage.fromJson(Map<String, dynamic>.from(raw));
+      // Authored actions carry committed-chat provenance, independently of the
+      // cancellation epoch. Failed resets leave the prior controls usable.
+      Object? stamp(Object? value) {
+        if (value is List) return value.map(stamp).toList();
+        if (value is! Map) return value;
+        return <String, dynamic>{
+          for (final entry in value.entries)
+            entry.key as String:
+                entry.key == 'event' &&
+                    entry.value is Map &&
+                    (entry.value as Map)['name'] is String
+                ? <String, dynamic>{
+                    ...Map<String, dynamic>.from(entry.value as Map),
+                    'context': <String, dynamic>{
+                      ...?((entry.value as Map)['context'] as Map?),
+                      '_chatGeneration': _interactionGeneration,
+                    },
+                  }
+                : stamp(entry.value),
+        };
+      }
+
+      return core.A2uiMessage.fromJson(
+        Map<String, dynamic>.from(
+          raw.containsKey('updateComponents') ? stamp(raw) as Map : raw,
+        ),
+      );
     }).toList();
   }
 

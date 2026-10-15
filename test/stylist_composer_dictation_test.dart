@@ -272,7 +272,7 @@ void main() {
   );
 
   testWidgets(
-    'glass stays inside the input pill and final content stays reachable',
+    'Figma dock masks scrolling content and final content stays reachable',
     (tester) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = const Size(390, 844);
@@ -310,23 +310,29 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byType(BackdropFilter), findsOneWidget);
-      expect(
-        tester.getRect(find.byType(BackdropFilter)),
-        tester.getRect(find.byType(FinalizedChatInput)),
+      expect(find.byType(BackdropFilter), findsNothing);
+      final pill = tester.getRect(find.byType(FinalizedChatInput));
+      final fade = find.byWidgetPredicate(
+        (widget) =>
+            widget is Image &&
+            widget.image ==
+                const AssetImage('assets/images/occasions/composer-fade.png'),
       );
+      expect(tester.getRect(fade).height, 24);
+      expect(tester.getRect(fade).bottom, pill.top);
+      expect(pill.height, 52);
       final mic = tester.getRect(
         find.byKey(const ValueKey('stylist-microphone')),
       );
       // The visible circle keeps 8px pill padding; its larger touch target
       // extends another 6px within the pill.
-      expect(tester.getRect(find.byType(StylistComposer)).bottom, 844 - 34 - 8);
-      expect(mic.bottom, lessThanOrEqualTo(844 - 34 - 6));
+      expect(tester.getRect(find.byType(StylistComposer)).bottom, 844 - 34);
+      expect(mic.bottom, lessThanOrEqualTo(844 - 34 - 2));
       expect(
         tester
             .getRect(find.byKey(const ValueKey('stylist-microphone-circle')))
             .bottom,
-        lessThanOrEqualTo(844 - 34 - 12),
+        lessThanOrEqualTo(844 - 34 - 8),
       );
       controller.text = 'A wedding in Berlin\nAn outdoor ceremony\nCocktail dress code\nAround €800\nComfortable shoes';
       await tester.pumpAndSettle();

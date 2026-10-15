@@ -1,4 +1,5 @@
 import 'money.dart';
+import 'product_attributes.dart';
 
 enum DemoJourney {
   paris(
@@ -86,6 +87,9 @@ class Product {
     this.occasion = '',
     this.imageAsset = '',
     this.keywords = '',
+    this.attributes = const ProductAttributes(),
+    this.sizeOptions = const [],
+    this.variantGroup = '',
   });
 
   final String id;
@@ -109,6 +113,13 @@ class Product {
   final String occasion;
   final String imageAsset;
   final String keywords;
+  final ProductAttributes attributes;
+
+  /// Sizes configured for this catalog item; no garment measurements implied.
+  final List<String> sizeOptions;
+
+  /// Explicit style family for separate catalog rows that differ by colour.
+  final String variantGroup;
 
   bool supportsGender(String requested) {
     if (requested.trim().isEmpty) return true;

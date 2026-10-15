@@ -57,7 +57,7 @@ class OutfitPlan {
     ).hasMatch(text);
     // The Flutter brief carries the season in text rather than a separate field.
     final cold = RegExp(
-      r'autumn|rain|cold|wind|snow|winter|november|december|january|february',
+      r'autumn|rain|cold|wind|snow|winter|october|november|december|january|february',
     ).hasMatch(text);
     final dressRoute =
         !restrictions.excludedCategories.contains(ProductCategory.dress) &&

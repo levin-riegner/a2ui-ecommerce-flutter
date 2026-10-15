@@ -22,10 +22,14 @@ String? parseDestinationCity(String message, {bool allowBare = false}) {
       r"[A-Za-zÀ-ž][A-Za-zÀ-ž'’.-]*(?:\s+[A-Za-zÀ-ž][A-Za-zÀ-ž'’.-]*){0,3}?";
   const stop =
       r'(?=\s+(?:for|this|next|today|tomorrow|on|during|under|with|budget|and|in|business|casual|formal)\b|[,;.!?]|$)';
+  final months = RegExp(
+    r'^(?:(?:early|mid|late)\s+)?(?:january|february|march|april|may|june|july|august|september|october|november|december)$',
+    caseSensitive: false,
+  );
   final explicit = RegExp(
     '\\b(?:in|to|visiting|visit${isWeatherQuestion(message) ? '|for' : ''})\\s+($words)$stop',
     caseSensitive: false,
-  ).allMatches(message).toList();
+  ).allMatches(message).where((match) => !months.hasMatch(match.group(1)!)).toList();
   final heading = RegExp(
     '^\\s*($words)\\s+(?:for\\s+(?:the\\s+)?|this\\s+|next\\s+)(?:weekend|week|trip)\\b',
     caseSensitive: false,
@@ -41,6 +45,7 @@ String? parseDestinationCity(String message, {bool allowBare = false}) {
     location = message.trim().replaceFirst(RegExp(r'[.!?]$'), '');
   }
   if (location == null ||
+      months.hasMatch(location) ||
       RegExp(
         r'\b(?:a|an|the|dress|shirt|top|bottom|shoes|jacket|bag|outfit|budget|spend|weather|weekend|today|tomorrow|tonight|monday|tuesday|wednesday|thursday|friday|saturday|sunday|casual|formal|business|winter|summer|spring|autumn|wool|cotton|black|blue|red|rain|yes|no|thanks|please)\b',
         caseSensitive: false,
@@ -57,6 +62,7 @@ String? parseDestinationCity(String message, {bool allowBare = false}) {
       caseSensitive: false,
     ).firstMatch(message.substring(locationEnd));
     if (country != null &&
+        !months.hasMatch(country.group(1)!) &&
         !RegExp(
           r'\b(?:business|casual|formal|budget|outfit|dress|winter|summer|spring|autumn)\b',
           caseSensitive: false,

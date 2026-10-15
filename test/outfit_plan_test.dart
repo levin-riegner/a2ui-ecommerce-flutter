@@ -19,6 +19,29 @@ Map<String, Product> outfitOf(Iterable<ProductCategory> categories) => {
 };
 
 void main() {
+  test('Paris dinner in October includes a layer without requiring the word autumn', () {
+    final plan = OutfitPlan.from(
+      brief: 'Anniversary dinner at a smart restaurant in Paris in October, black tie optional, about €1,500',
+      outfit: {},
+    );
+    expect(plan.slots, [
+      ProductCategory.dress,
+      ProductCategory.shoes,
+      ProductCategory.layer,
+      ProductCategory.bag,
+    ]);
+    final selected = outfitOf([
+      ProductCategory.dress,
+      ProductCategory.shoes,
+      ProductCategory.bag,
+    ]);
+    final unfinished = OutfitPlan.from(
+      brief: 'Paris dinner in October',
+      outfit: selected,
+    );
+    expect(unfinished.complete, isFalse);
+    expect(unfinished.nextCategory, ProductCategory.layer);
+  });
   test('formal autumn route starts with a dress and includes a layer', () {
     final plan = OutfitPlan.from(
       brief: '${DemoJourney.paris.title}. ${DemoJourney.paris.brief}',

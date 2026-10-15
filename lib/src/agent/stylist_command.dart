@@ -26,7 +26,14 @@ enum StylistCommandKind {
   updateBudget('update_budget'),
   selectProduct('select_product'),
   removeProduct('remove_product'),
-  adjustPiece('adjust_piece');
+  adjustPiece('adjust_piece'),
+  openProductDetails('open_product_details'),
+  setFitSize('set_fit_size'),
+  chooseProductColour('choose_product_colour'),
+  setProductOptions('set_product_options'),
+  previewDemoCheckout('preview_demo_checkout'),
+  confirmDemoCheckout('confirm_demo_checkout'),
+  openDemoReceipt('open_demo_receipt');
 
   const StylistCommandKind(this.wireName);
   final String wireName;

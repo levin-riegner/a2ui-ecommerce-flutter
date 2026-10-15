@@ -155,6 +155,105 @@ void main() {
     },
   );
 
+  test(
+    'Luna streams SSE prose with reasoning disabled after tool calls',
+    () async {
+      final wire = StreamController<List<int>>();
+      final connected = Completer<void>();
+      final received = Completer<void>();
+      final streamed = <String>[];
+      var requests = 0;
+      final client = MockClient.streaming((request, bodyStream) async {
+        requests++;
+        final body = jsonDecode(await bodyStream.bytesToString()) as Map;
+        expect(body['model'], 'gpt-6-luna');
+        expect(body['reasoning_effort'], 'none');
+        expect(body['store'], false);
+        if (requests == 3) {
+          expect(body['stream'], isTrue);
+          connected.complete();
+          return http.StreamedResponse(
+            wire.stream,
+            200,
+            headers: {'content-type': 'text/event-stream'},
+          );
+        }
+        expect(body['stream'], isNot(true));
+        final response = requests == 1
+            ? providerToolReply('openai', 'search_products', {'query': 'dress'})
+            : providerToolReply('openai', 'present_products', {
+                'productIds': ['dress-1'],
+              });
+        return http.StreamedResponse(
+          Stream.value(response.bodyBytes),
+          200,
+          headers: response.headers,
+        );
+      });
+      final connection = GenkitProvider(
+        ModelSettings(
+          provider: 'openai',
+          model: 'gpt-6-luna',
+          apiKey: 'test-key',
+        ),
+        client: client,
+      );
+      final runtime = StylistRuntime(
+        products: products,
+        providerModel: connection.model,
+        onBeginTurn: connection.beginTurn,
+        onCancelTurn: connection.cancelTurn,
+      );
+      addTearDown(() async {
+        connection.dispose();
+        await runtime.dispose();
+        client.close();
+      });
+      final turn = runtime.turn(
+        {'message': 'A dress under €100'},
+        onText: (text) {
+          streamed.add(text);
+          if (text.contains('A flowing silhouette.') && !received.isCompleted) {
+            received.complete();
+          }
+        },
+      );
+      await connected.future;
+      void event(String content, {String? finishReason}) => wire.add(
+        utf8.encode(
+          'data: ${jsonEncode({
+            'id': 'chat_stream',
+            'object': 'chat.completion.chunk',
+            'created': 1,
+            'model': 'gpt-6-luna',
+            'choices': [
+              {
+                'index': 0,
+                'delta': {'content': content},
+                'finish_reason': finishReason,
+              },
+            ],
+          })}\n\n',
+        ),
+      );
+      event('A flowing ');
+      event('silhouette. ');
+      await received.future.timeout(const Duration(seconds: 5));
+      expect(streamed.last, contains('A flowing silhouette.'));
+      expect(runtime.outfit['items'], isEmpty);
+      event('Choose your favourite.', finishReason: 'stop');
+      wire.add(utf8.encode('data: [DONE]\n\n'));
+      await wire.close();
+      final result = await turn;
+      expect(
+        result['reply'],
+        contains('A flowing silhouette. Choose your favourite.'),
+      );
+      expect(result['products'].single['id'], 'dress-1');
+      expect(requests, 3);
+    },
+  );
+
   for (final provider in ModelSettings.providers) {
     test(
       '$provider official Genkit plugin calls provider directly with an isolated key',

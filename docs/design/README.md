@@ -59,6 +59,14 @@ The production right-side content contains only the black dressing room.
 Selected pieces remain inside its slots; no companion selected-products list
 is emitted or rendered beneath it.
 
+The A4 bag view (`204:7457`) opens a centered 400-point preview over a dark,
+blurred backdrop spanning both panes. Quantity, removal, undo and size edits use
+the current host-owned bag; the chat draft remains mounted behind the overlay.
+The Check out action continues to the existing local demo checkout. Narrow
+screens and larger text stack row controls and scroll the dialog within the
+available display area. An existing Fit Notes row behind the modal can overflow
+at 200% text in a 390-point chat pane; that separate component is unchanged.
+
 The production journey preserves local brief changes until submission,
 selected outfit/budget accounting and explicit select/remove events. Change on a
 filled piece requests affordable alternatives while keeping the current outfit

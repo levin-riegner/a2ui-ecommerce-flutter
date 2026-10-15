@@ -110,13 +110,20 @@ class CommerceChoice extends StatelessWidget {
 }
 
 class CommercePrimaryButton extends StatelessWidget {
-  const CommercePrimaryButton({super.key, required this.label, this.onPressed});
+  const CommercePrimaryButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.style,
+  });
   final String label;
   final VoidCallback? onPressed;
+  final ButtonStyle? style;
   @override
   Widget build(BuildContext context) => SizedBox(
     width: double.infinity,
     child: FilledButton(
+      style: style,
       onPressed: onPressed,
       child: Text(label, textAlign: TextAlign.center),
     ),

@@ -73,6 +73,47 @@ Widget component(
 }
 
 void main() {
+  testWidgets(
+    'stylist emphasis renders semibold text without Markdown markers',
+    (tester) async {
+      await tester.pumpWidget(
+        component('StylistMessage', {
+          'text':
+              'Choose the **Black Sheer-Panel Maxi Dress** with **a jacket**.',
+        }),
+      );
+      await tester.pumpAndSettle();
+      final message = tester.widget<Text>(
+        find.descendant(
+          of: find.byType(FinalizedStylistMessage),
+          matching: find.byType(Text),
+        ),
+      );
+      expect(
+        message.textSpan!.toPlainText(),
+        'Choose the Black Sheer-Panel Maxi Dress with a jacket.',
+      );
+      final spans = (message.textSpan! as TextSpan).children!.cast<TextSpan>();
+      expect(
+        spans
+            .where((s) => s.style?.fontWeight == FontWeight.w600)
+            .map((s) => s.text),
+        ['Black Sheer-Panel Maxi Dress', 'a jacket'],
+      );
+      expect(message.style!.height, 1.5);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('unmatched emphasis stays literal without hiding text', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      component('StylistMessage', {'text': 'Choose **this dress'}),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Choose **this dress'), findsOneWidget);
+  });
   test(
     'all 14 screen compositions validate runtime schemas and child references',
     () async {

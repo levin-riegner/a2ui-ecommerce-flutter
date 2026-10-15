@@ -218,6 +218,7 @@ class _FirstTurnInputErrorRuntime extends StylistRuntime {
     Map<String, dynamic> input, {
     CancellationToken? cancel,
     StylistProgress? onProgress,
+    StylistTextProgress? onText,
     StylistResultValidator? validateResult,
   }) {
     if (_reject) {
@@ -233,6 +234,7 @@ class _FirstTurnInputErrorRuntime extends StylistRuntime {
       input,
       cancel: cancel,
       onProgress: onProgress,
+      onText: onText,
       validateResult: validateResult,
     );
   }

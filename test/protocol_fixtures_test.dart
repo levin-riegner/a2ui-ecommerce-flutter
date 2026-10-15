@@ -65,8 +65,12 @@ void main() {
   });
 
   test('recommendation prices omit zero decimals and preserve cents', () {
-    final messages = renderPendingStylistSurface(
-      surfaceId: 'preview',
+    final messages = renderStylistSurfaces(
+      turn: 1,
+      reply: 'Choose a shirt.',
+      outfit: {},
+      budget: 200,
+      occasion: 'Dinner',
       picks: [
         for (final price in [45.0, 45.75, 45.5])
           Product(

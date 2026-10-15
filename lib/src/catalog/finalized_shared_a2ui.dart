@@ -27,11 +27,15 @@ final finalizedSharedItems = <CatalogItem>[
       return BoundString(
         dataContext: context.dataContext,
         value: data['label'],
-        builder: (_, label) => FinalizedPrimaryButton(
-          label: label ?? '',
-          onPressed: _hasEvent(data['action'])
-              ? () => _dispatch(context, data['action'])
-              : null,
+        builder: (_, label) => BoundBool(
+          dataContext: context.dataContext,
+          value: data['enabled'] ?? true,
+          builder: (_, enabled) => FinalizedPrimaryButton(
+            label: label ?? '',
+            onPressed: enabled == true && _hasEvent(data['action'])
+                ? () => _dispatch(context, data['action'])
+                : null,
+          ),
         ),
       );
     },

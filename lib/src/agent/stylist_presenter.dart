@@ -30,6 +30,10 @@ Map<String, dynamic> presentStylistResult(StylistTurnResult result) {
     ownedCategories: view.ownedCategories,
     showCompletion: view.showCompletion,
     library: view.library,
+    inspectProducts: view.inspectProducts,
+    changeDirection: view.changeDirection,
+    productDetails: view.productDetails,
+    selectionOptions: view.selectionOptions,
   );
   // GenUI edits bound form data locally. Its wire graph must own mutable
   // collections rather than sharing the immutable domain snapshot.
@@ -37,12 +41,34 @@ Map<String, dynamic> presentStylistResult(StylistTurnResult result) {
     jsonEncode({
       ...result.toJson(),
       'messages': view.updateCurrentInlineOnly
-          ? messages.where((message) {
-              final update =
-                  message['updateComponents'] ?? message['updateDataModel'];
-              return update is Map &&
-                  update['surfaceId'] == 'inline-${view.turn}';
-            }).toList()
+          ? [
+              for (final message in messages)
+                if (message['updateComponents'] case final Map update)
+                  if (update['surfaceId'] == 'inline-${view.turn}')
+                    {
+                      'version': 'v0.9',
+                      'updateComponents': {
+                        'surfaceId': update['surfaceId'],
+                        'components': [
+                          for (final c in update['components'] as List)
+                            if ((c['id'] as String).startsWith('city-')) c,
+                        ],
+                      },
+                    },
+              for (final entry in <String, Object?>{
+                'cityLabel': view.cityContext?.label ?? view.city,
+                'weather': view.cityContext?.weatherCard,
+                'contextNotice': view.cityContextNotice ?? '',
+              }.entries)
+                {
+                  'version': 'v0.9',
+                  'updateDataModel': {
+                    'surfaceId': 'inline-${view.turn}',
+                    'path': '/${entry.key}',
+                    'value': entry.value,
+                  },
+                },
+            ]
           : messages,
     }),
   ) as Map<String, dynamic>;

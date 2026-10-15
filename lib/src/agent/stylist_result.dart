@@ -19,13 +19,16 @@ class StylistTurnResult extends MapBase<String, dynamic> {
     required Map<String, Product> outfit,
     required this.view,
     required Map<String, Object?> catalog,
+    Map<String, int> demoSold = const {},
   }) : products = List.unmodifiable(products),
        brief = StylistBrief.fromSnapshot(brief.toSnapshot()),
        outfit = Map.unmodifiable(outfit),
        _json = _freeze({
          'reply': reply,
          'intent': ?intent,
-         'products': products.map(productFacts).toList(),
+         'products': products
+             .map((p) => productFacts(p, demoSold: demoSold))
+             .toList(),
          'brief': brief.toMap(),
          'missingFields': brief.missingFields,
          'constraints': brief.productConstraints.toMap(),
@@ -83,6 +86,10 @@ class StylistViewState {
     Set<ProductCategory> ownedCategories = const {},
     this.showCompletion = true,
     Map<String, Object?>? library,
+    this.inspectProducts = false,
+    this.changeDirection = false,
+    Map<String, Object?>? productDetails,
+    Map<String, Object?>? selectionOptions,
     this.updateCurrentInlineOnly = false,
   }) : picks = List.unmodifiable(picks),
        clarification = _freeze(clarification) as Map<String, Object?>?,
@@ -90,7 +97,9 @@ class StylistViewState {
        adjustmentOptions = List.unmodifiable(adjustmentOptions),
        preferences = _freeze(preferences) as Map<String, Object?>?,
        ownedCategories = Set.unmodifiable(ownedCategories),
-       library = _freeze(library) as Map<String, Object?>?;
+       library = _freeze(library) as Map<String, Object?>?,
+       productDetails = _freeze(productDetails) as Map<String, Object?>?,
+       selectionOptions = _freeze(selectionOptions) as Map<String, Object?>?;
 
   final int turn;
   final List<Product> picks;
@@ -110,6 +119,8 @@ class StylistViewState {
   final Set<ProductCategory> ownedCategories;
   final bool showCompletion;
   final Map<String, Object?>? library;
+  final bool inspectProducts, changeDirection;
+  final Map<String, Object?>? productDetails, selectionOptions;
   final bool updateCurrentInlineOnly;
 }
 

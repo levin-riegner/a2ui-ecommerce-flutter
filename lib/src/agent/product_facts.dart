@@ -1,4 +1,5 @@
 import '../data/models.dart';
+import '../data/demo_commerce.dart';
 import '../data/money.dart';
 import '../data/catalog_semantics.dart';
 
@@ -10,8 +11,16 @@ class ProductFacts {
   Map<String, Object?> toJson() => productFacts(product);
 }
 
-Map<String, Object?> productFacts(Product product) => {
+Map<String, Object?> productFacts(
+  Product product, {
+  Map<String, int> demoSold = const {},
+}) => {
   'id': product.id,
+  'attributes': product.attributes.toMap(),
+  'demo_variants': const DemoCommerce()
+      .variants(product, sold: demoSold)
+      .map((v) => v.toMap())
+      .toList(),
   'name': product.name,
   'brand': product.brand,
   'description': product.description,
