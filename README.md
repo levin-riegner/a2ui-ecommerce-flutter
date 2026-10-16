@@ -30,6 +30,13 @@ Scroll down on the landing screen and choose **Explore component catalog** for a
 
 Browser connections require provider CORS support. iOS builds require an **iOS 27.1 SDK or newer**; the minimum deployment target is iOS 15.0. See [getting started](docs/getting-started.md) for platform setup and troubleshooting.
 
+## Design resources
+
+- [Figma design](https://www.figma.com/design/mG3g0dRExJiLZ6oWRM4CRg/Ecomm-GenUI-iPhone-Duo) — the shared design reference.
+- [Editable Figma snapshot](docs/design/alder-ecommerce-genui.fig) (~56 MB, Git LFS) — an optional resource for developers exploring the screens, layouts and components. Download the file and import it into Figma to create your own editable copy. It is not required to build or run Alder.
+
+The snapshot is a separate copy and does not stay in sync with the original. Figma exports do not include comment threads or version history; those remain in the shared Figma file. Text annotations drawn on the canvas are part of the design and remain in the snapshot.
+
 ## Read more
 
 - [Documentation index](docs/README.md) — guides, reference and historical evidence.
