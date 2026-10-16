@@ -617,7 +617,7 @@ class _ResponsiveShell extends StatelessWidget {
         final gutter = cover || (!innerDisplay && constraints.maxWidth < 600)
             ? StylistLayout.compactGutter
             : StylistLayout.gutter;
-        return AdaptivePaneLayout(
+        final layout = AdaptivePaneLayout(
           overlayFooter: true,
           overlayHeader: true,
           primaryBottomInset: StylistLayout.composerBottomClearance,
@@ -653,9 +653,14 @@ class _ResponsiveShell extends StatelessWidget {
           primary: _ChatSurface(agent: agent),
           secondaryBackgroundColor: Colors.black,
           secondaryBackgroundOnlyInBookMode: true,
-          secondary: _DressingPanel(agent: agent, onNewJourney: onNewJourney),
+          secondary: _DressingPanel(
+            agent: agent,
+            onNewJourney: onNewJourney,
+            inspectionInToolbar: !innerDisplay,
+          ),
           header: _MobileHeader(
             onNewJourney: onNewJourney,
+            showInspect: !innerDisplay && agent.inspector != null,
             showBag: !innerDisplay && constraints.maxWidth < 600,
             bagCount: agent.bagCount,
             onBag: agent.hasLocalLibrary && !agent.isBusy
@@ -667,6 +672,18 @@ class _ResponsiveShell extends StatelessWidget {
             child: _ChatComposer(agent: agent),
           ),
         );
+        final inspector = agent.inspector;
+        return inspector == null
+            ? layout
+            : CommerceInspectionPane(
+                bloc: inspector,
+                experience: layout,
+                fullScreen: true,
+                showButton: false,
+                inspectionPadding: EdgeInsets.only(
+                  right: DuoLayoutScope.mediaForLayout(context).padding.right,
+                ),
+              );
       },
     ),
   );
@@ -912,10 +929,15 @@ class _ChatComposerState extends State<_ChatComposer> {
 }
 
 class _DressingPanel extends StatelessWidget {
-  const _DressingPanel({required this.agent, required this.onNewJourney});
+  const _DressingPanel({
+    required this.agent,
+    required this.onNewJourney,
+    this.inspectionInToolbar = false,
+  });
 
   final CommerceAgent agent;
   final VoidCallback onNewJourney;
+  final bool inspectionInToolbar;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -934,6 +956,7 @@ class _DressingPanel extends StatelessWidget {
               bloc: inspector,
               experience: experience,
               fullScreen: !split,
+              showButton: !inspectionInToolbar || split,
               // Compact panes already sit inside the safe area. Split panes
               // extend to the screen edge and must reserve it for this control.
               buttonRightOffset: showRail
@@ -1145,12 +1168,14 @@ class _MobileHeader extends StatelessWidget {
     this.showBag = false,
     this.bagCount = 0,
     this.onBag,
+    this.showInspect = false,
   });
 
   final VoidCallback onNewJourney;
   final bool showBag;
   final int bagCount;
   final VoidCallback? onBag;
+  final bool showInspect;
 
   @override
   Widget build(BuildContext context) {
@@ -1186,6 +1211,18 @@ class _MobileHeader extends StatelessWidget {
                     key: const ValueKey('phone-header-bag'),
                     count: bagCount,
                     onPressed: onBag,
+                  ),
+                ),
+              if (showInspect && !split)
+                Positioned(
+                  right: 48,
+                  top: -12,
+                  bottom: -12,
+                  child: IconButton(
+                    key: const ValueKey('commerce-inspect-button'),
+                    onPressed: () => CommerceInspectionPane.inspect(context),
+                    icon: const Icon(Icons.data_object, size: 20),
+                    tooltip: context.l10n.inspectorInspect,
                   ),
                 ),
               if (showClose)

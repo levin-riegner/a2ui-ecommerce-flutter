@@ -185,7 +185,7 @@ void main() {
 
   for (final rightPadding in [0.0, 84.0]) {
     testWidgets(
-      'portrait inspector aligns with the room after safe inset $rightPadding',
+      'compact inspector uses the toolbar after safe inset $rightPadding',
       (tester) async {
         tester.view.physicalSize = Size(rightPadding == 0 ? 390 : 466, 844);
         tester.view.devicePixelRatio = 1;
@@ -220,13 +220,19 @@ void main() {
         final room = find.byKey(const ValueKey('finalized-dressing-room'));
         final roomBounds = tester.getRect(room);
         final button = find.byKey(const ValueKey('commerce-inspect-button'));
-        final circle = tester.getRect(
+        final header = find.byKey(const ValueKey('alder-journey-header'));
+        expect(find.descendant(of: header, matching: button), findsOneWidget);
+        expect(
           find.byKey(const ValueKey('commerce-inspect-circle')),
+          findsNothing,
         );
-        expect(tester.getSize(button), const Size(44, 44));
-        expect(circle.size, const Size(32, 32));
-        expect(circle.right, roomBounds.right - 14);
-        expect(circle.top, roomBounds.top + 10);
+        expect(tester.getSize(button).width, greaterThanOrEqualTo(44));
+        expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
+        expect(
+          tester.getRect(button).bottom,
+          lessThanOrEqualTo(tester.getRect(header).bottom),
+        );
+        expect(tester.getRect(button).overlaps(roomBounds), isFalse);
         final beforeCalls = calls;
         await _chooseView(tester, button, 'Inspect');
         expect(

@@ -18,6 +18,7 @@ class CommerceInspectionPane extends StatefulWidget {
     this.buttonTopOffset,
     this.plainButton = false,
     this.buttonForegroundColor = Colors.white,
+    this.showButton = true,
     this.fullScreen = false,
     super.key,
   });
@@ -29,7 +30,14 @@ class CommerceInspectionPane extends StatefulWidget {
   final double? buttonTopOffset;
   final bool plainButton;
   final Color buttonForegroundColor;
+  final bool showButton;
   final bool fullScreen;
+
+  static Future<void> inspect(BuildContext context) =>
+      context
+          .findAncestorStateOfType<_CommerceInspectionPaneState>()
+          ?._inspect() ??
+      Future<void>.value();
 
   @override
   State<CommerceInspectionPane> createState() => _CommerceInspectionPaneState();
@@ -162,41 +170,42 @@ class _CommerceInspectionPaneState extends State<CommerceInspectionPane> {
       fit: constraints.hasBoundedHeight ? StackFit.expand : StackFit.loose,
       children: [
         ExcludeFocus(excluding: _open, child: widget.experience),
-        Positioned(
-          top:
-              widget.buttonTopOffset ??
-              widget.inspectionPadding.top + (widget.fullScreen ? 4 : 16),
-          right: widget.buttonRightOffset + 8,
-          child: IconButton(
-            key: const ValueKey('commerce-inspect-button'),
-            tooltip: context.l10n.inspectorInspect,
-            onPressed: _open ? null : _inspect,
-            style: IconButton.styleFrom(
-              foregroundColor: widget.buttonForegroundColor,
-              backgroundColor: Colors.transparent,
-              shape: const CircleBorder(),
-              fixedSize: const Size(44, 44),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: EdgeInsets.zero,
+        if (widget.showButton)
+          Positioned(
+            top:
+                widget.buttonTopOffset ??
+                widget.inspectionPadding.top + (widget.fullScreen ? 4 : 16),
+            right: widget.buttonRightOffset + 8,
+            child: IconButton(
+              key: const ValueKey('commerce-inspect-button'),
+              tooltip: context.l10n.inspectorInspect,
+              onPressed: _open ? null : _inspect,
+              style: IconButton.styleFrom(
+                foregroundColor: widget.buttonForegroundColor,
+                backgroundColor: Colors.transparent,
+                shape: const CircleBorder(),
+                fixedSize: const Size(44, 44),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: EdgeInsets.zero,
+              ),
+              icon: widget.plainButton
+                  ? const Icon(Icons.data_object, size: 24)
+                  : Container(
+                      key: const ValueKey('commerce-inspect-circle'),
+                      width: widget.fullScreen ? 32 : 40,
+                      height: widget.fullScreen ? 32 : 40,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white30),
+                      ),
+                      child: Icon(
+                        Icons.data_object,
+                        size: widget.fullScreen ? 16 : 18,
+                      ),
+                    ),
             ),
-            icon: widget.plainButton
-                ? const Icon(Icons.data_object, size: 24)
-                : Container(
-                    key: const ValueKey('commerce-inspect-circle'),
-                    width: widget.fullScreen ? 32 : 40,
-                    height: widget.fullScreen ? 32 : 40,
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white30),
-                    ),
-                    child: Icon(
-                      Icons.data_object,
-                      size: widget.fullScreen ? 16 : 18,
-                    ),
-                  ),
           ),
-        ),
       ],
     ),
   );

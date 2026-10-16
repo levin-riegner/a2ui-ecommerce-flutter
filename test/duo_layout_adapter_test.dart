@@ -1202,7 +1202,7 @@ void main() {
         final font = FontLoader('Jost')
           ..addFont(rootBundle.load('assets/fonts/jost/Jost-Variable.ttf'));
         await font.load();
-        return createDuoFixtureAgent();
+        return createDuoFixtureAgent(withInspector: true);
       }))!;
       try {
         await tester.pumpWidget(ReferenceApp(agent: agent));
