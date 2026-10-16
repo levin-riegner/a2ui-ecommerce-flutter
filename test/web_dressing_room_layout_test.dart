@@ -21,11 +21,10 @@ void main() {
     (size: const Size(1920, 1080), status: null),
     (size: const Size(951, 669), status: HingeStatus.fullyOpen),
     (size: const Size(951, 669), status: HingeStatus.partiallyOpen),
+    (size: const Size(669, 951), status: HingeStatus.fullyOpen),
   ]) {
     final size = layout.size;
-    testWidgets('room grid and aligned controls at $size / ${layout.status}', (
-      tester,
-    ) async {
+    testWidgets('room controls at $size / ${layout.status}', (tester) async {
       tester.view.devicePixelRatio = 1;
       tester.view.physicalSize = size;
       addTearDown(tester.view.resetDevicePixelRatio);
@@ -72,6 +71,21 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      if (size.height > size.width) {
+        final inspect = find.byKey(const ValueKey('commerce-inspect-button'));
+        final icon = find.descendant(
+          of: inspect,
+          matching: find.byIcon(Icons.data_object),
+        );
+        expect(
+          find.byKey(const ValueKey('commerce-inspect-circle')),
+          findsOneWidget,
+        );
+        expect(IconTheme.of(tester.element(icon)).color, Colors.white);
+        expect(inspect.hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        return;
+      }
       expect(find.byKey(const ValueKey('dressing-room-rack')), findsNothing);
       final slots = find.byType(FinalizedPieceSlot);
       expect(slots, findsAtLeastNWidgets(3));

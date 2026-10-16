@@ -949,7 +949,8 @@ class _DressingPanel extends StatelessWidget {
                   : null,
               plainButton: showRail,
               buttonForegroundColor:
-                  innerDisplay &&
+                  showRail &&
+                      innerDisplay &&
                       (AdaptivePaneScope.secondaryBackgroundColorOf(context) ??
                                   Colors.white)
                               .computeLuminance() >=
