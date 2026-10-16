@@ -1,5 +1,7 @@
 # Design follow-ups
 
+Historical design brief. The [current design ingestion guide](design/README.md) and [component catalog](component-catalog.md) document implemented components; the items below preserve the original request and are not a current gap checklist.
+
 These are intentionally kept as design-system follow-ups rather than runtime dependencies. The component gallery can be reviewed using local previews. Stylist journeys require an agent connection and use bundled product photographs.
 
 ## For Ryan / design

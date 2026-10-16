@@ -12,12 +12,14 @@ Flutter remains pinned by `.fvmrc`; unrelated GenUI/A2UI packages are unchanged.
 
 | File | Responsibility |
 | --- | --- |
-| [`genkit_providers.dart`](../lib/src/agent/genkit_providers.dart) | Public provider factories, model invocation, HTTP ownership, credentials and provider compatibility |
-| [`stylist_runtime.dart`](../lib/src/agent/stylist_runtime.dart) | Flow, tools, host validation, conversation history, request limits and transactional state |
-| [`app_dependencies.dart`](../lib/src/app_dependencies.dart) | Catalog/provider/weather/store composition and injected connection factory |
-| [`genkit_agent.dart`](../lib/src/agent/genkit_agent.dart) | Session lifecycle and validated A2UI delivery to Flutter |
-| [`stylist_result.dart`](../lib/src/agent/stylist_result.dart) | Typed domain result and renderer-independent view state |
-| [`stylist_presenter.dart`](../lib/src/agent/stylist_presenter.dart) | Explicit domain-to-A2UI conversion before batch validation |
+| [`genkit_providers.dart`](../lib/data/stylist/service/remote/genkit_providers.dart) | Public provider factories, model invocation, HTTP ownership, credentials and provider compatibility |
+| [`stylist_runtime.dart`](../lib/data/stylist/service/runtime/stylist_runtime.dart) | Flow, tools, host validation, conversation history, request limits and transactional state |
+| [`stylist_dependencies.dart`](../lib/util/stylist_dependencies.dart) | Catalog/provider/weather/store composition and injected connection factory |
+| [`stylist_bloc.dart`](../lib/presentation/stylist/bloc/stylist_bloc.dart) | Serialized session events, immutable presentation state and validated surface publication |
+| [`stylist_repository.dart`](../lib/data/stylist/repository/stylist_repository.dart) | Runtime/provider ownership, cancellation and shutdown |
+| [`commerce_a2ui_renderer.dart`](../lib/presentation/stylist/a2ui/commerce_a2ui_renderer.dart) | GenUI controller/transport ownership, batch validation and stale-action rejection |
+| [`stylist_result.dart`](../lib/data/stylist/model/stylist_result.dart) | Typed domain result and renderer-independent view state |
+| [`stylist_presenter.dart`](../lib/presentation/stylist/a2ui/stylist_presenter.dart) | Explicit domain-to-A2UI conversion before batch validation |
 | [`genkit_providers_test.dart`](../test/genkit_providers_test.dart) | Real plugins exercised through mocked HTTP, including provider wire formats |
 | [`stylist_runtime_test.dart`](../test/stylist_runtime_test.dart) | Host policy, rollback, cancellation, explicit retries and tool-loop limits |
 | [`stylist.dart`](../tools/genkit/stylist.dart) | Offline flow entry point for the optional Developer UI |
@@ -50,10 +52,14 @@ Flutter remains pinned by `.fvmrc`; unrelated GenUI/A2UI packages are unchanged.
    the host's draft, committing only after the whole turn succeeds.
 
 The production connection is assembled by `StylistDependencies.connect` in
-`app_dependencies.dart` (`connectStylist` is a developer convenience). Supply
+`lib/util/stylist_dependencies.dart` (`connectStylist` is a developer convenience).
+The app-owned registry in `lib/util/dependencies.dart` supplies this factory to
+the connection flow. Supply
 `providerModel: connection.model`, `onBeginTurn: connection.beginTurn` and
 `onCancelTurn: connection.cancelTurn` to `StylistRuntime`. Close the connection
-and runtime together. `model:` is the deterministic test/offline callback;
+and runtime together through `StylistRepository.dispose()`. `StylistBloc` owns
+that repository and the `CommerceA2uiRenderer`; the app owns the accepted session.
+`model:` is the deterministic test/offline callback;
 connected production requests use the cancellation-aware `providerModel:` path.
 
 The model can call `respond_to_question` first to classify capability questions
@@ -117,13 +123,14 @@ must never silently expand them.
 
 `StylistRuntime.turn(onText: ...)` streams cumulative, display-only prose from
 only the final tool-free request using the public `Model(..., onChunk: ...)`
-API. Tool requests stay non-streaming. The provider wrapper forwards chunks and
+API. Tool requests stay non-streaming. Turns introducing destination weather hold prose until the validated response can show the forecast first. The provider wrapper forwards chunks and
 cancellation through its public action context. OpenAI Luna continues to send
 `reasoning_effort: none`, including the streaming request.
 
 The runtime buffers complete sentences before applying the final reply's
 financial filter and prepends the same host-owned acknowledgments and notices.
-`GenkitAgent` publishes that text to a temporary actionless surface. Product
+`StylistBloc` publishes that text through `CommerceA2uiRenderer` to a temporary
+actionless surface. Product
 cards remain hidden until validation and commit, then appear below the text;
 already-visible paragraphs bypass the reveal queue and surface entrance motion.
 Failure, cancellation, superseding a turn, or disconnect removes provisional
@@ -168,8 +175,8 @@ members. Keep the Genkit stack coordinated in the manifest and lockfile. Inspect
 the shipped package source when hosted documentation is older than the release.
 Never edit cached packages to make this app pass.
 
-The optional live smoke test is documented in the README and requires explicit
-authorization for paid requests. The Developer UI entry point uses the offline
+The optional live smoke tests are documented in [developer tools](developer-tools.md)
+and require explicit authorization for paid requests. The Developer UI entry point uses the offline
 model only; it must not expose connected credentials through reflection.
 
 ## Upstream references

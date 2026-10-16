@@ -1,0 +1,123 @@
+00:00 +0: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart
+00:00 +0: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: a new inspector does not inherit another pane scroll position
+00:01 +1: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: inspector bounds immutable history and toggles independently
+00:01 +2: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: distinguishes decoded fixture response from host A2UI
+00:01 +3: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: toggle retains experience state with bounded height true
+00:02 +4: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: toggle retains experience state with bounded height false
+00:02 +5: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: pane sheet preserves original experience bounds and scroll
+00:02 +6: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: compact inspector sheet fills the screen and dismisses with back
+00:02 +7: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: hidden experience cannot receive focus and retains its draft
+00:06 +8: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: all actual catalog registrations are available without a model
+00:07 +9: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: small viewport and large text keep inspect controls usable
+00:07 +10: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart
+00:08 +10: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:11 +11: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the actual basket toggles to diagnostics and retains quantities at Size(1456.0, 840.0) text 1.0
+00:11 +12: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the actual basket toggles to diagnostics and retains quantities at Size(390.0, 844.0) text 2.0
+00:12 +13: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: basket mutations publish host provenance and committed counts without a model
+00:12 +14: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: a late cancelled model response never appears as a new exchange or commit
+00:12 +15: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: actual user and decoded model prose are withheld from public diagnostics
+00:12 +16: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: untrusted tool identifiers cannot smuggle prompt or credential text into diagnostics
+00:12 +17: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: untrusted component identifiers cannot smuggle prompt or credential text into diagnostics
+00:12 +18: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the diagnostic component allowlist stays equal to actual selectable registrations
+00:12 +19: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart
+00:13 +19: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(951.0, 669.0), text 1.0, keyboard 0.0
+00:14 +20: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(669.0, 951.0), text 1.0, keyboard 0.0
+00:14 +21: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 844.0), text 1.0, keyboard 0.0
+00:14 +22: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 844.0), text 2.0, keyboard 0.0
+00:14 +23: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 844.0), text 3.0, keyboard 0.0
+00:14 +24: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 844.0), text 1.0, keyboard 300.0
+00:15 +25: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(844.0, 390.0), text 2.0, keyboard 0.0
+00:15 +26: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 320.0), text 3.0, keyboard 0.0
+00:15 +27: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(951.0, 669.0) at 1.0 text and dismisses without a model
+00:15 +28: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(669.0, 951.0) at 1.0 text and dismisses without a model
+00:16 +29: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(390.0, 844.0) at 1.0 text and dismisses without a model
+00:16 +30: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(390.0, 844.0) at 2.0 text and dismisses without a model
+00:17 +31: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart
+00:17 +31: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: composer matches Figma dock clearance, safe=0.0
+00:18 +32: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: composer matches Figma dock clearance, safe=34.0
+00:18 +33: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: resting conversation has clear gaps below header and above composer
+00:18 +34: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: journey glass header stays fixed and composer clears native bottom inset
+00:18 +35: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: adapts ordered panes to Size(360.0, 780.0)
+00:18 +36: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: adapts ordered panes to Size(600.0, 320.0)
+00:19 +37: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: adapts ordered panes to Size(669.0, 951.0)
+00:19 +38: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: adapts ordered panes to Size(951.0, 669.0)
+00:19 +39: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: adapts ordered panes to Size(720.0, 540.0)
+00:19 +40: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: adapts ordered panes to Size(1024.0, 768.0)
+00:19 +41: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: adapts ordered panes to Size(1440.0, 900.0)
+00:19 +42: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: split background covers safe margins while controls avoid them, hinge=false
+00:19 +43: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: split background covers safe margins while controls avoid them, hinge=true
+00:19 +44: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: roomy portrait keeps the dressing room above its own chat scroll
+00:19 +45: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: interactive extended pane reserves its rail beside the camera
+00:19 +46: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: decorative pane reaches the edges while controls remain safe, hinge=false
+00:19 +47: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: decorative pane reaches the edges while controls remain safe, hinge=true
+00:19 +48: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: opening mosaic fills outer margins on the inner display
+00:19 +49: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: Book background fades and reverses without losing the draft
+00:19 +50: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: Book background honours Reduce Motion
+00:19 +51: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: draft and focus survive compact/split resize
+00:19 +52: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: vertical obstruction leaves each pane inside its safe region
+00:19 +53: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: narrow obstructed side falls back to one usable region
+00:19 +54: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: horizontal obstruction uses one unobstructed scroll region
+00:19 +55: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: keyboard insets leave the composer above the keyboard
+00:19 +56: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: a fold covered by the keyboard cannot expand the pane viewport
+00:19 +57: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: catalog scroll reaches the bottom edge unless it contains hardware, cutout=false
+00:19 +58: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: catalog scroll reaches the bottom edge unless it contains hardware, cutout=true
+00:19 +59: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: a catalog page also respects a fold covered by the keyboard
+00:19 +60: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: the real session preserves the draft and agent across rotation
+00:19 +61: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: shared composer disables blank input and keeps a full tap target
+00:19 +62: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: large text keeps the phone landing and catalog reachable
+00:20 +63: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/adaptive_screen_layout_test.dart: compact content remains reachable through a single scroll
+00:20 +64: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart
+00:20 +64: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: display casing preserves names and raw catalog facts
+00:20 +65: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: dress recommendations keep the same card and image geometry
+00:20 +66: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: top recommendations keep the same card and image geometry
+00:20 +67: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: bottom recommendations keep the same card and image geometry
+00:20 +68: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: layer recommendations keep the same card and image geometry
+00:20 +69: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: shoes recommendations keep the same card and image geometry
+00:20 +70: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: bag recommendations keep the same card and image geometry
+00:21 +71: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_layout_test.dart: compact recommendations scroll to the same bound product action
+00:21 +72: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart
+00:21 +72: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: Duo portrait uses both display regions at HingeStatus.fullyOpen
+00:22 +73: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: Duo portrait uses both display regions at HingeStatus.partiallyOpen
+00:22 +74: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: open landscape
+00:22 +75: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: book landscape
+00:23 +76: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: open portrait
+00:23 +77: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: closed cover
+00:23 +78: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: book portrait
+00:23 +79: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: closed landscape
+00:23 +80: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: open keyboard
+00:23 +81: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: composer matches Figma dock: bottom cutout
+00:23 +82: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: cover keeps one content column and preserves draft across poses
+00:24 +83: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: snapshot and event updates recover after snapshot and stream errors
+00:24 +84: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: live event during a slow startup snapshot is not lost
+00:24 +85: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: event activation can recover on resume after initial channel failure
+00:24 +86: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: scope consumers receive angle and capability changes within the same posture
+00:24 +87: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: later events win over an in-flight older snapshot
+00:24 +88: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: concurrent snapshots preserve latest request when newest completes first
+00:24 +89: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: concurrent snapshots preserve latest request when newest completes last
+00:24 +90: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: platform replacement cancels old events and ignores its pending snapshots
+00:24 +91: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: missing initial snapshot still permits later live event recovery
+00:24 +92: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: reserved division is only active during closed
+00:24 +93: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: reserved division is only active during partiallyOpen
+00:24 +94: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: reserved division is only active during fullyOpen
+00:24 +95: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: zero, negative, inactive, unknown, and nonfinite reserved regions are ignored
+00:24 +96: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: interior camera Rect.fromLTRB(20.0, 300.0, 50.0, 360.0) reserves nearest viewport edge
+00:24 +97: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: interior camera Rect.fromLTRB(300.0, 20.0, 360.0, 50.0) reserves nearest viewport edge
+00:24 +98: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: interior camera Rect.fromLTRB(620.0, 300.0, 650.0, 360.0) reserves nearest viewport edge
+00:24 +99: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: interior camera Rect.fromLTRB(300.0, 902.0, 360.0, 932.0) reserves nearest viewport edge
+00:24 +100: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: engine display features take precedence over plugin geometry
+00:24 +101: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: method and event channels decode native posture snapshots into local scope
+00:24 +102: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: real native event activation error is retried by cancelling and resubscribing on resume
+00:24 +103: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: real native stream closed after an unavailable startup snapshot recovers on resume
+00:24 +104: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: real native stream closed after an unavailable startup snapshot recovers on metrics
+00:24 +105: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: camera behind the keyboard reserves no visible-body space and composer stays reachable
+00:24 +106: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual stylist preserves draft, focus, session and selected outfit through cover/inner/posture/keyboard transitions
+00:25 +107: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:26 +108: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(669.0, 951.0)
+00:30 +109: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: hinge resize preserves opening state, reduced=false
+00:30 +110: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: hinge resize preserves chat state, reduced=false
+00:31 +111: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: hinge resize preserves opening state, reduced=true
+00:31 +112: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:33 +113: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: native scope respects exact Duo view Size(466.0, 678.0) and layout mode
+00:33 +114: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: native scope respects exact Duo view Size(669.0, 951.0) and layout mode
+00:33 +115: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: native scope respects exact Duo view Size(951.0, 669.0) and layout mode
+00:33 +116: All tests passed!

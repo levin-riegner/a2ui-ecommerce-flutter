@@ -40,6 +40,8 @@ Focused source evidence: `test/stylist_component_adoption_test.dart`, `test/styl
 
 ## Deliberate limits
 
+These limits describe this dated adoption pass. [Product data and local demo commerce](product-data-and-demo-commerce.md) subsequently added fictional sizes, stock, delivery and simulated checkout. They remain separate from verified merchant data.
+
 - No supplier API or vector database is needed for these local interactions. Raw catalog descriptions and photos are retained; derived garment/color labels are reproducible approximations.
 - 592 materials are unspecified. Sizes, stock, measured fit, technical weather performance and delivery are unknown. Unknown material cannot establish compliance with a material exclusion.
 - The bag and prices are fictional demo data. Local preferences storage is not a transactional order database or cross-device account service.

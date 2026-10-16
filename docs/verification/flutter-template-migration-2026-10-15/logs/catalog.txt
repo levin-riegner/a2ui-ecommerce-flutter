@@ -1,0 +1,2 @@
+Catalog valid: local images present and synthetic product checks passed
+Private-source comparison skipped: pass --source for each original export

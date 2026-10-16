@@ -1,7 +1,7 @@
-import 'package:a2ui_flutter_commerce/src/agent/stylist_input_error.dart';
-import 'package:a2ui_flutter_commerce/src/agent/outfit_plan.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_constraints.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_input_error.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/outfit_plan.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_constraints.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart';
 

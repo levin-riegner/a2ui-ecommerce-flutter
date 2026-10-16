@@ -1,7 +1,7 @@
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_components.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_examples.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
-import 'package:a2ui_flutter_commerce/src/theme.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/commerce_components.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/commerce_examples.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_svg/flutter_svg.dart';

@@ -1,14 +1,14 @@
-import 'package:a2ui_flutter_commerce/src/app_dependencies.dart';
+import 'package:a2ui_flutter_commerce/util/stylist_dependencies.dart';
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/genkit_providers.dart';
-import 'package:a2ui_flutter_commerce/src/agent/model_settings.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/remote/genkit_providers.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/model_settings.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/catalog_products.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart' as g;
@@ -75,7 +75,7 @@ void main() {
     final catalog = parseCatalogProducts(
       await rootBundle.loadString('assets/data/catalog/products.csv'),
     );
-    GenkitAgent connected;
+    StylistBloc connected;
     var usePreviewModel = seededPreview;
     if (seededPreview) {
       final connection = GenkitProvider(

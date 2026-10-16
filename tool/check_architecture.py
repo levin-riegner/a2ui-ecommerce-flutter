@@ -5,17 +5,26 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-_DIRECTIVE = re.compile(r"^\s*(?:import|export|part(?!\s+of))\s+([^;]+);", re.MULTILINE)
+_DIRECTIVE = re.compile(r"(?:^|(?<=;))\s*(?:import|export|part(?!\s+of))\s+([^;]+);", re.MULTILINE)
 _URI = re.compile(r"['\"]([^'\"]+)['\"]")
 _COMMENT_OR_STRING = re.compile(r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"|//[^\n]*|/\*[\s\S]*?\*/")
-DOMAIN_FILES = (
-    'data/models.dart', 'data/money.dart', 'data/catalog_products.dart',
-    'data/catalog_semantics.dart', 'data/catalog_snapshot.dart',
-    'data/stylist_store.dart', 'agent/stylist_brief.dart',
-    'agent/stylist_constraints.dart', 'agent/outfit_plan.dart',
-    'agent/stylist_input_error.dart', 'agent/product_facts.dart',
-    'agent/stylist_command.dart', 'agent/stylist_result.dart',
+# Pure domain ports and shared query policy live beside their implementations.
+# Each is checked transitively; this is not an exception for all repositories.
+DOMAIN_PORTS = (
+    'lib/data/stylist/repository/stylist_store.dart',
+    'lib/data/catalog/repository/catalog_search.dart',
 )
+_PRESENTATION_SDKS = (
+    'package:flutter_bloc/', 'package:bloc/', 'package:genui/',
+    'package:a2ui_core/', 'package:provider/', 'package:get_it/',
+    'package:go_router/',
+)
+_PROVIDER_SDKS = ('package:genkit',)
+_PLATFORM_SDKS = (
+    'package:flutter/', 'package:flutter_localizations/',
+    'package:shared_preferences', 'package:http/',
+)
+
 
 
 def imports(path):
@@ -61,28 +70,76 @@ def inspect_graph(root, entry, label, reject):
     return errors
 
 
+def _is_model(relative):
+    return (relative.startswith('lib/data/') and '/model/' in relative
+            and '/service/' not in relative)
+
+
+def _is_composition(relative):
+    return relative.startswith('lib/util/') or (
+        relative.startswith('lib/app/') and not relative.startswith('lib/app/l10n/')
+    )
+
+
 def ui_reject(uri, relative):
-    if uri.startswith(('package:genui/', 'package:a2ui_core/', 'package:genkit', 'package:schemantic/', 'package:json_schema_builder/')):
-        return 'presentation must not depend on agent/renderer SDKs'
-    if relative and (relative.startswith('lib/src/agent/') or relative.endswith(('_a2ui.dart', '_gallery.dart', '_examples.dart')) or relative == 'lib/src/catalog/catalog_export.dart'):
-        return 'presentation must not include runtime, registrations or opt-in galleries'
+    if uri.startswith((*_PRESENTATION_SDKS, *_PROVIDER_SDKS,
+                       'package:schemantic/', 'package:json_schema_builder/')):
+        return 'public widgets must not depend on BLoC, provider or renderer SDKs'
+    if relative and (
+        '/bloc/' in relative
+        or relative.startswith(('lib/presentation/stylist/a2ui/',
+                                'lib/presentation/gallery/',
+                                'lib/presentation/connection/'))
+        or _is_composition(relative)
+        or (relative.startswith('lib/data/') and not _is_model(relative))
+    ):
+        return 'public widgets must not include state controllers, data adapters, registrations or galleries'
     return None
 
 
-
 def registration_reject(uri, relative):
-    if uri.startswith(('package:genkit', 'package:shared_preferences/')):
-        return 'A2UI registrations must not configure providers or storage'
-    if relative and (relative.startswith('lib/src/agent/') or relative.endswith(('_gallery.dart', '_examples.dart'))):
-        return 'A2UI registrations must not pull runtime or opt-in gallery code'
+    if uri.startswith((*_PROVIDER_SDKS, 'package:flutter_bloc/', 'package:bloc/',
+                       'package:shared_preferences', 'package:http/',
+                       'package:provider/', 'package:get_it/')):
+        return 'A2UI registrations must not configure providers, state controllers or storage'
+    if relative and (
+        '/bloc/' in relative
+        or relative.startswith(('lib/presentation/gallery/',
+                                'lib/presentation/connection/'))
+        or _is_composition(relative)
+        or (relative.startswith('lib/data/') and not _is_model(relative))
+    ):
+        return 'A2UI registrations must not pull runtime, data adapters or opt-in gallery code'
     return None
 
 
 def domain_reject(uri, relative):
-    if uri.startswith(('package:flutter/', 'package:genui/', 'package:a2ui_core/', 'package:genkit', 'package:shared_preferences/')):
-        return 'domain contracts must not depend on Flutter, providers, renderers or platform storage'
-    if relative and (relative.startswith(('lib/src/catalog/', 'lib/src/layout/', 'lib/src/input/')) or relative.endswith(('stylist_surfaces.dart', 'stylist_brief_surface.dart', 'stylist_presenter.dart', 'local_stylist_store.dart', 'app_dependencies.dart', 'genkit_providers.dart'))):
-        return 'domain contracts must depend on values and ports, not adapters'
+    if uri.startswith((*_PRESENTATION_SDKS, *_PROVIDER_SDKS, *_PLATFORM_SDKS,
+                       'dart:io', 'dart:ui', 'dart:html', 'dart:ffi')):
+        return 'domain contracts must not depend on Flutter, providers, renderers or platform transports'
+    if relative and not (_is_model(relative) or relative in DOMAIN_PORTS):
+        return 'domain contracts must depend on values and explicit pure ports, not adapters'
+    return None
+
+
+def data_reject(uri, relative):
+    if uri.startswith(_PRESENTATION_SDKS):
+        return 'data must not depend on presentation or renderer SDKs'
+    if relative and not relative.startswith('lib/data/'):
+        return 'data must not import presentation, app configuration or composition'
+    return None
+
+
+def runtime_reject(uri, relative):
+    if uri.startswith((*_PRESENTATION_SDKS, *_PLATFORM_SDKS,
+                       'dart:io', 'dart:ui', 'dart:html', 'dart:ffi')):
+        return 'runtime orchestration must keep renderer and platform adapters outside'
+    if relative and not (
+        _is_model(relative)
+        or relative in DOMAIN_PORTS
+        or relative.startswith('lib/data/stylist/service/runtime/')
+    ):
+        return 'runtime orchestration must use domain values and ports, not concrete adapters'
     return None
 
 
@@ -90,15 +147,18 @@ def check(root=ROOT):
     root = root.resolve()
     errors = inspect_graph(root, 'lib/commerce_ui.dart', 'commerce_ui', ui_reject)
     errors.extend(inspect_graph(root, 'lib/commerce_a2ui.dart', 'commerce_a2ui', registration_reject))
-    for name in DOMAIN_FILES:
-        errors.extend(inspect_graph(root, 'lib/src/' + name, name, domain_reject))
-    runtime = root / 'lib/src/agent/stylist_runtime.dart'
-    if runtime.is_file():
-        for uri in imports(runtime):
-            relative = local_path(root, runtime, uri)
-            relative = relative.relative_to(root).as_posix() if relative else None
-            if domain_reject(uri, relative) and not uri.startswith('package:genkit/'):
-                errors.append(f'stylist_runtime.dart -> {uri}: orchestration must keep presentation/platform adapters outside the runtime')
+    model_files = [path.relative_to(root).as_posix()
+                   for path in (root / 'lib/data').rglob('*.dart')
+                   if _is_model(path.relative_to(root).as_posix())]
+    for name in sorted([*model_files, *DOMAIN_PORTS]):
+        errors.extend(inspect_graph(root, name, name, domain_reject))
+    # Check every data file so a repository cannot hide a reverse dependency
+    # in a transport, helper, export or generated/conditional directive.
+    for path in sorted((root / 'lib/data').rglob('*.dart')):
+        name = path.relative_to(root).as_posix()
+        errors.extend(inspect_graph(root, name, name, data_reject))
+    runtime = 'lib/data/stylist/service/runtime/stylist_runtime.dart'
+    errors.extend(inspect_graph(root, runtime, 'stylist_runtime', runtime_reject))
     return sorted(set(errors))
 
 
@@ -107,4 +167,4 @@ if __name__ == '__main__':
     if problems:
         print('\n'.join(problems), file=sys.stderr)
         raise SystemExit(1)
-    print('Architecture boundaries passed: transitive presentation/registration/domain imports and runtime adapters.')
+    print('Architecture boundaries passed: transitive public widgets/catalogs, domain models/ports, data direction and runtime adapters.')

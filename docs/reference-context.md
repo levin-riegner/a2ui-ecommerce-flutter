@@ -1,5 +1,7 @@
 # Reference context
 
+Historical starter context. Use [the current architecture](architecture.md), [template map](flutter-template.md) and [API contracts](api-reference.md) for current boundaries and source locations.
+
 This document records the public-facing decisions behind the starter without copying private project history or credentials into the repository.
 
 ## Protocol and renderer

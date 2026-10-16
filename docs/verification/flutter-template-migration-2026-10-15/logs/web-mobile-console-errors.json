@@ -1,0 +1,32 @@
+[
+  {
+    "level": "error",
+    "message": "══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════\nThe following assertion was thrown while notifying listeners for AnimationController:\nA RenderAnimatedSize was mutated in its own performLayout implementation.\nA RenderObject must not re-dirty itself while still being laid out.\nThe RenderObject being mutated was:\n  RenderAnimatedSize#77062 relayoutBoundary=up12 NEEDS-LAYOUT NEEDS-PAINT\nConsider using the LayoutBuilder widget to dynamically change a subtree during layout.\n\nWhen the exception was thrown, this was the stack\n\nThe AnimationController notifying listeners was:\n  AnimationController#f202a(⏮ 1.000; paused)\n════════════════════════════════════════════════════════════════════════════════════════════════════",
+    "timestamp": "2026-10-15T19:30:15.109Z",
+    "url": "http://127.0.0.1:8793/main.dart.js"
+  },
+  {
+    "level": "error",
+    "message": "Another exception was thrown: A RenderAnimatedSize was mutated in its own performLayout implementation.",
+    "timestamp": "2026-10-15T19:30:55.548Z",
+    "url": "http://127.0.0.1:8793/main.dart.js"
+  },
+  {
+    "level": "error",
+    "message": "Another exception was thrown: A RenderAnimatedSize was mutated in its own performLayout implementation.",
+    "timestamp": "2026-10-15T19:34:26.729Z",
+    "url": "http://127.0.0.1:8793/main.dart.js"
+  },
+  {
+    "level": "error",
+    "message": "Another exception was thrown: A RenderAnimatedSize was mutated in its own performLayout implementation.",
+    "timestamp": "2026-10-15T19:35:08.275Z",
+    "url": "http://127.0.0.1:8793/main.dart.js"
+  },
+  {
+    "level": "error",
+    "message": "Another exception was thrown: A RenderAnimatedSize was mutated in its own performLayout implementation.",
+    "timestamp": "2026-10-15T19:35:31.135Z",
+    "url": "http://127.0.0.1:8793/main.dart.js"
+  }
+]

@@ -1,0 +1,1 @@
+Architecture boundaries passed: transitive public widgets/catalogs, domain models/ports, data direction and runtime adapters.

@@ -2,12 +2,12 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_component_gallery.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_screen_gallery.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_screen_examples.dart';
-import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
-import 'package:a2ui_flutter_commerce/src/theme.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/finalized_component_gallery.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/finalized_screen_gallery.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/finalized_screen_examples.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/duo_layout_adapter.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/theme/app_theme.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
 import 'package:flutter/material.dart';
 import 'package:foldable/foldable.dart';
 

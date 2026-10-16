@@ -1,19 +1,22 @@
-import 'package:a2ui_flutter_commerce/src/app_dependencies.dart';
+import 'package:a2ui_flutter_commerce/util/stylist_dependencies.dart';
 
 // Explicit development entry point; no provider credentials in the app binary.
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-import 'package:a2ui_flutter_commerce/src/agent/city_context.dart';
-import 'package:a2ui_flutter_commerce/src/agent/conversation_entry.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/conversation_entry.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/catalog_products.dart';
 import 'package:flutter/services.dart';
 
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/model_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/commerce_inspector_bloc.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/commerce_trace.dart';
 
 import 'duo_simulator_probe.dart' show captureDuoState;
 
@@ -28,19 +31,27 @@ Future<void> main() async {
     runApp(const ReferenceApp());
     return;
   }
+  final uiCatalog = buildCommerceCatalog();
+  final inspector = offline
+      ? CommerceInspectorBloc(catalog: buildModelUiCatalog(uiCatalog))
+      : null;
   final agent = offline
       ? GenkitAgent(
           StylistRuntime(
             products: parseCatalogProducts(
               await rootBundle.loadString('assets/data/catalog/products.csv'),
             ),
-            cityContextSource: OpenMeteoCityContextSource(),
             model: (request) async {
               await Future<void>.delayed(const Duration(milliseconds: 700));
               return offlineStylistModel(request);
             },
             onModelRequest: (_) => modelRequests++,
+            uiCatalog: inspector!.catalog,
+            onTrace: inspector.record,
+            modelSource: CommerceModelSource.offline,
           ),
+          catalog: uiCatalog,
+          inspector: inspector,
         )
       : await connectStylist(
           provider: 'openai-compatible',

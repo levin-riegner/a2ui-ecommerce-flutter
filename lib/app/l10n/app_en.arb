@@ -1,0 +1,345 @@
+{
+  "@@locale": "en",
+  "connectionTitle": "Connect your model",
+  "connectionPrivacyNotice": "Bring your own API key. Your key stays in memory on this device and is sent directly to your chosen provider. It is not saved.",
+  "connectionProvider": "Provider",
+  "connectionProviderGoogle": "Google Gemini",
+  "connectionProviderOpenAi": "OpenAI",
+  "connectionProviderAnthropic": "Anthropic",
+  "connectionProviderCompatible": "OpenAI-compatible",
+  "connectionBaseUrl": "Provider API base URL",
+  "connectionBaseUrlHint": "https://your-provider.example/v1",
+  "connectionInvalidBaseUrl": "Use HTTPS or a local loopback HTTP address",
+  "connectionModelId": "Model ID",
+  "connectionApiKey": "API key",
+  "connectionUsageNotice": "Connecting makes no model request. Starting a journey, chatting, selecting pieces, and retrying use your provider account and may incur charges.",
+  "connectionSubmit": "Connect model",
+  "connectionFailure": "Could not configure your model. Check the provider and model settings.",
+  "fieldRequired": "Required",
+  "composerMessageLabel": "Message your stylist",
+  "composerSend": "Send",
+  "composerOccasionPlaceholder": "Tell me about the occasion…",
+  "composerOccasionLabel": "Tell me about the occasion",
+  "composerSendMessage": "Send message",
+  "dictationActive": "Dictation active",
+  "dictationStop": "Stop dictation",
+  "dictationCancel": "Cancel dictation",
+  "dictationStart": "Dictate message",
+  "dictationListening": "Listening…",
+  "dictationUnavailableTooltip": "Voice input unavailable",
+  "dictationEnablePermissions": "Enable microphone and speech recognition permissions to dictate. If dictation is unavailable on this device, you can still type.",
+  "dictationMicrophoneDidNotStart": "The microphone did not start. Please try again or type your message.",
+  "dictationCouldNotStart": "Dictation could not start. Please try again or type your message.",
+  "dictationStopped": "Dictation stopped. Your draft is still available.",
+  "dictationNoSpeech": "No speech detected. Tap the microphone to try again.",
+  "dictationCheckPermissions": "Check microphone and speech recognition permissions, then try again.",
+  "dictationCouldNotInitialize": "Speech recognition could not initialize on this device. Please try again or type your message.",
+  "dictationUnavailable": "Dictation is unavailable right now. Please try again or type your message.",
+  "budgetWholeOutfit": "Budget for the whole outfit",
+  "budgetWholeOutfitEyebrow": "BUDGET FOR THE WHOLE OUTFIT",
+  "remove": "Remove",
+  "chooseThis": "Choose this",
+  "dressingRoomTitle": "Dressing room",
+  "choosingNow": "Choosing now",
+  "choosingOnLeft": "Choosing on the left",
+  "notYet": "Not yet",
+  "change": "Change",
+  "overBudget": "Over budget",
+  "outfitBudget": "Outfit budget",
+  "saveLook": "Save look",
+  "share": "Share",
+  "startOver": "Start over",
+  "swap": "Swap",
+  "usually": "Usually",
+  "noCatalogPieces": "No catalog pieces selected",
+  "undo": "Undo",
+  "bagEmpty": "Your bag is empty",
+  "bagClose": "Close bag",
+  "subtotal": "Subtotal",
+  "checkOut": "Check out",
+  "keepStyling": "Keep styling",
+  "occasionMap": "Occasion map",
+  "decreaseQuantity": "Decrease quantity",
+  "increaseQuantity": "Increase quantity",
+  "closeStylist": "Close stylist",
+  "inDressingRoom": "In your dressing room",
+  "addToDressingRoom": "Add to dressing room",
+  "whichDoYouPrefer": "Which do you prefer?",
+  "colourQuestion": "Any colours you’re drawn to? Pick a few.",
+  "photoUploadQuestion": "Got a photo of you, or a piece you already own?\nI’ll build around it.",
+  "photoUploadChoose": "Take a photo or choose from your library",
+  "yourPhoto": "YOUR PHOTO",
+  "photoDescription": "What I’m seeing",
+  "useIt": "Use it",
+  "replace": "Replace",
+  "fitQuestion": "Your usual size, and how you like it to sit?",
+  "dressSize": "DRESS SIZE",
+  "fitEyebrow": "FIT",
+  "occasionTimelineIntro": "Here’s the day as I understand it — tap anything to fix it.",
+  "editOccasion": "Edit occasion",
+  "time": "Time",
+  "activity": "Activity",
+  "location": "Location",
+  "save": "Save",
+  "cancel": "Cancel",
+  "brandQuestion": "Any brands you love, or would rather I skip?",
+  "brandLove": "LOVE",
+  "brandSkip": "SKIP",
+  "addWithPlus": "+ Add",
+  "addBrand": "Add a brand",
+  "brandName": "Brand name",
+  "add": "Add",
+  "chooseSize": "Choose size",
+  "legacyDress": "A dress",
+  "legacyLayer": "A layer over it",
+  "legacyShoes": "Shoes",
+  "legacyBag": "A bag",
+  "bagSemantics": "Bag, {count, plural, =1{1 item} other{{count} items}}",
+  "@bagSemantics": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quantitySemantics": "Quantity {quantity}",
+  "@quantitySemantics": {
+    "placeholders": {
+      "quantity": {
+        "type": "int"
+      }
+    }
+  },
+  "categoryPlaceholder": "{category} placeholder",
+  "@categoryPlaceholder": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "spentPieceCount": "{amount} spent · {count} of {total}",
+  "@spentPieceCount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetLeft": "{amount} left",
+  "@budgetLeft": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "addedToBag": "Added to your bag · {count} items",
+  "@addedToBag": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addPartialLook": "Add the {count} piece so far · {total}",
+  "@addPartialLook": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "addLookToBag": "Add the look to your bag · {total}",
+  "@addLookToBag": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "itemRemoved": "{name} removed",
+  "@itemRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removeNamedItem": "Remove {name}",
+  "@removeNamedItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "bagTitle": "Your bag — {count, plural, =1{1 item} other{{count} items}}",
+  "@bagTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseItemSize": "Choose size · {name}",
+  "@chooseItemSize": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "changeItemSize": "Change size · {name}",
+  "@changeItemSize": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "changeNamedItem": "Change {name}",
+  "@changeNamedItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "matchingProducts": "{name} · {count} matching products",
+  "@matchingProducts": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "coloursChosen": "{count} chosen{selection}",
+  "@coloursChosen": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "selection": {
+        "type": "String"
+      }
+    }
+  },
+  "wantItDifferent": "{name} — want it different?",
+  "@wantItDifferent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "restartTitle": "Back to start?",
+  "restartDescription": "Your current look and conversation will be cleared. Items in your bag and saved looks will be kept.",
+  "restartConfirm": "Back to start",
+  "occasionExamples": "HERE ARE SOME EXAMPLES",
+  "exploreCatalog": "Explore component catalog",
+  "disconnectModel": "Disconnect model",
+  "connectModelTitle": "Connect your model",
+  "occasionTitle": "Where are you going?",
+  "occasionDescription": "Tell me the occasion, where it is and roughly what you’d like to spend. I’ll pull the whole look together from what we carry, and you can change anything as we go.",
+  "occasionField": "Your occasion",
+  "startLook": "Start my look",
+  "back": "Back",
+  "catalogTitle": "Catalog components",
+  "catalogDescription": "A visual index of the commerce vocabulary available to A2UI surfaces. Each custom item has a schema, a Flutter builder, and a fixture-backed interaction path.",
+  "catalogCounts": "9 commerce components · 15 GenUI basic components",
+  "finalizedComponents": "Finalized Figma components",
+  "finalizedScreens": "Finalized Figma screens",
+  "basicComponents": "GenUI basic components",
+  "basicComponentsDescription": "These primitives are available from the base catalog and can be composed before adding a custom schema.",
+  "catalogGuidance": "Basic components remain available through the GenUI catalog. Add a custom item only when a schema and reusable interaction are clearer than composing existing primitives.",
+  "previousResponse": "Previous response",
+  "askingStylist": "Asking your stylist…",
+  "stylistThinking": "Your stylist is thinking…",
+  "updateOutfit": "Update your outfit",
+  "stylistUnavailable": "Stylist unavailable",
+  "retry": "Retry",
+  "newJourney": "New journey",
+  "inspectorClose": "Close inspector",
+  "inspectorInspect": "Inspect",
+  "inspectorExchanges": "Exchanges",
+  "inspectorCatalog": "Catalog",
+  "inspectorTitle": "Under the hood",
+  "inspectorPrivacy": "These are safe structural summaries, not raw HTTP captures. Message text, model prose, prompts, keys and authentication headers are withheld.",
+  "inspectorAuthority": "The model can choose an eligible recommendation component. The host binds product facts, validates the result and controls prices, basket changes and demo checkout.",
+  "inspectorHistory": "Showing {count} of the last {limit} events. Newest first; history stays in memory for this connection.",
+  "@inspectorHistory": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "inspectorEmpty": "Start a journey or use a basket control to see its path through the app. Host-only actions do not need a model request.",
+  "inspectorClientInput": "Client → host",
+  "inspectorClientExplanation": "A message or control reached the host. Content is withheld; a known action name may be shown.",
+  "inspectorModelRequest": "Host → model",
+  "inspectorRequestExplanation": "Metadata from an actual decoded model request. The provider receives instructions and context; their content is withheld here.",
+  "inspectorModelResponse": "Model → host",
+  "inspectorResponseExplanation": "Metadata from an actual decoded response. Safe component choices and known tool names are shown before host validation; model prose is withheld.",
+  "inspectorValidation": "Host validation",
+  "inspectorValidationExplanation": "The host checks whether the proposed component is eligible. Product, budget and action validation still apply.",
+  "inspectorModelSelected": "Model-selected recommendation · host-bound surface",
+  "inspectorHostComposed": "Host-composed surface",
+  "inspectorSurfaceExplanation": "A structural summary of the validated A2UI batch published to Flutter. The host supplies facts, bindings and actions. This is not raw model-authored A2UI.",
+  "inspectorProvider": "Connected provider",
+  "inspectorOffline": "Offline fixture · no provider call",
+  "inspectorInjected": "Injected model · test or custom adapter",
+  "inspectorCatalogCount": "{count, plural, =1{1 registered component} other{{count} registered components}}",
+  "@inspectorCatalogCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "inspectorCatalogExplanation": "These schemas come from the same catalog used by the Flutter renderer and sent as model instructions. Availability shows which components the model may choose now, which the host controls, and which are gallery examples.",
+  "inspectorHostActions": "Host action contracts",
+  "inspectorHostActionsExplanation": "Schemas describe validated controls. They do not authorize a model to change your basket or confirm checkout.",
+  "inspectorSelectable": "Model selectable",
+  "inspectorHostControlled": "Host controlled",
+  "inspectorReferenceOnly": "Reference only · gallery",
+  "inspectorSchema": "Properties and action bindings",
+  "inspectorToolResult": "Host → model tool feedback",
+  "inspectorToolResultExplanation": "A host tool returned feedback to the model. The tool name and safe counts are shown; its content is withheld.",
+  "inspectorComponentChoice": "Component: {component}",
+  "@inspectorComponentChoice": {
+    "placeholders": {
+      "component": {
+        "type": "String"
+      }
+    }
+  },
+  "inspectorTools": "Tools: {tools}",
+  "@inspectorTools": {
+    "placeholders": {
+      "tools": {
+        "type": "String"
+      }
+    }
+  },
+  "inspectorAccepted": "Accepted",
+  "inspectorRejected": "Rejected",
+  "inspectorTurnFailure": "Turn not committed",
+  "inspectorTurnFailureExplanation": "The turn failed before publication. Its safe category distinguishes rejected input, invalid presentation and an unavailable response; exception details are withheld."
+}

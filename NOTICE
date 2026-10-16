@@ -31,12 +31,14 @@ Copyright 2020 The Inter Project Authors (https://github.com/rsms/inter).
 Licensed under the SIL Open Font License, Version 1.1, bundled as
 assets/fonts/inter/OFL.txt. Distributed unmodified from Google Fonts.
 
-Start-screen collage artwork is drawn by the original project source in
-lib/src/catalog/occasion_artwork.dart and occasion_collage.dart and follows the
-project's Apache-2.0 license. The former ten design-reference start PNGs are
-removed from the current asset tree because their source credits and
-redistribution terms were not recorded. Historical screenshots, videos and
-Git blobs may retain those images; deletion is not a grant or history clearance.
+Start-screen collage photographs in assets/images/occasions/start-01.png through
+start-10.png are the original images supplied in the Figma design reference,
+restored byte-for-byte at the project owner's direction. They are separate from
+the approved catalog-photo grant. The project does not assert an Apache-2.0
+license for these photographs; source identity and the existing public
+redistribution review are recorded in docs/assets/collage-provenance.json and
+docs/asset-provenance.json. Historical screenshots, videos and Git blobs retain
+their own review requirements.
 
 The four design-context photographs in assets/images/finalized_left/ retain
 recorded Figma extraction evidence but no independent redistribution grant in

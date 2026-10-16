@@ -1,6 +1,11 @@
 name: Verify
 
 on:
+  pull_request:
+  push:
+    branches-ignore:
+      - main
+      - master
   workflow_dispatch:
 
 permissions:
@@ -24,6 +29,12 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Verify generated localization, state and routes
+        run: |
+          flutter gen-l10n
+          dart run build_runner build
+          git diff --exit-code -- lib/app/l10n/generated lib/app/navigation/router/app_router.g.dart lib/presentation/stylist/bloc
 
       - name: Enforce architecture and current asset boundaries
         run: |

@@ -1,0 +1,11 @@
+00:00 +0: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/dressing_room_transition_test.dart
+00:00 +0: custom brief releases text input before its outgoing fade
+00:01 +1: gallery restart removes surfaces and ignores pending fixture results
+00:01 +2: gallery close drains requests without waiting for the fixture repository
+00:01 +3: X confirms restart and fades between views, reduceMotion=false
+00:01 +4: X confirms restart and fades between views, reduceMotion=true
+00:01 +5: failed restart fades back to the current look
+00:01 +6: first long reply stays at the top and later replies follow the end
+00:02 +7: first-turn imagery stays visible until room ready, failure=false
+00:02 +8: first-turn imagery stays visible until room ready, failure=true
+00:02 +9: All tests passed!

@@ -1,0 +1,21 @@
+00:00 +0: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart
+00:00 +0: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: a new inspector does not inherit another pane scroll position
+00:02 +1: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:02 +2: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:02 +3: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:02 +4: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:03 +5: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:03 +6: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:03 +7: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:04 +8: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the real session can inspect a pending turn without replacing its draft or renderer
+00:04 +9: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: all actual catalog registrations are available without a model
+00:05 +10: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_test.dart: all actual catalog registrations are available without a model
+00:05 +11: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the actual basket toggles to diagnostics and retains quantities at Size(390.0, 844.0) text 2.0
+00:05 +12: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the actual basket toggles to diagnostics and retains quantities at Size(390.0, 844.0) text 2.0
+00:05 +13: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: basket mutations publish host provenance and committed counts without a model
+00:06 +14: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: a late cancelled model response never appears as a new exchange or commit
+00:06 +15: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: actual user and decoded model prose are withheld from public diagnostics
+00:06 +16: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: untrusted tool identifiers cannot smuggle prompt or credential text into diagnostics
+00:06 +17: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: untrusted component identifiers cannot smuggle prompt or credential text into diagnostics
+00:06 +18: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/commerce_inspector_integration_test.dart: the diagnostic component allowlist stays equal to actual selectable registrations
+00:06 +19: All tests passed!

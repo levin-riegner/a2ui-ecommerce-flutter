@@ -1,0 +1,25 @@
+{
+  "source_manifest_sha256": "c8bae39b814ea2a83c8dfbe23854a11e0925efe8a32a98b06e76a50f6e94250a",
+  "artifacts": {
+    "offline_ios_kernel": {
+      "path": "build/ios/iphonesimulator/Runner.app/Frameworks/App.framework/flutter_assets/kernel_blob.bin",
+      "bytes": 83285176,
+      "sha256": "43c1dcbc96fae46296505d1f62539cb67061cdc0456f17346d76a14223854826"
+    },
+    "production_android_apk": {
+      "path": "build/app/outputs/flutter-apk/app-debug.apk",
+      "bytes": 289389403,
+      "sha256": "5d97965772390a82503678f5337f8bd18d10aa42433073b737070b84b155236f"
+    },
+    "production_web_js": {
+      "path": "build/web/main.dart.js",
+      "bytes": 5295259,
+      "sha256": "d77e4c0b1060f5f7d403bbf743d6508c590c7e3a0371ee99a680076ef2634cdb"
+    },
+    "offline_web_js": {
+      "path": "/tmp/lr-migration-after-focus-web/main.dart.js",
+      "bytes": 18579538,
+      "sha256": "ff234cc5757aa073d763ccf01fc04ad5712d25dbcd7a0409c65a1fdc0d18976c"
+    }
+  }
+}

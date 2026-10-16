@@ -1,0 +1,255 @@
+{
+  "context": {},
+  "data": {
+    "all_succeeded": true,
+    "steps": [
+      {
+        "kind": "interact",
+        "result": {
+          "appeared": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "appeared_count": 5,
+          "disappeared": [
+            "staticText|Fictional delivery scenario; no carrier, tax or arrival guarantee.|",
+            "button|Complete demo checkout — no payment|",
+            "button|Back to demo bag|",
+            "staticText|Demo checkout complete. Your local demo stock was updated and the bag cleared. No payment, real order or shipment was created.|",
+            "staticText|SIMULATED RECEIPT · demo-checkout-1\nNatural Cotton Long-Sleeve Shirt · M × 2\nOlive Dust Urban Slip-On · 41 × 1\nTeal Hiking Backpack with Contrast Trim · One size × 1\nTerracotta Straight-Leg Trousers · M × 1\nDemo total: €258.95\nNo payment taken, real order placed or shipment booked.|",
+            "button|View last demo receipt|",
+            "image|ALDER|",
+            "button|New journey|",
+            "textField|Message your stylist|",
+            "button|Dictate message|",
+            "button|Send|",
+            "group|Typing Predictions|",
+            "button|“draft”|",
+            "button|drafts|",
+            "button|drafted|",
+            "button|q|",
+            "button|w|",
+            "button|e|",
+            "button|r|",
+            "button|t|"
+          ],
+          "disappeared_count": 49,
+          "duration_ms": 1756,
+          "next_screen": "d1187713",
+          "next_seq": 3511,
+          "previous_screen": "e412b48e",
+          "screen_changed": true
+        }
+      },
+      {
+        "kind": "interact",
+        "result": {
+          "appeared": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "appeared_count": 10,
+          "disappeared": [
+            "group|Dismiss|",
+            "staticText|Back to start?|",
+            "staticText|Your current look and conversation will be cleared. Items in your bag and saved looks will be kept.|",
+            "button|Back to start|",
+            "button|Keep styling|"
+          ],
+          "disappeared_count": 5,
+          "duration_ms": 1755,
+          "next_screen": "7e89e74b",
+          "next_seq": 3514,
+          "previous_screen": "d1187713",
+          "screen_changed": true
+        }
+      },
+      {
+        "kind": "interact",
+        "result": {
+          "appeared": [
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+          ],
+          "appeared_count": 38,
+          "disappeared": [],
+          "disappeared_count": 0,
+          "duration_ms": 1813,
+          "next_screen": "d7b079a1",
+          "next_seq": 3517,
+          "previous_screen": "7e89e74b",
+          "screen_changed": true
+        }
+      },
+      {
+        "kind": "interact",
+        "result": {
+          "appeared": [
+            8,
+            12
+          ],
+          "appeared_count": 2,
+          "disappeared": [
+            "textField|Your occasion\nTell me about the occasion…|",
+            "button|I|",
+            "button|The|",
+            "button|I’m|"
+          ],
+          "disappeared_count": 4,
+          "duration_ms": 6982,
+          "next_screen": "db3bddd3",
+          "next_seq": 3520,
+          "previous_screen": "d7b079a1",
+          "screen_changed": true
+        }
+      },
+      {
+        "kind": "interact",
+        "result": {
+          "appeared": [
+            1,
+            2,
+            4,
+            5,
+            7
+          ],
+          "appeared_count": 5,
+          "disappeared": [
+            "staticText|Where are you going?|",
+            "staticText|Tell me the occasion, where it is and roughly what you’d like to spend. I’ll pull the whole look together from what we carry, and you can change anything as we go.|",
+            "staticText|HERE ARE SOME EXAMPLES|",
+            "image|A summer lunch in Lisbon in June — a midi dress and sandals, under €500 for the whole outfit|",
+            "image|A weekend in Paris in October — a sweater, trousers, sneakers and a jacket, casual style, under €650 for the whole outfit|",
+            "image|First day at a creative agency in Berlin in September — a shirt, tailored trousers and loafers, smart casual, under €700 for the whole outfit|",
+            "textField|Your occasion|",
+            "button|Start my look|",
+            "group|Typing Predictions|",
+            "button|“500”|",
+            "button|q|",
+            "button|w|",
+            "button|e|",
+            "button|r|",
+            "button|t|",
+            "button|y|",
+            "button|u|",
+            "button|i|",
+            "button|o|",
+            "button|p|"
+          ],
+          "disappeared_count": 44,
+          "duration_ms": 1730,
+          "next_screen": "3a8ee7f1",
+          "next_seq": 3523,
+          "previous_screen": "db3bddd3",
+          "screen_changed": true
+        }
+      },
+      {
+        "kind": "elements",
+        "result": "rs/1 act screen=3a8ee7f1 seq=3524 age=0ms count=7 udid=473AFAD8-39CA-4DA6-8D3A-443070830101 keyboard=hidden\n1|staticText|A casual outfit under 500||enabled\n2|staticText|Asking your stylist…||enabled\n3|image|ALDER||enabled\n4|button|New journey||enabled\n5|staticText|Message your stylist\\nTell me about the occasion…||enabled\n6|button|Dictate message||enabled\n7|button|Send||enabled"
+      },
+      {
+        "kind": "interact",
+        "result": {
+          "appeared": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "appeared_count": 5,
+          "disappeared": [
+            "staticText|A casual outfit under 500|",
+            "staticText|Asking your stylist…|",
+            "image|ALDER|",
+            "button|New journey|",
+            "staticText|Message your stylist\nTell me about the occasion…|",
+            "button|Dictate message|",
+            "button|Send|"
+          ],
+          "disappeared_count": 7,
+          "duration_ms": 1704,
+          "next_screen": "d1187713",
+          "next_seq": 3527,
+          "previous_screen": "3a8ee7f1",
+          "screen_changed": true
+        }
+      },
+      {
+        "kind": "interact",
+        "result": {
+          "appeared": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "appeared_count": 10,
+          "disappeared": [
+            "group|Dismiss|",
+            "staticText|Back to start?|",
+            "staticText|Your current look and conversation will be cleared. Items in your bag and saved looks will be kept.|",
+            "button|Back to start|",
+            "button|Keep styling|"
+          ],
+          "disappeared_count": 5,
+          "duration_ms": 1682,
+          "next_screen": "7e89e74b",
+          "next_seq": 3530,
+          "previous_screen": "d1187713",
+          "screen_changed": true
+        }
+      },
+      {
+        "kind": "wait",
+        "result": {
+          "elapsed_ms": 5016,
+          "satisfied": true
+        }
+      },
+      {
+        "kind": "elements",
+        "result": "rs/1 act screen=7e89e74b seq=3531 age=0ms count=10 udid=473AFAD8-39CA-4DA6-8D3A-443070830101 keyboard=hidden issue=zero_size_elements_omitted\n1|staticText|Where are you going?||enabled\n2|staticText|Tell me the occasion, where it is and roughly what you’d like to spend. I’ll pull the whole look together from what we carry, and you can change anything as we go.||enabled\n3|staticText|HERE ARE SOME EXAMPLES||enabled\n4|image|A summer lunch in Lisbon in June — a midi dress and sandals, under €500 for the whole outfit||enabled\n5|image|A weekend in Paris in October — a sweater, trousers, sneakers and a jacket, casual style, under €650 for the whole outfit||enabled\n6|image|First day at a creative agency in Berlin in September — a shirt, tailored trousers and loafers, smart casual, under €700 for the whole outfit||enabled\n7|image|ALDER||enabled\n8|textField|Your occasion\\nTell me about the occasion…||enabled,empty\n9|button|Dictate message||enabled\n10|button|Start my look||enabled\n!perception|zero_size_elements_omitted|1 omitted|Elements with accessibility content but zero-size frames were omitted. Give them a nonzero frame (1x1 points is enough)."
+      }
+    ],
+    "stopped_at": null
+  },
+  "ok": true,
+  "rs": "1"
+}

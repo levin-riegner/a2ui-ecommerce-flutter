@@ -1,0 +1,650 @@
+00:00 +0: loading /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_composer_dictation_test.dart
+00:00 +0: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +1: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +2: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +3: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +4: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +5: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +6: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +7: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +8: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +9: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +10: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +11: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:00 +12: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:01 +13: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:01 +14: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: root rebuild preserves external dependency ownership
+00:01 +15: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:01 +16: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:01 +17: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:02 +18: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_composer_dictation_test.dart: partial and final words replace the selection without auto-send
+00:02 +19: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_data_contract_test.dart: bag line quantities and subtotal preserve decimal EUR amounts
+00:02 +20: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_data_contract_test.dart: bag line quantities and subtotal preserve decimal EUR amounts
+00:02 +21: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_data_contract_test.dart: bag line quantities and subtotal preserve decimal EUR amounts
+00:02 +22: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:02 +23: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:02 +24: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:02 +25: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:02 +26: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:02 +27: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:02 +28: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:03 +29: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:03 +30: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:03 +31: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:03 +32: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/catalog_route_session_test.dart: typed catalog push and back preserve the owned session, renderer and draft
+00:03 +33: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:03 +34: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:04 +35: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:04 +36: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:04 +37: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:04 +38: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:04 +39: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:04 +40: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:04 +41: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: formal male styling uses available separates instead of unsuitable utility coveralls
+00:05 +42: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:05 +43: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:05 +44: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:06 +45: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +46: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +47: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +48: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +49: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +50: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +51: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:07 +52: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +53: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +54: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +55: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +56: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +57: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +58: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +59: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +60: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +61: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +62: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:08 +63: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +64: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +65: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +66: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +67: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +68: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +69: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +70: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +71: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +72: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +73: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +74: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +75: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +76: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +77: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +78: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +79: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +80: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +81: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +82: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +83: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:09 +84: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +85: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +86: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +87: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +88: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +89: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:10 +90: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +91: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +92: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:11 +93: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +94: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +95: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +96: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +97: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +98: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +99: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +100: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +101: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +102: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +103: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +104: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +105: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +106: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +107: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +108: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +109: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +110: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +111: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:12 +112: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +113: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +114: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +115: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +116: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +117: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +118: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +119: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:13 +120: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +121: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +122: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +123: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +124: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +125: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +126: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +127: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +128: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +129: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +130: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +131: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:14 +132: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +133: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +134: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +135: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +136: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +137: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +138: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +139: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +140: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +141: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +142: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +143: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +144: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +145: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +146: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +147: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +148: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +149: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +150: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +151: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +152: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +153: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +154: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +155: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +156: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +157: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +158: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +159: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +160: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +161: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +162: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +163: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +164: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +165: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +166: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +167: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +168: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +169: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +170: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +171: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +172: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +173: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +174: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +175: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +176: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +177: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +178: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +179: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +180: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +181: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +182: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +183: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +184: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +185: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +186: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +187: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:15 +188: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +189: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +190: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +191: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +192: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +193: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:16 +194: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +195: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +196: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +197: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:17 +198: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +199: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +200: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +201: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +202: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +203: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +204: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +205: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +206: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +207: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +208: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +209: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +210: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +211: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:18 +212: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:19 +213: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:19 +214: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:19 +215: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:19 +216: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +217: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +218: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +219: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +220: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +221: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +222: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +223: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +224: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +225: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +226: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +227: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +228: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +229: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: paris advances through every required piece and finishes
+00:20 +230: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:20 +231: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +232: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:21 +233: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +234: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +235: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +236: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +237: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +238: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +239: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +240: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +241: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +242: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:22 +243: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +244: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +245: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +246: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +247: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +248: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +249: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +250: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +251: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +252: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +253: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +254: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +255: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +256: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +257: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +258: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +259: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +260: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +261: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +262: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +263: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +264: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +265: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +266: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +267: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:23 +268: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +269: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +270: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +271: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +272: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +273: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +274: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +275: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +276: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +277: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +278: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +279: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +280: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +281: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +282: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +283: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +284: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +285: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +286: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +287: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +288: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +289: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +290: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +291: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +292: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +293: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:24 +294: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +295: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +296: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +297: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +298: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +299: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +300: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +301: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +302: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +303: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +304: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +305: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +306: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +307: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +308: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +309: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +310: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +311: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +312: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +313: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +314: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +315: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +316: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +317: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +318: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +319: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +320: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +321: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +322: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +323: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +324: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +325: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +326: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +327: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +328: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +329: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +330: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +331: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +332: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +333: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +334: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +335: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +336: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +337: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +338: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +339: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:25 +340: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +341: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +342: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +343: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +344: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +345: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +346: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +347: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +348: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +349: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +350: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +351: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +352: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +353: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +354: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +355: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +356: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:26 +357: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +358: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +359: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +360: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +361: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +362: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +363: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +364: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +365: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +366: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +367: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +368: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +369: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +370: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:27 +371: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +372: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +373: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +374: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +375: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +376: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +377: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +378: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +379: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +380: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +381: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +382: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +383: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +384: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:28 +385: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:29 +386: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: business budget recovery preserves shirt and does not broaden to loungewear
+00:29 +387: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: cotswolds advances through every required piece and finishes
+00:31 +388: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: cotswolds advances through every required piece and finishes
+00:31 +389: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: cotswolds advances through every required piece and finishes
+00:31 +390: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: cotswolds advances through every required piece and finishes
+00:32 +391: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: cotswolds advances through every required piece and finishes
+00:32 +392: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(466.0, 678.0) at maximum text
+00:32 +393: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_catalog_integration_test.dart: all actual A2UI gallery states fit Size(466.0, 678.0) at maximum text
+00:32 +394: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/agent_connection_test.dart: failed model turn stays retryable and blocks duplicate input
+00:32 +395: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/agent_connection_test.dart: failed model turn stays retryable and blocks duplicate input
+00:32 +396: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/agent_connection_test.dart: failed model turn stays retryable and blocks duplicate input
+00:32 +397: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/agent_connection_test.dart: failed model turn stays retryable and blocks duplicate input
+00:32 +398: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: Cheaper exposes actual cheaper alternatives and rejects cached original selection
+00:32 +399: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: Cheaper exposes actual cheaper alternatives and rejects cached original selection
+00:32 +400: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: Cheaper exposes actual cheaper alternatives and rejects cached original selection
+00:32 +401: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: Cheaper exposes actual cheaper alternatives and rejects cached original selection
+00:33 +402: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +403: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +404: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +405: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +406: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +407: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +408: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +409: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +410: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +411: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +412: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +413: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +414: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +415: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +416: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +417: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +418: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +419: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:33 +420: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +421: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +422: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +423: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +424: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +425: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +426: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +427: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +428: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +429: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +430: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +431: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +432: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +433: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +434: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +435: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +436: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +437: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +438: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +439: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:34 +440: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:35 +441: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:35 +442: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:35 +443: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:35 +444: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:35 +445: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +446: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +447: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +448: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +449: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +450: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +451: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +452: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +453: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +454: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:36 +455: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: lisbon advances through every required piece and finishes
+00:37 +456: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:37 +457: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:37 +458: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:37 +459: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:37 +460: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:37 +461: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:37 +462: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: actual compact dressing room condenses at Size(466.0, 678.0)
+00:38 +463: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/dressing_room_transition_test.dart: custom brief releases text input before its outgoing fade
+00:38 +464: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/dressing_room_transition_test.dart: custom brief releases text input before its outgoing fade
+00:38 +465: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/dressing_room_transition_test.dart: custom brief releases text input before its outgoing fade
+00:38 +466: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/dressing_room_transition_test.dart: custom brief releases text input before its outgoing fade
+00:38 +467: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/dressing_room_transition_test.dart: custom brief releases text input before its outgoing fade
+00:38 +468: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/dressing_room_transition_test.dart: custom brief releases text input before its outgoing fade
+00:39 +469: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:39 +470: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:39 +471: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:39 +472: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +473: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +474: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +475: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +476: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +477: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +478: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +479: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +480: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +481: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:40 +482: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_journey_integration_test.dart: Berlin knit stays visible while next choices become bottoms
+00:41 +483: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:41 +484: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:41 +485: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:41 +486: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:41 +487: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:41 +488: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:41 +489: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: real GenUI comparison button selects its actual catalog product
+00:41 +490: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:41 +491: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +492: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +493: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +494: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +495: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +496: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +497: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +498: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +499: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +500: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:42 +501: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +502: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +503: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +504: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +505: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +506: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +507: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +508: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +509: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/duo_layout_adapter_test.dart: only the black dressing room remains stable between Open and Book
+00:43 +510: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:43 +511: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:43 +512: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:43 +513: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +514: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +515: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +516: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +517: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +518: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +519: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +520: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +521: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +522: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +523: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +524: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +525: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +526: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +527: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:44 +528: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:45 +529: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:45 +530: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:45 +531: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:45 +532: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:46 +533: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:46 +534: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:47 +535: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:47 +536: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:47 +537: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:48 +538: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_component_adoption_test.dart: preferences use actual brands, soft ranking and atomic validation
+00:48 +539: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:49 +540: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:49 +541: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +542: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +543: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +544: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +545: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +546: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +547: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +548: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +549: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +550: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +551: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +552: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +553: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +554: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +555: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +556: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +557: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +558: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +559: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:50 +560: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/custom_brief_journey_test.dart: custom occasion reaches one brief form then actual catalog picks
+00:51 +561: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +562: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +563: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +564: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +565: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +566: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +567: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +568: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +569: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +570: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +571: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/byok_test.dart: bundled BYOK has no service address, masks the key, and connects without network calls
+00:51 +572: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +573: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +574: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +575: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +576: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +577: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +578: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +579: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +580: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +581: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +582: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +583: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +584: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +585: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +586: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +587: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +588: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +589: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +590: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +591: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +592: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +593: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +594: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(466.0, 678.0) / 3.12 text
+00:52 +595: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +596: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +597: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +598: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +599: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +600: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +601: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +602: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +603: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +604: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:53 +605: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +606: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +607: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +608: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +609: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +610: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +611: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +612: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +613: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +614: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +615: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +616: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:54 +617: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:55 +618: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:55 +619: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:55 +620: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:55 +621: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:55 +622: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: shoe sizes do not overwrite clothing size preferences on a new look
+00:55 +623: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/finalized_screen_gallery_test.dart: all 14 screen surfaces render at Size(951.0, 669.0) / 1.0 text
+00:55 +624: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:56 +625: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:56 +626: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:56 +627: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +628: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +629: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +630: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +631: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +632: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +633: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +634: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +635: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +636: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +637: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +638: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +639: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/product_data_demo_commerce_test.dart: real controls apply a size, preview delivery and complete only a simulated checkout
+00:57 +640: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 844.0), text 3.0, keyboard 0.0
+00:57 +641: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 844.0), text 1.0, keyboard 300.0
+00:58 +642: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(844.0, 390.0), text 2.0, keyboard 0.0
+00:58 +643: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: five-item bag keeps actions reachable: Size(390.0, 320.0), text 3.0, keyboard 0.0
+00:58 +644: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(951.0, 669.0) at 1.0 text and dismisses without a model
+00:58 +645: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(669.0, 951.0) at 1.0 text and dismisses without a model
+00:59 +646: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(390.0, 844.0) at 1.0 text and dismisses without a model
+01:00 +647: /Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/test/stylist_bag_overlay_test.dart: bag modal fits Size(390.0, 844.0) at 2.0 text and dismisses without a model
+01:00 +648: All tests passed!

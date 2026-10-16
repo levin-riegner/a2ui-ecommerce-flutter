@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/input/speech_dictation.dart';
-import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/input/speech_dictation.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_composer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

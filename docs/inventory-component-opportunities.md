@@ -2,11 +2,13 @@
 
 Implementation follow-up (15 October): this report preserves the analysis snapshot. Recommendations in the first three batches now have local implementations, with final verification tracked in [component-adoption-progress.md](component-adoption-progress.md). Product facts and the original readiness analysis below remain useful; do not read “current” baseline gaps as the updated implementation status.
 
+Source links point to current equivalent files; code paths and line numbers quoted in the report remain historical.
+
 Snapshot: 14 October 2026, current local feature branch. Three agents independently analyzed catalog facts, component contracts, and real user journeys. This report is analysis; no application code, catalog, deployment, or Git publication changed for this request.
 
 **The 977-product catalog is sufficient to activate most shopping and styling components.** The immediate work is host composition, action handlers, retained state, and more precise filtering. Another bulk import or vector database is not a prerequisite. Available product content does not establish sizes, stock, fit, delivery, or real checkout.
 
-The companion [component library audit](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/docs/component-library-audit.md) inventories all 60 registered names and their current use. This report maps the actual products to those components and gives concrete flow triggers. A component being registered or demonstrated in the gallery is separate from being usable in the live journey.
+The companion [component library audit](component-library-audit.md) inventories all 60 registered names and their current use. This report maps the actual products to those components and gives concrete flow triggers. A component being registered or demonstrated in the gallery is separate from being usable in the live journey.
 
 ## Recommended sequence
 
@@ -187,15 +189,15 @@ All counts were computed over the runtime CSV `assets/data/catalog/products.csv`
 
 Key source entry points:
 
-- [Runtime catalog](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/assets/data/catalog/products.csv): all 977 rows and 14 retained fields.
-- [Product model](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/data/models.dart:67): available fields and audience compatibility.
-- [Catalog parser](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/data/catalog_products.dart:31): derived presentation fields and default swatch.
-- [Host component producer](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/agent/stylist_surfaces.dart:128): the UI vocabulary currently emitted.
-- [Host action dispatch](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/agent/stylist_runtime.dart:863): supported actions, including budget and selection.
-- [QuickAdjust handling](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/agent/stylist_runtime.dart:943): current preference behavior.
-- [Constraints](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/agent/stylist_constraints.dart:99): hard filters and soft ranking.
-- [Left-side components](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/catalog/finalized_left_components.dart:1661): shortlists, comparisons and input controls.
-- [Right-side components](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/lib/src/catalog/finalized_right_components.dart:1251): current fixed Look composition.
-- [Import/evidence limits](/Users/kelvinharron/Developer/work/a2ui-ecommerce-flutter/docs/catalog-import.md): demo data, unknown facts and enrichment boundaries.
+- [Runtime catalog](../assets/data/catalog/products.csv): all 977 rows and 14 retained fields.
+- [Product model](../lib/data/catalog/model/models.dart): available fields and audience compatibility.
+- [Catalog parser](../lib/data/catalog/model/catalog_products.dart): derived presentation fields and default swatch.
+- [Host component producer](../lib/presentation/stylist/a2ui/stylist_surfaces.dart): the UI vocabulary currently emitted.
+- [Host action dispatch](../lib/data/stylist/service/runtime/stylist_runtime.dart): supported actions, including budget and selection.
+- [QuickAdjust handling](../lib/data/stylist/service/runtime/stylist_runtime.dart): current preference behavior.
+- [Constraints](../lib/data/stylist/model/stylist_constraints.dart): hard filters and soft ranking.
+- [Left-side components](../lib/presentation/shared/design_system/views/commerce/finalized_left_components.dart): shortlists, comparisons and input controls.
+- [Right-side components](../lib/presentation/shared/design_system/views/commerce/finalized_right_components.dart): current fixed Look composition.
+- [Import/evidence limits](catalog-import.md): demo data, unknown facts and enrichment boundaries.
 
 The minimum shared change is a factual product-to-component adapter plus allowlisted host actions and presentation triggers. Preserve explicit user facts, action freshness, rollback and inactive-history isolation across every new component. New components must use the existing authoritative selection path, rather than bypassing catalog validation.

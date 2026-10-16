@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:a2ui_flutter_commerce/src/agent/commerce_session.dart';
-import 'package:a2ui_flutter_commerce/src/agent/model_connection.dart';
-import 'package:a2ui_flutter_commerce/src/agent/model_settings.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/app_dependencies.dart';
-import 'package:a2ui_flutter_commerce/src/agent/genkit_providers.dart';
-import 'package:a2ui_flutter_commerce/src/data/catalog_snapshot.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/commerce_session.dart';
+import 'package:a2ui_flutter_commerce/presentation/connection/views/model_connection_form.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/model_settings.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
+import 'package:a2ui_flutter_commerce/util/stylist_dependencies.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/remote/genkit_providers.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/catalog_snapshot.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';

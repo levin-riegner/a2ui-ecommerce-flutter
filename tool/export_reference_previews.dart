@@ -1,17 +1,17 @@
 // Run with: fvm flutter test tool/export_reference_previews.dart
-// Captures only the disconnected start screen and original project artwork.
+// Captures the disconnected start screen with the supplied Figma photographs.
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/occasion_artwork.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/occasion_artwork.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const _output = 'docs/verification/reference-architecture-2026-10-15';
+const _output = 'docs/verification/figma-photo-restoration';
 
 void main() {
   testWidgets('export current disconnected start with real bundled fonts', (
@@ -59,7 +59,7 @@ void main() {
         'pixelRatio': 1,
         'fonts': ['Inter', 'Jost'],
         'state': 'disconnected start; no provider configured or called',
-        'artworkTiles': find.byType(OccasionArtwork).evaluate().length,
+        'photoTiles': find.byType(OccasionArtwork).evaluate().length,
       });
       await tester.pumpWidget(const SizedBox.shrink());
     }

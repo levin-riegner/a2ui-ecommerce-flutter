@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
-import 'package:a2ui_flutter_commerce/src/data/product_repository.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/catalog_products.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/repository/product_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

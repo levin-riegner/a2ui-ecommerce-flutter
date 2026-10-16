@@ -1,6 +1,6 @@
-import 'package:a2ui_flutter_commerce/src/layout/stylist_message_queue.dart';
-import 'package:a2ui_flutter_commerce/src/layout/stylist_layout.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_message_queue.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_layout.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
 import 'package:a2ui_core/a2ui_core.dart' as core;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

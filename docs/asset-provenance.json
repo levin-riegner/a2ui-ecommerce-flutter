@@ -81,17 +81,6 @@
     },
     {
       "paths": [
-        "lib/src/catalog/occasion_artwork.dart",
-        "lib/src/catalog/occasion_collage.dart"
-      ],
-      "source": "Original geometric Canvas artwork authored in this reference repository; no source image pixels",
-      "evidence": [
-        "LICENSE"
-      ],
-      "terms": "Project Apache-2.0"
-    },
-    {
-      "paths": [
         "docs/verification/reference-architecture-2026-10-15/start-*.png"
       ],
       "source": "Fresh disconnected ReferenceApp renders with original code-native occasion art and project UI text",
@@ -101,20 +90,31 @@
         "LICENSE"
       ],
       "terms": "Project Apache-2.0; contains no removed Start PNG or unresolved context-photo gallery media"
+    },
+    {
+      "paths": [
+        "assets/images/occasions/start-*.png"
+      ],
+      "source": "Ten original supplied Figma photographs; exact bytes restored from d67a33b",
+      "evidence": [
+        "docs/assets/collage-provenance.json"
+      ],
+      "terms": "Local restoration authorized; public redistribution terms remain subject to the existing release review",
+      "release_status": "requires_review"
+    },
+    {
+      "paths": [
+        "docs/assets/readme/duo-*.png"
+      ],
+      "source": "Native iPhone Duo simulator captures of project UI and bundled catalog, exported with RocketSim device framing",
+      "evidence": [
+        "docs/assets/readme/README.md",
+        "NOTICE"
+      ],
+      "terms": "Project UI and catalog-photo terms as recorded in NOTICE; no Start collage or design-context photographs are shown. Simulator capture is not live-provider or physical-device evidence."
     }
   ],
-  "removed_unverified_assets": [
-    "assets/images/occasions/start-01.png",
-    "assets/images/occasions/start-02.png",
-    "assets/images/occasions/start-03.png",
-    "assets/images/occasions/start-04.png",
-    "assets/images/occasions/start-05.png",
-    "assets/images/occasions/start-06.png",
-    "assets/images/occasions/start-07.png",
-    "assets/images/occasions/start-08.png",
-    "assets/images/occasions/start-09.png",
-    "assets/images/occasions/start-10.png"
-  ],
+  "removed_unverified_assets": [],
   "archive_review": [
     "docs/verification/**/*.png",
     "docs/verification/**/*.mp4",
@@ -122,10 +122,11 @@
   ],
   "vendored_code": [
     {
-      "path": "lib/src/catalog/a2ui_common_schema.dart",
+      "path": "lib/presentation/stylist/a2ui/catalog/a2ui_common_schema.dart",
       "source": "Pinned GenUI 0.10.3 common component JSON schema",
       "license": "licenses/genui-BSD-3-Clause.txt",
       "upgrade": "Compare with the pinned SDK when upgrading GenUI; preserve upstream license."
     }
-  ]
+  ],
+  "restored_design_assets_ledger": "docs/assets/collage-provenance.json"
 }

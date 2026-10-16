@@ -38,8 +38,8 @@ remaining families. No Figma nodes were edited.
 Static SVGs retain their exported geometry. Four screen photos are exported
 original image bytes with Figma image-hash verification. This establishes source
 identity, not redistribution permission; see [the release gates](../open-source-release.md).
-The current Start collage uses original code-native artwork in the same staggered
-layout; historical captures retain the former photographs. Jost and Inter are bundled locally.
+The Start collage uses the original supplied Figma photographs in the same
+staggered layout, restored byte-for-byte against [the source ledger](../assets/collage-provenance.json). Jost and Inter are bundled locally.
 Product images in real journeys remain the approved catalog assets.
 
 The Designs page's journey layout uses shared gutters and `StylistSection` for

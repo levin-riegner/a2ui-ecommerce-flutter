@@ -1,0 +1,24 @@
+{
+  "sourceBase": "4d4a43f",
+  "branch": "feat/model-catalog-inspector",
+  "sourceFilesDigest": "b4ed21e4ce85e9c0aee90cab9d335654006712242727db7e8121e1faad4b5511",
+  "offlineWeb": {
+    "main.dart.js": "fb9acc8a6559a7fae4bc586f2c6d47fe0d63c8c5e83df6a83983e878bc99ee3c",
+    "entry": "tool/alder_online_demo.dart",
+    "defines": [
+      "ALDER_DEMO_OFFLINE=true"
+    ]
+  },
+  "installedOfflineIos": {
+    "device": "iPhone Duo simulator",
+    "udid": "473AFAD8-39CA-4DA6-8D3A-443070830101",
+    "entry": "tool/alder_online_demo.dart",
+    "defines": [
+      "ALDER_DEMO_OFFLINE=true"
+    ],
+    "files": {
+      "Runner": "870ca9b0b4f56453156fed55c06cbca6b80a65375df41080af874cf0373c760c",
+      "Frameworks/App.framework/flutter_assets/kernel_blob.bin": "df0f2a80c70f69e8ee0b7f5b7ff1b0a21dcab8a8d5188cf12322c848de8f4879"
+    }
+  }
+}
