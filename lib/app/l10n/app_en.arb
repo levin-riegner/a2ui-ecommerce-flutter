@@ -246,7 +246,7 @@
     }
   },
   "restartTitle": "Back to start?",
-  "restartDescription": "Your current look and conversation will be cleared. Items in your bag and saved looks will be kept.",
+  "restartDescription": "Your current look, conversation and bag will be cleared. Saved looks will be kept.",
   "restartConfirm": "Back to start",
   "occasionExamples": "HERE ARE SOME EXAMPLES",
   "exploreCatalog": "Explore component catalog",

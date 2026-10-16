@@ -2565,6 +2565,13 @@ class StylistRuntime {
           scope.hostReply = 'Deleted ${look['name']}.';
         case 'reset_look':
           state
+            ..bag = {}
+            ..bagVariants = {}
+            ..reviewedBagPieces = {}
+            ..removedBagItems = {}
+            ..removedBagVariants = {}
+            ..bagUndo = null
+            ..bagVariantsUndo = null
             ..briefState = const StylistBrief()
             ..brief = ''
             ..preferences = []

@@ -436,7 +436,7 @@ void main() {
           .last;
       await tap(find.descendant(of: rail, matching: find.text('Your look')));
       expect(runtime.outfit['items'], {'dress': 'demo-0092'});
-      expect(runtime.bagCount, 2);
+      expect(runtime.bagCount, 0);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },

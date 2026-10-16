@@ -655,7 +655,14 @@ class _ResponsiveShell extends StatelessWidget {
           secondaryBackgroundColor: Colors.black,
           secondaryBackgroundOnlyInBookMode: true,
           secondary: _DressingPanel(agent: agent, onNewJourney: onNewJourney),
-          header: _MobileHeader(onNewJourney: onNewJourney),
+          header: _MobileHeader(
+            onNewJourney: onNewJourney,
+            showBag: !innerDisplay && constraints.maxWidth < 600,
+            bagCount: agent.bagCount,
+            onBag: agent.hasLocalLibrary && !agent.isBusy
+                ? agent.openBag
+                : null,
+          ),
           footer: StylistComposerDock(
             padding: EdgeInsets.fromLTRB(gutter, 24, gutter, 0),
             child: _ChatComposer(agent: agent),
@@ -1079,9 +1086,17 @@ class _DressingRoomSurface extends StatelessWidget {
 }
 
 class _MobileHeader extends StatelessWidget {
-  const _MobileHeader({required this.onNewJourney});
+  const _MobileHeader({
+    required this.onNewJourney,
+    this.showBag = false,
+    this.bagCount = 0,
+    this.onBag,
+  });
 
   final VoidCallback onNewJourney;
+  final bool showBag;
+  final int bagCount;
+  final VoidCallback? onBag;
 
   @override
   Widget build(BuildContext context) {
@@ -1108,6 +1123,17 @@ class _MobileHeader extends StatelessWidget {
                 heightFactor: 1,
                 child: const SizedBox(width: 76, child: BrandLockup()),
               ),
+              if (showBag && !split)
+                Positioned(
+                  left: 0,
+                  top: -12,
+                  bottom: -12,
+                  child: FinalizedBagIcon(
+                    key: const ValueKey('phone-header-bag'),
+                    count: bagCount,
+                    onPressed: onBag,
+                  ),
+                ),
               if (showClose)
                 Positioned(
                   right: 0,

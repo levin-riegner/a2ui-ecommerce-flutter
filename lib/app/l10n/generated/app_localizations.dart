@@ -769,7 +769,7 @@ abstract class AppLocalizations {
   /// No description provided for @restartDescription.
   ///
   /// In en, this message translates to:
-  /// **'Your current look and conversation will be cleared. Items in your bag and saved looks will be kept.'**
+  /// **'Your current look, conversation and bag will be cleared. Saved looks will be kept.'**
   String get restartDescription;
 
   /// No description provided for @restartConfirm.

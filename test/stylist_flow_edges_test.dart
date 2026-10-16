@@ -116,6 +116,7 @@ void main() {
       final result = await runtime.turn({'message': 'I changed my mind'});
       expect(result['intent'], 'change_direction');
       expect(runtime.outfit, before);
+      expect(runtime.bagCount, 1);
       expect(
         components(result)
             .where((c) => c['component'] == 'ChoiceChip')
@@ -128,7 +129,7 @@ void main() {
       );
       final restarted = await runtime.turn({'message': 'restart'});
       expect(restarted['outfit']['items'], isEmpty);
-      expect(runtime.bagCount, 1);
+      expect(runtime.bagCount, 0);
       expect((await store.read())!['looks'], hasLength(1));
     },
   );
@@ -240,9 +241,44 @@ void main() {
     },
   );
 
+  test(
+    'returning to start clears the persisted bag and keeps saved looks',
+    () async {
+      final store = MemoryStylistStore();
+      final seed = await completed(store: store);
+      await seed.turn(event('save_look'));
+      await seed.turn(event('add_look_to_bag'));
+      await seed.dispose();
+      var modelCalls = 0;
+      final runtime = StylistRuntime(
+        products: libraryCatalog,
+        store: store,
+        onModelRequest: (_) => modelCalls++,
+      );
+      final agent = GenkitAgent(runtime);
+      addTearDown(agent.dispose);
+      await agent.resumeLocalState();
+      expect(agent.bagCount, 1);
+      expect(await agent.restartChat(), isTrue);
+      expect(agent.hasStarted, isFalse);
+      expect(agent.bagCount, 0);
+      final snapshot = (await store.read())!;
+      expect(snapshot['bag'], isEmpty);
+      expect(snapshot['bagVariants'], isEmpty);
+      expect(snapshot['reviewedBagPieces'], isEmpty);
+      expect(snapshot['looks'], hasLength(1));
+      final restored = StylistRuntime(products: libraryCatalog, store: store);
+      addTearDown(restored.dispose);
+      await restored.loadLocalState();
+      expect(restored.bagCount, 0);
+      expect(modelCalls, 0);
+    },
+  );
+
   test('failed restart keeps persisted look and previously authored controls usable', () async {
     final store = MemoryStylistStore();
     final seed = await completed(store: store);
+    await seed.turn(event('add_look_to_bag'));
     await seed.dispose();
     final runtime = StylistRuntime(products: libraryCatalog, store: store);
     final agent = GenkitAgent(runtime);
@@ -257,6 +293,7 @@ void main() {
     };
     expect(await agent.restartChat(), isFalse);
     expect(store.encoded, before);
+    expect(agent.bagCount, 1);
     expect(runtime.outfit['items'], {'dress': 'demo-0092'});
     expect(agent.inputError, isNotNull);
     await agent.conversation.sendRequest(original);

@@ -6,7 +6,7 @@ Connecting loads the bundled catalog and configures Genkit without calling a mod
 
 The key stays in memory on the device and is added only to the provider's outgoing HTTP headers. It is not saved to files or browser storage and is never a Genkit flow input or generation option. **New journey → Disconnect model** clears the key and session. Reloading or closing the app requires configuring it again. Never embed keys in source, assets, or `--dart-define` values.
 
-Accepted styling preferences, the current look, saved looks and demo bag quantities are stored locally under `alder.stylist.v1`, separately from the model connection. Reconnecting restores catalog IDs and accepted facts against current prices and restrictions. Start over clears the working look while retaining saved looks and the demo bag. The bag supports quantities, removal, undo and an explicitly simulated checkout. Local demo variants, stock, size guides and delivery scenarios are fictional; no payment, real order or shipment is created. See [product-data-and-demo-commerce.md](product-data-and-demo-commerce.md).
+Accepted styling preferences, the current look, saved looks and demo bag quantities are stored locally under `alder.stylist.v1`, separately from the model connection. Reconnecting restores catalog IDs and accepted facts against current prices and restrictions. Start over clears the working look and demo bag while retaining saved looks. The bag supports quantities, removal, undo and an explicitly simulated checkout. Local demo variants, stock, size guides and delivery scenarios are fictional; no payment, real order or shipment is created. See [product-data-and-demo-commerce.md](product-data-and-demo-commerce.md).
 
 ## Styling and recovery
 

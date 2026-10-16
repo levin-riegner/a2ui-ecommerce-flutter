@@ -407,7 +407,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get restartDescription =>
-      'Your current look and conversation will be cleared. Items in your bag and saved looks will be kept.';
+      'Your current look, conversation and bag will be cleared. Saved looks will be kept.';
 
   @override
   String get restartConfirm => 'Back to start';
