@@ -104,6 +104,10 @@ void main() {
       await tapAction(find.widgetWithText(OutlinedButton, 'Keep styling'));
       expect(find.byType(FinalizedBagPreview), findsNothing);
       expect(agent.conversationEntries.length, entryCount);
+      expect(
+        agent.renderer.surfaceIds,
+        unorderedEquals(['dressing-room', agent.latestInlineSurfaceId]),
+      );
       expect(summary, findsOneWidget);
       expect(find.text('Save look'), findsNothing);
       expect(find.text('Your selected sizes'), findsNothing);

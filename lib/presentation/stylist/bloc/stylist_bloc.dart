@@ -662,6 +662,17 @@ class StylistBloc extends CommerceAgent {
           }
         }
       }
+      // The replacement is committed before releasing its previous surface.
+      // Surfaces still referenced by conversation history remain alive.
+      if (replacedEntryId != null &&
+          replacedEntryId != latestInlineSurfaceId &&
+          !state.conversationEntries.any(
+            (entry) =>
+                entry is CommerceSurfaceEntry &&
+                entry.surfaceId == replacedEntryId,
+          )) {
+        renderer.publish(core.DeleteSurfaceMessage(surfaceId: replacedEntryId));
+      }
       committed = true;
       inspector?.record(
         CommerceTraceEntry.surfaceCommit(
