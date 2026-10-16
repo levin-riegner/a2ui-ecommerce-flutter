@@ -104,17 +104,18 @@ void main() {
       final latest = agent.latestInlineSurfaceId;
       final roomSurface = find.byKey(const ValueKey('dressing-room-resize'));
       final roomBounds = tester.getRect(roomSurface);
-      final roomWidget = tester.widget<FinalizedDressingRoom>(
-        find.byType(FinalizedDressingRoom),
+      final inspectBounds = tester.getRect(
+        find.byKey(const ValueKey('commerce-inspect-button')),
       );
-      expect(
-        tester
-            .getRect(find.byKey(const ValueKey('commerce-inspect-button')))
-            .bottom,
-        lessThanOrEqualTo(
-          tester.getRect(find.text(roomWidget.values['brief']!)).top,
+      final closeBounds = tester.getRect(
+        find.descendant(
+          of: find.byKey(const ValueKey('dressing-room-side-rail')),
+          matching: find.byIcon(Icons.close),
         ),
       );
+      expect(inspectBounds.center.dx, closeBounds.center.dx);
+      expect(inspectBounds.top, greaterThan(closeBounds.bottom));
+      expect(inspectBounds.overlaps(roomBounds), isFalse);
       expect(find.text('Inspect'), findsNothing);
       expect(find.text('Experience'), findsNothing);
       hold = true;

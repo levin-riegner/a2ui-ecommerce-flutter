@@ -1338,7 +1338,7 @@ void main() {
   }
 
   testWidgets(
-    'only the black dressing room remains stable between Open and Book',
+    'Duo room and rail follow Figma Open and Book without resetting the look',
     (tester) async {
       _window(tester, const Size(951, 669));
       final fake = _FakeFoldable(
@@ -1370,6 +1370,12 @@ void main() {
         final resize = find.byKey(const ValueKey('dressing-room-resize'));
         final top = tester.getTopLeft(room).dy;
         final height = tester.getSize(resize).height;
+        final rail = find.byKey(const ValueKey('dressing-room-side-rail'));
+        expect(tester.widget<ColoredBox>(rail).color, Colors.white);
+        expect(top, 12);
+        expect(tester.getRect(rail), const Rect.fromLTWH(867, 0, 84, 669));
+        expect(tester.getRect(room).right, 867);
+        expect(tester.getRect(room).bottom, 657);
         expect(top, lessThan(669 - 34));
         final session = agent.conversation;
         final before = jsonEncode(
@@ -1393,11 +1399,27 @@ void main() {
             ),
           );
           await tester.pump();
-          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+          expect(tester.getTopLeft(room).dy, inInclusiveRange(0, 12));
           await tester.pump(const Duration(milliseconds: 160));
-          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+          expect(tester.getTopLeft(room).dy, inInclusiveRange(0, 12));
           await tester.pumpAndSettle();
-          expect(tester.getTopLeft(room).dy, closeTo(top, .01));
+          final book = status == HingeStatus.partiallyOpen;
+          expect(tester.getTopLeft(room).dy, book ? 0 : 12);
+          expect(tester.getRect(room).bottom, book ? 669 : 657);
+          expect(tester.getRect(room).right, 867);
+          expect(
+            tester.widget<ColoredBox>(rail).color,
+            book ? Colors.black : Colors.white,
+          );
+          expect(
+            tester
+                .widget<Icon>(
+                  find.descendant(of: rail, matching: find.byIcon(Icons.close)),
+                )
+                .color,
+            book ? Colors.white : Colors.black,
+          );
+          expect(tester.getRect(rail), const Rect.fromLTWH(867, 0, 84, 669));
           expect(tester.getRect(find.byType(StylistComposer)).bottom, 637);
           expect(
             tester
@@ -1405,7 +1427,10 @@ void main() {
                 .bottom,
             637,
           );
-          expect(tester.getSize(resize).height, closeTo(height, .01));
+          expect(
+            tester.getSize(resize).height,
+            closeTo(book ? height + 24 : height, .01),
+          );
           expect(agent.conversation, same(session));
           expect(
             jsonEncode(

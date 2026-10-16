@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,6 +44,7 @@ class FinalizedPieceSlot extends StatelessWidget {
     this.imageAsset,
     this.onChange,
     this.compactHorizontal = false,
+    this.imageHeight,
   });
 
   final String label;
@@ -54,6 +56,7 @@ class FinalizedPieceSlot extends StatelessWidget {
   final String? imageAsset;
   final VoidCallback? onChange;
   final bool compactHorizontal;
+  final double? imageHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -1443,7 +1446,7 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
           ],
         );
         final sections = Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: pinActions ? MainAxisSize.max : MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
@@ -1472,7 +1475,7 @@ class _FinalizedBagPreviewState extends State<FinalizedBagPreview> {
             ),
             const SizedBox(height: 14),
             if (pinActions)
-              Flexible(
+              Expanded(
                 child: SingleChildScrollView(
                   key: const ValueKey('bag-items-scroll'),
                   primary: false,
@@ -1750,8 +1753,7 @@ class FinalizedDressingRoom extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final large = MediaQuery.textScalerOf(context).scale(14) > 21;
-              if (dark &&
-                  (compact || (constraints.maxWidth >= 520 && !large))) {
+              if (dark && compact) {
                 return SingleChildScrollView(
                   key: const ValueKey('dressing-room-rack'),
                   scrollDirection: Axis.horizontal,
@@ -1799,29 +1801,49 @@ class FinalizedDressingRoom extends StatelessWidget {
               final columns = ((constraints.maxWidth + gap) / (minimum + gap))
                   .floor()
                   .clamp(1, dark ? 2 : 4);
-              final width =
+              final columnWidth =
                   (constraints.maxWidth - (columns - 1) * gap) / columns;
-              return Wrap(
-                spacing: gap,
-                runSpacing: 16,
-                children: [
-                  for (final slot in slots)
-                    SizedBox(
-                      width: width,
-                      child: FinalizedPieceSlot(
-                        key: ValueKey('dressing-slot-${slot['category']}'),
-                        category: slot['category']?.toString() ?? '',
-                        label: slot['label']?.toString() ?? '',
-                        name: slot['name']?.toString() ?? '',
-                        meta: slot['meta']?.toString() ?? '',
-                        swatch: slot['swatch']?.toString(),
-                        state: slot['state']?.toString() ?? 'Empty',
-                        imageAsset: slot['imageAsset']?.toString(),
-                        onChange: () =>
-                            onChange(slot['category']?.toString() ?? ''),
-                      ),
-                    ),
-                ],
+              final roomy = dark && constraints.maxWidth >= 520;
+              final rows = (slots.length / columns).ceil().clamp(1, 100);
+              final roomHeight =
+                  CommerceDressingRoomStyle.maybeOf(context)?.minHeight ?? 0;
+              final availableImageHeight = roomHeight > 0
+                  ? (roomHeight - 160 - rows * 72 - (rows - 1) * 16) / rows
+                  : 240.0;
+              final imageHeight = roomy
+                  ? math.min(240.0, availableImageHeight).clamp(120.0, 240.0)
+                  : null;
+              final width = roomy
+                  ? math.min(columnWidth, imageHeight! / 1.08)
+                  : columnWidth;
+              return Align(
+                alignment: Alignment.topLeft,
+                child: SizedBox(
+                  width: columns * width + (columns - 1) * gap,
+                  child: Wrap(
+                    spacing: gap,
+                    runSpacing: 16,
+                    children: [
+                      for (final slot in slots)
+                        SizedBox(
+                          width: width,
+                          child: FinalizedPieceSlot(
+                            key: ValueKey('dressing-slot-${slot['category']}'),
+                            imageHeight: imageHeight,
+                            category: slot['category']?.toString() ?? '',
+                            label: slot['label']?.toString() ?? '',
+                            name: slot['name']?.toString() ?? '',
+                            meta: slot['meta']?.toString() ?? '',
+                            swatch: slot['swatch']?.toString(),
+                            state: slot['state']?.toString() ?? 'Empty',
+                            imageAsset: slot['imageAsset']?.toString(),
+                            onChange: () =>
+                                onChange(slot['category']?.toString() ?? ''),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               );
             },
           ),
@@ -1851,12 +1873,12 @@ class FinalizedDressingRoom extends StatelessWidget {
 
 class _FinalizedDarkPieceSlot extends StatelessWidget {
   const _FinalizedDarkPieceSlot({super.key, required this.slot});
-  // The pane narrows around the active hinge in Book mode. Keep image height
-  // independent of that width so the selected section below does not jump.
-  static const imageHeight = StylistLayout.pieceImage;
+  // Native panes retain their fixed height through Book-mode hinge changes;
+  // roomy desktop grids supply a proportional portrait height.
   final FinalizedPieceSlot slot;
   @override
   Widget build(BuildContext context) {
+    final imageHeight = slot.imageHeight ?? StylistLayout.pieceImage;
     final filled = slot.state == 'Filled';
     final next = slot.state == 'Next';
     final image = slot.imageAsset;
@@ -1988,7 +2010,9 @@ class _FinalizedDarkPieceSlot extends StatelessWidget {
                             ? CommerceProductImage(
                                 imageAsset: image,
                                 swatch: slot.swatch,
-                                fit: BoxFit.cover,
+                                fit: slot.imageHeight == null
+                                    ? BoxFit.cover
+                                    : BoxFit.contain,
                               )
                             : _rightThumb(
                                 {

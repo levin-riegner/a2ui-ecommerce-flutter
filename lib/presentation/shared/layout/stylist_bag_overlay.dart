@@ -1,4 +1,5 @@
 import 'dart:ui' show ImageFilter;
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import '../../stylist/a2ui/commerce_agent.dart';
 import '../../gallery/commerce_inspector.dart';
 import '../design_system/views/commerce/finalized_right_components.dart';
 import '../design_system/views/commerce/finalized_shared_components.dart';
+import 'duo_layout_adapter.dart';
 
 /// Presents the current host-owned bag over both panes without moving the chat.
 /// Actions still go through the current GenUI surface and its runtime guards.
@@ -81,6 +83,18 @@ class _StylistBagOverlayState extends State<StylistBagOverlay> {
       ),
     );
     final inspector = agent.inspector;
+    final layoutMedia = DuoLayoutScope.mediaForLayout(context);
+    final usableWidth = layoutMedia.size.width - layoutMedia.padding.horizontal;
+    final expanded = usableWidth >= 700;
+    final itemCount = (data['items'] as List).length;
+    final availableHeight =
+        layoutMedia.size.height -
+        layoutMedia.padding.vertical -
+        layoutMedia.viewInsets.bottom -
+        48;
+    final dialogHeight = expanded
+        ? math.min(availableHeight, 280.0 + itemCount * 88)
+        : double.infinity;
 
     return PopScope(
       canPop: !open,
@@ -119,8 +133,7 @@ class _StylistBagOverlayState extends State<StylistBagOverlay> {
                     ),
                   ),
                   SafeArea(
-                    left: false,
-                    right: false,
+                    minimum: layoutMedia.padding,
                     child: Shortcuts(
                       shortcuts: const {
                         SingleActivator(LogicalKeyboardKey.escape):
@@ -143,7 +156,13 @@ class _StylistBagOverlayState extends State<StylistBagOverlay> {
                             surfaceTintColor: Colors.transparent,
                             elevation: 0,
                             insetPadding: const EdgeInsets.all(24),
-                            constraints: const BoxConstraints(maxWidth: 400),
+                            constraints: BoxConstraints(
+                              maxWidth: expanded ? 600 : 400,
+                              maxHeight: dialogHeight.clamp(
+                                0.0,
+                                double.infinity,
+                              ),
+                            ),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.stretch,

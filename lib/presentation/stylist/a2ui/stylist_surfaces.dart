@@ -446,7 +446,9 @@ List<Map<String, Object?>> renderStylistSurfaces({
         },
       ],
     ]);
-  } else if (clarification == null && canEditPreferences) {
+  } else if (clarification == null &&
+      canEditPreferences &&
+      !outfitPlan.complete) {
     (inlineComponents.first['children'] as List).add('edit-preferences');
     inlineComponents.add({
       'id': 'edit-preferences',
@@ -495,10 +497,6 @@ List<Map<String, Object?>> renderStylistSurfaces({
         'name': _path('/look/name'),
         'meta': _path('/look/meta'),
         'pieces': _path('/look/pieces'),
-        if (library != null) ...{
-          'saveAction': _eventAction('save_look'),
-          'resetAction': _eventAction('reset_look'),
-        },
       },
     ]);
     if (library != null && outfit.isNotEmpty) {
@@ -553,6 +551,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
     (inlineComponents.first['children'] as List).addAll(ids);
   }
   if (inspectProducts &&
+      !(outfitPlan.complete && showCompletion) &&
       clarification == null &&
       productDetails == null &&
       selectionOptions == null &&
@@ -757,28 +756,6 @@ List<Map<String, Object?>> renderStylistSurfaces({
     );
   }
   if (library != null) {
-    (inlineComponents.first['children'] as List).add('local-library');
-    inlineComponents.add({
-      'id': 'local-library',
-      'component': 'StylistSection',
-      'children': ['saved-looks-button', 'bag-button'],
-    });
-    inlineComponents.addAll([
-      {
-        'id': 'saved-looks-button',
-        'component': 'PrimaryButton',
-        'label': library['persistent'] == true
-            ? 'Saved looks'
-            : 'Session looks',
-        'action': _eventAction('open_saved_looks'),
-      },
-      {
-        'id': 'bag-button',
-        'component': 'PrimaryButton',
-        'label': 'Demo bag (${library['bagCount']})',
-        'action': _eventAction('open_bag'),
-      },
-    ]);
     if (library['showLooks'] == true) {
       final looks = (library['looks'] as List).cast<Map>();
       inlineData['savedLooks'] = looks;
@@ -854,7 +831,8 @@ List<Map<String, Object?>> renderStylistSurfaces({
         ]);
       }
     }
-    if (productDetails == null &&
+    if (!showCompletion &&
+        productDetails == null &&
         selectionOptions == null &&
         outfitPlan.complete &&
         picks.isEmpty &&
@@ -921,7 +899,7 @@ List<Map<String, Object?>> renderStylistSurfaces({
             'SIMULATED RECEIPT · ${receipt['id']}\n${(receipt['lines'] as List).map((line) => '${line['name']} · ${line['size']} × ${line['quantity']}').join('\n')}\nDemo total: ${formatEuros((receipt['totalCents'] as int) / 100)}\nNo payment taken, real order placed or shipment booked.',
       });
     }
-    if (library['hasReceipt'] == true) {
+    if (library['hasReceipt'] == true && !outfitPlan.complete) {
       (inlineComponents.first['children'] as List).add('view-demo-receipt');
       inlineComponents.add({
         'id': 'view-demo-receipt',

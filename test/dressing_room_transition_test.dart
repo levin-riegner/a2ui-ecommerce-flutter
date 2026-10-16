@@ -294,7 +294,7 @@ void main() {
 
   for (final fail in [false, true]) {
     testWidgets(
-      'first-turn imagery stays visible until room ready, failure=$fail',
+      'first-turn room stays visible through model response, failure=$fail',
       (tester) async {
         tester.view.devicePixelRatio = 1;
         tester.view.physicalSize = const Size(951, 669);
@@ -325,7 +325,6 @@ void main() {
         await tester.pumpWidget(ReferenceApp(agent: agent));
         await tester.pumpAndSettle();
         final mosaic = find.byKey(const ValueKey('occasion-mosaic'));
-        final originalBounds = tester.getRect(mosaic);
         late Future<void> turn;
         await tester.runAsync(() async {
           turn = agent.startBrief('Dinner in Paris');
@@ -333,12 +332,11 @@ void main() {
         });
         await tester.pump();
         await tester.pump(const Duration(seconds: 1));
-        expect(find.text('Dinner in Paris'), findsOneWidget);
-        expect(tester.getRect(mosaic), originalBounds);
-        expect(
-          find.byKey(const ValueKey('finalized-dressing-room')),
-          findsNothing,
-        );
+        expect(find.text('Dinner in Paris'), findsWidgets);
+        expect(mosaic, findsNothing);
+        final room = find.byKey(const ValueKey('finalized-dressing-room'));
+        expect(room, findsOneWidget);
+        final roomElement = tester.element(room);
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
         await tester.runAsync(() async {
           if (fail) {
@@ -349,33 +347,11 @@ void main() {
           await turn;
         });
         await tester.pump();
-        if (fail) {
-          expect(mosaic, findsOneWidget);
-          expect(
-            find.byKey(const ValueKey('finalized-dressing-room')),
-            findsNothing,
-          );
-          expect(agent.canRetry, isTrue);
-        } else {
-          expect(mosaic, findsOneWidget);
-          final ready = find.byKey(const ValueKey('dressing-room-ready'));
-          final fade = tester.widget<FadeTransition>(
-            find
-                .ancestor(of: ready, matching: find.byType(FadeTransition))
-                .first,
-          );
-          expect(fade.opacity.value, 0);
-          await tester.pump(const Duration(milliseconds: 160));
-          expect(fade.opacity.value, greaterThan(0));
-          expect(fade.opacity.value, lessThan(1));
-          expect(mosaic, findsOneWidget);
-          await tester.pumpAndSettle();
-          expect(mosaic, findsNothing);
-          expect(
-            find.byKey(const ValueKey('finalized-dressing-room')),
-            findsOneWidget,
-          );
-        }
+        await tester.pumpAndSettle();
+        expect(mosaic, findsNothing);
+        expect(room, findsOneWidget);
+        expect(tester.element(room), same(roomElement));
+        expect(agent.canRetry, fail);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox.shrink());
       },

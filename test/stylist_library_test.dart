@@ -357,7 +357,7 @@ void main() {
   });
 
   testWidgets(
-    'actual controls save, add, change quantity, remove, undo and restore a look',
+    'demo controls add, change quantity, remove, undo and restore an existing look',
     (tester) async {
       tester.view.physicalSize = const Size(1240, 1000);
       tester.view.devicePixelRatio = 1;
@@ -367,6 +367,7 @@ void main() {
       });
       final store = MemoryStylistStore();
       final seed = (await tester.runAsync(() => completed(store: store)))!;
+      await tester.runAsync(() => seed.turn(event('save_look')));
       await tester.runAsync(seed.dispose);
       final runtime = (await tester.runAsync(
         () async => StylistRuntime(products: libraryCatalog, store: store),
@@ -395,7 +396,7 @@ void main() {
         expect(agent.inputError, expectInputError ? isNotNull : isNull);
       }
 
-      await tap(find.text('Save look').last);
+      expect(find.text('Save look'), findsNothing);
       expect((await store.read())!['looks'], hasLength(1));
       await tap(find.text('Add look to demo bag · €230.00').last);
       expect(find.byType(FinalizedBagPreview), findsOneWidget);
@@ -424,7 +425,8 @@ void main() {
       await tap(find.text('Undo').last);
       expect(runtime.bagCount, 2);
       await tap(find.byTooltip('Close bag').last);
-      await tap(find.text('Start over').last);
+      await tester.runAsync(agent.restartChat);
+      await tester.pumpAndSettle();
       expect(runtime.outfit['items'], isEmpty);
       await tester.runAsync(agent.openSavedLooks);
       await tester.pumpAndSettle();
