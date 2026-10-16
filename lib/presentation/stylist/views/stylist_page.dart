@@ -543,7 +543,7 @@ class _CustomBriefEntryState extends State<_CustomBriefEntry> {
 }
 
 class _MosaicPreview extends StatelessWidget {
-  const _MosaicPreview({super.key});
+  const _MosaicPreview();
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -627,7 +627,7 @@ class _ResponsiveShell extends StatelessWidget {
           compactSecondaryPadding: const EdgeInsets.symmetric(horizontal: 16),
           secondaryScrollable: false,
           extendSecondaryToEdges: true,
-          showSecondaryInCompact: !cover || agent.hasDressingRoomSurface,
+          showSecondaryInCompact: !cover || agent.hasStarted,
           compactPaneGap: 32,
           followPrimaryEnd: true,
           primaryFollowTrigger: agent.latestInlineSurfaceId == null
@@ -649,8 +649,7 @@ class _ResponsiveShell extends StatelessWidget {
                       .length <=
                   1,
           stackSecondaryInPortrait:
-              !cover &&
-              (agent.hasDressingRoomSurface || fold.capabilities.isFoldable),
+              !cover && (agent.hasStarted || fold.capabilities.isFoldable),
           primary: _ChatSurface(agent: agent),
           secondaryBackgroundColor: Colors.black,
           secondaryBackgroundOnlyInBookMode: true,
@@ -919,110 +918,124 @@ class _DressingPanel extends StatelessWidget {
   final VoidCallback onNewJourney;
 
   @override
-  Widget build(BuildContext context) {
-    final experience = _buildExperience(context);
-    final split = AdaptivePaneScope.isSplitOf(context);
-    final safeRight = DuoLayoutScope.mediaForLayout(context).padding.right;
-    final inspector = agent.inspector;
-    return inspector == null
-        ? experience
-        : CommerceInspectionPane(
-            bloc: inspector,
-            experience: experience,
-            fullScreen: !split,
-            // Compact panes already sit inside the safe area. Split panes
-            // extend to the screen edge and must reserve it for this control.
-            buttonRightOffset: split ? safeRight : 0,
-            inspectionPadding: EdgeInsets.only(right: safeRight),
-          );
-  }
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final experience = _buildExperience(context);
+      final split = AdaptivePaneScope.isSplitOf(context);
+      final safeRight = DuoLayoutScope.mediaForLayout(context).padding.right;
+      final inspector = agent.inspector;
+      return inspector == null
+          ? experience
+          : CommerceInspectionPane(
+              bloc: inspector,
+              experience: experience,
+              fullScreen: !split,
+              // Compact panes already sit inside the safe area. Split panes
+              // extend to the screen edge and must reserve it for this control.
+              buttonRightOffset: _showRail(context, constraints)
+                  ? 12
+                  : split
+                  ? safeRight
+                  : 0,
+              inspectionPadding: EdgeInsets.only(right: safeRight),
+            );
+    },
+  );
 
-  Widget _buildExperience(BuildContext context) =>
-      BlocBuilder<CommerceSession, StylistState>(
-        bloc: agent,
-        builder: (context, _) => LayoutBuilder(
-          builder: (context, constraints) {
-            final ready =
-                agent.hasDressingRoomSurface &&
-                agent.controller
-                        .contextFor('dressing-room')
-                        .definition
-                        .value
-                        ?.components
-                        .containsKey('root') ==
-                    true;
-            final split = AdaptivePaneScope.isSplitOf(context);
-            final showRail =
-                ready &&
-                split &&
-                constraints.hasBoundedHeight &&
-                MediaQuery.sizeOf(context).width >= 900 &&
-                constraints.maxWidth - 84 >=
-                    320 *
-                        math.max(
-                          1,
-                          MediaQuery.textScalerOf(context).scale(14) / 14,
-                        );
-            final identity = ValueKey(
-              ready ? 'dressing-room-ready' : 'dressing-room-mosaic',
-            );
-            final room = Padding(
-              padding: split
-                  ? const EdgeInsets.symmetric(vertical: 12)
-                  : EdgeInsets.zero,
-              child: _DressingRoomSurface(agent: agent),
-            );
-            return AnimatedSwitcher(
-              duration: MediaQuery.disableAnimationsOf(context)
-                  ? Duration.zero
-                  : const Duration(milliseconds: 320),
-              switchInCurve: Curves.easeInOutCubic,
-              transitionBuilder: (child, animation) => FadeTransition(
-                opacity: child.key == identity
-                    ? animation
-                    : const AlwaysStoppedAnimation(1),
-                child: child,
-              ),
-              layoutBuilder: (current, previous) => Stack(
-                fit: constraints.hasBoundedHeight
-                    ? StackFit.expand
-                    : StackFit.loose,
-                alignment: Alignment.topLeft,
-                children: [
-                  for (final child in previous)
-                    ExcludeSemantics(child: IgnorePointer(child: child)),
-                  ?current,
-                ],
-              ),
-              child: ready
-                  ? SizedBox(
-                      key: identity,
-                      width: constraints.maxWidth,
-                      child: showRail
-                          ? Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(child: room),
-                                SizedBox(
-                                  width: 84,
-                                  child: _SideRail(
-                                    onNewJourney: onNewJourney,
-                                    bagCount: agent.bagCount,
-                                    onBag:
-                                        agent.hasLocalLibrary && !agent.isBusy
-                                        ? agent.openBag
-                                        : null,
+  bool _showRail(BuildContext context, BoxConstraints constraints) =>
+      agent.hasDressingRoomSurface &&
+      AdaptivePaneScope.isSplitOf(context) &&
+      constraints.hasBoundedHeight &&
+      MediaQuery.sizeOf(context).width >= 900 &&
+      constraints.maxWidth - 84 >=
+          320 * math.max(1, MediaQuery.textScalerOf(context).scale(14) / 14);
+
+  Widget _buildExperience(
+    BuildContext context,
+  ) => BlocBuilder<CommerceSession, StylistState>(
+    bloc: agent,
+    builder: (context, _) => LayoutBuilder(
+      builder: (context, constraints) {
+        final ready =
+            agent.hasDressingRoomSurface &&
+            agent.controller
+                    .contextFor('dressing-room')
+                    .definition
+                    .value
+                    ?.components
+                    .containsKey('root') ==
+                true;
+        final split = AdaptivePaneScope.isSplitOf(context);
+        final showRail = ready && _showRail(context, constraints);
+        final identity = ValueKey(
+          ready ? 'dressing-room-ready' : 'dressing-room-pending',
+        );
+        final room = Padding(
+          padding: split && !showRail
+              ? const EdgeInsets.symmetric(vertical: 12)
+              : EdgeInsets.zero,
+          child: _DressingRoomSurface(agent: agent),
+        );
+        return AnimatedSwitcher(
+          duration: MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : const Duration(milliseconds: 320),
+          switchInCurve: Curves.easeInOutCubic,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: child.key == identity
+                ? animation
+                : const AlwaysStoppedAnimation(1),
+            child: child,
+          ),
+          layoutBuilder: (current, previous) => Stack(
+            fit: constraints.hasBoundedHeight
+                ? StackFit.expand
+                : StackFit.loose,
+            alignment: Alignment.topLeft,
+            children: [
+              for (final child in previous)
+                ExcludeSemantics(child: IgnorePointer(child: child)),
+              ?current,
+            ],
+          ),
+          child: ready
+              ? SizedBox(
+                  key: identity,
+                  width: constraints.maxWidth,
+                  child: showRail
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: ColoredBox(
+                              color: Colors.black,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(child: room),
+                                  SizedBox(
+                                    width: 84,
+                                    child: _SideRail(
+                                      onNewJourney: onNewJourney,
+                                      bagCount: agent.bagCount,
+                                      onBag:
+                                          agent.hasLocalLibrary && !agent.isBusy
+                                          ? agent.openBag
+                                          : null,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            )
-                          : room,
-                    )
-                  : _MosaicPreview(key: identity),
-            );
-          },
-        ),
-      );
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : room,
+                )
+              : SizedBox.shrink(key: identity),
+        );
+      },
+    ),
+  );
 }
 
 class _DressingRoomSurface extends StatelessWidget {
@@ -1162,30 +1175,21 @@ class _SideRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final background =
-        AdaptivePaneScope.secondaryBackgroundColorOf(context) ?? Colors.white;
-    final dark = background.computeLuminance() < .5;
     return ColoredBox(
-      color: background,
+      key: const ValueKey('dressing-room-side-rail'),
+      color: Colors.black,
       child: Column(
         children: [
           const SizedBox(height: 122),
           IconButton(
             onPressed: onNewJourney,
             tooltip: context.l10n.newJourney,
-            icon: Icon(
-              Icons.close,
-              size: 24,
-              color: dark ? Colors.white : Colors.black,
-            ),
+            icon: Icon(Icons.close, size: 24, color: Colors.white),
             constraints: const BoxConstraints.tightFor(width: 48, height: 48),
           ),
           const Spacer(),
           ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              dark ? Colors.white54 : Colors.black54,
-              BlendMode.srcIn,
-            ),
+            colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
             child: FinalizedBagIcon(count: bagCount, onPressed: onBag),
           ),
           const SizedBox(height: 24),

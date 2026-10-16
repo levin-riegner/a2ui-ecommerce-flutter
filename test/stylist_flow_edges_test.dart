@@ -285,7 +285,12 @@ void main() {
     addTearDown(agent.dispose);
     await agent.resumeLocalState();
     final id = agent.latestInlineSurfaceId!;
-    final original = nativeAction(agent, id, 'details-demo-0092');
+    final original = nativeAction(
+      agent,
+      'dressing-room',
+      'root',
+      extra: {'category': 'dress'},
+    );
     final before = store.encoded;
     store.beforeWrite = () async {
       store.beforeWrite = null;

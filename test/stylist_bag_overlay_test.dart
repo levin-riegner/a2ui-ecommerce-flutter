@@ -1,3 +1,5 @@
+import 'dart:ui' show DisplayFeature, DisplayFeatureType, DisplayFeatureState;
+
 import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
 import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
 import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_bag_overlay.dart';
@@ -30,7 +32,122 @@ Future<void> _completeBagAction(
 }
 
 void main() {
+  testWidgets('open Duo basket adapts when unfolded and folded again', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(466, 678);
+    tester.view.padding = const FakeViewPadding(right: 84);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetPadding);
+    final agent = (await tester.runAsync(() async {
+      final store = MemoryStylistStore();
+      final seed = await completed(store: store);
+      await seed.dispose();
+      final agent = GenkitAgent(
+        StylistRuntime(products: libraryCatalog, store: store),
+      );
+      await agent.resumeLocalState();
+      await agent.openBag();
+      return agent;
+    }))!;
+    addTearDown(agent.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(
+          body: BlocBuilder<CommerceSession, StylistState>(
+            bloc: agent,
+            builder: (_, _) =>
+                StylistBagOverlay(agent: agent, child: const Text('Chat')),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final bag = find.byType(FinalizedBagPreview);
+    final folded = tester.getRect(bag);
+    final element = tester.element(bag);
+    expect(folded.right, lessThanOrEqualTo(466 - 84 - 24));
+    tester.view.physicalSize = const Size(951, 669);
+    await tester.pumpAndSettle();
+    final unfolded = tester.getRect(bag);
+    expect(unfolded.width, 600);
+    expect(unfolded.height, lessThan(500));
+    expect(unfolded.height, lessThan(folded.height));
+    expect(tester.element(bag), same(element));
+    expect(unfolded.center.dx, closeTo((951 - 84) / 2, .1));
+    expect(find.byTooltip('Close bag').hitTestable(), findsOneWidget);
+    expect(find.text('Check out').hitTestable(), findsOneWidget);
+    expect(find.text('Keep styling').hitTestable(), findsOneWidget);
+    tester.view.physicalSize = const Size(466, 678);
+    await tester.pumpAndSettle();
+    expect(tester.getRect(bag), folded);
+    expect(agent.bagCount, 1);
+    expect(tester.takeException(), isNull);
+  });
+  for (final cutout in [false, true]) {
+    testWidgets('Duo bag reserves right camera strip: cutout=$cutout', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(466, 678);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final agent = (await tester.runAsync(() async {
+        final store = MemoryStylistStore();
+        final seed = await completed(store: store);
+        await seed.dispose();
+        final agent = GenkitAgent(
+          StylistRuntime(products: libraryCatalog, store: store),
+        );
+        await agent.resumeLocalState();
+        await agent.openBag();
+        return agent;
+      }))!;
+      addTearDown(agent.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          home: Builder(
+            builder: (context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                padding: cutout
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.only(right: 84),
+                displayFeatures: cutout
+                    ? const [
+                        DisplayFeature(
+                          bounds: Rect.fromLTWH(382, 18, 64, 120),
+                          type: DisplayFeatureType.cutout,
+                          state: DisplayFeatureState.unknown,
+                        ),
+                      ]
+                    : const [],
+              ),
+              child: BlocBuilder<CommerceSession, StylistState>(
+                bloc: agent,
+                builder: (_, _) =>
+                    StylistBagOverlay(agent: agent, child: const Text('Chat')),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final panel = tester.getRect(find.byType(FinalizedBagPreview));
+      expect(panel.right, lessThanOrEqualTo(466 - 84 - 24));
+      expect(panel.center.dx, closeTo((466 - 84) / 2, .1));
+      expect(find.byTooltip('Close bag').hitTestable(), findsOneWidget);
+      expect(tester.getRect(find.byTooltip('Close bag')).right, lessThan(382));
+      expect(find.text('Check out').hitTestable(), findsOneWidget);
+      expect(find.text('Keep styling').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
   for (final (size, scale, keyboard, pinned) in [
+    (const Size(402, 874), 1.0, 0.0, true),
     (const Size(951, 669), 1.0, 0.0, true),
     (const Size(669, 951), 1.0, 0.0, true),
     (const Size(390, 844), 1.0, 0.0, true),
@@ -99,7 +216,7 @@ void main() {
           final footer = tester.getRect(
             find.byKey(const ValueKey('bag-footer')),
           );
-          expect(footer.bottom, lessThanOrEqualTo(panel.bottom - 17));
+          expect(footer.bottom, closeTo(panel.bottom - 18, .1));
           final header = tester.getRect(find.text('Your bag — 5 items'));
           await tester.drag(list, const Offset(0, -600));
           await tester.pumpAndSettle();
@@ -166,9 +283,8 @@ void main() {
           final store = MemoryStylistStore();
           final seed = await completed(store: store);
           await seed.dispose();
-          store.beforeWrite = () => Future<void>.delayed(
-            const Duration(milliseconds: 80),
-          );
+          store.beforeWrite = () =>
+              Future<void>.delayed(const Duration(milliseconds: 80));
           final agent = GenkitAgent(
             StylistRuntime(
               products: libraryCatalog,
@@ -199,7 +315,7 @@ void main() {
         final dialog = find.byKey(const ValueKey('stylist-bag-dialog'));
         expect(dialog, findsOneWidget);
         final card = tester.getRect(find.byType(FinalizedBagPreview));
-        expect(card.width, lessThanOrEqualTo(400));
+        expect(card.width, lessThanOrEqualTo(size.width >= 700 ? 600 : 400));
         expect(card.left, greaterThanOrEqualTo(24));
         expect(card.right, lessThanOrEqualTo(size.width - 24));
         expect(card.center.dx, closeTo(size.width / 2, 1));

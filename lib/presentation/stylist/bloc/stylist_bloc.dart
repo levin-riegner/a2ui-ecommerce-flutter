@@ -10,6 +10,8 @@ import '../a2ui/commerce_agent.dart';
 import 'conversation_entry.dart';
 import '../../../data/stylist/repository/stylist_repository.dart';
 import '../../../data/stylist/model/stylist_input_error.dart';
+import '../../../data/stylist/model/stylist_brief.dart';
+import '../../../data/stylist/model/outfit_plan.dart';
 import '../a2ui/stylist_presenter.dart';
 import '../a2ui/stylist_surfaces.dart';
 import '../../../data/catalog/model/models.dart';
@@ -385,6 +387,19 @@ class StylistBloc extends CommerceAgent {
 
   Future<bool> _performTurn(_AgentTurn turn) async {
     final epoch = _epoch;
+    // Bag interactions are one flow, not new assistant replies in the chat.
+    final replacedEntryId =
+        const {
+          'open_bag',
+          'close_bag',
+          'add_look_to_bag',
+          'change_bag_quantity',
+          'remove_bag_item',
+          'restore_bag_item',
+          'undo_bag_changes',
+        }.contains(turn.action?['name'])
+        ? latestInlineSurfaceId
+        : null;
     final optionsSurface = turn.action?['name'] == 'set_product_options'
         ? latestInlineSurfaceId
         : null;
@@ -514,6 +529,42 @@ class StylistBloc extends CommerceAgent {
           action: turn.action?['name'] as String?,
         ),
       );
+      // Show the normal room from explicit input before waiting for the model.
+      // This is presentation only; runtime state still commits atomically.
+      if (!renderer.contains('dressing-room') && turn.message.isNotEmpty) {
+        try {
+          final brief =
+              (activeJourney == null
+                      ? const StylistBrief()
+                      : StylistBrief.fromJourney(activeJourney!))
+                  .recordMessage(turn.message);
+          final messages = renderStylistSurfaces(
+            turn: 1,
+            reply: '',
+            picks: const [],
+            outfit: const {},
+            budget: brief.budget,
+            occasion: brief.summary,
+            plan: OutfitPlan.from(
+              brief: brief.planningBrief,
+              outfit: const {},
+              constraints: brief.productConstraints,
+              dressCode: brief.dressCode.isEmpty ? null : brief.dressCode,
+            ),
+          );
+          final events = renderer.parse({'messages': messages});
+          _validateSurfaces(events);
+          for (final event in events) {
+            if (event.toJson().values.whereType<Map>().any(
+              (body) => body['surfaceId'] == 'dressing-room',
+            )) {
+              renderer.publish(event);
+            }
+          }
+        } on FormatException {
+          // Let the runtime report invalid input through the existing UI.
+        }
+      }
       publishProgress(null);
       final result = await _repository.turn(
         {
@@ -542,12 +593,30 @@ class StylistBloc extends CommerceAgent {
           if (_disposed || _revoked || epoch != _epoch) {
             throw StateError('Turn superseded');
           }
-          _validateSurfaces(renderer.parse(presentStylistResult(payload)));
+          _validateSurfaces(
+            renderer
+                .parse(presentStylistResult(payload))
+                .where(
+                  (event) =>
+                      event is! core.CreateSurfaceMessage ||
+                      event.surfaceId != 'dressing-room' ||
+                      !renderer.contains(event.surfaceId),
+                )
+                .toList(),
+          );
         },
       );
       if (_disposed || _revoked || epoch != _epoch) return false;
       // Parse the whole batch before publishing any part of it to the renderer.
-      final events = renderer.parse(presentStylistResult(result));
+      final events = renderer
+          .parse(presentStylistResult(result))
+          .where(
+            (event) =>
+                event is! core.CreateSurfaceMessage ||
+                event.surfaceId != 'dressing-room' ||
+                !renderer.contains(event.surfaceId),
+          )
+          .toList();
       _validateSurfaces(events);
       // State and the published surface must describe the same committed bag.
       // A toast can render before the handler's final cleanup runs.
@@ -561,12 +630,31 @@ class StylistBloc extends CommerceAgent {
         if (event is core.CreateSurfaceMessage) {
           if (event.surfaceId.startsWith('inline-')) {
             latestInlineSurfaceId = event.surfaceId;
-            _appendEntry(
-              CommerceSurfaceEntry(
-                surfaceId: event.surfaceId,
-                textAlreadyVisible: textAlreadyVisible,
-              ),
+            final entry = CommerceSurfaceEntry(
+              surfaceId: event.surfaceId,
+              textAlreadyVisible: textAlreadyVisible,
             );
+            if (replacedEntryId != null &&
+                state.conversationEntries.any(
+                  (entry) =>
+                      entry is CommerceSurfaceEntry &&
+                      entry.surfaceId == replacedEntryId,
+                )) {
+              _setState(
+                state.copyWith(
+                  conversationEntries: [
+                    for (final previous in state.conversationEntries)
+                      if (previous is CommerceSurfaceEntry &&
+                          previous.surfaceId == replacedEntryId)
+                        entry
+                      else
+                        previous,
+                  ],
+                ),
+              );
+            } else {
+              _appendEntry(entry);
+            }
           }
         } else if (event is core.DeleteSurfaceMessage) {
           if (event.surfaceId == latestInlineSurfaceId) {

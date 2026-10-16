@@ -38,6 +38,10 @@ class _CommerceInspectionPaneState extends State<CommerceInspectionPane> {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() => _open = true);
     final bloc = widget.bloc;
+    // Bottom-sheet routes remove top padding. Capture the window insets first.
+    final safe = MediaQuery.viewPaddingOf(
+      Navigator.of(context, rootNavigator: true).context,
+    );
     bloc.setInspecting(true);
     try {
       await showModalBottomSheet<void>(
@@ -68,7 +72,6 @@ class _CommerceInspectionPaneState extends State<CommerceInspectionPane> {
                 : (pane.localToGlobal(Offset.zero, ancestor: overlay) &
                           pane.size)
                       .intersect(viewport);
-            final safe = MediaQuery.viewPaddingOf(sheetContext);
             return Padding(
               padding: EdgeInsets.only(
                 left: bounds.left,
