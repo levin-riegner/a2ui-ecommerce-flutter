@@ -30,23 +30,19 @@ does not connect a model or a commerce service.
 
 `finalized-left.json`, `finalized-right.json` and `finalized-shared.json` map
 Figma node IDs, states, exact assets, properties, events and host responsibilities
-to reusable Flutter renderers. The left source was extracted with Figma design
-context. After the connector quota was reached, the user authorized exact
-read-only Plugin API properties, usage notes and original asset exports for the
-remaining families. No Figma nodes were edited.
+to reusable Flutter renderers.
 
 Static SVGs retain their exported geometry. Four screen photos are exported
 original image bytes with Figma image-hash verification. This establishes source
 identity, not redistribution permission; see [the release gates](../open-source-release.md).
-The current Start collage uses original code-native artwork in the same staggered
-layout; historical captures retain the former photographs. Jost and Inter are bundled locally.
+The Start collage uses the original supplied Figma photographs in the same
+staggered layout, restored byte-for-byte against [the source ledger](../assets/collage-provenance.json). Jost and Inter are bundled locally.
 Product images in real journeys remain the approved catalog assets.
 
 The Designs page's journey layout uses shared gutters and `StylistSection` for
 explicit section spacing and compact recommendation carousels. Journey captions
 use the screen typography; standalone component captions retain their own style.
 Roomy portrait keeps the dressing room above an independent conversation scroll.
-See the [native before/after comparison](../verification/figma-layout-2026-10-13/README.md).
 
 ## Behavior boundaries
 
@@ -64,8 +60,7 @@ blurred backdrop spanning both panes. Quantity, removal, undo and size edits use
 the current host-owned bag; the chat draft remains mounted behind the overlay.
 The Check out action continues to the existing local demo checkout. Narrow
 screens and larger text stack row controls and scroll the dialog within the
-available display area. An existing Fit Notes row behind the modal can overflow
-at 200% text in a 390-point chat pane; that separate component is unchanged.
+available display area.
 
 The production journey preserves local brief changes until submission,
 selected outfit/budget accounting and explicit select/remove events. Change on a

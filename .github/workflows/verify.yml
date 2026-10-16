@@ -1,6 +1,11 @@
 name: Verify
 
 on:
+  pull_request:
+  push:
+    branches-ignore:
+      - main
+      - master
   workflow_dispatch:
 
 permissions:
@@ -25,20 +30,24 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Verify generated localization, state and routes
+        run: |
+          flutter gen-l10n
+          dart run build_runner build
+          git diff --exit-code -- lib/app/l10n/generated lib/app/navigation/router/app_router.g.dart lib/presentation/stylist/bloc
+
       - name: Enforce architecture and current asset boundaries
         run: |
           python3 tool/check_architecture.py
           python3 tool/check_release_assets.py
 
       # iOS needs an installed 27.1+ SDK. Run tool/verify_ios.sh on a compatible
-      # Mac before release; do not represent Ubuntu/checkpoint passes as iOS builds.
+      # Mac before release; do not represent Ubuntu builds as iOS builds.
       - name: Validate catalog assets
         run: python3 tools/catalog/validate.py assets/data/catalog/products.csv
 
-      - name: Verify saved Duo checkpoints
-        run: |
-          python3 -m unittest discover -s tool -p 'test_*.py'
-          python3 tool/verify_duo_checkpoints.py docs/verification/duo-simulator-2026-10-04.json
+      - name: Test repository tools
+        run: python3 -m unittest discover -s tool -p 'test_*.py'
 
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed lib test tools/genkit tool

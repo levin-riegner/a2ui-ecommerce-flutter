@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:a2ui_core/a2ui_core.dart' as core;
-import 'package:a2ui_flutter_commerce/src/agent/a2ui_batch_validator.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/a2ui_batch_validator.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 

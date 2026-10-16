@@ -2,9 +2,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:a2ui_flutter_commerce/src/catalog/catalog_export.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_screen_examples.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/catalog_export.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/finalized_screen_examples.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

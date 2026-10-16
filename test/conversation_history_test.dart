@@ -1,9 +1,9 @@
 import 'package:a2ui_core/a2ui_core.dart' as core;
-import 'package:a2ui_flutter_commerce/src/agent/commerce_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/conversation_entry.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/commerce_agent.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/conversation_entry.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -372,7 +372,14 @@ class _HistoryAgent extends CommerceAgent {
         ],
       ),
     );
-    if (notifyAgent) notifyListeners();
+    if (notifyAgent) {
+      emit(
+        state.copyWith(
+          conversationEntries: List.of(history),
+          surfaceRevision: state.surfaceRevision + 1,
+        ),
+      );
+    }
     await Future<void>.delayed(Duration.zero);
   }
 
@@ -446,7 +453,13 @@ class _HistoryAgent extends CommerceAgent {
   void setState({String? pending, String? error}) {
     _pending = pending;
     _error = error;
-    notifyListeners();
+    emit(
+      state.copyWith(
+        conversationEntries: List.of(history),
+        pendingInlineSurfaceId: pending,
+        connectionError: error,
+      ),
+    );
   }
 
   @override

@@ -1,5 +1,5 @@
-import 'package:a2ui_flutter_commerce/src/agent/stylist_brief.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_brief_surface.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_brief.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/stylist_brief_surface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

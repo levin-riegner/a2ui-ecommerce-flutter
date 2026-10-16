@@ -1,0 +1,12 @@
+import 'package:flutter/widgets.dart';
+
+import 'generated/app_localizations.dart';
+import 'generated/app_localizations_en.dart';
+
+export 'generated/app_localizations.dart';
+
+/// Also supports standalone catalog widgets without an application delegate.
+extension AppLocalizationsContext on BuildContext {
+  AppLocalizations get l10n =>
+      AppLocalizations.of(this) ?? AppLocalizationsEn();
+}

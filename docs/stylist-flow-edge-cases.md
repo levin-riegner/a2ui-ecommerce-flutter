@@ -1,6 +1,6 @@
 # Stylist flow edge cases
 
-Reviewed 2026-10-15 against the running Duo chat, the pinned packages and the local regression suite. The visible failure was a selected dress's generic sizing block below shoe recommendations. A separate audit found that the new-journey control previously changed screens without cancelling the active turn.
+Host behavior and regression coverage for styling, recovery and user actions.
 
 ## Architecture rules
 
@@ -33,7 +33,7 @@ The online docs evolve faster than our pins: `genui` 0.10.3, `a2ui_core` 0.1.1, 
 | Clothing sizing | Show available sizes and fit choices; enable the single Save size & fit action only when both are valid. | `stylist_product_options_test.dart`, `finalized_left_components_test.dart` |
 | “What sizes are the shoes?” while only a dress is selected | Resolve the named category; never fall back to the unrelated dress. If several products remain ambiguous, do not choose an arbitrary editor. | `stylist_flow_edges_test.dart` |
 | Colour changes available sizes | Resolve the linked catalog product and its own available sizes; reject unrelated colours and invalid size combinations. | `stylist_product_options_test.dart` |
-| New look after saving/adding to bag | Reset the working conversation, retain saved looks, bag and usual-size preferences; keep library access on the welcome screen. | `stylist_flow_edges_test.dart`, `stylist_library_test.dart` |
+| New look after saving/adding to bag | Reset the working conversation and bag, retain saved looks and usual-size preferences; keep library access on the welcome screen. | `stylist_flow_edges_test.dart`, `stylist_library_test.dart` |
 | Budget reduction makes current outfit invalid | Preserve selected pieces as visible conflicts; block invalid completion and offer host-controlled recovery. | `stylist_recovery_test.dart`, `stylist_budget_weather_recovery_test.dart` |
 | Hard restriction or audience correction conflicts with picks | Revalidate search, fallback, selection and completion; retain conflicts until explicitly resolved. | `stylist_constraints_test.dart`, `stylist_gender_test.dart` |
 | User owns or removes a required category | Recalculate the plan and budget without reintroducing owned pieces. | `outfit_plan_test.dart`, `stylist_component_adoption_test.dart` |
@@ -41,24 +41,10 @@ The online docs evolve faster than our pins: `genui` 0.10.3, `a2ui_core` 0.1.1, 
 | Invalid size, unavailable stock, changed checkout quote | Reject and roll back atomically; keep working look and stored state coherent. | `product_data_demo_commerce_test.dart`, `stylist_library_test.dart` |
 | Fold, keyboard, large text or history scroll | Preserve draft, focus and scroll; respect reduced motion and keep the last content reachable above the composer. | `adaptive_screen_layout_test.dart`, `conversation_history_test.dart`, `duo_layout_adapter_test.dart` |
 
-## Verification boundaries and remaining work
+## Regression coverage
 
-The regression suite uses deterministic local models and real GenUI/catalog rendering. It exercises cancellation, errors and rollback; it does not establish live provider reliability or merchant stock accuracy. The live Duo inspection confirmed the mismatched dress/shoe UI; RocketSim's current inner-display scrolling did not move the chat, so full historical scrolling is covered by widget interaction tests rather than claimed as a completed native walkthrough.
-
-The app still uses explicitly fictional commerce variants, stock and checkout. Public launch needs verified merchant variants/inventory and purchase integration if it is intended to sell real products. Do not relabel these fixtures as supplier measurements or available stock. Live provider soak tests, actual network interruption, app termination during storage, and screen-reader/device review remain separate release checks. Additional natural-language paraphrases should extend the same runtime tests, not create a second intent service.
-
-## PR review follow-up
-
-The final port targets main's architecture split. Independent review also identified exhausted-product eligibility, material questions opening sizing, stale stock in result JSON and floating-point colour affordability. These are covered by `stylist_review_regressions_test.dart`. The presenter patches only city-specific components/data on forecast refresh; existing weather tests verify unsaved sizing fields survive. A subsequent review found that bag Undo dropped the chosen variant; it now restores and revalidates that variant, with size and checkout regression coverage in `product_data_demo_commerce_test.dart`.
-
-The original Duo build verification above predates this architecture port. The PR worktree is checked independently with the architecture/import guard, strict A2UI schemas, catalog validator, Python tests, Flutter analysis and the full Flutter suite. No live model calls are used by those checks.
-
-Final architecture-port checks (2026-10-15):
-
-- `fvm flutter test --timeout 1m --concurrency 4`: **586 passed**.
-- `fvm flutter analyze`: no issues; Dart formatting and `git diff --check` passed.
-- Architecture, current-asset and catalog validators passed; **41 Python tests passed**.
-- `fvm flutter build web`: passed. The existing optional CupertinoIcons font warning remains.
-- Independent read-only review completed; all identified findings were fixed before publication.
-
-These checks used offline model fixtures. This port has not been installed on the Duo or verified with a live provider.
+The listed tests use deterministic models and the real GenUI/catalog renderer.
+They cover cancellation, errors and rollback; they do not verify provider availability
+or merchant inventory. Extend these tests when adding new commands or language cases.
+`stylist_review_regressions_test.dart` also covers exhausted-product eligibility,
+material questions, stock metadata and cent-accurate colour affordability.

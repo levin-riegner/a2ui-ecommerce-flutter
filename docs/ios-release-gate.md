@@ -1,17 +1,22 @@
 # iOS release gate
 
-Run this gate on a Mac with an installed Xcode providing iOS 27.1 SDK or newer. The deployment target remains iOS 15.0. `ios/Runner/Runner-Bridging-Header.h` enforces the build-SDK requirement for every configuration.
+Use macOS with Xcode providing iOS Simulator SDK 27.1 or newer. The deployment
+target remains iOS 15.0; `ios/Runner/Runner-Bridging-Header.h` enforces the build-SDK
+requirement in every configuration.
 
-As checked on 2026-10-15, GitHub's documented [macOS 26 Intel image](https://github.com/actions/runner-images/blob/main/images/macos/macos-26-Readme.md) and [macOS 26 ARM image](https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md) did not list Xcode/iOS 27.1. Hosted images change; verify the actual runner inventory before adding an automated job. Ubuntu CI passes do not count as an iOS build. Until a compatible runner is configured, iOS remains an explicit manual release gate.
-
-Select Xcode per command without changing the machine's global selection:
+Select your installed Xcode for the command:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode-27.1.0-Release.Candidate.app/Contents/Developer   bash tool/verify_ios.sh
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer bash tool/verify_ios.sh
 ```
 
-Use your installed Xcode path. The script verifies the selected SDK and builds the current source for iOS Simulator with the pinned Flutter SDK. It fails if the SDK is missing/too old or the build fails. It neither signs nor publishes an app.
+The script checks the SDK and builds the current source for iOS Simulator with
+the pinned Flutter SDK. It fails when the SDK is missing, too old, or compilation
+fails. It does not sign or publish an app.
 
-Record the commit/diff, `xcodebuild -version`, SDK version, command and outcome in the release review. Then run the app on the supported simulator and verify connection/gallery, speech permission handling and posture layout where available. Physical-device/glasses behavior requires its own evidence; a successful simulator build cannot establish it.
+Run the app to check connection, the no-key gallery, speech permissions and the
+layouts supported by your target device. Simulator compilation does not establish
+physical dictation or device behavior.
 
-A future CI job must select an actually installed compatible Xcode, invoke this script and retain the build log. Do not use a fictional runner label or silently skip native compilation while reporting an iOS pass.
+CI currently builds Android and web. An iOS job needs a runner with a compatible
+Xcode installation and must run the same script.

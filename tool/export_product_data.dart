@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:a2ui_flutter_commerce/src/data/catalog_products.dart';
-import 'package:a2ui_flutter_commerce/src/data/demo_commerce.dart';
-import 'package:a2ui_flutter_commerce/src/data/product_attributes.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/catalog_products.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/demo_commerce.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/product_attributes.dart';
 
 /// Rebuild the granular evidence report with the same rules the app consumes.
 void main(List<String> arguments) {

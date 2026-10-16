@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/agent/conversation_entry.dart';
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/conversation_entry.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart' as g;
 import 'package:genui/genui.dart';
 
 import 'stylist_runtime_test.dart' show products, textResponse;
+import 'city_context_test.dart' show FixtureContext;
 
 ChatMessage action(
   String name,
@@ -27,6 +28,37 @@ ChatMessage action(
 );
 
 void main() {
+  test(
+    'new weather context waits for the forecast before revealing prose',
+    () async {
+      final text = <String>[];
+      var finalRequests = 0;
+      final runtime = StylistRuntime(
+        products: products,
+        cityContextSource: FixtureContext(),
+        providerModel: g.Model(
+          name: 'test/weather-first',
+          fn: (request, context) async {
+            if (request.tools?.isEmpty == true) {
+              finalRequests++;
+              expect(context.streamingRequested, isFalse);
+              return textResponse('A light layer suits this forecast.');
+            }
+            return offlineStylistModel(request);
+          },
+        ),
+      );
+      addTearDown(runtime.dispose);
+      final result = await runtime.turn({
+        'message': 'A smart casual work day in Berlin, budget 900 euros',
+      }, onText: text.add);
+      expect(finalRequests, greaterThan(0));
+      expect(result.view.cityContext, isNotNull);
+      expect(result.reply, contains('A light layer suits this forecast.'));
+      expect(text, isEmpty);
+    },
+  );
+
   test('streams final prose before exposing product cards', () async {
     final started = Completer<void>();
     final finish = Completer<void>();

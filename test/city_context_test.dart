@@ -1,16 +1,18 @@
+import 'package:a2ui_flutter_commerce/data/weather/repository/open_meteo_city_context_source.dart';
+
 import 'stylist_wire_helpers.dart';
 
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/agent/city_context.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/data/weather/model/city_context.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 import 'package:a2ui_core/a2ui_core.dart' as core;
-import 'package:a2ui_flutter_commerce/src/agent/stylist_surfaces.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/stylist_surfaces.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
@@ -367,6 +369,10 @@ void main() {
         final location = tester.getRect(find.text(context.label));
         final weather = tester.getRect(find.text('Berlin — forecast'));
         expect(weather.top - location.bottom, lessThanOrEqualTo(20));
+        final explanation = tester.getRect(
+          find.text('Choose a layer for this forecast.'),
+        );
+        expect(weather.bottom, lessThan(explanation.top));
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox.shrink());
       },

@@ -1,15 +1,33 @@
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/layout/stylist_bag_overlay.dart';
-import 'package:a2ui_flutter_commerce/src/theme.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_components.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_shared_components.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_bag_overlay.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/theme/app_theme.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/finalized_right_components.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/finalized_shared_components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/commerce_session.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stylist_library_test.dart' show completed, libraryCatalog;
 import 'stylist_store_helpers.dart';
+
+Future<void> _completeBagAction(
+  WidgetTester tester,
+  GenkitAgent agent,
+  Future<void> Function() action,
+) async {
+  await tester.runAsync(() async {
+    // Subscribe before tapping: UI dispatch and persistence finish asynchronously.
+    final completed = agent.stream
+        .firstWhere((state) => !state.isBusy)
+        .timeout(const Duration(seconds: 5));
+    await action();
+    await completed;
+  });
+  await tester.pumpAndSettle();
+}
 
 void main() {
   for (final (size, scale, keyboard, pinned) in [
@@ -59,8 +77,8 @@ void main() {
           MaterialApp(
             theme: buildAppTheme(),
             home: Scaffold(
-              body: AnimatedBuilder(
-                animation: agent,
+              body: BlocBuilder<CommerceSession, StylistState>(
+                bloc: agent,
                 builder: (_, _) =>
                     StylistBagOverlay(agent: agent, child: const Text('Chat')),
               ),
@@ -117,11 +135,7 @@ void main() {
           );
         }
         expect(tester.takeException(), isNull);
-        await tester.runAsync(() async {
-          await tester.tap(keep);
-          await Future<void>.delayed(const Duration(milliseconds: 30));
-        });
-        await tester.pumpAndSettle();
+        await _completeBagAction(tester, agent, () => tester.tap(keep));
         expect(find.byKey(const ValueKey('stylist-bag-dialog')), findsNothing);
         expect(agent.bagCount, 5);
         expect(calls, 0);
@@ -152,6 +166,9 @@ void main() {
           final store = MemoryStylistStore();
           final seed = await completed(store: store);
           await seed.dispose();
+          store.beforeWrite = () => Future<void>.delayed(
+            const Duration(milliseconds: 80),
+          );
           final agent = GenkitAgent(
             StylistRuntime(
               products: libraryCatalog,
@@ -168,8 +185,8 @@ void main() {
           MaterialApp(
             theme: buildAppTheme(),
             home: Scaffold(
-              body: AnimatedBuilder(
-                animation: agent,
+              body: BlocBuilder<CommerceSession, StylistState>(
+                bloc: agent,
                 builder: (_, _) => StylistBagOverlay(
                   agent: agent,
                   child: const Text('Chat context'),
@@ -204,21 +221,19 @@ void main() {
         expect(find.textContaining('Choose demo size'), findsNothing);
         expect(tester.takeException(), isNull);
 
-        await tester.runAsync(() async {
+        await _completeBagAction(tester, agent, () async {
           await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-          await Future<void>.delayed(const Duration(milliseconds: 30));
         });
-        await tester.pumpAndSettle();
         expect(dialog, findsNothing);
         expect(find.text('Chat context'), findsOneWidget);
         await tester.runAsync(agent.openBag);
         await tester.pumpAndSettle();
         expect(dialog, findsOneWidget);
-        await tester.runAsync(() async {
-          await tester.tapAt(const Offset(4, 4));
-          await Future<void>.delayed(const Duration(milliseconds: 30));
-        });
-        await tester.pumpAndSettle();
+        await _completeBagAction(
+          tester,
+          agent,
+          () => tester.tapAt(const Offset(4, 4)),
+        );
         expect(dialog, findsNothing);
         expect(agent.bagCount, 1);
         expect(calls, 0);
@@ -227,11 +242,7 @@ void main() {
         await tester.pumpAndSettle();
         final remove = find.byTooltip('Remove ${libraryCatalog.first.name}');
         await tester.ensureVisible(remove);
-        await tester.runAsync(() async {
-          await tester.tap(remove);
-          await Future<void>.delayed(const Duration(milliseconds: 30));
-        });
-        await tester.pumpAndSettle();
+        await _completeBagAction(tester, agent, () => tester.tap(remove));
         expect(find.text('Item removed'), findsOneWidget);
         expect(find.text('Undo'), findsOneWidget);
         expect(agent.bagCount, 0);
@@ -241,11 +252,11 @@ void main() {
             lessThanOrEqualTo(48),
           );
         }
-        await tester.runAsync(() async {
-          await tester.tap(find.text('Undo'));
-          await Future<void>.delayed(const Duration(milliseconds: 30));
-        });
-        await tester.pumpAndSettle();
+        await _completeBagAction(
+          tester,
+          agent,
+          () => tester.tap(find.text('Undo')),
+        );
         expect(agent.bagCount, 1);
         expect(calls, 0);
         expect(tester.takeException(), isNull);

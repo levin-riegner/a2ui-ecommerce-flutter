@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/agent/genkit_providers.dart';
-import 'package:a2ui_flutter_commerce/src/agent/model_settings.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/remote/genkit_providers.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/model_settings.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 

@@ -1,13 +1,13 @@
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
-import 'package:a2ui_flutter_commerce/src/layout/adaptive_page.dart';
-import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
-import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/conversation_entry.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/adaptive_pane_layout.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/adaptive_page.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_composer.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/duo_layout_adapter.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/stub_agent.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/conversation_entry.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -349,6 +349,21 @@ void main() {
     expect(mosaic.width, 951 / 2);
     expect(mosaic.right, 951);
     expect(mosaic.bottom, 669);
+    final photographs = tester
+        .widgetList<Image>(
+          find.descendant(
+            of: find.byKey(const ValueKey('occasion-mosaic')),
+            matching: find.byType(Image),
+          ),
+        )
+        .toList();
+    expect(photographs.map((image) => (image.image as AssetImage).assetName), [
+      for (var number = 1; number <= 10; number++)
+        'assets/images/occasions/start-${number.toString().padLeft(2, '0')}.png',
+    ]);
+    expect(photographs[5].alignment, Alignment.topCenter);
+    expect(photographs.every((image) => image.fit == BoxFit.cover), isTrue);
+
     expect(
       tester.getRect(find.text('Where are you going?')).left,
       greaterThanOrEqualTo(20 + 16),

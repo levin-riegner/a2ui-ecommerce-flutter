@@ -5,14 +5,15 @@
 /// for examples and inspection screens.
 library;
 
-export 'src/catalog/commerce_components.dart';
-export 'src/catalog/finalized_left_components.dart';
-export 'src/catalog/finalized_right_components.dart';
-export 'src/catalog/finalized_shared_components.dart';
-export 'src/data/models.dart' show ProductCategory;
-export 'src/layout/adaptive_page.dart';
-export 'src/layout/adaptive_pane_layout.dart';
-export 'src/layout/duo_layout_adapter.dart' show DuoLayoutAdapter;
-export 'src/layout/stylist_composer.dart';
-export 'src/catalog/occasion_artwork.dart';
-export 'src/catalog/occasion_collage.dart';
+export 'presentation/shared/design_system/views/commerce/commerce_components.dart';
+export 'presentation/shared/design_system/views/commerce/finalized_left_components.dart';
+export 'presentation/shared/design_system/views/commerce/finalized_right_components.dart';
+export 'presentation/shared/design_system/views/commerce/finalized_shared_components.dart';
+export 'data/catalog/model/models.dart' show ProductCategory;
+export 'presentation/shared/layout/adaptive_page.dart';
+export 'presentation/shared/layout/adaptive_pane_layout.dart';
+export 'presentation/shared/layout/duo_layout_adapter.dart'
+    show DuoLayoutAdapter;
+export 'presentation/shared/layout/stylist_composer.dart';
+export 'presentation/shared/design_system/views/commerce/occasion_artwork.dart';
+export 'presentation/shared/design_system/views/commerce/occasion_collage.dart';

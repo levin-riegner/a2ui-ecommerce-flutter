@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
-import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_components.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
-import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
-import 'package:a2ui_flutter_commerce/src/layout/duo_layout_adapter.dart';
-import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/stub_agent.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/finalized_right_components.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/adaptive_pane_layout.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/duo_layout_adapter.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_composer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:foldable/foldable.dart';
 import 'package:genui/genui.dart';
 
-import '../tool/duo_simulator_probe.dart' show createDuoFixtureAgent;
+import 'duo_fixture.dart' show createDuoFixtureAgent;
 
 const _available = FoldableCapabilities(
   supportLevel: FoldableSupportLevel.available,

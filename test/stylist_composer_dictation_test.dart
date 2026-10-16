@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_left_components.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/finalized_left_components.dart';
 
-import 'package:a2ui_flutter_commerce/src/input/speech_dictation.dart';
-import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
-import 'package:a2ui_flutter_commerce/src/layout/stylist_composer.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/input/speech_dictation.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/adaptive_pane_layout.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/stylist_composer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -27,6 +27,19 @@ void main() {
     await tester.tap(find.text('Continue'));
     expect(taps, 1);
     expect(find.byType(ui.OccasionArtwork), findsOneWidget);
+    expect(
+      (tester
+                  .widget<Image>(
+                    find.descendant(
+                      of: find.byType(ui.OccasionArtwork),
+                      matching: find.byType(Image),
+                    ),
+                  )
+                  .image
+              as AssetImage)
+          .assetName,
+      'assets/images/occasions/start-01.png',
+    );
     expect(tester.takeException(), isNull);
   });
 

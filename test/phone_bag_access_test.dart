@@ -1,23 +1,15 @@
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:flutter/foundation.dart';
+import 'package:a2ui_flutter_commerce/app/l10n/l10n.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/theme/app_theme.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/duo_layout_adapter.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/views/stylist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:foldable/foldable.dart';
 
 import 'stylist_library_test.dart' show completed, libraryCatalog;
 import 'stylist_store_helpers.dart';
-import 'stylist_product_options_test.dart' show settleTurn;
-
-class _PhoneFoldable extends FoldablePlatform {
-  _PhoneFoldable(this.data);
-  final FoldableData data;
-  @override
-  Future<FoldableData> getSnapshot() async => data;
-  @override
-  Stream<FoldableData> get events => const Stream.empty();
-}
 
 void main() {
   for (final (size, foldStatus, showBag) in [
@@ -69,14 +61,21 @@ void main() {
               regions: const [],
               displayFeatures: const [],
             );
-      final previous = FoldablePlatform.instance;
-      FoldablePlatform.instance = _PhoneFoldable(fold);
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      addTearDown(() {
-        FoldablePlatform.instance = previous;
-        debugDefaultTargetPlatformOverride = null;
-      });
-      await tester.pumpWidget(ReferenceApp(agent: agent));
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: DuoLayoutScope(
+            data: fold,
+            child: StylistPage(
+              agent: agent,
+              onConnected: (_) {},
+              connectionFactory: (_) async => throw UnimplementedError(),
+            ),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
       final button = find.byKey(const ValueKey('phone-header-bag'));
       expect(button, showBag ? findsOneWidget : findsNothing);
@@ -92,7 +91,7 @@ void main() {
             .position;
         expect(scroll.maxScrollExtent, greaterThan(0));
         scroll.jumpTo(scroll.maxScrollExtent);
-        await settleTurn(tester, agent);
+        await tester.pumpAndSettle();
         expect(tester.getRect(button), before);
         expect(button.hitTestable(), findsOneWidget);
         expect(
@@ -103,25 +102,27 @@ void main() {
           findsOneWidget,
         );
         await tester.runAsync(() async {
+          final settled = agent.stream.firstWhere((state) => !state.isBusy);
           await tester.tap(button);
+          await settled;
         });
-        await settleTurn(tester, agent);
+        await tester.pumpAndSettle();
         expect(
           find.byKey(const ValueKey('stylist-bag-dialog')),
           findsOneWidget,
         );
         expect(find.text('Your bag — 1 item'), findsOneWidget);
         await tester.runAsync(() async {
+          final settled = agent.stream.firstWhere((state) => !state.isBusy);
           await tester.tap(find.widgetWithText(OutlinedButton, 'Keep styling'));
+          await settled;
         });
-        await settleTurn(tester, agent);
+        await tester.pumpAndSettle();
         expect(find.byKey(const ValueKey('stylist-bag-dialog')), findsNothing);
         expect(button.hitTestable(), findsOneWidget);
       }
       expect(modelCalls, 0);
       expect(tester.takeException(), isNull);
-      await tester.pumpWidget(const SizedBox.shrink());
-      debugDefaultTargetPlatformOverride = null;
     });
   }
 }
