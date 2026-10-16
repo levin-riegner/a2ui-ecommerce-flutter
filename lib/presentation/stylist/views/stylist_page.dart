@@ -924,6 +924,10 @@ class _DressingPanel extends StatelessWidget {
       final split = AdaptivePaneScope.isSplitOf(context);
       final safeRight = DuoLayoutScope.mediaForLayout(context).padding.right;
       final inspector = agent.inspector;
+      final showRail = _showRail(context, constraints);
+      final fold = DuoLayoutScope.of(context);
+      final innerDisplay =
+          fold.capabilities.isFoldable && fold.status != HingeStatus.closed;
       return inspector == null
           ? experience
           : CommerceInspectionPane(
@@ -932,11 +936,17 @@ class _DressingPanel extends StatelessWidget {
               fullScreen: !split,
               // Compact panes already sit inside the safe area. Split panes
               // extend to the screen edge and must reserve it for this control.
-              buttonRightOffset: _showRail(context, constraints)
+              buttonRightOffset: showRail
                   ? 12
                   : split
                   ? safeRight
                   : 0,
+              buttonTopOffset: showRail
+                  ? _SideRail.closeTop +
+                        _SideRail.controlSize +
+                        12 +
+                        (innerDisplay ? 0 : 12)
+                  : null,
               inspectionPadding: EdgeInsets.only(right: safeRight),
             );
     },
@@ -967,15 +977,48 @@ class _DressingPanel extends StatelessWidget {
                 true;
         final split = AdaptivePaneScope.isSplitOf(context);
         final showRail = ready && _showRail(context, constraints);
+        final fold = DuoLayoutScope.of(context);
+        final innerDisplay =
+            fold.capabilities.isFoldable && fold.status != HingeStatus.closed;
+        final book = innerDisplay && fold.isPartiallyOpen;
+        final separateRail = innerDisplay && !book;
         final identity = ValueKey(
           ready ? 'dressing-room-ready' : 'dressing-room-pending',
         );
-        final room = Padding(
-          padding: split && !showRail
+        final room = AnimatedPadding(
+          duration: MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : AdaptivePaneLayout.transitionDuration,
+          curve: Curves.easeInOutCubic,
+          padding: split && !book && (!showRail || separateRail)
               ? const EdgeInsets.symmetric(vertical: 12)
               : EdgeInsets.zero,
           child: _DressingRoomSurface(agent: agent),
         );
+        final rail = showRail
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: room),
+                  SizedBox(
+                    width: 84,
+                    child: _SideRail(
+                      backgroundColor: innerDisplay
+                          ? AdaptivePaneScope.secondaryBackgroundColorOf(
+                                  context,
+                                ) ??
+                                Colors.white
+                          : Colors.black,
+                      onNewJourney: onNewJourney,
+                      bagCount: agent.bagCount,
+                      onBag: agent.hasLocalLibrary && !agent.isBusy
+                          ? agent.openBag
+                          : null,
+                    ),
+                  ),
+                ],
+              )
+            : null;
         return AnimatedSwitcher(
           duration: MediaQuery.disableAnimationsOf(context)
               ? Duration.zero
@@ -1002,31 +1045,14 @@ class _DressingPanel extends StatelessWidget {
               ? SizedBox(
                   key: identity,
                   width: constraints.maxWidth,
-                  child: showRail
+                  child: showRail && innerDisplay
+                      ? rail
+                      : showRail
                       ? Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
-                            child: ColoredBox(
-                              color: Colors.black,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Expanded(child: room),
-                                  SizedBox(
-                                    width: 84,
-                                    child: _SideRail(
-                                      onNewJourney: onNewJourney,
-                                      bagCount: agent.bagCount,
-                                      onBag:
-                                          agent.hasLocalLibrary && !agent.isBusy
-                                          ? agent.openBag
-                                          : null,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: ColoredBox(color: Colors.black, child: rail),
                           ),
                         )
                       : room,
@@ -1167,29 +1193,49 @@ class _MobileHeader extends StatelessWidget {
 }
 
 class _SideRail extends StatelessWidget {
-  const _SideRail({required this.onNewJourney, this.bagCount = 0, this.onBag});
+  static const closeTop = 122.0;
+  static const controlSize = 48.0;
+
+  const _SideRail({
+    required this.onNewJourney,
+    this.bagCount = 0,
+    this.onBag,
+    this.backgroundColor = Colors.black,
+  });
 
   final VoidCallback onNewJourney;
   final int bagCount;
   final VoidCallback? onBag;
+  final Color backgroundColor;
 
   @override
   Widget build(BuildContext context) {
+    final dark = backgroundColor.computeLuminance() < .5;
     return ColoredBox(
       key: const ValueKey('dressing-room-side-rail'),
-      color: Colors.black,
+      color: backgroundColor,
       child: Column(
         children: [
-          const SizedBox(height: 122),
+          const SizedBox(height: closeTop),
           IconButton(
             onPressed: onNewJourney,
             tooltip: context.l10n.newJourney,
-            icon: Icon(Icons.close, size: 24, color: Colors.white),
-            constraints: const BoxConstraints.tightFor(width: 48, height: 48),
+            icon: Icon(
+              Icons.close,
+              size: 24,
+              color: dark ? Colors.white : Colors.black,
+            ),
+            constraints: const BoxConstraints.tightFor(
+              width: controlSize,
+              height: controlSize,
+            ),
           ),
           const Spacer(),
           ColorFiltered(
-            colorFilter: ColorFilter.mode(Colors.white54, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(
+              dark ? Colors.white54 : const Color(0xff71717a),
+              BlendMode.srcIn,
+            ),
             child: FinalizedBagIcon(count: bagCount, onPressed: onBag),
           ),
           const SizedBox(height: 24),

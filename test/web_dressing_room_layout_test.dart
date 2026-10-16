@@ -16,8 +16,14 @@ import 'package:foldable/foldable.dart';
 import 'stylist_runtime_test.dart' show products;
 
 void main() {
-  for (final size in [const Size(1456, 840), const Size(1920, 1080)]) {
-    testWidgets('roomy desktop uses Duo grid and aligned black rail at $size', (
+  for (final layout in [
+    (size: const Size(1456, 840), status: null),
+    (size: const Size(1920, 1080), status: null),
+    (size: const Size(951, 669), status: HingeStatus.fullyOpen),
+    (size: const Size(951, 669), status: HingeStatus.partiallyOpen),
+  ]) {
+    final size = layout.size;
+    testWidgets('room grid and aligned controls at $size / ${layout.status}', (
       tester,
     ) async {
       tester.view.devicePixelRatio = 1;
@@ -44,7 +50,19 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: DuoLayoutScope(
-            data: FoldableData.unsupported,
+            data: layout.status == null
+                ? FoldableData.unsupported
+                : FoldableData.unsupported.copyWith(
+                    status: layout.status,
+                    capabilities: const FoldableCapabilities(
+                      supportLevel: FoldableSupportLevel.available,
+                      isFoldable: true,
+                      hingeApiPresent: true,
+                      regionApiPresent: true,
+                      angleUnitVerified: false,
+                      strategy: 'test',
+                    ),
+                  ),
             child: StylistPage(
               agent: agent,
               onConnected: (_) {},
@@ -68,19 +86,32 @@ void main() {
       final third = tester.getRect(slots.at(2));
       expect(first.height, greaterThan(first.width));
       expect(first.width, lessThanOrEqualTo(223));
-      expect(third.bottom, lessThanOrEqualTo(size.height - 12));
+      expect(
+        third.bottom,
+        lessThanOrEqualTo(
+          size.height - (layout.status == HingeStatus.partiallyOpen ? 0 : 12),
+        ),
+      );
       expect(first.top, second.top);
       expect(second.left, greaterThan(first.right));
       expect(third.left, first.left);
       expect(third.top, greaterThan(first.bottom));
       final rail = find.byKey(const ValueKey('dressing-room-side-rail'));
-      expect(tester.widget<ColoredBox>(rail).color, Colors.black);
+      expect(
+        tester.widget<ColoredBox>(rail).color,
+        layout.status == HingeStatus.fullyOpen ? Colors.white : Colors.black,
+      );
       final inspect = find.byKey(const ValueKey('commerce-inspect-button'));
       final close = find.descendant(
         of: rail,
         matching: find.byIcon(Icons.close),
       );
       expect(tester.getCenter(inspect).dx, tester.getCenter(close).dx);
+      expect(
+        tester.getRect(inspect).top,
+        greaterThan(tester.getRect(close).bottom),
+      );
+      expect(tester.getRect(inspect).overlaps(tester.getRect(close)), isFalse);
       expect(inspect.hitTestable(), findsOneWidget);
       await tester.tap(inspect);
       await tester.pumpAndSettle();

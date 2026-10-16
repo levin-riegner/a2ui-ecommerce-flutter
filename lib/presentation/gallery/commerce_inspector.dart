@@ -15,6 +15,7 @@ class CommerceInspectionPane extends StatefulWidget {
     required this.experience,
     this.inspectionPadding = EdgeInsets.zero,
     this.buttonRightOffset = 0,
+    this.buttonTopOffset,
     this.fullScreen = false,
     super.key,
   });
@@ -23,6 +24,7 @@ class CommerceInspectionPane extends StatefulWidget {
   final Widget experience;
   final EdgeInsets inspectionPadding;
   final double buttonRightOffset;
+  final double? buttonTopOffset;
   final bool fullScreen;
 
   @override
@@ -157,7 +159,9 @@ class _CommerceInspectionPaneState extends State<CommerceInspectionPane> {
       children: [
         ExcludeFocus(excluding: _open, child: widget.experience),
         Positioned(
-          top: widget.inspectionPadding.top + (widget.fullScreen ? 4 : 16),
+          top:
+              widget.buttonTopOffset ??
+              widget.inspectionPadding.top + (widget.fullScreen ? 4 : 16),
           right: widget.buttonRightOffset + 8,
           child: IconButton(
             key: const ValueKey('commerce-inspect-button'),
