@@ -1252,7 +1252,7 @@ class _SideRail extends StatelessWidget {
             const Spacer(),
             ColorFiltered(
               colorFilter: ColorFilter.mode(
-                dark ? Colors.white54 : const Color(0xff71717a),
+                dark ? Colors.white : Colors.black,
                 BlendMode.srcIn,
               ),
               child: FinalizedBagIcon(count: bagCount, onPressed: onBag),
