@@ -61,10 +61,7 @@ description, category/subcategory, gender audience, color, material, season, occ
 keywords, EUR price and local image path. These are structured JSON facts, not
 image inputs. The photographs are inspected during offline enrichment and
 rendered in the cards. Retrieval uses local word matching and filters; no
-embeddings or vector service are required. The original React PoC used the same
-tool-result pattern with Monostate's hybrid vector-search API, returning titles,
-types, colors, tags, prices, availability and image/storefront URLs. Its adapter
-did not send image pixels to the conversation model.
+embeddings or vector service are required.
 
 `StylistBrief` records the source of accepted facts. The shared budget parser recognizes explicit spending amounts without requiring a currency symbol, distinguishes item prices from outfit totals, and handles corrections. Host confirmations describe accepted facts and constraint changes separately from model styling prose. Model patches cannot replace an explicit current user value with a suggestion. Unknown form budgets remain labeled suggestions until submission; settled budgets are preserved.
 
