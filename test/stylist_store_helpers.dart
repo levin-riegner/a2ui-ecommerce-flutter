@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/data/stylist_store.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/repository/stylist_store.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 

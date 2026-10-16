@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:a2ui_flutter_commerce/src/agent/stylist_presenter.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_result.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_schemas.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_tool_error.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/stylist_presenter.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_result.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_schemas.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_tool_error.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stylist_runtime_test.dart' show products;
@@ -39,7 +39,8 @@ void main() {
       );
       expect(wire['reply'], result.reply);
       expect(
-        File('lib/src/agent/stylist_runtime.dart').readAsStringSync(),
+        File('lib/data/stylist/service/runtime/stylist_runtime.dart')
+            .readAsStringSync(),
         isNot(contains("import 'stylist_surfaces.dart'")),
       );
     },

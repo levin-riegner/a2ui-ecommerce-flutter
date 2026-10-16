@@ -1,12 +1,19 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui' as ui;
 
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_components.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
-import 'package:a2ui_flutter_commerce/src/layout/adaptive_pane_layout.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/commerce_components.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/finalized_left_components.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/model_catalog.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/layout/adaptive_pane_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart' as g;
 import 'package:genui/genui.dart';
@@ -19,8 +26,251 @@ import 'stylist_runtime_test.dart' show products;
 import 'stylist_store_helpers.dart';
 import 'stylist_wire_helpers.dart';
 
+const _dresses = [
+  Product(
+    id: 'green-dress',
+    category: ProductCategory.dress,
+    name: 'Green summer dress',
+    brand: 'Alder Studio',
+    price: 90,
+    meta: 'Green · Linen',
+    tag: 'Summer',
+    swatch: '#405d42',
+    imageAsset: 'assets/images/products/demo-0242.jpg',
+    sizeOptions: ['S', 'M', 'L'],
+  ),
+  Product(
+    id: 'slate-dress',
+    category: ProductCategory.dress,
+    name: 'Slate Sleeveless Midi Dress',
+    brand: 'Alder Studio',
+    price: 75,
+    meta: 'Slate blue · Linen',
+    tag: 'Summer',
+    swatch: '#718b98',
+    imageAsset: 'assets/images/products/demo-0241.jpg',
+    sizeOptions: ['S', 'M', 'L'],
+  ),
+  Product(
+    id: 'black-dress',
+    category: ProductCategory.dress,
+    name: 'Black summer dress',
+    brand: 'Alder Studio',
+    price: 120,
+    meta: 'Black · Linen',
+    tag: 'Summer',
+    swatch: '#111111',
+    imageAsset: 'assets/images/products/demo-0243.jpg',
+    sizeOptions: ['S', 'M', 'L'],
+  ),
+];
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  for (final component in ['ProductCard', 'PicksStrip', 'ThisOrThat']) {
+    for (final width in [390.0, 1200.0]) {
+      testWidgets(
+        'selecting a dress from $component keeps only its real card inline at $width',
+        (tester) async {
+          tester.view.devicePixelRatio = 1;
+          tester.view.physicalSize = Size(width, 1000);
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          final agent = (await tester.runAsync(
+            () async => GenkitAgent(
+              StylistRuntime(
+                products: _dresses,
+                uiCatalog: buildModelUiCatalog(buildCommerceCatalog()),
+                model: (request) async {
+                  final response = await offlineStylistModel(request);
+                  for (final part in response.message!.content) {
+                    if (part.toolRequest?.name == 'search_products') {
+                      final tool = part.toolRequest!;
+                      tool.input = {...tool.input as Map, 'limit': 3};
+                    }
+                    if (part.toolRequest?.name == 'present_products') {
+                      final tool = part.toolRequest!;
+                      tool.input = {
+                        ...tool.input as Map,
+                        'component': component,
+                        if (component != 'ThisOrThat')
+                          'productIds': _dresses.map((p) => p.id).toList(),
+                      };
+                    }
+                  }
+                  return response;
+                },
+              ),
+            ),
+          ))!;
+          final capture =
+              Platform.environment['ALDER_CAPTURE_SELECTION'] == '1';
+          if (capture) {
+            await tester.runAsync(() async {
+              for (final (family, asset) in [
+                ('Inter', 'assets/fonts/inter/Inter-Variable.ttf'),
+                ('Jost', 'assets/fonts/jost/Jost-Variable.ttf'),
+              ]) {
+                await (FontLoader(
+                  family,
+                )..addFont(rootBundle.load(asset))).load();
+              }
+            });
+          }
+          final boundaryKey = GlobalKey();
+          await tester.pumpWidget(
+            RepaintBoundary(
+              key: boundaryKey,
+              child: ReferenceApp(agent: agent),
+            ),
+          );
+          await tester.runAsync(() => agent.startBrief(brief));
+          await tester.pumpAndSettle();
+          final cards = find.byType(FinalizedProductCard);
+          final Finder chosen;
+          if (component == 'ProductCard') {
+            expect(cards, findsNWidgets(3));
+            chosen = find.byWidgetPredicate(
+              (w) => w is FinalizedProductCard && w.name == _dresses[1].name,
+            );
+          } else {
+            final choices = component == 'PicksStrip'
+                ? find.byType(FinalizedPicksStrip)
+                : find.byType(FinalizedThisOrThat);
+            expect(choices, findsOneWidget);
+            final rows = component == 'PicksStrip'
+                ? tester.widget<FinalizedPicksStrip>(choices).products
+                : tester.widget<FinalizedThisOrThat>(choices).options;
+            final index = rows.indexWhere(
+              (row) => row['productId'] == _dresses[1].id,
+            );
+            expect(index, greaterThanOrEqualTo(0));
+            chosen = find
+                .descendant(of: choices, matching: find.byType(InkWell))
+                .at(index);
+          }
+          await tester.ensureVisible(chosen);
+          await tester.tap(chosen);
+          await tester.pump();
+          for (var i = 0; i < 100 && agent.isBusy; i++) {
+            await tester.runAsync(
+              () => Future<void>.delayed(const Duration(milliseconds: 10)),
+            );
+            await tester.pump(const Duration(milliseconds: 20));
+          }
+          await tester.pumpAndSettle();
+          expect(agent.connectionError, isNull);
+          expect(cards, findsOneWidget);
+          final card = tester.widget<FinalizedProductCard>(cards);
+          expect(card.name, _dresses[1].name);
+          expect(card.price, '€75');
+          expect(card.brandLine, _dresses[1].brandLine);
+          expect(card.imageAsset, _dresses[1].imageAsset);
+          expect(card.selected, isTrue);
+          expect(find.text('In your dressing room'), findsOneWidget);
+          expect(find.text('Add to dressing room'), findsNothing);
+          expect(find.text('Save size & fit'), findsOneWidget);
+          expect(find.byType(FinalizedPicksStrip), findsNothing);
+          expect(find.byType(FinalizedThisOrThat), findsNothing);
+          expect(tester.takeException(), isNull);
+          if (capture) {
+            await tester.ensureVisible(cards);
+            await tester.pumpAndSettle();
+            await tester.runAsync(() async {
+              await precacheImage(
+                AssetImage(_dresses[1].imageAsset),
+                boundaryKey.currentContext!,
+              );
+            });
+            await tester.pumpAndSettle();
+            await tester.runAsync(() async {
+              final boundary =
+                  boundaryKey.currentContext!.findRenderObject()!
+                      as RenderRepaintBoundary;
+              final image = await boundary.toImage(pixelRatio: 1);
+              final bytes = (await image.toByteData(
+                format: ui.ImageByteFormat.png,
+              ))!;
+              await File('/tmp/alder-selected-$component-${width.toInt()}.png')
+                  .writeAsBytes(
+                    bytes.buffer.asUint8List(
+                      bytes.offsetInBytes,
+                      bytes.lengthInBytes,
+                    ),
+                  );
+              image.dispose();
+            });
+          }
+          await tester.pumpWidget(const SizedBox());
+        },
+      );
+    }
+  }
+
+  test(
+    'an accepted replacement collapses AlternativePiece to the chosen card',
+    () async {
+      var replacing = false;
+      final runtime = StylistRuntime(
+        products: _dresses.take(2).toList(),
+        uiCatalog: buildModelUiCatalog(buildCommerceCatalog()),
+        model: (request) async {
+          final response = await offlineStylistModel(request);
+          if (replacing) {
+            for (final part in response.message!.content) {
+              if (part.toolRequest?.name == 'present_products') {
+                final tool = part.toolRequest!;
+                tool.input = {
+                  ...tool.input as Map,
+                  'component': 'AlternativePiece',
+                };
+              }
+            }
+          }
+          return response;
+        },
+      );
+      final agent = GenkitAgent(runtime);
+      addTearDown(agent.dispose);
+      await agent.startBrief(brief);
+      await agent.conversation.sendRequest(
+        action('select_product', {'productId': _dresses.first.id}),
+      );
+      await agent.conversation.sendRequest(
+        action('set_product_options', {
+          'productId': _dresses.first.id,
+          'size': 'M',
+          'fit': 'Regular',
+        }),
+      );
+      replacing = true;
+      await agent.conversation.sendRequest(
+        action('adjust_piece', {
+          'category': 'dress',
+          'productId': _dresses.first.id,
+          'adjustment': 'Cheaper',
+        }),
+      );
+      expect(agent.connectionError, isNull);
+      final surface = agent.controller.contextFor(agent.latestInlineSurfaceId!);
+      expect(
+        surface.definition.value!.components['recommendations']!.type,
+        'AlternativePiece',
+      );
+      await agent.conversation.sendRequest(
+        action('select_product', {'productId': _dresses[1].id}),
+      );
+      expect(agent.connectionError, isNull);
+      final card = surface.definition.value!.components['recommendations']!
+          .toJson();
+      expect(card['component'], 'ProductCard');
+      expect(card['name'], _dresses[1].name);
+      expect(card['imageAsset'], _dresses[1].imageAsset);
+      expect(card['selected'], true);
+      expect(runtime.outfit['items'], {'dress': _dresses[1].id});
+    },
+  );
 
   test(
     'optional search notices appear with choices, not size selection',
@@ -238,6 +488,10 @@ void main() {
           .contextFor(agent.latestInlineSurfaceId!)
           .dataModel;
       final previous = choices.getValue<Object?>(DataPath.root).toString();
+      final surfaceId = agent.latestInlineSurfaceId!;
+      final definition = agent.controller.contextFor(surfaceId).definition;
+      final previousComponent = definition.value!.components['recommendations']!
+          .toJson();
       blocked = true;
       final turn = agent.conversation.sendRequest(
         action('select_product', {'productId': top.id}),
@@ -249,6 +503,15 @@ void main() {
           .cast<Map>();
       expect(rows.singleWhere((r) => r['id'] == top.id)['selected'], true);
       expect(rows.singleWhere((r) => r['id'] != top.id)['dimmed'], true);
+      expect(
+        choices.getValue<String>(DataPath('/recommendations/0/name')),
+        top.name,
+      );
+      final selectedCard = definition.value!.components['recommendations']!
+          .toJson();
+      expect(selectedCard['component'], 'ProductCard');
+      expect(selectedCard['name'], top.name);
+      expect(selectedCard['selected'], true);
       final room = agent.controller.contextFor('dressing-room').dataModel;
       expect(
         (room.getValue<List<Object?>>(DataPath('/slots'))!.first
@@ -269,6 +532,10 @@ void main() {
       expect((runtime.outfit['items'] as Map).containsValue(top.id), !fail);
       if (fail) {
         expect(choices.getValue<Object?>(DataPath.root).toString(), previous);
+        expect(
+          definition.value!.components['recommendations']!.toJson(),
+          previousComponent,
+        );
       } else {
         expect(
           choices.getValue<String>(DataPath('/selectedProductId')),
@@ -330,10 +597,12 @@ void main() {
         addTearDown(tester.view.resetPhysicalSize);
         addTearDown(tester.view.resetDevicePixelRatio);
         final store = MemoryStylistStore();
-        final runtime = (await tester.runAsync(
-          () async => StylistRuntime(products: [blue], store: store),
+        // BLoC subscribes to its event stream during construction. Keep the
+        // agent and runtime in the same real async zone as the awaited turns.
+        final agent = (await tester.runAsync(
+          () async =>
+              GenkitAgent(StylistRuntime(products: [blue], store: store)),
         ))!;
-        final agent = GenkitAgent(runtime);
         await tester.pumpWidget(ReferenceApp(agent: agent));
         await tester.runAsync(() => agent.startBrief(brief));
         await tester.pumpAndSettle();

@@ -1,9 +1,11 @@
+import 'package:a2ui_flutter_commerce/data/weather/repository/open_meteo_city_context_source.dart';
+
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/agent/city_context.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_presenter.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/data/weather/model/city_context.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/stylist_presenter.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';

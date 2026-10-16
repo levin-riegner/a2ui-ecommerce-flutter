@@ -1,13 +1,13 @@
-import 'package:a2ui_flutter_commerce/src/catalog/occasion_collage_a2ui.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/occasion_collage_a2ui.dart';
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_left_components.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_left_a2ui.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_screen_examples.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
-import 'package:a2ui_flutter_commerce/src/theme.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/finalized_left_components.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/finalized_left_a2ui.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/finalized_screen_examples.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';

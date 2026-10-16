@@ -1,8 +1,8 @@
-import 'package:a2ui_flutter_commerce/src/agent/product_facts.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_command.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_input_error.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_schemas.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/product_facts.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_command.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_input_error.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_schemas.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 2,
+  "sourceCommit": "d67a33b0c8baa5817a28fa62e89e9ecc678ad241",
+  "scope": "Ten original supplied Figma Start photographs restored at Kelvin\u2019s explicit direction; original bytes and ordering preserved.",
+  "permissionEvidence": "Restoration is authorized for the current local work. Source identity is recorded here; no new public redistribution grant is inferred.",
+  "assets": [
+    {
+      "path": "assets/images/occasions/start-01.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "175:3675"
+      ],
+      "figmaImageHash": "3945d1fd61750f40a135f490f90c7e5a5604ea96",
+      "sha1": "3945d1fd61750f40a135f490f90c7e5a5604ea96",
+      "sha256": "809c392c46199816847cf17373ddae8e58910b6fc4905c248fc191581af30a4c",
+      "bytes": 965708,
+      "dimensions": [
+        896,
+        1344
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-02.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "175:3674"
+      ],
+      "figmaImageHash": "4fd5fede40aabe214bb882553dc9975f74c2345b",
+      "sha1": "4fd5fede40aabe214bb882553dc9975f74c2345b",
+      "sha256": "3537a592891d825aece080679c1b25518660a0808c56c3a1cbb5757e7f7b4b8b",
+      "bytes": 1355368,
+      "dimensions": [
+        896,
+        1344
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-03.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "175:3676"
+      ],
+      "figmaImageHash": "32853108429201af800a679baf2a893c64658fe3",
+      "sha1": "32853108429201af800a679baf2a893c64658fe3",
+      "sha256": "196cb16df76ed012e94b954b6974b604e84e3ad759545837d15cfebe257b6522",
+      "bytes": 1845606,
+      "dimensions": [
+        1200,
+        1799
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-04.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "175:3677"
+      ],
+      "figmaImageHash": "538f9a28fc1178f821287e636df1fafb16ee71ee",
+      "sha1": "538f9a28fc1178f821287e636df1fafb16ee71ee",
+      "sha256": "b71c36fd2e9c0eeb725d63fcd73a4ec2228e55469c5a5bf86672c9e8b491d73f",
+      "bytes": 413467,
+      "dimensions": [
+        736,
+        981
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-05.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "175:3681"
+      ],
+      "figmaImageHash": "6877e62bb0b5a408997abfbff83117f0849230a8",
+      "sha1": "6877e62bb0b5a408997abfbff83117f0849230a8",
+      "sha256": "86c880f7944bfc0881045a5e43d1ac0c1524e107004ffb8a0967943ade760471",
+      "bytes": 725721,
+      "dimensions": [
+        736,
+        1104
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-06.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "175:3679"
+      ],
+      "figmaImageHash": "3d750ea812a2336984e5a7ed39aab050b8ee1419",
+      "sha1": "3d750ea812a2336984e5a7ed39aab050b8ee1419",
+      "sha256": "6e7d9aa052cdf6bf0099468e11d9d51532ed3d1b7881eb3f0d2b977058007f10",
+      "bytes": 1582196,
+      "dimensions": [
+        800,
+        1319
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-07.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "175:3678"
+      ],
+      "figmaImageHash": "303b16c3ac188eaaa2dbc0c7a0fda932014542b3",
+      "sha1": "303b16c3ac188eaaa2dbc0c7a0fda932014542b3",
+      "sha256": "1daefd5be41daf052a5b8430a0e126f1e8f74f139af5d4539b3fca5915d572ae",
+      "bytes": 888795,
+      "dimensions": [
+        750,
+        1000
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-08.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "178:4231"
+      ],
+      "figmaImageHash": "663f9e0912decaa8871b9ab9bbdfd3ce1d68190a",
+      "sha1": "663f9e0912decaa8871b9ab9bbdfd3ce1d68190a",
+      "sha256": "3401371fa01da544d04e2c6f28b140eb0cc8b71b344dc1c36c5fba5bc3d14093",
+      "bytes": 575839,
+      "dimensions": [
+        800,
+        1200
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-09.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "178:4232"
+      ],
+      "figmaImageHash": "b4a7298315b14c2b92c56098031033a1140613f0",
+      "sha1": "b4a7298315b14c2b92c56098031033a1140613f0",
+      "sha256": "1b994f11b408d2343ce3427f322dc0b67050fa47b27f0d264c0bafec54aa0736",
+      "bytes": 696137,
+      "dimensions": [
+        1200,
+        1800
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    },
+    {
+      "path": "assets/images/occasions/start-10.png",
+      "sourceKind": "Provided Figma image original",
+      "figmaFile": "mG3g0dRExJiLZ6oWRM4CRg",
+      "sourceNodes": [
+        "178:4233"
+      ],
+      "figmaImageHash": "25437d290bbe1dab3fae2776f3f832372289e47d",
+      "sha1": "25437d290bbe1dab3fae2776f3f832372289e47d",
+      "sha256": "d1b8683bd7ab6a83da14a325e02c732392caaae20a2bbe539f4af27b23dd91b2",
+      "bytes": 2333955,
+      "dimensions": [
+        1200,
+        1598
+      ],
+      "matchesBaseline": "b3263ce205315599523118e956839207b4a04a90",
+      "creator": null,
+      "recordedLicense": null,
+      "permissionStatus": "Project owner reports prior authorization; hosted display and public source redistribution scope not yet recorded in repository.",
+      "modifications": "None: restored original PNG bytes."
+    }
+  ]
+}

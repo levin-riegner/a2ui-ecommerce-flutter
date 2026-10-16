@@ -1,5 +1,5 @@
-import 'package:a2ui_flutter_commerce/src/agent/stylist_constraints.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_constraints.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Product product({

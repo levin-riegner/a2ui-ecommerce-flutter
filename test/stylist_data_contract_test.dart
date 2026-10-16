@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/outfit_plan.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_constraints.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_input_error.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_right_components.dart';
-import 'package:a2ui_flutter_commerce/src/data/local_stylist_store.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
-import 'package:a2ui_flutter_commerce/src/data/money.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/outfit_plan.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_constraints.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/model/stylist_input_error.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/views/commerce/finalized_right_components.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/repository/local_stylist_store.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/money.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';

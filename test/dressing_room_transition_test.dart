@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:a2ui_core/a2ui_core.dart' as core;
 
-import 'package:a2ui_flutter_commerce/src/agent/genkit_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stub_agent.dart';
-import 'package:a2ui_flutter_commerce/src/agent/stylist_runtime.dart';
-import 'package:a2ui_flutter_commerce/src/app.dart';
-import 'package:a2ui_flutter_commerce/src/data/models.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/bloc/genkit_agent.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/stub_agent.dart';
+import 'package:a2ui_flutter_commerce/data/stylist/service/runtime/stylist_runtime.dart';
+import 'package:a2ui_flutter_commerce/app/app.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/model/models.dart';
+import 'package:a2ui_flutter_commerce/data/catalog/repository/product_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genkit/genkit.dart' as g;
 import 'package:genui/genui.dart';
@@ -15,6 +17,116 @@ import 'package:genui/genui.dart';
 import 'stylist_runtime_test.dart' show products, textResponse;
 
 void main() {
+  testWidgets('custom brief releases text input before its outgoing fade', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final semantics = tester.ensureSemantics();
+    try {
+      final agent = (await tester.runAsync(
+        () async => GenkitAgent(
+          StylistRuntime(products: products, model: offlineStylistModel),
+        ),
+      ))!;
+      await tester.pumpWidget(ReferenceApp(agent: agent));
+      await tester.pumpAndSettle();
+      final field = find.byKey(const ValueKey('custom-brief-occasion'));
+      await tester.enterText(field, 'A spring day');
+      await tester.pump();
+      final editable = tester.state<EditableTextState>(
+        find.descendant(of: field, matching: find.byType(EditableText)),
+      );
+      expect(editable.widget.focusNode.hasFocus, isTrue);
+      expect(tester.testTextInput.hasAnyClients, isTrue);
+
+      // Match browser accessibility activation without a pointer tap that might
+      // independently dismiss the keyboard on some platforms.
+      final submit = tester.getSemantics(
+        find.byKey(const ValueKey('stylist-submit-Start my look')),
+      );
+      submit.owner!.performAction(submit.id, SemanticsAction.tap);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 40));
+      expect(field, findsOneWidget);
+      expect(editable.widget.focusNode.hasFocus, isFalse);
+      expect(tester.testTextInput.hasAnyClients, isFalse);
+      expect(agent.hasStarted, isFalse);
+      final opacity = tester
+          .widget<FadeTransition>(
+            find.byKey(const ValueKey('stylist-view-fade')),
+          )
+          .opacity
+          .value;
+      expect(opacity, allOf(greaterThan(0), lessThan(1)));
+
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.runAsync(() async {
+        if (!agent.hasStarted || agent.isBusy) {
+          await agent.stream
+              .firstWhere((state) => state.hasStarted && !state.isBusy)
+              .timeout(const Duration(seconds: 5));
+        }
+      });
+      await tester.pumpAndSettle();
+      expect(agent.hasStarted, isTrue);
+      expect(agent.isBusy, isFalse);
+      expect(agent.connectionError, isNull);
+      expect(field, findsNothing);
+      expect(find.byKey(const ValueKey('stylist-composer')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    } finally {
+      semantics.dispose();
+    }
+  });
+
+  test(
+    'gallery restart removes surfaces and ignores pending fixture results',
+    () async {
+      final repository = _DelayedGalleryRepository();
+      final agent = StubAgent(repository: repository);
+      addTearDown(agent.dispose);
+      await agent.startJourney(DemoJourney.paris);
+      final pending = agent.sendMessage('Find options');
+      await repository.entered.future;
+      expect(await agent.restartChat(), isTrue);
+      repository.release.complete();
+      await pending;
+      await Future<void>.delayed(Duration.zero);
+      expect(agent.hasStarted, isFalse);
+      expect(agent.activeJourney, isNull);
+      expect(agent.latestInlineSurfaceId, isNull);
+      expect(agent.hasDressingRoomSurface, isFalse);
+      expect(
+        agent.controller.contextFor('dressing-room').definition.value,
+        isNull,
+      );
+      expect(agent.controller.contextFor('inline-0').definition.value, isNull);
+    },
+  );
+
+  test(
+    'gallery close drains requests without waiting for the fixture repository',
+    () async {
+      final repository = _DelayedGalleryRepository();
+      final agent = StubAgent(repository: repository);
+      await agent.startJourney(DemoJourney.paris);
+      final pending = agent.sendMessage('Find options');
+      await repository.entered.future;
+      final closing = agent.close();
+      expect(agent.close(), same(closing));
+      await expectLater(pending, completes);
+      await closing;
+      expect(agent.isClosed, isTrue);
+      // The uncancellable repository is deliberately released after shutdown.
+      repository.release.complete();
+      await Future<void>.delayed(Duration.zero);
+    },
+  );
+
   for (final reducedMotion in [false, true]) {
     testWidgets(
       'X confirms restart and fades between views, reduceMotion=$reducedMotion',
@@ -277,6 +389,28 @@ class _RestartAgent extends StubAgent {
   @override
   Future<bool> restartChat() async {
     restarts++;
-    return allowRestart;
+    return allowRestart ? super.restartChat() : false;
+  }
+}
+
+class _DelayedGalleryRepository extends FixtureProductRepository {
+  final entered = Completer<void>();
+  final release = Completer<void>();
+
+  @override
+  Future<List<Product>> recommendations({
+    required DemoJourney journey,
+    required ProductCategory category,
+    String? gender,
+    int limit = 3,
+  }) async {
+    if (!entered.isCompleted) entered.complete();
+    await release.future;
+    return super.recommendations(
+      journey: journey,
+      category: category,
+      gender: gender,
+      limit: limit,
+    );
   }
 }

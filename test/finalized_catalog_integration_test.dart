@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:a2ui_flutter_commerce/src/catalog/catalog_export.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/commerce_catalog.dart';
-import 'package:a2ui_flutter_commerce/src/catalog/finalized_component_gallery.dart';
-import 'package:a2ui_flutter_commerce/src/theme.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/catalog_export.dart';
+import 'package:a2ui_flutter_commerce/presentation/stylist/a2ui/catalog/commerce_catalog.dart';
+import 'package:a2ui_flutter_commerce/presentation/gallery/finalized_component_gallery.dart';
+import 'package:a2ui_flutter_commerce/presentation/shared/design_system/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/test/validation.dart';

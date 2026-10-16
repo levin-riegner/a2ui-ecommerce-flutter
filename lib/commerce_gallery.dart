@@ -1,7 +1,8 @@
 /// Opt-in examples and inspection screens; no provider connection is required.
 library;
 
-export 'src/catalog/commerce_examples.dart';
-export 'src/catalog/finalized_component_gallery.dart';
-export 'src/catalog/finalized_screen_examples.dart';
-export 'src/catalog/finalized_screen_gallery.dart';
+export 'presentation/gallery/commerce_examples.dart';
+export 'presentation/gallery/commerce_inspector.dart';
+export 'presentation/gallery/finalized_component_gallery.dart';
+export 'presentation/gallery/finalized_screen_examples.dart';
+export 'presentation/gallery/finalized_screen_gallery.dart';
