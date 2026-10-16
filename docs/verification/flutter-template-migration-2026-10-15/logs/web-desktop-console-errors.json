@@ -1,8 +1,0 @@
-[
-  {
-    "level": "error",
-    "message": "══╡ EXCEPTION CAUGHT BY ANIMATION LIBRARY ╞═════════════════════════════════════════════════════════\nThe following assertion was thrown while notifying listeners for AnimationController:\nA RenderAnimatedSize was mutated in its own performLayout implementation.\nA RenderObject must not re-dirty itself while still being laid out.\nThe RenderObject being mutated was:\n  RenderAnimatedSize#efa3e relayoutBoundary=up3 NEEDS-LAYOUT NEEDS-PAINT\nConsider using the LayoutBuilder widget to dynamically change a subtree during layout.\n\nWhen the exception was thrown, this was the stack\n\nThe AnimationController notifying listeners was:\n  AnimationController#a9308(⏮ 1.000; paused)\n════════════════════════════════════════════════════════════════════════════════════════════════════",
-    "timestamp": "2026-10-15T19:36:40.394Z",
-    "url": "http://127.0.0.1:8793/main.dart.js"
-  }
-]

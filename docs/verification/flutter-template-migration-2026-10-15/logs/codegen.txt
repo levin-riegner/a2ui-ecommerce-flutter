@@ -1,9 +1,0 @@
-  0s freezed on 169 inputs; lib/app/app.dart
-  0s freezed on 169 inputs: 169 skipped
-  0s json_serializable on 338 inputs; lib/app/app.dart
-  0s json_serializable on 338 inputs: 338 skipped
-  0s go_router_builder on 338 inputs; lib/app/app.dart
-  0s go_router_builder on 338 inputs: 338 skipped
-  0s source_gen:combining_builder on 338 inputs; lib/app/app.dart
-  0s source_gen:combining_builder on 338 inputs: 338 skipped
-  Built with build_runner/aot in 1s; wrote 0 outputs.

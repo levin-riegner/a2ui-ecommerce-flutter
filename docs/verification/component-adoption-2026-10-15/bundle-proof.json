@@ -1,9 +1,0 @@
-{
-  "products": 977,
-  "allBundledPhotosPresent": true,
-  "catalogBytesMatchSource": true,
-  "bundles": [
-    "build/web/assets",
-    "build/ios/iphonesimulator/Runner.app/Frameworks/App.framework/flutter_assets"
-  ]
-}

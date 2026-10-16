@@ -5,7 +5,7 @@ The [flow edge-case matrix](stylist-flow-edge-cases.md) documents restart, cance
 This is the integration contract for implementers and coding agents working on
 Alder. The reference pins `genkit`, `genkit_openai`, `genkit_anthropic`,
 `genkit_google_genai`, and `schemantic` to **1.0.0**. Its lockfile resolves
-`dotprompt` 2.0.0. Genkit 0.17.0 was the preceding non-prerelease version.
+`dotprompt` 2.0.0.
 Flutter remains pinned by `.fvmrc`; unrelated GenUI/A2UI packages are unchanged.
 
 ## Start with these files
@@ -186,8 +186,7 @@ reveals and preserves the existing `Surface` and bound controls. Bound data can
 change layout without an agent notification, so bottom-following observes actual
 rendered geometry. It follows only while the user is up to date and respects
 Reduce Motion. This does not add or change Genkit requests. See the
-[renderer capture and comparison](verification/figma-layout-2026-10-13/README.md)
-and [GenUI SurfaceContext API](https://pub.dev/documentation/genui/latest/genui/SurfaceContext-class.html).
+[GenUI SurfaceContext API](https://pub.dev/documentation/genui/latest/genui/SurfaceContext-class.html).
 
 - [Genkit version history](https://pub.dev/packages/genkit/versions)
 - [Genkit 1.0 changes](https://pub.dev/packages/genkit/versions/1.0.0/changelog)

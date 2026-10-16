@@ -1,6 +1,6 @@
 # Documentation
 
-The implementation and shared schemas are the source of truth. The guides below describe the current checkout. Dated audits, plans and verification records preserve the state they inspected; they are not a claim that the current source has passed a live-provider or native-device check.
+Start with setup and the experience guide, then use the architecture and API references to extend the app.
 
 ## Start and use
 
@@ -23,19 +23,7 @@ The implementation and shared schemas are the source of truth. The guides below 
 - [Catalog curation](catalog-import.md): data preparation, fictional prices and optional variant groups.
 - [Flow edge cases](stylist-flow-edge-cases.md): lifecycle, rollback, sizing and recovery matrix.
 
-## Release and evidence
-
-- [2026-10-16 release audit](release-audit-2026-10-16.md): first-run findings, fixes, executed checks and remaining publication blockers.
+## Release
 
 - [Public-release gates](open-source-release.md), [asset provenance](asset-provenance.json), [photo ledger](assets/collage-provenance.json), [NOTICE](../NOTICE) and [SECURITY.md](../SECURITY.md).
-- [iOS release gate](ios-release-gate.md): required SDK and current-source native build procedure.
-- [Duo simulator verification](duo-simulator-verification.md): posture matrix and dated evidence.
-- [`verification/`](verification/): dated checks and captured artifacts. Read each record's scope and limits before reusing it.
-
-## Historical context and planning
-
-These explain earlier decisions and proposed work. Later implementation can supersede individual gaps or paths; use the current guides and source before acting on a recommendation.
-
-- [Reference context](reference-context.md) and [design follow-ups](design-followups.md).
-- [Component library audit](component-library-audit.md), [inventory opportunities](inventory-component-opportunities.md) and [component adoption record](component-adoption-progress.md).
-- [Foldable package review](foldable-package-review.md): dated package comparison, not a current package recommendation.
+- [iOS release gate](ios-release-gate.md): required SDK and native build procedure.

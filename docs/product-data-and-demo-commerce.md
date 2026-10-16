@@ -26,7 +26,7 @@ Material hints never replace the material field or establish compliance with har
 Generate the granular report with:
 
 ```sh
-dart run tool/export_product_data.dart .catalog-work/product-data-20261015/enrichment.json
+dart run tool/export_product_data.dart .catalog-work/product-data/enrichment.json
 ```
 
 The report contains all 977 products, original context, individual evidence/confidence, unknowns, demo variants and illustrative size guides. It stays in the ignored workspace because these are reproducible derived records rather than a second source catalog.
@@ -53,6 +53,6 @@ A changed bag or delivery date invalidates an older quote. Duplicate confirmatio
 
 The existing `alder.stylist.v1` snapshot accepts older saves. It now also retains fit preferences, selected product/bag variants, demo inventory consumption and the last simulated receipt. Product IDs and variants are validated on restore. API keys and conversation/model payloads remain outside storage.
 
-Focused coverage: `test/product_data_demo_commerce_test.dart`, including every product's evidence and variant IDs, negation, styling-advice isolation, typed input, separate shoe/clothing sizes, rendered controls, stock limits, stale quotes, failed-write rollback and restart persistence. Before the architecture port, **501 full-suite tests and seven final focused tests passed**, analysis/formatting were clean, and web/iOS simulator builds succeeded. Those historical checks do not establish a current native build of this port. [Browser and catalog evidence](verification/product-data-2026-10-15/README.md) verifies size selection, demo checkout and receipt recovery after reload at desktop and phone widths. Nothing was installed or deployed.
+Focused coverage is in `test/product_data_demo_commerce_test.dart`: product evidence, variant IDs, input validation, separate shoe/clothing sizes, rendered controls, stock limits, stale quotes, failed-write rollback and restart persistence.
 
 To replace the demo with real commerce, a merchant must supply variant/SKU mappings, currency/price authority, inventory, measured size/composition data and checkout/delivery services. These fictional fixtures cannot be promoted to verified facts by changing their label.

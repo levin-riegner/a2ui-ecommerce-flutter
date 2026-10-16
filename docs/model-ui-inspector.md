@@ -107,5 +107,4 @@ fvm flutter run -d chrome -t tool/alder_online_demo.dart --dart-define=ALDER_DEM
 ```
 
 The deterministic fixture demonstrates the tool loop and component choices; it
-does not establish provider quality. See the [verification record](verification/model-catalog-inspector-2026-10-15.md)
-for the tested builds, interactions and remaining limits.
+does not establish provider quality.

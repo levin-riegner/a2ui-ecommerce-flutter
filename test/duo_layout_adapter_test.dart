@@ -18,7 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:foldable/foldable.dart';
 import 'package:genui/genui.dart';
 
-import '../tool/duo_simulator_probe.dart' show createDuoFixtureAgent;
+import 'duo_fixture.dart' show createDuoFixtureAgent;
 
 const _available = FoldableCapabilities(
   supportLevel: FoldableSupportLevel.available,

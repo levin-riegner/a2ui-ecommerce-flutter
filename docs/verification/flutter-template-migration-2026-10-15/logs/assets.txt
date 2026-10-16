@@ -1,1 +1,0 @@
-Current asset manifest passed; archives/history and recorded permission gates still require review.

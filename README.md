@@ -14,8 +14,6 @@ Built on the [Levin+Riegner Flutter template](docs/flutter-template.md), with BL
   <img src="docs/assets/readme/duo-catalog.png" width="32%" alt="Alder A2UI component catalog on iPhone Duo">
 </p>
 
-Native iPhone Duo simulator captures with the deterministic offline model: recommendations, exchange inspector and component catalog. [Capture details](docs/assets/readme/README.md).
-
 ## Try it
 
 Install [Git LFS](https://git-lfs.com/) and [FVM](https://fvm.app/), then run from the checkout:

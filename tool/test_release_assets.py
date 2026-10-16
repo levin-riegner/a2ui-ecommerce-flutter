@@ -35,7 +35,7 @@ class ReleaseAssetBoundaryTest(unittest.TestCase):
         self.assertIn('referenced by runtime', errors[0])
 
     def test_historical_evidence_does_not_become_a_current_runtime_reference(self):
-        self.assertEqual(self.inspect({'NOTICE': 'Project terms', 'docs/verification/old.md': 'assets/images/occasions/start-01.png'}), [])
+        self.assertEqual(self.inspect({'NOTICE': 'Project terms', 'docs/example.md': 'assets/images/occasions/start-01.png'}), [])
 
     def test_missing_evidence_is_reported(self):
         errors = self.inspect({})

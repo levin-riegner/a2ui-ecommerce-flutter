@@ -140,7 +140,7 @@ Hinge geometry changes on the same inner display ease between pane bounds over 3
 
 The persistent `dressing-room` surface owns the evolving look. Inline surfaces are versioned per turn (`inline-0`, `inline-1`, and so on) so recommendations can be replaced without losing the persistent surface state.
 
-See [component-catalog.md](component-catalog.md) and [component-library-audit.md](component-library-audit.md) for the registered vocabulary and extension path. The audit preserves its original baseline; [component-adoption-progress.md](component-adoption-progress.md) records subsequent local integration.
+See [the component catalog](component-catalog.md) for registered widgets and [the extension guide](extending.md) for adding components and integrations.
 
 Explicit item choices publish an immutable, renderer-independent outfit preview after local validation. The GenUI adapter presents it immediately and restores the previous room and recommendation emphasis if the turn fails. Size forms collapse during save and return on failure; weather context is shown only at intake, on destination changes, on resume or for explicit weather questions.
 

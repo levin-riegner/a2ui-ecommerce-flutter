@@ -43,5 +43,3 @@ This document records source structure and intended contracts. Current test/buil
 Before adapting a newer template revision, inspect its actual BLoC, data, dependency, routing and localization code and update this map with the pinned commit. Adopt relevant structural changes without copying unrelated services or replacing the Flutter/GenUI/Genkit stack.
 
 Use `fvm flutter gen-l10n` for ARB generation and `fvm dart run build_runner build` for Freezed/typed-router changes. Keep generated outputs reviewable with their source. Run the offline checks in [CONTRIBUTING.md](../CONTRIBUTING.md), including the architecture guard and its negative fixtures.
-
-The migration's [verification record](verification/flutter-template-migration-2026-10-15.md) includes executed checks, build identities, UI evidence and known limits.

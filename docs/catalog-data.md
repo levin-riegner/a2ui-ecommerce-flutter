@@ -1,16 +1,45 @@
 # Catalog and asset sources
 
-The bundled `StylistRuntime` searches `assets/data/catalog/products.csv` and returns validated domain results. `StylistBloc` presents them as A2UI through `CommerceA2uiRenderer`; `GenkitAgent` remains a compatibility constructor. Flutter renders the bundled product photographs from their `image_asset` paths. `CsvProductRepository`, `FixtureProductRepository`, and `StubAgent` remain available for tests and component previews through explicit agent injection; they are not runtime fallback modes.
+The app searches `assets/data/catalog/products.csv`, containing 977 fictional
+products. `StylistRuntime` validates catalog choices and returns domain results;
+`StylistBloc` presents them through `CommerceA2uiRenderer`. Flutter loads photographs
+from each product's `image_asset` path.
 
-The CSV parser handles quoted commas, escaped quotes, and multiline fields. Run `python3 tools/catalog/validate.py assets/data/catalog/products.csv` before publishing catalog changes. Add `--source` once per private source export when checking for source identifiers; the original exports are not part of this repository.
+## Product facts
 
-The CSV uses fictional names, brands, descriptions, prices, and IDs. The approved product photographs are reused as local assets, resized and saved without image metadata. Visible marks on products and reverse image search can still identify a photographed item; the image bundle does not provide image-level unlinkability. For future catalog expansion, `tools/catalog/import_images.py` accepts a private, ordered URL file and an explicit `--allowed-host`, then writes renamed JPEGs. Keep that URL file outside the repository; the importer requires Pillow.
+Names, brands, descriptions, EUR prices and IDs are demo data. Descriptions and
+styling tags are best-effort interpretations of photographs, not verified material,
+fit, stock or performance claims. Unsupported material values use `unspecified`.
+Search uses text matching and filters; it needs no vector database or embeddings.
 
-The bundled catalog contains 977 products: the original 200 plus 777 curated from mock.shop. All 1,028 records imported from Everbloom and UrbanVantage were processed with Luna; unrelated goods, children's clothing, unsupported sets and duplicate images were skipped. The original photographs are used with permission for this public demo. The additional images are generated mock content, with photo-led styling guesses and fictional EUR prices. Conflicting source variants are omitted; this is an outfit demo, not live stock. The Start collage uses the original supplied Figma photographs, restored with their recorded source hashes. Those photographs, historical verification media and the design context photos retain separate [public-release gates](open-source-release.md). See [NOTICE](../NOTICE) and [asset provenance](asset-provenance.json) for credits and evidence limits.
+The `gender` field describes product styling: `male`, `female`, or `male, female`.
+Explicit audience requests remain host constraints across search, selection and
+budget completion. These labels do not describe the wearer's identity or fit.
 
-Catalog expansion uses [best-effort demo curation](catalog-import.md): use the pictured item, infer useful style tags, omit unsupported claims and skip broken records. Raw sources and enrichment history remain local for traceability; no manual review interface is required.
+[Demo commerce](product-data-and-demo-commerce.md) adds explicitly fictional size,
+variant, stock and delivery data. It does not connect to a merchant or take payment.
 
-All 977 products have photo-based descriptions and styling tags, including a separate Luna pass over the original 200. Original IDs, prices and photographs are preserved; unsupported original material labels are replaced with `unspecified`. Search passes matching product descriptions and styling keywords to the LLM as structured text facts. Images are inspected during enrichment and displayed in the cards; local retrieval uses word matching and filters without a vector database.
+## Assets and attribution
 
-Every product also has a styling audience: `male`, `female`, or `male, female`. Explicit menswear, womenswear, and unisex requests are retained. Selecting a piece with one audience establishes the outfit's audience when none was specified, so a female dress leads to female-compatible jackets and accessories, including neutral pieces. Explicit unisex requests return only products supporting both audiences. Search fallback, presentation, and budget completion enforce this preference. These labels describe product styling, not the wearer's identity or size/fit.
+The original 200 product photographs and the additional 777 mock.shop images have
+separate terms in [NOTICE](../NOTICE). Keep those terms and bundled font licenses.
+The Start collage and design-context photographs have their own redistribution
+requirements in [asset provenance](asset-provenance.json) and [the release gates](open-source-release.md).
 
+Visible marks or reverse image search can identify photographed products. Fictional
+metadata does not make the images anonymous or imply brand affiliation.
+
+## Import and validation
+
+See [catalog curation](catalog-import.md) for import policy, size options and colour
+variant groups. The parser supports quoted commas, escaped quotes and multiline fields.
+Validate changes before building:
+
+```sh
+python3 tools/catalog/validate.py assets/data/catalog/products.csv
+```
+
+Use `--source` for each private source export when checking source identifiers.
+Keep raw exports, enrichment results and image URL lists outside the repository.
+`CsvProductRepository`, `FixtureProductRepository` and `StubAgent` support explicit
+injection in tests and galleries; they are not production fallback modes.
