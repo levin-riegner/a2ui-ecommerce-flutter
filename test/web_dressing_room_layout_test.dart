@@ -107,6 +107,25 @@ void main() {
         matching: find.byIcon(Icons.close),
       );
       expect(tester.getCenter(inspect).dx, tester.getCenter(close).dx);
+      if (layout.status != null) {
+        // System indicator centre: Figma rail gutters are 12 left / 24 right.
+        expect(tester.getCenter(inspect).dx, size.width - 48);
+      }
+      expect(
+        find.byKey(const ValueKey('commerce-inspect-circle')),
+        findsNothing,
+      );
+      expect(
+        tester
+            .widget<Icon>(
+              find.descendant(
+                of: inspect,
+                matching: find.byIcon(Icons.data_object),
+              ),
+            )
+            .size,
+        24,
+      );
       expect(
         tester.getRect(inspect).top,
         greaterThan(tester.getRect(close).bottom),

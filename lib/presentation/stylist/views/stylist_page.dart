@@ -937,7 +937,7 @@ class _DressingPanel extends StatelessWidget {
               // Compact panes already sit inside the safe area. Split panes
               // extend to the screen edge and must reserve it for this control.
               buttonRightOffset: showRail
-                  ? 12
+                  ? (innerDisplay ? 18 : 12)
                   : split
                   ? safeRight
                   : 0,
@@ -947,6 +947,15 @@ class _DressingPanel extends StatelessWidget {
                         12 +
                         (innerDisplay ? 0 : 12)
                   : null,
+              plainButton: showRail,
+              buttonForegroundColor:
+                  innerDisplay &&
+                      (AdaptivePaneScope.secondaryBackgroundColorOf(context) ??
+                                  Colors.white)
+                              .computeLuminance() >=
+                          .5
+                  ? Colors.black
+                  : Colors.white,
               inspectionPadding: EdgeInsets.only(right: safeRight),
             );
     },
@@ -1003,6 +1012,11 @@ class _DressingPanel extends StatelessWidget {
                   SizedBox(
                     width: 84,
                     child: _SideRail(
+                      // Figma's 12/24 gutters align the app controls with the
+                      // system status indicator rather than the rail midpoint.
+                      controlPadding: innerDisplay
+                          ? const EdgeInsets.only(left: 12, right: 24)
+                          : EdgeInsets.zero,
                       backgroundColor: innerDisplay
                           ? AdaptivePaneScope.secondaryBackgroundColorOf(
                                   context,
@@ -1201,12 +1215,14 @@ class _SideRail extends StatelessWidget {
     this.bagCount = 0,
     this.onBag,
     this.backgroundColor = Colors.black,
+    this.controlPadding = EdgeInsets.zero,
   });
 
   final VoidCallback onNewJourney;
   final int bagCount;
   final VoidCallback? onBag;
   final Color backgroundColor;
+  final EdgeInsets controlPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -1214,32 +1230,35 @@ class _SideRail extends StatelessWidget {
     return ColoredBox(
       key: const ValueKey('dressing-room-side-rail'),
       color: backgroundColor,
-      child: Column(
-        children: [
-          const SizedBox(height: closeTop),
-          IconButton(
-            onPressed: onNewJourney,
-            tooltip: context.l10n.newJourney,
-            icon: Icon(
-              Icons.close,
-              size: 24,
-              color: dark ? Colors.white : Colors.black,
+      child: Padding(
+        padding: controlPadding,
+        child: Column(
+          children: [
+            const SizedBox(height: closeTop),
+            IconButton(
+              onPressed: onNewJourney,
+              tooltip: context.l10n.newJourney,
+              icon: Icon(
+                Icons.close,
+                size: 24,
+                color: dark ? Colors.white : Colors.black,
+              ),
+              constraints: const BoxConstraints.tightFor(
+                width: controlSize,
+                height: controlSize,
+              ),
             ),
-            constraints: const BoxConstraints.tightFor(
-              width: controlSize,
-              height: controlSize,
+            const Spacer(),
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                dark ? Colors.white54 : const Color(0xff71717a),
+                BlendMode.srcIn,
+              ),
+              child: FinalizedBagIcon(count: bagCount, onPressed: onBag),
             ),
-          ),
-          const Spacer(),
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              dark ? Colors.white54 : const Color(0xff71717a),
-              BlendMode.srcIn,
-            ),
-            child: FinalizedBagIcon(count: bagCount, onPressed: onBag),
-          ),
-          const SizedBox(height: 24),
-        ],
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

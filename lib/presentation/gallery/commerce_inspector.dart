@@ -16,6 +16,8 @@ class CommerceInspectionPane extends StatefulWidget {
     this.inspectionPadding = EdgeInsets.zero,
     this.buttonRightOffset = 0,
     this.buttonTopOffset,
+    this.plainButton = false,
+    this.buttonForegroundColor = Colors.white,
     this.fullScreen = false,
     super.key,
   });
@@ -25,6 +27,8 @@ class CommerceInspectionPane extends StatefulWidget {
   final EdgeInsets inspectionPadding;
   final double buttonRightOffset;
   final double? buttonTopOffset;
+  final bool plainButton;
+  final Color buttonForegroundColor;
   final bool fullScreen;
 
   @override
@@ -168,24 +172,29 @@ class _CommerceInspectionPaneState extends State<CommerceInspectionPane> {
             tooltip: context.l10n.inspectorInspect,
             onPressed: _open ? null : _inspect,
             style: IconButton.styleFrom(
-              foregroundColor: Colors.white,
+              foregroundColor: widget.buttonForegroundColor,
               backgroundColor: Colors.transparent,
               shape: const CircleBorder(),
               fixedSize: const Size(44, 44),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               padding: EdgeInsets.zero,
             ),
-            icon: Container(
-              key: const ValueKey('commerce-inspect-circle'),
-              width: widget.fullScreen ? 32 : 40,
-              height: widget.fullScreen ? 32 : 40,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white30),
-              ),
-              child: Icon(Icons.data_object, size: widget.fullScreen ? 16 : 18),
-            ),
+            icon: widget.plainButton
+                ? const Icon(Icons.data_object, size: 24)
+                : Container(
+                    key: const ValueKey('commerce-inspect-circle'),
+                    width: widget.fullScreen ? 32 : 40,
+                    height: widget.fullScreen ? 32 : 40,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white30),
+                    ),
+                    child: Icon(
+                      Icons.data_object,
+                      size: widget.fullScreen ? 16 : 18,
+                    ),
+                  ),
           ),
         ),
       ],
