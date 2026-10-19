@@ -34,7 +34,7 @@ to reusable Flutter renderers.
 
 Static SVGs retain their exported geometry. Four screen photos are exported
 original image bytes with Figma image-hash verification. This establishes source
-identity, not redistribution permission; see [the release gates](../open-source-release.md).
+identity, not redistribution permission; see [asset provenance](../asset-provenance.json).
 The Start collage uses the original supplied Figma photographs in the same
 staggered layout, restored byte-for-byte against [the source ledger](../assets/collage-provenance.json). Jost and Inter are bundled locally.
 Product images in real journeys remain the approved catalog assets.

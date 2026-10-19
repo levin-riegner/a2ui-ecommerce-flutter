@@ -25,5 +25,5 @@ Start with setup and the experience guide, then use the architecture and API ref
 
 ## Release
 
-- [Public-release gates](open-source-release.md), [asset provenance](asset-provenance.json), [photo ledger](assets/collage-provenance.json), [NOTICE](../NOTICE) and [SECURITY.md](../SECURITY.md).
+- [Catalog and asset sources](catalog-data.md), [asset provenance](asset-provenance.json) and [photo ledger](assets/collage-provenance.json).
 - [iOS release gate](ios-release-gate.md): required SDK and native build procedure.

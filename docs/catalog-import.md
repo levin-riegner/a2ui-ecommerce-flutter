@@ -50,7 +50,7 @@ fixture, which uses synthetic IDs, local JPEGs and fictional EUR prices.
 
 mock.shop content is fictional. Its [source terms](https://demostore.hydrogen.mock.shop/policies/terms-of-service)
 permit development against it and prohibit presenting imagery or copy as real
-merchandise. Additional images are credited separately in `NOTICE`.
+merchandise. Additional images are credited separately in [catalog and asset sources](catalog-data.md).
 
 ### Assigned size options
 

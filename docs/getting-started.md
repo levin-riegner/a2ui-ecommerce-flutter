@@ -35,7 +35,7 @@ Remote providers require HTTPS; loopback HTTP is accepted for local compatible e
 
 Connecting loads the catalog and configures Genkit locally. It neither verifies the key nor sends a model request. Starting a journey, chatting, selecting/removing products and Retry can invoke the provider, with at most four model requests per interaction. Provider availability, quotas and charges depend on your account and model.
 
-The app calls the selected provider directly. The key remains in device memory, is inserted into outgoing provider headers and is cleared by **New journey → Disconnect model**. Reloading requires configuring it again. Never embed a key in source, assets or `--dart-define` values. Accepted preferences, saved looks and demo bag state are stored separately; see [using Alder](experience.md) and [SECURITY.md](../SECURITY.md).
+The app calls the selected provider directly. The key remains in device memory, is inserted into outgoing provider headers and is cleared by **New journey → Disconnect model**. Reloading requires configuring it again. Never embed a key in source, assets or `--dart-define` values. Accepted preferences, saved looks and demo bag state are stored separately; see [using Alder](experience.md).
 
 ## Native platforms
 

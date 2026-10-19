@@ -46,4 +46,4 @@ The snapshot is a separate copy and does not stay in sync with the original. Fig
 - [Using Alder](docs/experience.md), [catalog data](docs/catalog-data.md) and [demo commerce](docs/product-data-and-demo-commerce.md) — behavior and fixture limits.
 - [Contributing](CONTRIBUTING.md) and [extending](docs/extending.md) — checks and implementation walkthroughs.
 
-The catalog, prices, stock and checkout are demo data; no payment or real order is created. Code is Apache-2.0; image/font terms and outstanding public-release media reviews are recorded in [NOTICE](NOTICE), [asset provenance](docs/asset-provenance.json) and [release gates](docs/open-source-release.md).
+The catalog, prices, stock and checkout are demo data; no payment or real order is created. Code is Apache-2.0; image/font terms and outstanding public-release media reviews are recorded in [catalog and asset sources](docs/catalog-data.md) and [asset provenance](docs/asset-provenance.json).

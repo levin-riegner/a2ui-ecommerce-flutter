@@ -20,7 +20,7 @@
       ],
       "source": "Original 200 catalog photographs",
       "evidence": [
-        "NOTICE"
+        "docs/catalog-data.md"
       ],
       "terms": "Recorded public-use/redistribution grant under project Apache-2.0; original authorship retained"
     },
@@ -30,7 +30,7 @@
       ],
       "source": "Images 0201 through 0977: generated fictional mock.shop product imagery",
       "evidence": [
-        "NOTICE"
+        "docs/catalog-data.md"
       ],
       "terms_url": "https://demostore.hydrogen.mock.shop/policies/terms-of-service",
       "terms": "Additional-image group only; original 0001-0200 grant takes precedence"
@@ -97,9 +97,9 @@
       "source": "Native iPhone Duo simulator captures of project UI and bundled catalog, exported with RocketSim device framing",
       "evidence": [
         "README.md",
-        "NOTICE"
+        "docs/catalog-data.md"
       ],
-      "terms": "Project UI and catalog-photo terms as recorded in NOTICE; no Start collage or design-context photographs are shown. Simulator capture is not live-provider or physical-device evidence."
+      "terms": "Project UI and catalog-photo terms as recorded in docs/catalog-data.md; no Start collage or design-context photographs are shown. Simulator capture is not live-provider or physical-device evidence."
     }
   ],
   "removed_unverified_assets": [],
