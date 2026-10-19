@@ -12,4 +12,4 @@
 - Run offline tests by default. Never opt into paid model tests, publish, deploy or push without user authorization. Keep keys out of source, assets, fixtures, logs and tracked environment files.
 - See [the extension walkthrough](docs/extending.md) for commands, components and catalog sources. Validate wire input before runtime mutation and validate presentation before commit.
 - Run the checks relevant to the change and inspect the actual diff. Saved screenshots/checkpoints do not establish a current native build or physical-device behavior.
-- Follow [the release gates](docs/open-source-release.md) before publishing; deleting current files does not clear Git history or historical screenshot rights.
+- Review [asset provenance](docs/asset-provenance.json) before publishing; deleting current files does not clear Git history or historical screenshot rights.

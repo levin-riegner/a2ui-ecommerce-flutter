@@ -43,4 +43,4 @@ Use a feature branch. Never push to `main` or `master`. Describe the concrete pr
 
 Changes to a wire schema must update its decoder, tool schema, presenter/adapter where relevant and focused contract tests. Changes to public exports must pass the transitive import guard. Keep BLoC presentation state separate from host commerce rules and live renderer resources.
 
-See [SECURITY.md](SECURITY.md) for credential handling and [the release gates](docs/open-source-release.md) for licensing and publication.
+See [catalog and asset sources](docs/catalog-data.md) for attribution and [asset provenance](docs/asset-provenance.json) for outstanding media reviews.
