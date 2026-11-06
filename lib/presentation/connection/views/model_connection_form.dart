@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/l10n/l10n.dart';
+import '../../../data/stylist/model/provider_model_catalog.dart';
 import '../service/session_connection.dart';
 import '../../stylist/bloc/commerce_session.dart';
 import '../../../data/stylist/model/model_settings.dart';
@@ -25,6 +26,7 @@ class ModelConnectionForm extends StatefulWidget {
 }
 
 class _ModelConnectionFormState extends State<ModelConnectionForm> {
+  static const _otherModel = '__other__';
   final _form = GlobalKey<FormState>();
   final _model = TextEditingController();
   final _key = TextEditingController();
@@ -32,6 +34,14 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
   late final _bloc = ConnectionBloc(
     coordinator: SessionConnection(connect: widget.connectionFactory),
   );
+  late String _selectedModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedModel =
+        defaultModelForProvider(_bloc.state.provider) ?? _otherModel;
+  }
 
   @override
   void dispose() {
@@ -47,7 +57,9 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
   void _connect() {
     if (!_bloc.state.canSubmit || !_form.currentState!.validate()) return;
     _bloc.submit(
-      model: _model.text.trim(),
+      model: _selectedModel == _otherModel
+          ? _model.text.trim()
+          : _selectedModel,
       apiKey: _key.text.trim(),
       baseUrl: _baseUrl.text.trim(),
     );
@@ -103,6 +115,9 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
                 onChanged: state.canSubmit
                     ? (value) {
                         if (value != null) {
+                          _selectedModel =
+                              defaultModelForProvider(value) ?? _otherModel;
+                          _model.clear();
                           _bloc.add(ConnectionProviderChanged(value));
                         }
                       }
@@ -123,14 +138,43 @@ class _ModelConnectionFormState extends State<ModelConnectionForm> {
                 ),
               ],
               const SizedBox(height: 12),
-              TextFormField(
-                controller: _model,
-                enabled: state.canSubmit,
-                autocorrect: false,
-                enableSuggestions: false,
-                decoration: InputDecoration(labelText: l10n.connectionModelId),
-                validator: requiredValue,
+              DropdownButtonFormField<String>(
+                key: ValueKey('model-${state.provider}'),
+                initialValue: _selectedModel,
+                decoration: InputDecoration(labelText: l10n.connectionModel),
+                items: [
+                  for (final model in modelsForProvider(state.provider))
+                    DropdownMenuItem(value: model.id, child: Text(model.label)),
+                  DropdownMenuItem(
+                    value: _otherModel,
+                    child: Text(l10n.connectionModelOther),
+                  ),
+                ],
+                onChanged: state.canSubmit
+                    ? (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedModel = value;
+                            if (value != _otherModel) _model.clear();
+                          });
+                        }
+                      }
+                    : null,
               ),
+              if (_selectedModel == _otherModel) ...[
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _model,
+                  enabled: state.canSubmit,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  decoration: InputDecoration(
+                    labelText: l10n.connectionModelId,
+                    helperText: l10n.connectionModelOtherHelp,
+                  ),
+                  validator: requiredValue,
+                ),
+              ],
               const SizedBox(height: 12),
               TextFormField(
                 controller: _key,

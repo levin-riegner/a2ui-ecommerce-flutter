@@ -32,10 +32,10 @@ dependencies:
   flutter_svg: 2.3.0
   json_schema_builder: ^0.1.7
   # Upgrade this reference stack together; see docs/genkit-reference.md.
-  genkit: 1.0.0
-  genkit_openai: 1.0.0
-  genkit_anthropic: 1.0.0
-  genkit_google_genai: 1.0.0
+  genkit: 1.0.1
+  genkit_openai: 1.0.1
+  genkit_anthropic: 1.0.1
+  genkit_google_genai: 1.0.1
   schemantic: 1.0.0
   foldable: 1.0.5
   # Native dictation: Android speech service, Apple Speech, and browser recognition.

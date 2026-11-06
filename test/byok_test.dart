@@ -19,9 +19,7 @@ Finder occasionSuggestion() => find
 Future<void> fill(WidgetTester tester) async {
   await tester.tap(find.text('Connect your model'));
   await tester.pumpAndSettle();
-  final fields = find.byType(TextFormField);
-  await tester.enterText(fields.at(0), 'test-model');
-  await tester.enterText(fields.at(1), 'private-test-key');
+  await tester.enterText(find.byType(TextFormField).first, 'private-test-key');
 }
 
 void main() {
@@ -45,7 +43,8 @@ void main() {
       expect(tester.widget<InkWell>(occasionSuggestion()).onTap, isNull);
       await fill(tester);
       expect(find.text('Stylist service URL'), findsNothing);
-      expect(find.byType(TextFormField), findsNWidgets(2));
+      expect(find.text('Gemini 4 Argon'), findsOneWidget);
+      expect(find.byType(TextFormField), findsOneWidget);
       expect(
         tester.widget<TextField>(find.byType(TextField).last).obscureText,
         isTrue,
@@ -81,13 +80,15 @@ void main() {
     (tester) async {
       await tester.pumpWidget(const ReferenceApp());
       await fill(tester);
-      await tester.tap(find.byType(DropdownButtonFormField<String>));
+      await tester.tap(find.byType(DropdownButtonFormField<String>).first);
       await tester.pumpAndSettle();
       await tester.tap(find.text('OpenAI-compatible').last);
       await tester.pumpAndSettle();
       expect(find.text('Provider API base URL'), findsOneWidget);
+      expect(find.text('Other…'), findsOneWidget);
       final fields = find.byType(TextFormField);
       await tester.enterText(fields.at(0), 'http://remote.example/v1');
+      await tester.enterText(fields.at(1), 'compatible-tool-model');
       await tester.ensureVisible(find.text('Connect model'));
       await tester.tap(find.text('Connect model'));
       await tester.pumpAndSettle();

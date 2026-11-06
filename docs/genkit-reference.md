@@ -4,7 +4,7 @@ The [flow edge-case matrix](stylist-flow-edge-cases.md) documents restart, cance
 
 This is the integration contract for implementers and coding agents working on
 Alder. The reference pins `genkit`, `genkit_openai`, `genkit_anthropic`,
-`genkit_google_genai`, and `schemantic` to **1.0.0**. Its lockfile resolves
+`genkit_google_genai` to **1.0.1**, and `schemantic` to **1.0.0**. Its lockfile resolves
 `dotprompt` 2.0.0.
 Flutter remains pinned by `.fvmrc`; unrelated GenUI/A2UI packages are unchanged.
 
@@ -99,7 +99,7 @@ in model configuration, flow inputs, trace context, assets or persistent state.
 Connection setup is network-free; model discovery is deliberately not called.
 
 OpenAI's `store: false` is enforced at this boundary because the pinned plugin's
-Chat Completions options do not expose it. The Luna tool-call configuration uses
+Chat Completions options do not expose it. The GPT-6 Sol tool-call configuration uses
 the public `OpenAIChatOptions(reasoningEffort: 'none')` schema, not a raw request
 rewrite. Other models and compatible hosts do not inherit that setting.
 
@@ -124,7 +124,7 @@ must never silently expand them.
 `StylistRuntime.turn(onText: ...)` streams cumulative, display-only prose from
 only the final tool-free request using the public `Model(..., onChunk: ...)`
 API. Tool requests stay non-streaming. Turns introducing destination weather hold prose until the validated response can show the forecast first. The provider wrapper forwards chunks and
-cancellation through its public action context. OpenAI Luna continues to send
+cancellation through its public action context. OpenAI GPT-6 Sol continues to send
 `reasoning_effort: none`, including the streaming request.
 
 The runtime buffers complete sentences before applying the final reply's
@@ -139,7 +139,7 @@ and direct host replies keep the existing paragraph queue.
 
 ## Remaining upstream exception
 
-The published `genkit_openai` 1.0.0 non-streaming converter passes the SDK enum's
+The published `genkit_openai` 1.0.1 non-streaming converter passes the SDK enum's
 `.name` (`toolCalls`) to a mapping expecting `tool_calls`. The narrow
 `_normalizeResponse` adapter accepts only an unknown finish reason accompanied
 by real tool requests and raw `choices[0].finish_reason == 'tool_calls'`.
@@ -189,8 +189,8 @@ Reduce Motion. This does not add or change Genkit requests. See the
 [GenUI SurfaceContext API](https://pub.dev/documentation/genui/latest/genui/SurfaceContext-class.html).
 
 - [Genkit version history](https://pub.dev/packages/genkit/versions)
-- [Genkit 1.0 changes](https://pub.dev/packages/genkit/versions/1.0.0/changelog)
-- [Genkit public API](https://pub.dev/documentation/genkit/1.0.0/genkit/)
-- [Anthropic public API](https://pub.dev/documentation/genkit_anthropic/1.0.0/genkit_anthropic/)
-- [Google public API](https://pub.dev/documentation/genkit_google_genai/1.0.0/genkit_google_genai/)
-- [OpenAI public API](https://pub.dev/documentation/genkit_openai/1.0.0/genkit_openai/)
+- [Genkit 1.0.1 changes](https://pub.dev/packages/genkit/versions/1.0.1/changelog)
+- [Genkit public API](https://pub.dev/documentation/genkit/1.0.1/genkit/)
+- [Anthropic public API](https://pub.dev/documentation/genkit_anthropic/1.0.1/genkit_anthropic/)
+- [Google public API](https://pub.dev/documentation/genkit_google_genai/1.0.1/genkit_google_genai/)
+- [OpenAI public API](https://pub.dev/documentation/genkit_openai/1.0.1/genkit_openai/)

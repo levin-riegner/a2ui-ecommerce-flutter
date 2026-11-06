@@ -449,34 +449,34 @@ packages:
     dependency: "direct main"
     description:
       name: genkit
-      sha256: "478f914efde52c6c1c0f2177b5a1632c2e5dc39e88cab29b48930d80137c1a2a"
+      sha256: "6148f5511b6a620ceeefb89b470603f662f54c326369c94de1b0a2d7672fea4c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   genkit_anthropic:
     dependency: "direct main"
     description:
       name: genkit_anthropic
-      sha256: "99ea31e75b61ad22cd81835ee76c34afed00996177a4d446fca1016a052153e0"
+      sha256: "821bc09998857cb89abde6dc2c3fa41db01665f022cf3b4579165414317f72d2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   genkit_google_genai:
     dependency: "direct main"
     description:
       name: genkit_google_genai
-      sha256: d308e31d60d89c3ed8484347aab1db16ba6e150e325b10e41550b677fe6adc10
+      sha256: bff035ea8a467e74f4193187c4b5d880de0e88b0c47e3e5753077c61f95ab896
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   genkit_openai:
     dependency: "direct main"
     description:
       name: genkit_openai
-      sha256: "963843257ad027c641e4fcc5594a174f035be413137093a6c0c6903c23b2b80c"
+      sha256: c2c92eb31ea43748f3b5d8e8b2ba4500b0c25fb185cd873717a2abf8eb8ba5cd
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   genui:
     dependency: "direct main"
     description:

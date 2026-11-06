@@ -42,7 +42,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use HTTPS or a local loopback HTTP address';
 
   @override
+  String get connectionModel => 'Model';
+
+  @override
+  String get connectionModelOther => 'Other…';
+
+  @override
   String get connectionModelId => 'Model ID';
+
+  @override
+  String get connectionModelOtherHelp =>
+      'The model must support tool calling through the selected provider.';
 
   @override
   String get connectionApiKey => 'API key';

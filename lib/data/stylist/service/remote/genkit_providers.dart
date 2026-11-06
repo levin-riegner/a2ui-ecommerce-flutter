@@ -34,8 +34,8 @@ class GenkitProvider {
       name: providerModel.name,
       customOptions: providerModel.customOptions,
       fn: (request, context) {
-        if (settings.provider == 'openai' && settings.model == 'gpt-6-luna') {
-          // This model supports Chat Completions tools without reasoning.
+        if (settings.provider == 'openai' && settings.model == 'gpt-6-sol') {
+          // GPT-6 Sol supports Chat Completions tools without reasoning.
           // Use the plugin's public options rather than patching its wire JSON.
           request = ModelRequest.fromJson(request.toJson())
             ..config = {
@@ -73,7 +73,7 @@ class GenkitProvider {
   void beginTurn() => _transport.beginTurn();
   void cancelTurn() => _transport.cancelTurn();
   ModelResponse _normalizeResponse(ModelResponse response) {
-    // genkit_openai 1.0.0 still maps the SDK's camel-case enum name, whereas its
+    // genkit_openai 1.0.1 still maps the SDK's camel-case enum name, whereas its
     // converter expects the wire value "tool_calls". Accept only that explicit
     // finish reason with real tool requests; truncated output stays rejected.
     if ((settings.provider == 'openai' ||

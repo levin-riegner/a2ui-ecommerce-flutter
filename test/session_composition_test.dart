@@ -33,8 +33,7 @@ class SessionFake extends CommerceSession {
 }
 
 Future<void> submit(WidgetTester tester) async {
-  await tester.enterText(find.byType(TextFormField).at(0), 'test-model');
-  await tester.enterText(find.byType(TextFormField).at(1), 'test-key');
+  await tester.enterText(find.byType(TextFormField).first, 'test-key');
   await tester.ensureVisible(find.text('Connect model'));
   await tester.tap(find.text('Connect model'));
   await tester.pump();
@@ -63,8 +62,73 @@ void main() {
     await submit(tester);
     await tester.pumpAndSettle();
     expect(accepted, same(session));
-    expect(supplied!.model, 'test-model');
+    expect(supplied!.model, 'gemini-4-argon');
     expect(session.disposals, 0);
+    supplied!.clear();
+    session.dispose();
+  });
+
+  testWidgets('Other accepts a manual model ID', (tester) async {
+    final session = SessionFake();
+    ModelSettings? supplied;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ModelConnectionForm(
+            connectionFactory: (settings) async {
+              supplied = settings;
+              return session;
+            },
+            onConnected: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byType(DropdownButtonFormField<String>).at(1));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Other…').last);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'future-tool-model',
+    );
+    await tester.enterText(find.byType(TextFormField).at(1), 'test-key');
+    await tester.ensureVisible(find.text('Connect model'));
+    await tester.tap(find.text('Connect model'));
+    await tester.pumpAndSettle();
+    expect(supplied!.model, 'future-tool-model');
+    supplied!.clear();
+    session.dispose();
+  });
+
+  testWidgets('provider change selects that provider default', (tester) async {
+    final session = SessionFake();
+    ModelSettings? supplied;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ModelConnectionForm(
+            connectionFactory: (settings) async {
+              supplied = settings;
+              return session;
+            },
+            onConnected: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byType(DropdownButtonFormField<String>).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Anthropic').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Claude Fable 5.1'), findsOneWidget);
+    expect(find.text('Gemini 4 Argon'), findsNothing);
+    await tester.enterText(find.byType(TextFormField).first, 'test-key');
+    await tester.ensureVisible(find.text('Connect model'));
+    await tester.tap(find.text('Connect model'));
+    await tester.pumpAndSettle();
+    expect(supplied!.provider, 'anthropic');
+    expect(supplied!.model, 'claude-fable-5-1');
     supplied!.clear();
     session.dispose();
   });

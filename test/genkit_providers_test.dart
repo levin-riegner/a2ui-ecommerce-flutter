@@ -108,13 +108,13 @@ http.Response providerToolReply(
 
 void main() {
   test(
-    'OpenAI Luna disables reasoning for Chat Completions tool calls',
+    'OpenAI GPT-6 Sol disables reasoning for Chat Completions tool calls',
     () async {
       final requests = <http.Request>[];
       final client = MockClient((request) async {
         requests.add(request);
         final body = jsonDecode(request.body) as Map;
-        expect(body['model'], 'gpt-6-luna');
+        expect(body['model'], 'gpt-6-sol');
         expect(body['reasoning_effort'], 'none');
         expect(body['store'], false);
         switch (requests.length) {
@@ -133,7 +133,7 @@ void main() {
       final connection = GenkitProvider(
         ModelSettings(
           provider: 'openai',
-          model: 'gpt-6-luna',
+          model: 'gpt-6-sol',
           apiKey: 'test-key',
         ),
         client: client,
@@ -156,7 +156,7 @@ void main() {
   );
 
   test(
-    'Luna streams SSE prose with reasoning disabled after tool calls',
+    'GPT-6 Sol streams SSE prose with reasoning disabled after tool calls',
     () async {
       final wire = StreamController<List<int>>();
       final connected = Completer<void>();
@@ -166,7 +166,7 @@ void main() {
       final client = MockClient.streaming((request, bodyStream) async {
         requests++;
         final body = jsonDecode(await bodyStream.bytesToString()) as Map;
-        expect(body['model'], 'gpt-6-luna');
+        expect(body['model'], 'gpt-6-sol');
         expect(body['reasoning_effort'], 'none');
         expect(body['store'], false);
         if (requests == 3) {
@@ -193,7 +193,7 @@ void main() {
       final connection = GenkitProvider(
         ModelSettings(
           provider: 'openai',
-          model: 'gpt-6-luna',
+          model: 'gpt-6-sol',
           apiKey: 'test-key',
         ),
         client: client,
@@ -225,7 +225,7 @@ void main() {
             'id': 'chat_stream',
             'object': 'chat.completion.chunk',
             'created': 1,
-            'model': 'gpt-6-luna',
+            'model': 'gpt-6-sol',
             'choices': [
               {
                 'index': 0,
