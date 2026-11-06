@@ -12,9 +12,9 @@ The official [GenUI input and events guide](https://docs.flutter.dev/ai/genui/in
 
 [GenUI component bindings](https://docs.flutter.dev/ai/genui/components) use per-surface observable data. Size/fit selection stays in that surface's data model until its existing Save action commits. Do not copy these drafts into another widget's global state.
 
-[Genkit Dart generation and cancellation](https://genkit.dev/docs/dart/models/) supports cooperative cancellation. Our pinned `genkit` 1.0.0 exposes `CancellationController`, `CancellationToken.whenCancelled` and `CancelledException`. Cancelling cannot force an uncooperative provider future to finish. The runtime races draft generation against cancellation, then rejects late work through the draft's token and the agent epoch. Persistence writes and rollback remain serialized outside that race.
+[Genkit Dart generation and cancellation](https://genkit.dev/docs/dart/models/) supports cooperative cancellation. Our pinned `genkit` 1.0.1 exposes `CancellationController`, `CancellationToken.whenCancelled` and `CancelledException`. Cancelling cannot force an uncooperative provider future to finish. The runtime races draft generation against cancellation, then rejects late work through the draft's token and the agent epoch. Persistence writes and rollback remain serialized outside that race.
 
-The online docs evolve faster than our pins: `genui` 0.10.3, `a2ui_core` 0.1.1, Genkit/provider plugins/Schemantic 1.0.0. Verify signatures against those installed sources. The newer [full-agent run/session APIs](https://genkit.dev/docs/dart/agents/run/) are not a reason to migrate the existing `stylistTurn` flow during a UX fix.
+The online docs evolve faster than our pins: `genui` 0.10.3, `a2ui_core` 0.1.1, Genkit/provider plugins 1.0.1 and Schemantic 1.0.0. Verify signatures against those installed sources. The newer [full-agent run/session APIs](https://genkit.dev/docs/dart/agents/run/) are not a reason to migrate the existing `stylistTurn` flow during a UX fix.
 
 ## Flow matrix
 

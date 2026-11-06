@@ -154,11 +154,29 @@ abstract class AppLocalizations {
   /// **'Use HTTPS or a local loopback HTTP address'**
   String get connectionInvalidBaseUrl;
 
+  /// No description provided for @connectionModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Model'**
+  String get connectionModel;
+
+  /// No description provided for @connectionModelOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other…'**
+  String get connectionModelOther;
+
   /// No description provided for @connectionModelId.
   ///
   /// In en, this message translates to:
   /// **'Model ID'**
   String get connectionModelId;
+
+  /// No description provided for @connectionModelOtherHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The model must support tool calling through the selected provider.'**
+  String get connectionModelOtherHelp;
 
   /// No description provided for @connectionApiKey.
   ///

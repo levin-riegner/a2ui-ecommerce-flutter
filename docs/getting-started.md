@@ -29,7 +29,7 @@ For a deterministic connected demonstration, use the explicit [offline developer
 
 ## Connect a model
 
-Choose **Connect your model**, select Google Gemini, OpenAI, Anthropic or OpenAI-compatible, and enter a model ID supporting function tools and a provider API key. There is no default provider/model/key in the public app. OpenAI-compatible connections also require the API base URL, including its version path, such as `https://your-provider.example/v1`.
+Choose **Connect your model**, select Google Gemini, OpenAI, Anthropic or OpenAI-compatible, and enter your provider API key. Alder preselects a current tool-capable model for each bundled provider: Gemini 4 Argon, GPT-6 Sol or Claude Fable 5.1. You can choose another curated model or **Other…** to enter a model ID manually. OpenAI-compatible connections always use **Other…** and also require the API base URL, including its version path, such as `https://your-provider.example/v1`.
 
 Remote providers require HTTPS; loopback HTTP is accepted for local compatible endpoints. Native operating systems may require additional configuration for cleartext local HTTP. Web requires the provider to allow browser requests through CORS; a working native connection does not establish browser support.
 
@@ -50,7 +50,7 @@ Dictation requests microphone/speech permissions on first use. Recognition depen
 | Symptom | Check |
 | --- | --- |
 | Missing images or invalid JPEG bytes | Run `git lfs pull` and the catalog/release-asset checks in CONTRIBUTING. |
-| Connected, but the first message fails | Setup does not verify credentials. Check the key, model ID, tool support, quota and provider error. |
+| Connected, but the first message fails | Setup does not verify credentials or model access. Check the key, selected model, tool support, quota and provider error. |
 | Native works, browser fails | Check provider CORS support; do not weaken browser security or put keys in a public proxy. |
 | iOS SDK build failure | Select Xcode with iOS 27.1 or newer and run the iOS gate. |
 | Dictation unavailable | Check platform recognition support and permissions; rebuild after plugin changes. |

@@ -26,7 +26,7 @@ fvm flutter pub get
 fvm flutter run -d chrome
 ```
 
-Scroll down on the landing screen and choose **Explore component catalog** for a free first run with no API key. To use the stylist, choose **Connect your model** and supply a tool-capable Gemini, OpenAI, Anthropic or OpenAI-compatible model and your own API key. Connecting makes no model request; stylist interactions can incur provider charges. Keys stay in session memory. There is no application backend to deploy.
+Scroll down on the landing screen and choose **Explore component catalog** for a free first run with no API key. To use the stylist, choose **Connect your model**, select a provider and supply your own API key. Alder preselects a current tool-capable model for each bundled provider, with alternative curated choices and a manual **Other…** option. Connecting makes no model request; stylist interactions can incur provider charges. Keys stay in session memory. There is no application backend to deploy.
 
 Browser connections require provider CORS support. iOS builds require an **iOS 27.1 SDK or newer**; the minimum deployment target is iOS 15.0. See [getting started](docs/getting-started.md) for platform setup and troubleshooting.
 
